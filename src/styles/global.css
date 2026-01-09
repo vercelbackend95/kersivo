@@ -1,0 +1,9 @@
+:root{
+  --container: 1200px;
+  --gutter: clamp(20px, 3.2vw, 56px);
+}
+
+.container{
+  width: min(var(--container), calc(100% - (var(--gutter) * 2)));
+  margin: 0 auto;
+}
