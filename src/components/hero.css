@@ -1,5 +1,6 @@
 /* Kersivo — Hero #3 (launch edition)
-   typography-first, premium minimal, no fake rating, no socials, no stock photos */
+   Typography-first, premium minimal, no fake rating, no socials, no stock photos
+*/
 
 .k3-hero{
   --mx: 55%;
@@ -40,7 +41,7 @@
   mask-image: radial-gradient(70% 60% at 50% 25%, #000 25%, transparent 78%);
 }
 
-/* container wrapper inside hero */
+/* wrapper */
 .k3-wrap{
   position: relative;
   z-index: 2;
@@ -51,7 +52,6 @@
   padding: 14px 0 32px;
 }
 
-/* keeps nav from stretching across the full 1400px container */
 .k3-navInner{
   width: min(1120px, 100%);
   margin: 0 auto;
@@ -109,7 +109,7 @@
 .k3-center{
   margin: 0 auto;
   text-align: center;
-  max-width: 1040px; /* ~+20% vs previous 860 */
+  max-width: 1040px;
   display:grid;
   justify-items:center;
 }
@@ -276,51 +276,28 @@
   transform: translateY(0);
 }
 
-/* --- Neon underline (thin, longer, infinite shimmer) --- */
+/* --- Neon underline: ONLY the moving sweep (no static underline) --- */
 .k3-underline{
   position: relative;
   display: inline-block;
-  padding-bottom: 0.10em;
+  padding-bottom: 0.12em;
+  isolation: isolate;
 }
 
-/* base neon line */
+/* kill the static underline completely */
 .k3-underline::after{
-  content:"";
-  position:absolute;
-  left: -0.45em;          /* longer */
-  right: -0.45em;         /* longer */
-  bottom: -0.12em;
-  height: 2px;            /* thin */
-  border-radius: 999px;
-
-  /* neon gradient line */
-  background: linear-gradient(
-    90deg,
-    rgba(140,170,255,0.15),
-    rgba(190,145,255,0.95),
-    rgba(255,180,220,0.90),
-    rgba(140,170,255,0.15)
-  );
-
-  opacity: 0;             /* starts hidden until reveal */
-  transform: scaleX(0.85);
-  transform-origin: center;
-
-  /* neon glow */
-  box-shadow:
-    0 0 10px rgba(190,145,255,0.35),
-    0 0 18px rgba(255,180,220,0.25);
-
-  /* subtle, constant shimmer */
-  background-size: 220% 100%;
+  content: none !important;
 }
 
-/* moving highlight sweep (extra “electric” pass) */
+/* moving sweep */
 .k3-underline::before{
   content:"";
   position:absolute;
-  left: -0.60em;
-  right: -0.60em;
+
+  /* FULL WIDTH OF VIEWPORT (symmetry left/right) */
+  left: calc(-50vw + 50%);
+  right: calc(-50vw + 50%);
+
   bottom: -0.12em;
   height: 2px;
   border-radius: 999px;
@@ -328,84 +305,51 @@
   background: linear-gradient(
     90deg,
     rgba(255,255,255,0),
-    rgba(255,255,255,0.75),
+    rgba(255,255,255,0.82),
     rgba(255,255,255,0)
   );
 
   opacity: 0;
-  filter: blur(0.4px);
-  transform: translateX(-35%);
+  transform: translate3d(-140%, 0, 0);
+  will-change: transform, opacity;
   pointer-events:none;
+  filter: blur(0.25px);
+  mix-blend-mode: screen;
+
+  box-shadow:
+    0 0 10px rgba(190,145,255,0.38),
+    0 0 22px rgba(255,180,220,0.26);
 }
 
-/* start once revealed */
-.k3-hero.k3-reveal .k3-underline.is-in::after{
-  opacity: 0.95;
-  transform: scaleX(1);
-  animation:
-    k3NeonShimmer 2.6s linear infinite,
-    k3NeonPulse 4.2s ease-in-out infinite;
+
+/* start ONLY when the H1 is revealed */
+.k3-h1.is-in .k3-underline::before{
+  opacity: 0.60;
+  animation: k3NeonSweep 2.6s linear infinite;
 }
 
-.k3-hero.k3-reveal .k3-underline.is-in::before{
-  opacity: 0.55;
-  animation: k3NeonSweep 2.2s cubic-bezier(.2,.9,.2,1) infinite;
-}
-
-/* shimmer: subtle background movement */
-@keyframes k3NeonShimmer{
-  0%   { background-position: 0% 50%; }
-  100% { background-position: 220% 50%; }
-}
-
-/* pulse: gentle breathing glow */
-@keyframes k3NeonPulse{
-  0%,100%{
-    box-shadow:
-      0 0 10px rgba(190,145,255,0.30),
-      0 0 18px rgba(255,180,220,0.20);
-  }
-  50%{
-    box-shadow:
-      0 0 14px rgba(190,145,255,0.45),
-      0 0 26px rgba(255,180,220,0.32);
-  }
-}
-
-/* sweep: a bright pass over the line */
 @keyframes k3NeonSweep{
-  0%   { transform: translateX(-45%); opacity: 0.0; }
-  15%  { opacity: 0.60; }
-  55%  { opacity: 0.35; }
-  100% { transform: translateX(45%); opacity: 0.0; }
+  0%   { transform: translate3d(-140%, 0, 0); opacity: 0; }
+  10%  { opacity: 0.70; }
+  55%  { opacity: 0.34; }
+  100% { transform: translate3d(140%, 0, 0); opacity: 0; }
 }
 
-/* optional: re-sweep on hover (desktop) */
 @media (hover: hover) and (pointer: fine){
-  .k3-underline:hover::before{
-    opacity: 0.65;
-  }
+  .k3-underline:hover::before{ opacity: 0.75; }
 }
 
-/* reduced motion (also avoids infinite shimmer) */
+/* prefers-reduced-motion: stop infinite neon + motion */
 @media (prefers-reduced-motion: reduce){
   .k3-underline::before{
-    display: none !important;
+    opacity: 0.55 !important;
+    transform: translate3d(0,0,0) !important;
     animation: none !important;
   }
-  .k3-underline::after{
-    opacity: 0.85 !important;
-    transform: scaleX(1) !important;
-    animation: none !important;
-    background-position: 50% 50% !important;
-  }
-}
 
-/* reduced motion for the whole hero */
-@media (prefers-reduced-motion: reduce){
-  .k3-btn, .k3-nav__cta, .k3-hero.k3-reveal [data-reveal], .k3-btn__shine {
+  .k3-btn, .k3-nav__cta, .k3-hero.k3-reveal [data-reveal], .k3-btn__shine{
     transition: none !important;
   }
-  .k3-btn { transform: none !important; }
-  .k3-hero.k3-reveal [data-reveal] { opacity: 1; transform: none; }
+  .k3-btn{ transform: none !important; }
+  .k3-hero.k3-reveal [data-reveal]{ opacity: 1; transform: none; }
 }
