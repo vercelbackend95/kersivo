@@ -1,5 +1,6 @@
 ---
 import "./topnav.css";
+import "../styles/neon-nav.css";
 ---
 
 <header class="k-topnav" data-topnav>
@@ -27,7 +28,8 @@ import "./topnav.css";
     </a>
 
     <nav class="k-topnav__links" aria-label="Primary" data-nav-links>
-      <span class="k-topnav__indicator" aria-hidden="true"></span>
+      <!-- One neon that slides under the active link -->
+      <span class="k-navNeon" aria-hidden="true" data-nav-neon></span>
 
       <a class="k-topnav__link" href="#work" data-nav-link>Work</a>
       <a class="k-topnav__link" href="#services" data-nav-link>Services</a>
@@ -64,7 +66,7 @@ import "./topnav.css";
       <a class="k-topnav__panelLink" href="#contact">Contact</a>
 
       <div class="k-topnav__panelCtas">
-        <a class="k-btn k-btn--primary k-topnav__panelPrimary" href="#contact">
+        <a class="k-btn k-btn--primary k-topnav__panelPrimary" href="#contact" data-magnetic>
           <span class="k-btn__label">Get a quote</span>
           <span class="k-btn__shine" aria-hidden="true"></span>
           <span class="k-btn__arrow" aria-hidden="true">→</span>
@@ -86,12 +88,12 @@ import "./topnav.css";
       const reduced =
         window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-      // ====== shrink / scrolled state ======
-      const setScrolled = () => root.classList.toggle("is-scrolled", window.scrollY > 8);
+      // ===== shrink glass on scroll =====
+      const setScrolled = () => root.classList.toggle("is-scrolled", window.scrollY > 6);
       setScrolled();
       window.addEventListener("scroll", setScrolled, { passive: true });
 
-      // ====== mobile panel ======
+      // ===== mobile panel =====
       const btn = root.querySelector(".k-topnav__burger");
       const panel = root.querySelector("#kTopnavPanel");
 
@@ -112,18 +114,13 @@ import "./topnav.css";
         root.classList.remove("is-open");
         btn.setAttribute("aria-expanded", "false");
         lockScroll(false);
-
-        if (reduced) {
-          panel.hidden = true;
-          return;
-        }
+        if (reduced) return (panel.hidden = true);
         setTimeout(() => (panel.hidden = true), 180);
       };
 
       if (btn && panel) {
         btn.addEventListener("click", () => {
-          const isOpen = root.classList.contains("is-open");
-          isOpen ? close() : open();
+          root.classList.contains("is-open") ? close() : open();
         });
 
         window.addEventListener("keydown", (e) => {
@@ -135,10 +132,11 @@ import "./topnav.css";
         });
       }
 
-      // ====== scroll-spy + active pill indicator ======
-      const linksWrap = root.querySelector("[data-nav-links]");
+      // ===== neon indicator movement + scroll spy =====
+      const wrap = root.querySelector("[data-nav-links]");
+      const neon = root.querySelector("[data-nav-neon]");
       const links = Array.from(root.querySelectorAll("[data-nav-link]"));
-      if (!linksWrap || !links.length) return;
+      if (!wrap || !neon || !links.length) return;
 
       const map = new Map();
       links.forEach((a) => {
@@ -146,10 +144,20 @@ import "./topnav.css";
         if (hash && hash.startsWith("#")) map.set(hash, a);
       });
 
-      const getWrapPaddingLeft = () => {
-        const cs = getComputedStyle(linksWrap);
-        const p = parseFloat(cs.paddingLeft || "0");
-        return Number.isFinite(p) ? p : 0;
+      const moveNeonTo = (a) => {
+        const x = Math.round(a.offsetLeft);
+        const w = Math.round(a.offsetWidth);
+        wrap.style.setProperty("--nx", x + "px");
+        wrap.style.setProperty("--nw", w + "px");
+      };
+
+      const pulseNeon = () => {
+        if (reduced) return;
+        neon.classList.remove("is-pulsing");
+        // force reflow so animation can replay reliably
+        void neon.offsetWidth;
+        neon.classList.add("is-pulsing");
+        setTimeout(() => neon.classList.remove("is-pulsing"), 160);
       };
 
       const setActive = (hash) => {
@@ -164,24 +172,16 @@ import "./topnav.css";
         a.classList.add("is-active");
         a.setAttribute("aria-current", "page");
 
-        // Move indicator (IMPORTANT: subtract wrap padding to avoid double offset)
-        const rA = a.getBoundingClientRect();
-        const rW = linksWrap.getBoundingClientRect();
-        const pad = getWrapPaddingLeft();
-
-        const x = (rA.left - rW.left) - pad;
-        const w = rA.width;
-
-        linksWrap.style.setProperty("--ix", x.toFixed(2) + "px");
-        linksWrap.style.setProperty("--iw", w.toFixed(2) + "px");
+        moveNeonTo(a);
+        pulseNeon();
       };
 
-      // initial active: current hash or first link
-      const initial = map.has(location.hash)
-        ? location.hash
-        : (links[0].getAttribute("href") || "#work");
+      // initial active
+      const initial =
+        map.has(location.hash) ? location.hash : (links[0].getAttribute("href") || "#work");
       setActive(initial);
 
+      // click feels instant
       links.forEach((a) => {
         a.addEventListener("click", () => {
           const hash = (a.getAttribute("href") || "").trim();
@@ -190,22 +190,22 @@ import "./topnav.css";
         });
       });
 
-      // Keep indicator correct on resize + font load
+      // keep aligned on resize + font load
       let raf = 0;
-      const reflowIndicator = () => {
+      const reflow = () => {
         cancelAnimationFrame(raf);
         raf = requestAnimationFrame(() => {
-          const active = links.find((x) => x.classList.contains("is-active"));
-          const hash = active ? (active.getAttribute("href") || "") : initial;
-          if (hash.startsWith("#")) setActive(hash);
+          const active = links.find((x) => x.classList.contains("is-active")) || links[0];
+          moveNeonTo(active);
         });
       };
-      window.addEventListener("resize", reflowIndicator, { passive: true });
+
+      window.addEventListener("resize", reflow, { passive: true });
       if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(reflowIndicator).catch(() => {});
+        document.fonts.ready.then(reflow).catch(() => {});
       }
 
-      // Observe sections (only if they exist)
+      // scroll-spy (only if sections exist)
       const sections = Array.from(map.keys())
         .map((hash) => document.querySelector(hash))
         .filter(Boolean);
@@ -216,9 +216,7 @@ import "./topnav.css";
         const onScroll = () => {
           const y = window.scrollY + window.innerHeight * 0.35;
           let best = sections[0];
-          for (const s of sections) {
-            if (s.offsetTop <= y) best = s;
-          }
+          for (const s of sections) if (s.offsetTop <= y) best = s;
           setActive("#" + best.id);
         };
         onScroll();
@@ -230,6 +228,7 @@ import "./topnav.css";
       const io = new IntersectionObserver(
         (entries) => {
           entries.forEach((e) => ratios.set(e.target, e.intersectionRatio));
+
           let bestEl = null;
           let bestRatio = 0;
           ratios.forEach((ratio, el) => {
@@ -238,6 +237,7 @@ import "./topnav.css";
               bestEl = el;
             }
           });
+
           if (bestEl && bestEl.id) setActive("#" + bestEl.id);
         },
         {

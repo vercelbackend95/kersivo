@@ -5,7 +5,6 @@
    - Pills:   .k-pill (pills.css)
    - Laser:   .laser / .k3-underline (laser.css)
    ========================================= */
-
 .k3-hero{
   --mx: 55%;
   --my: 38%;
@@ -13,11 +12,18 @@
   position: relative;
   overflow: hidden;
   background: #07070a;
-  color: rgba(255,255,255,.92);
+  color: rgba(255,255,255,92);
 
-  /* space for sticky topnav */
-  padding: clamp(88px, 10vh, 128px) 0 clamp(84px, 10vh, 140px);
+  /* HERO = full viewport height */
+  min-height: 100svh;
+
+  /* content breath (nav overlays hero) */
+  padding:
+    calc(var(--nav-h, 64px) + clamp(26px, 6vh, 54px))
+    0
+    clamp(72px, 10vh, 140px);
 }
+
 
 /* background */
 .k3-bg{ position:absolute; inset:0; pointer-events:none; z-index:0; }

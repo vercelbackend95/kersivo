@@ -1,0 +1,209 @@
+/* =========================================
+   Kersivo — Neon Nav Indicator (v2, detailed)
+   - One underline that slides under active link
+   - Light emits UPWARDS from the tube (no glow below)
+   - Crisp core + hot center + controlled bloom + upward beam
+   - Optional micro “power-up” on section change (via .is-pulsing)
+   ========================================= */
+
+:root{
+  --neon-core: rgba(190,145,255,.98);     /* tube color */
+  --neon-hot:  rgba(255,215,245,.92);     /* hot center */
+  --neon-aura: rgba(190,145,255,.28);     /* outer aura */
+  --neon-aura2: rgba(255,190,230,.14);    /* secondary aura */
+}
+
+/* Vars live on the links wrapper (set by JS) */
+.k-topnav__links{
+  --nx: 0px;        /* x position of active link */
+  --nw: 64px;       /* width of active link */
+  --neon-y: 10px;   /* distance from bottom of capsule */
+
+  /* tuning */
+  --tube-h: 2px;    /* core line thickness */
+  --tube-r: 999px;  /* radius */
+}
+
+/* =======================
+   THE ONE NEON TUBE
+   ======================= */
+.k-navNeon{
+  position: absolute;
+  left: 0;
+  bottom: var(--neon-y);
+
+  width: var(--nw);
+  height: var(--tube-h);
+  transform: translate3d(var(--nx), 0, 0);
+
+  border-radius: var(--tube-r);
+  pointer-events: none;
+  z-index: 0;
+
+  /* Tube: bright center, soft edges, slight specular */
+  background:
+    radial-gradient(55% 180% at 50% 50%,
+      rgba(255,255,255,.75),
+      rgba(255,255,255,0) 55%
+    ),
+    linear-gradient(90deg,
+      rgba(255,255,255,0),
+      var(--neon-core) 22%,
+      var(--neon-hot) 50%,
+      var(--neon-core) 78%,
+      rgba(255,255,255,0)
+    );
+
+  /* Micro crispness: core stays sharp; glow comes from pseudos */
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.06) inset;
+
+  opacity: .98;
+  transition:
+    transform 300ms cubic-bezier(.2,.9,.2,1),
+    width 300ms cubic-bezier(.2,.9,.2,1);
+  will-change: transform, width;
+}
+
+/* =======================
+   BLOOM (tight halo) — UP ONLY
+   (small, stuck to the tube; avoids “pillow”)
+   ======================= */
+.k-navNeon::after{
+  content:"";
+  position:absolute;
+  left: -2px;
+  right: -2px;
+
+  bottom: -1px;          /* kisses the tube */
+  height: 16px;          /* tight halo */
+  border-radius: inherit;
+
+  background:
+    linear-gradient(90deg,
+      rgba(255,255,255,0),
+      rgba(255,220,245,.30),
+      rgba(190,145,255,.22),
+      rgba(255,220,245,.30),
+      rgba(255,255,255,0)
+    );
+
+  filter: blur(6px);
+  opacity: .70;
+  mix-blend-mode: screen;
+
+  /* clamp glow to UP only */
+  -webkit-mask-image: linear-gradient(to top,
+    rgba(0,0,0,1),
+    rgba(0,0,0,1) 72%,
+    rgba(0,0,0,0)
+  );
+          mask-image: linear-gradient(to top,
+    rgba(0,0,0,1),
+    rgba(0,0,0,1) 72%,
+    rgba(0,0,0,0)
+  );
+}
+
+/* =======================
+   BEAM (rising light) — UP ONLY
+   (anchored at the tube; fades upward)
+   ======================= */
+.k-navNeon::before{
+  content:"";
+  position:absolute;
+  left: -10px;
+  right: -10px;
+
+  bottom: 0;
+  height: 42px;          /* controlled beam height */
+  border-radius: 999px;
+
+  background:
+    radial-gradient(70% 95% at 50% 100%,
+      rgba(255,230,250,.40),
+      rgba(190,145,255,.22) 32%,
+      rgba(190,145,255,.10) 55%,
+      rgba(0,0,0,0) 78%
+    ),
+    radial-gradient(55% 80% at 50% 100%,
+      rgba(255,190,230,.18),
+      rgba(0,0,0,0) 70%
+    );
+
+  filter: blur(10px);
+  opacity: .85;
+  mix-blend-mode: screen;
+
+  /* hard rule: zero glow below the tube */
+  -webkit-mask-image: linear-gradient(to top,
+    rgba(0,0,0,1),
+    rgba(0,0,0,1) 60%,
+    rgba(0,0,0,0)
+  );
+          mask-image: linear-gradient(to top,
+    rgba(0,0,0,1),
+    rgba(0,0,0,1) 60%,
+    rgba(0,0,0,0)
+  );
+}
+
+/* =======================
+   ACTIVE TEXT “LIT FROM BELOW”
+   (subtle, no fat blob)
+   ======================= */
+.k-topnav__link.is-active{
+  color: rgba(255,255,255,.98) !important;
+  background: transparent !important;
+
+  text-shadow:
+    0 0 10px rgba(190,145,255,.18),
+    0 0 18px rgba(255,210,245,.10);
+}
+
+/* Ensure links render above neon */
+.k-topnav__link{
+  position: relative;
+  z-index: 1;
+}
+
+/* =======================
+   OPTIONAL: micro “power-up” on section change
+   (short burst, no flicker)
+   Triggered by adding .is-pulsing on the neon element
+   ======================= */
+.k-navNeon.is-pulsing{
+  animation: kNeonPulse 140ms ease-out 1;
+}
+.k-navNeon.is-pulsing::before{
+  animation: kBeamPulse 140ms ease-out 1;
+}
+.k-navNeon.is-pulsing::after{
+  animation: kBloomPulse 140ms ease-out 1;
+}
+
+@keyframes kNeonPulse{
+  0%{ opacity: .85; filter: saturate(1.0); }
+  45%{ opacity: 1; filter: saturate(1.12); }
+  100%{ opacity: .98; filter: saturate(1.0); }
+}
+@keyframes kBeamPulse{
+  0%{ opacity: .55; }
+  45%{ opacity: .95; }
+  100%{ opacity: .85; }
+}
+@keyframes kBloomPulse{
+  0%{ opacity: .55; }
+  45%{ opacity: .86; }
+  100%{ opacity: .70; }
+}
+
+/* Motion safety */
+@media (prefers-reduced-motion: reduce){
+  .k-navNeon,
+  .k-navNeon::before,
+  .k-navNeon::after{
+    transition: none !important;
+    animation: none !important;
+  }
+}
