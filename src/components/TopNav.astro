@@ -1,0 +1,253 @@
+---
+import "./topnav.css";
+---
+
+<header class="k-topnav" data-topnav>
+  <a class="k-skip" href="#main">Skip to content</a>
+
+  <div class="k-topnav__inner">
+    <a class="k-topnav__brand" href="/" aria-label="Kersivo home">
+      <span class="k-topnav__mark" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path
+            d="M12 2l1.2 5.1L18 8.3l-4.4 2.4L12 16l-1.6-5.3L6 8.3l4.8-1.2L12 2Z"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M19.5 13l.6 2.3 2.4.6-2.4.6-.6 2.3-.6-2.3-2.4-.6 2.4-.6.6-2.3Z"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </span>
+      <span class="k-topnav__name">Kersivo</span>
+    </a>
+
+    <nav class="k-topnav__links" aria-label="Primary" data-nav-links>
+      <span class="k-topnav__indicator" aria-hidden="true"></span>
+
+      <a class="k-topnav__link" href="#work" data-nav-link>Work</a>
+      <a class="k-topnav__link" href="#services" data-nav-link>Services</a>
+      <a class="k-topnav__link" href="#process" data-nav-link>Process</a>
+      <a class="k-topnav__link" href="#contact" data-nav-link>Contact</a>
+    </nav>
+
+    <div class="k-topnav__actions">
+      <a class="k-topnav__mini" href="#work">View work</a>
+
+      <a class="k-btn k-btn--secondary k-topnav__cta" href="#contact">
+        <span class="k-btn__label">Get a quote</span>
+        <span class="k-btn__arrow" aria-hidden="true">→</span>
+      </a>
+
+      <button
+        class="k-topnav__burger"
+        type="button"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="kTopnavPanel"
+      >
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="k-topnav__panel" id="kTopnavPanel" hidden>
+    <div class="k-topnav__panelInner">
+      <a class="k-topnav__panelLink" href="#work">Work</a>
+      <a class="k-topnav__panelLink" href="#services">Services</a>
+      <a class="k-topnav__panelLink" href="#process">Process</a>
+      <a class="k-topnav__panelLink" href="#contact">Contact</a>
+
+      <div class="k-topnav__panelCtas">
+        <a class="k-btn k-btn--primary k-topnav__panelPrimary" href="#contact">
+          <span class="k-btn__label">Get a quote</span>
+          <span class="k-btn__shine" aria-hidden="true"></span>
+          <span class="k-btn__arrow" aria-hidden="true">→</span>
+        </a>
+
+        <a class="k-btn k-btn--ghost k-topnav__panelGhost" href="#work">
+          <span class="k-btn__label">View work</span>
+          <span class="k-btn__arrow2" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const root = document.querySelector("[data-topnav]");
+      if (!root) return;
+
+      const reduced =
+        window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      // ====== shrink / scrolled state ======
+      const setScrolled = () => root.classList.toggle("is-scrolled", window.scrollY > 8);
+      setScrolled();
+      window.addEventListener("scroll", setScrolled, { passive: true });
+
+      // ====== mobile panel ======
+      const btn = root.querySelector(".k-topnav__burger");
+      const panel = root.querySelector("#kTopnavPanel");
+
+      const lockScroll = (locked) => {
+        document.documentElement.style.overflow = locked ? "hidden" : "";
+      };
+
+      const open = () => {
+        if (!panel || !btn) return;
+        panel.hidden = false;
+        root.classList.add("is-open");
+        btn.setAttribute("aria-expanded", "true");
+        lockScroll(true);
+      };
+
+      const close = () => {
+        if (!panel || !btn) return;
+        root.classList.remove("is-open");
+        btn.setAttribute("aria-expanded", "false");
+        lockScroll(false);
+
+        if (reduced) {
+          panel.hidden = true;
+          return;
+        }
+        setTimeout(() => (panel.hidden = true), 180);
+      };
+
+      if (btn && panel) {
+        btn.addEventListener("click", () => {
+          const isOpen = root.classList.contains("is-open");
+          isOpen ? close() : open();
+        });
+
+        window.addEventListener("keydown", (e) => {
+          if (e.key === "Escape" && root.classList.contains("is-open")) close();
+        });
+
+        panel.addEventListener("click", (e) => {
+          if (e.target === panel) close();
+        });
+      }
+
+      // ====== scroll-spy + active pill indicator ======
+      const linksWrap = root.querySelector("[data-nav-links]");
+      const links = Array.from(root.querySelectorAll("[data-nav-link]"));
+      if (!linksWrap || !links.length) return;
+
+      const map = new Map();
+      links.forEach((a) => {
+        const hash = (a.getAttribute("href") || "").trim();
+        if (hash && hash.startsWith("#")) map.set(hash, a);
+      });
+
+      const getWrapPaddingLeft = () => {
+        const cs = getComputedStyle(linksWrap);
+        const p = parseFloat(cs.paddingLeft || "0");
+        return Number.isFinite(p) ? p : 0;
+      };
+
+      const setActive = (hash) => {
+        const a = map.get(hash);
+        if (!a) return;
+
+        links.forEach((x) => {
+          x.classList.remove("is-active");
+          x.removeAttribute("aria-current");
+        });
+
+        a.classList.add("is-active");
+        a.setAttribute("aria-current", "page");
+
+        // Move indicator (IMPORTANT: subtract wrap padding to avoid double offset)
+        const rA = a.getBoundingClientRect();
+        const rW = linksWrap.getBoundingClientRect();
+        const pad = getWrapPaddingLeft();
+
+        const x = (rA.left - rW.left) - pad;
+        const w = rA.width;
+
+        linksWrap.style.setProperty("--ix", x.toFixed(2) + "px");
+        linksWrap.style.setProperty("--iw", w.toFixed(2) + "px");
+      };
+
+      // initial active: current hash or first link
+      const initial = map.has(location.hash)
+        ? location.hash
+        : (links[0].getAttribute("href") || "#work");
+      setActive(initial);
+
+      links.forEach((a) => {
+        a.addEventListener("click", () => {
+          const hash = (a.getAttribute("href") || "").trim();
+          if (hash.startsWith("#")) setActive(hash);
+          if (root.classList.contains("is-open")) close();
+        });
+      });
+
+      // Keep indicator correct on resize + font load
+      let raf = 0;
+      const reflowIndicator = () => {
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => {
+          const active = links.find((x) => x.classList.contains("is-active"));
+          const hash = active ? (active.getAttribute("href") || "") : initial;
+          if (hash.startsWith("#")) setActive(hash);
+        });
+      };
+      window.addEventListener("resize", reflowIndicator, { passive: true });
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(reflowIndicator).catch(() => {});
+      }
+
+      // Observe sections (only if they exist)
+      const sections = Array.from(map.keys())
+        .map((hash) => document.querySelector(hash))
+        .filter(Boolean);
+
+      if (!sections.length) return;
+
+      if (reduced) {
+        const onScroll = () => {
+          const y = window.scrollY + window.innerHeight * 0.35;
+          let best = sections[0];
+          for (const s of sections) {
+            if (s.offsetTop <= y) best = s;
+          }
+          setActive("#" + best.id);
+        };
+        onScroll();
+        window.addEventListener("scroll", onScroll, { passive: true });
+        return;
+      }
+
+      const ratios = new Map();
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => ratios.set(e.target, e.intersectionRatio));
+          let bestEl = null;
+          let bestRatio = 0;
+          ratios.forEach((ratio, el) => {
+            if (ratio > bestRatio) {
+              bestRatio = ratio;
+              bestEl = el;
+            }
+          });
+          if (bestEl && bestEl.id) setActive("#" + bestEl.id);
+        },
+        {
+          root: null,
+          rootMargin: "-35% 0px -55% 0px",
+          threshold: [0, 0.12, 0.24, 0.36, 0.5, 0.7, 0.9],
+        }
+      );
+
+      sections.forEach((s) => io.observe(s));
+    })();
+  </script>
+</header>

@@ -1,19 +1,22 @@
 /* =========================================
-   Kersivo — Hero #3 (launch edition)
-   Typography system ready + premium effects
-   NOTE: Laser is now in src/styles/laser.css
+   Kersivo — Hero #3 (lean)
+   Uses global systems:
+   - Buttons: .k-btn (cta-button.css)
+   - Pills:   .k-pill (pills.css)
+   - Laser:   .laser / .k3-underline (laser.css)
    ========================================= */
 
 .k3-hero{
-  /* cursor spotlight */
   --mx: 55%;
   --my: 38%;
 
   position: relative;
-  overflow: hidden; /* keep: prevents any 100vw effects from causing scroll */
+  overflow: hidden;
   background: #07070a;
   color: rgba(255,255,255,.92);
-  padding: 22px 0 clamp(84px, 10vh, 140px);
+
+  /* space for sticky topnav */
+  padding: clamp(88px, 10vh, 128px) 0 clamp(84px, 10vh, 140px);
 }
 
 /* background */
@@ -49,68 +52,6 @@
 .k3-wrap{
   position: relative;
   z-index: 2;
-}
-
-/* nav */
-.k3-nav{
-  padding: 14px 0 32px;
-}
-
-/* keeps nav “studio-tight” while page can be wider */
-.k3-navInner{
-  width: min(1200px, 100%);
-  margin: 0 auto;
-  padding: 0 18px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-
-.k3-brand{
-  display:inline-flex;
-  align-items:center;
-  gap: 10px;
-  text-decoration:none;
-  color: rgba(255,255,255,.92);
-}
-
-.k3-brand__mark{
-  width: 36px;
-  height: 36px;
-  border-radius: 12px;
-  display:grid;
-  place-items:center;
-  background: linear-gradient(135deg, rgba(115,105,255,.92), rgba(190,105,255,.82));
-  box-shadow: 0 18px 70px rgba(130,110,255,.25);
-}
-
-.k3-brand__name{
-  font-weight: var(--w-bold, 780);
-  letter-spacing: -0.02em;
-  font-size: 20px;
-}
-
-.k3-nav__cta{
-  height: 44px;
-  padding: 0 18px;
-  border-radius: 999px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  text-decoration:none;
-  color: rgba(255,255,255,.90);
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.14);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 20px 80px rgba(0,0,0,.30);
-  transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
-  font-weight: var(--w-medium, 560);
-  letter-spacing: -0.01em;
-}
-.k3-nav__cta:hover{
-  background: rgba(255,255,255,.08);
-  border-color: rgba(255,255,255,.18);
-  transform: translateY(-1px);
 }
 
 /* center content */
@@ -183,7 +124,7 @@
   letter-spacing: var(--track-normal, -0.01em);
 }
 
-/* CTAs */
+/* CTAs layout */
 .k3-cta{
   margin-top: 26px;
   display:flex;
@@ -192,91 +133,10 @@
   justify-content: center;
 }
 
-.k3-btn{
-  position:relative;
-  height: 52px;
-  padding: 0 22px;
-  border-radius: 999px;
-  display:inline-flex;
-  align-items:center;
-  gap: 10px;
-  text-decoration:none;
-
-  font-weight: var(--w-semibold, 650);
-  letter-spacing: -0.015em;
-
-  border: 1px solid transparent;
-  transform: translate3d(var(--tx,0px), var(--ty,0px), 0);
-  transition: transform 220ms cubic-bezier(.2,.9,.2,1), background 200ms ease, border-color 200ms ease, box-shadow 200ms ease, color 200ms ease;
-  will-change: transform;
-}
-
-.k3-btn--primary{
-  color: #0a0b10;
-  background: linear-gradient(135deg, rgba(105,140,255,1), rgba(170,95,255,1));
-  box-shadow: 0 28px 90px rgba(105,140,255,.28);
-  overflow:hidden;
-}
-
-.k3-btn__shine{
-  position:absolute;
-  inset:-80% -30%;
-  background: radial-gradient(closest-side at 50% 50%, rgba(255,255,255,.55), transparent 72%);
-  transform: translateX(-36%);
-  opacity: 0;
-  transition: transform 520ms cubic-bezier(.2,.9,.2,1), opacity 220ms ease;
-  pointer-events:none;
-  filter: blur(10px);
-}
-.k3-btn--primary:hover .k3-btn__shine{
-  opacity:.55;
-  transform: translateX(36%);
-}
-
-.k3-btn__arrow{
-  opacity:.9;
-  transform: translateX(0);
-  transition: transform 220ms cubic-bezier(.2,.9,.2,1);
-}
-.k3-btn--primary:hover .k3-btn__arrow{ transform: translateX(2px); }
-
-.k3-btn--ghost{
-  color: rgba(255,255,255,.92);
-  background: rgba(255,255,255,.06);
-  border-color: rgba(255,255,255,.14);
-  backdrop-filter: blur(10px);
-}
-.k3-btn--ghost:hover{
-  background: rgba(255,255,255,.08);
-  border-color: rgba(255,255,255,.18);
-}
-
-.k3-btn__arrow2{
-  opacity:.86;
-  transform: translateX(0);
-  transition: transform 220ms cubic-bezier(.2,.9,.2,1);
-}
-.k3-btn--ghost:hover .k3-btn__arrow2{ transform: translateX(2px); }
-
-/* pills */
-.k3-pills{
-  margin-top: 18px;
-  display:flex;
-  flex-wrap: wrap;
-  gap: 10px;
+/* pills spacing */
+.k-pills{
+  margin-top: 14px;
   justify-content: center;
-}
-
-.k3-pill{
-  padding: 10px 14px;
-  border-radius: 999px;
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.12);
-  color: rgba(255,255,255,.78);
-  font-size: 13px;
-  backdrop-filter: blur(10px);
-  font-weight: var(--w-medium, 560);
-  letter-spacing: 0.01em;
 }
 
 /* reveal */
@@ -292,11 +152,10 @@
   transform: translateY(0);
 }
 
-/* reduced motion tweaks (hero-only) */
 @media (prefers-reduced-motion: reduce){
-  .k3-btn, .k3-nav__cta, .k3-hero.k3-reveal [data-reveal], .k3-btn__shine{
+  .k3-hero.k3-reveal [data-reveal]{
     transition: none !important;
+    opacity: 1;
+    transform: none;
   }
-  .k3-btn{ transform: none !important; }
-  .k3-hero.k3-reveal [data-reveal]{ opacity: 1; transform: none; }
 }

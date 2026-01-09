@@ -1,12 +1,7 @@
 ---
 import "./hero.css";
 import "../styles/laser.css";
-import CtaButton from "./CtaButton.astro";
-import Pill from "./Pill.astro";
-
 ---
-
-
 
 <section class="k3-hero" aria-label="Kersivo hero">
   <div class="k3-bg" aria-hidden="true">
@@ -16,32 +11,6 @@ import Pill from "./Pill.astro";
   </div>
 
   <div class="k3-wrap">
-    <nav class="k3-nav" aria-label="Primary">
-      <div class="k3-navInner">
-        <a class="k3-brand" href="/" aria-label="Kersivo home">
-          <span class="k3-brand__mark" aria-hidden="true">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M12 2l1.2 5.1L18 8.3l-4.4 2.4L12 16l-1.6-5.3L6 8.3l4.8-1.2L12 2Z"
-                stroke="currentColor"
-                stroke-width="1.6"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M19.5 13l.6 2.3 2.4.6-2.4.6-.6 2.3-.6-2.3-2.4-.6 2.4-.6.6-2.3Z"
-                stroke="currentColor"
-                stroke-width="1.6"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </span>
-          <span class="k3-brand__name">Kersivo</span>
-        </a>
-
-        <a class="k3-nav__cta" href="#contact">Get in touch</a>
-      </div>
-    </nav>
-
     <div class="k3-center">
       <div class="k3-badges" data-reveal>
         <span class="k3-badge">
@@ -60,21 +29,22 @@ import Pill from "./Pill.astro";
       </p>
 
       <div class="k3-cta" data-reveal>
-        <a class="k3-btn k3-btn--primary" href="#contact" data-magnetic>
-          Get a quote
-          <span class="k3-btn__shine" aria-hidden="true"></span>
-          <span class="k3-btn__arrow" aria-hidden="true">→</span>
+        <a class="k-btn k-btn--primary" href="#contact" data-magnetic>
+          <span class="k-btn__label">Get a quote</span>
+          <span class="k-btn__shine" aria-hidden="true"></span>
+          <span class="k-btn__arrow" aria-hidden="true">→</span>
         </a>
 
-        <a class="k3-btn k3-btn--ghost" href="#work">
-          View work <span class="k3-btn__arrow2" aria-hidden="true">→</span>
+        <a class="k-btn k-btn--ghost" href="#work">
+          <span class="k-btn__label">View work</span>
+          <span class="k-btn__arrow2" aria-hidden="true">→</span>
         </a>
       </div>
 
-      <div class="k3-pills" data-reveal aria-label="Key benefits">
-        <span class="k3-pill">SEO foundations</span>
-        <span class="k3-pill">Astro-fast builds</span>
-        <span class="k3-pill">Mobile-first</span>
+      <div class="k-pills" data-reveal aria-label="Key benefits">
+        <span class="k-pill k-pill--accent">SEO foundations</span>
+        <span class="k-pill">Astro-fast builds</span>
+        <span class="k-pill">Mobile-first</span>
       </div>
     </div>
   </div>
