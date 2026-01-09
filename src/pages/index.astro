@@ -1,10 +1,10 @@
 ---
 import "../styles/global.css";
-import "../styles/cta-button.css";
-import "../styles/pills.css";
 
+import SiteBg from "../components/SiteBg.astro";
 import TopNav from "../components/TopNav.astro";
 import Hero from "../components/Hero.astro";
+import ProofPack from "../components/ProofPack.astro";
 ---
 
 <!doctype html>
@@ -32,147 +32,20 @@ import Hero from "../components/Hero.astro";
   </head>
 
   <body>
-    <TopNav />
+    <SiteBg />
 
-    <main id="main">
-      <Hero />
+    <div class="site-foreground">
+      <TopNav />
 
-      <!-- Temporary anchors so nav/CTAs have a target (replace with real sections later) -->
-      <section id="work" style="height: 1px;"></section>
-      <section id="services" style="height: 1px;"></section>
-      <section id="process" style="height: 1px;"></section>
-      <section id="contact" style="height: 1px;"></section>
-    </main>
-	<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
-		<br>
-	<br>
-	<br>
+      <main id="main">
+        <Hero />
+        <ProofPack />
+
+        <!-- anchors for nav (until real sections exist) -->
+        <section id="services" style="height: 1px;"></section>
+        <section id="process" style="height: 1px;"></section>
+        <section id="contact" style="height: 1px;"></section>
+      </main>
+    </div>
   </body>
 </html>

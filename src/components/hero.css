@@ -1,57 +1,19 @@
 /* =========================================
-   Kersivo — Hero #3 (lean)
-   Uses global systems:
-   - Buttons: .k-btn (cta-button.css)
-   - Pills:   .k-pill (pills.css)
-   - Laser:   .laser / .k3-underline (laser.css)
+   Kersivo — Hero #3 (lean) — foreground only
+   Background is now global (site-bg.css)
    ========================================= */
-.k3-hero{
-  --mx: 55%;
-  --my: 38%;
 
+.k3-hero{
   position: relative;
   overflow: hidden;
-  background: #07070a;
   color: rgba(255,255,255,92);
 
-  /* HERO = full viewport height */
   min-height: 100svh;
 
-  /* content breath (nav overlays hero) */
   padding:
     calc(var(--nav-h, 64px) + clamp(26px, 6vh, 54px))
     0
     clamp(72px, 10vh, 140px);
-}
-
-
-/* background */
-.k3-bg{ position:absolute; inset:0; pointer-events:none; z-index:0; }
-
-.k3-bg__spot{
-  position:absolute; inset:-30%;
-  background:
-    radial-gradient(900px 620px at var(--mx) var(--my), rgba(255,255,255,.10), transparent 62%),
-    radial-gradient(860px 620px at 62% 28%, rgba(120,110,255,.22), transparent 62%),
-    radial-gradient(840px 660px at 40% 52%, rgba(210,120,255,.16), transparent 66%);
-  filter: blur(18px);
-  transform: translateZ(0);
-}
-
-.k3-bg__grid{
-  position:absolute; inset:0;
-  opacity:.10;
-  background-image: radial-gradient(rgba(255,255,255,.10) 1px, transparent 1px);
-  background-size: 22px 22px;
-  mask-image: radial-gradient(70% 60% at 50% 30%, #000 30%, transparent 78%);
-}
-
-.k3-bg__grain{
-  position:absolute; inset:0;
-  opacity:.06;
-  background-image: linear-gradient(0deg, rgba(255,255,255,.08), rgba(255,255,255,0));
-  mix-blend-mode: overlay;
-  mask-image: radial-gradient(70% 60% at 50% 25%, #000 25%, transparent 78%);
 }
 
 /* wrapper */
@@ -101,6 +63,7 @@
   letter-spacing: var(--track-tighter, -0.06em);
   line-height: 1.01;
   font-size: var(--h1, clamp(44px, 6.2vw, 88px));
+  cursor: default;
 }
 
 .k3-br{ display:none; }

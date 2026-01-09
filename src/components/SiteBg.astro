@@ -1,0 +1,39 @@
+---
+import "../styles/site-bg.css";
+---
+
+<div class="site-bg" aria-hidden="true">
+  <div class="site-bg__spot"></div>
+  <div class="site-bg__grid"></div>
+  <div class="site-bg__grain"></div>
+  <div class="site-bg__vignette"></div>
+</div>
+
+<script>
+  (() => {
+    const reduced =
+      window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) return;
+
+    let raf = 0;
+    let x = 0, y = 0;
+
+    const paint = () => {
+      raf = 0;
+      const mx = (x / window.innerWidth) * 100;
+      const my = (y / window.innerHeight) * 100;
+      document.documentElement.style.setProperty("--mx", mx.toFixed(2) + "%");
+      document.documentElement.style.setProperty("--my", my.toFixed(2) + "%");
+    };
+
+    window.addEventListener(
+      "pointermove",
+      (e) => {
+        x = e.clientX;
+        y = e.clientY;
+        if (!raf) raf = requestAnimationFrame(paint);
+      },
+      { passive: true }
+    );
+  })();
+</script>

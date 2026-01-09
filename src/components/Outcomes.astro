@@ -1,0 +1,118 @@
+---
+import "./outcomes.css";
+---
+
+<section class="k-outcomes section" aria-label="Proof and outcomes" id="proof">
+  <div class="container">
+    <header class="k-outcomes__head" data-reveal>
+      <div class="k-outcomes__kicker">PROOF & OUTCOMES</div>
+      <h2 class="k-outcomes__title">Outcome-first builds — with receipts, not hype.</h2>
+      <p class="k-outcomes__lead">
+        No made-up numbers. We show audits, checklists and before/after snapshots on <em>your</em> project.
+        Until then — here’s the standard we ship every time.
+      </p>
+    </header>
+
+    <div class="k-outcomes__grid">
+      <article class="k-outcomes__card" data-reveal>
+        <div class="k-outcomes__icon" aria-hidden="true">⚡</div>
+        <h3 class="k-outcomes__h">Speed budget</h3>
+        <p class="k-outcomes__p">Fast by default. No heavy JS for vibes.</p>
+        <ul class="k-outcomes__list">
+          <li>Astro-first rendering</li>
+          <li>Image discipline (sizes, formats, lazy)</li>
+          <li>Minimal hydration, only where it pays</li>
+        </ul>
+      </article>
+
+      <article class="k-outcomes__card" data-reveal>
+        <div class="k-outcomes__icon" aria-hidden="true">🔎</div>
+        <h3 class="k-outcomes__h">SEO foundations</h3>
+        <p class="k-outcomes__p">Solid structure Google can actually read.</p>
+        <ul class="k-outcomes__list">
+          <li>Clean headings + semantic HTML</li>
+          <li>Meta, Open Graph, sitemap, robots</li>
+          <li>Schema where it makes sense</li>
+        </ul>
+      </article>
+
+      <article class="k-outcomes__card" data-reveal>
+        <div class="k-outcomes__icon" aria-hidden="true">🎯</div>
+        <h3 class="k-outcomes__h">Conversion flow</h3>
+        <p class="k-outcomes__p">Clear message. Clear CTA. Less friction.</p>
+        <ul class="k-outcomes__list">
+          <li>One primary action per screen</li>
+          <li>Mobile thumb-zone layout</li>
+          <li>Trust cues without clutter</li>
+        </ul>
+      </article>
+
+      <article class="k-outcomes__card" data-reveal>
+        <div class="k-outcomes__icon" aria-hidden="true">🛠️</div>
+        <h3 class="k-outcomes__h">Build quality</h3>
+        <p class="k-outcomes__p">Feels premium because it’s built clean.</p>
+        <ul class="k-outcomes__list">
+          <li>Accessibility basics (contrast, focus)</li>
+          <li>Cross-browser sanity checks</li>
+          <li>Lighthouse snapshots as receipts</li>
+        </ul>
+      </article>
+    </div>
+
+    <div class="k-outcomes__bar" data-reveal>
+      <div class="k-outcomes__barLeft">
+        <div class="k-outcomes__barTitle">What you’ll see during delivery</div>
+        <div class="k-outcomes__barText">
+          A simple “Proof Pack”: performance + SEO checklist + key screens — so progress is visible, not mystical.
+        </div>
+      </div>
+
+      <div class="k-outcomes__barRight">
+        <a class="k-btn k-btn--primary" href="#contact" data-magnetic>
+          <span class="k-btn__label">Get a quote</span>
+          <span class="k-btn__shine" aria-hidden="true"></span>
+          <span class="k-btn__arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="k-btn k-btn--ghost" href="#work">
+          <span class="k-btn__label">View work</span>
+          <span class="k-btn__arrow2" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const root = document.querySelector(".k-outcomes");
+      if (!root) return;
+
+      const reduced =
+        window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      const items = Array.from(root.querySelectorAll("[data-reveal]"));
+      if (!items.length) return;
+
+      if (reduced) {
+        items.forEach((el) => el.classList.add("is-in"));
+        return;
+      }
+
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((en) => {
+            if (en.isIntersecting) {
+              en.target.classList.add("is-in");
+              io.unobserve(en.target);
+            }
+          });
+        },
+        { threshold: 0.16 }
+      );
+
+      items.forEach((el, i) => {
+        el.style.setProperty("--d", i * 70 + "ms");
+        io.observe(el);
+      });
+    })();
+  </script>
+</section>

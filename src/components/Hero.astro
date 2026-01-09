@@ -4,12 +4,6 @@ import "../styles/laser.css";
 ---
 
 <section class="k3-hero" aria-label="Kersivo hero">
-  <div class="k3-bg" aria-hidden="true">
-    <div class="k3-bg__spot"></div>
-    <div class="k3-bg__grid"></div>
-    <div class="k3-bg__grain"></div>
-  </div>
-
   <div class="k3-wrap">
     <div class="k3-center">
       <div class="k3-badges" data-reveal>
@@ -80,74 +74,6 @@ import "../styles/laser.css";
           el.style.setProperty("--d", i * 75 + "ms");
           io.observe(el);
         });
-      }
-
-      // subtle cursor spotlight — FIXED (no dead zone)
-      if (!reduced) {
-        let rect = null;
-        let rectDirty = true;
-
-        let lastX = 0;
-        let lastY = 0;
-        let raf = 0;
-        let inside = false;
-
-        const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
-
-        const readRect = () => {
-          rect = hero.getBoundingClientRect();
-          rectDirty = false;
-        };
-
-        const paint = () => {
-          raf = 0;
-          if (!rect || rectDirty) readRect();
-          if (!rect || rect.width <= 0 || rect.height <= 0) return;
-
-          const x = ((lastX - rect.left) / rect.width) * 100;
-          const y = ((lastY - rect.top) / rect.height) * 100;
-
-          // clamp stops weird values when you skim edges
-          hero.style.setProperty("--mx", clamp(x, 0, 100).toFixed(2) + "%");
-          hero.style.setProperty("--my", clamp(y, 0, 100).toFixed(2) + "%");
-        };
-
-        // mark rect dirty on layout changes
-        const markDirty = () => (rectDirty = true);
-        window.addEventListener("resize", markDirty, { passive: true });
-        window.addEventListener("scroll", markDirty, { passive: true });
-
-        // optional: if hero changes size due to fonts / responsive
-        if ("ResizeObserver" in window) {
-          const ro = new ResizeObserver(() => (rectDirty = true));
-          ro.observe(hero);
-        }
-
-        // track pointer globally, but only update when pointer is over hero
-        window.addEventListener(
-          "pointermove",
-          (e) => {
-            lastX = e.clientX;
-            lastY = e.clientY;
-
-            const el = document.elementFromPoint(lastX, lastY);
-            const nowInside = !!(el && hero.contains(el));
-
-            if (!nowInside) {
-              inside = false;
-              return;
-            }
-
-            // just entered hero area -> refresh rect once
-            if (!inside) {
-              inside = true;
-              rectDirty = true;
-            }
-
-            if (!raf) raf = requestAnimationFrame(paint);
-          },
-          { passive: true }
-        );
       }
 
       // magnetic CTA
