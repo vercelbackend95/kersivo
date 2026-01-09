@@ -1,0 +1,171 @@
+/* =========================================
+   Kersivo — Laser Sweep (standalone)
+   Variants:
+   - .laser (default)          -> FULL viewport width (100vw)
+   - .laser laser--section     -> width of nearest positioned parent (section/container)
+   - .laser laser--word        -> ONLY under the word (subtle)
+   Start modes:
+   - add .laser--on            -> always running
+   - or rely on reveal: parent gets .is-in
+   Notes:
+   - For .laser--section: parent MUST be position:relative and overflow:hidden
+     Example: .section { position:relative; overflow:hidden; }
+   ========================================= */
+
+:root{
+  /* tweak knobs */
+  --laser-height: 2px;
+  --laser-bottom: -0.12em;
+  --laser-opacity: 0.60;
+  --laser-duration: 2.6s;
+  --laser-blur: 0.25px;
+
+  /* glow */
+  --laser-glow-1: rgba(190,145,255,0.38);
+  --laser-glow-2: rgba(255,180,220,0.26);
+
+  /* word variant spacing */
+  --laser-word-pad: 0.70em;
+
+  /* section variant spacing (small overshoot looks premium) */
+  --laser-section-pad: 18px;
+}
+
+/* alias: keep .k3-underline for hero legacy */
+.laser,
+.k3-underline{
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.12em;
+  isolation: isolate;
+}
+
+/* remove any static underline if present */
+.laser::after,
+.k3-underline::after{
+  content: none !important;
+}
+
+/* =========================================
+   BASE LASER (DEFAULT = 100vw)
+   ========================================= */
+.laser::before,
+.k3-underline::before{
+  content:"";
+  position:absolute;
+
+  /* FULL VIEWPORT WIDTH while anchored under the word */
+  left: calc(-50vw + 50%);
+  right: calc(-50vw + 50%);
+
+  bottom: var(--laser-bottom);
+  height: var(--laser-height);
+  border-radius: 999px;
+
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0),
+    rgba(255,255,255,0.85),
+    rgba(255,255,255,0)
+  );
+
+  opacity: 0;
+  transform: translate3d(-140%, 0, 0);
+  will-change: transform, opacity;
+  pointer-events:none;
+
+  filter: blur(var(--laser-blur));
+  mix-blend-mode: screen;
+
+  box-shadow:
+    0 0 10px var(--laser-glow-1),
+    0 0 22px var(--laser-glow-2);
+}
+
+/* =========================================
+   SECTION VARIANT (width of parent section/container)
+   Usage: <span class="laser laser--section">convert</span>
+   Requirement: parent has position:relative + overflow:hidden
+   ========================================= */
+.laser.laser--section::before{
+  /* stretch to nearest positioned ancestor (section/container) */
+  left: calc(-1 * var(--laser-section-pad));
+  right: calc(-1 * var(--laser-section-pad));
+
+  /* slightly calmer than 100vw */
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0),
+    rgba(255,255,255,0.78),
+    rgba(255,255,255,0)
+  );
+
+  box-shadow:
+    0 0 9px rgba(190,145,255,0.32),
+    0 0 18px rgba(255,180,220,0.22);
+}
+
+/* =========================================
+   WORD VARIANT (subtle, only under the word)
+   Usage: <span class="laser laser--word">convert</span>
+   ========================================= */
+.laser.laser--word::before{
+  left: calc(var(--laser-word-pad) * -1);
+  right: calc(var(--laser-word-pad) * -1);
+
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0),
+    rgba(255,255,255,0.70),
+    rgba(255,255,255,0)
+  );
+
+  box-shadow:
+    0 0 8px rgba(190,145,255,0.28),
+    0 0 16px rgba(255,180,220,0.18);
+}
+
+/* =========================================
+   START RULES
+   ========================================= */
+
+/* start when parent element has .is-in (works with your reveal) */
+.is-in .laser::before,
+.is-in .k3-underline::before{
+  opacity: var(--laser-opacity);
+  animation: k3LaserSweep var(--laser-duration) linear infinite;
+}
+
+/* always-on switch (no reveal needed) */
+.laser--on::before{
+  opacity: var(--laser-opacity);
+  animation: k3LaserSweep var(--laser-duration) linear infinite;
+}
+
+/* hover (desktop only) */
+@media (hover: hover) and (pointer: fine){
+  .laser:hover::before,
+  .k3-underline:hover::before{
+    opacity: 0.75;
+  }
+
+  .laser.laser--word:hover::before{ opacity: 0.70; }
+  .laser.laser--section:hover::before{ opacity: 0.72; }
+}
+
+@keyframes k3LaserSweep{
+  0%   { transform: translate3d(-140%, 0, 0); opacity: 0; }
+  10%  { opacity: 0.72; }
+  55%  { opacity: 0.34; }
+  100% { transform: translate3d(140%, 0, 0); opacity: 0; }
+}
+
+/* reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .laser::before,
+  .k3-underline::before{
+    opacity: 0.55 !important;
+    transform: translate3d(0,0,0) !important;
+    animation: none !important;
+  }
+}

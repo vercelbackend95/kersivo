@@ -1,0 +1,172 @@
+/* =========================================
+   Kersivo CTA Button System
+   Variants: primary / secondary / ghost
+   Effects: magnetic + shine (primary)
+   ========================================= */
+
+:root{
+  --btn-h: 52px;
+  --btn-pad: 22px;
+  --btn-radius: 999px;
+
+  --btn-font: var(--font-sans, ui-sans-serif);
+  --btn-w: var(--w-semibold, 650);
+  --btn-track: -0.015em;
+
+  /* primary gradient */
+  --btn-g1: rgba(105,140,255,1);
+  --btn-g2: rgba(170,95,255,1);
+
+  /* surfaces */
+  --btn-surface: rgba(255,255,255,.06);
+  --btn-border: rgba(255,255,255,.14);
+  --btn-border-hover: rgba(255,255,255,.18);
+
+  /* focus */
+  --btn-focus: rgba(190,145,255,.70);
+}
+
+.k-btn{
+  position: relative;
+  height: var(--btn-h);
+  padding: 0 var(--btn-pad);
+  border-radius: var(--btn-radius);
+
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  font-family: var(--btn-font);
+  font-weight: var(--btn-w);
+  letter-spacing: var(--btn-track);
+  text-decoration: none;
+  user-select: none;
+
+  transform: translate3d(var(--tx, 0px), var(--ty, 0px), 0);
+  will-change: transform;
+
+  transition:
+    transform 220ms cubic-bezier(.2,.9,.2,1),
+    background 200ms ease,
+    border-color 200ms ease,
+    box-shadow 200ms ease,
+    color 200ms ease;
+
+  border: 1px solid transparent;
+}
+
+.k-btn:focus-visible{
+  outline: 2px solid var(--btn-focus);
+  outline-offset: 3px;
+}
+
+.k-btn__label{
+  position: relative;
+  z-index: 1;
+}
+
+.k-btn__arrow,
+.k-btn__arrow2{
+  position: relative;
+  z-index: 1;
+  opacity: .9;
+  transform: translateX(0);
+  transition: transform 220ms cubic-bezier(.2,.9,.2,1);
+}
+
+.k-btn:hover .k-btn__arrow,
+.k-btn:hover .k-btn__arrow2{
+  transform: translateX(2px);
+}
+
+/* ---------- Primary (hero main CTA) ---------- */
+.k-btn--primary{
+  color: #0a0b10;
+  background: linear-gradient(135deg, var(--btn-g1), var(--btn-g2));
+  box-shadow: 0 28px 90px rgba(105,140,255,.28);
+  overflow: hidden;
+}
+
+.k-btn--primary:hover{
+  box-shadow: 0 32px 110px rgba(105,140,255,.34);
+}
+
+/* shine */
+.k-btn__shine{
+  position: absolute;
+  inset: -80% -30%;
+  background: radial-gradient(closest-side at 50% 50%, rgba(255,255,255,.58), transparent 72%);
+  transform: translateX(-36%);
+  opacity: 0;
+  filter: blur(10px);
+  pointer-events: none;
+
+  transition:
+    transform 520ms cubic-bezier(.2,.9,.2,1),
+    opacity 220ms ease;
+}
+
+.k-btn--primary:hover .k-btn__shine{
+  opacity: .55;
+  transform: translateX(36%);
+}
+
+/* ---------- Secondary (your “View work”) ---------- */
+.k-btn--secondary{
+  color: rgba(255,255,255,.92);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+  border-color: rgba(255,255,255,.16);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 22px 90px rgba(0,0,0,.26);
+}
+
+.k-btn--secondary:hover{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.04));
+  border-color: rgba(190,145,255,.26);
+  box-shadow:
+    0 26px 110px rgba(0,0,0,.32),
+    0 0 0 1px rgba(190,145,255,.10) inset;
+}
+
+/* subtle “inner gloss line” */
+.k-btn--secondary::before{
+  content:"";
+  position:absolute;
+  inset: 1px;
+  border-radius: inherit;
+  pointer-events:none;
+  background: linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,0));
+  opacity: .22;
+}
+
+/* ---------- Ghost (spare) ---------- */
+.k-btn--ghost{
+  color: rgba(255,255,255,.92);
+  background: var(--btn-surface);
+  border-color: var(--btn-border);
+  backdrop-filter: blur(10px);
+}
+
+.k-btn--ghost:hover{
+  background: rgba(255,255,255,.08);
+  border-color: var(--btn-border-hover);
+}
+
+/* ---------- Motion safety ---------- */
+@media (prefers-reduced-motion: reduce){
+  .k-btn{
+    transition: none !important;
+    transform: none !important;
+  }
+  .k-btn__arrow,
+  .k-btn__arrow2{
+    transition: none !important;
+    transform: none !important;
+  }
+  .k-btn__shine{
+    transition: none !important;
+    opacity: 0 !important;
+  }
+}

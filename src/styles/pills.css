@@ -1,0 +1,70 @@
+/* =========================================
+   Kersivo — Pills (standalone)
+   Use anywhere: .k-pill (and variants)
+   ========================================= */
+
+:root{
+  --pill-h: 36px;
+  --pill-pad-x: 14px;
+  --pill-radius: 999px;
+
+  --pill-bg: rgba(255,255,255,.04);
+  --pill-bg-hover: rgba(255,255,255,.06);
+  --pill-border: rgba(255,255,255,.12);
+  --pill-border-hover: rgba(255,255,255,.18);
+
+  --pill-fg: rgba(255,255,255,.78);
+  --pill-fg-strong: rgba(255,255,255,.90);
+}
+
+/* wrapper row */
+.k-pills{
+  display:flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* the pill itself */
+.k-pill{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  height: var(--pill-h);
+  padding: 0 var(--pill-pad-x);
+  border-radius: var(--pill-radius);
+
+  background: var(--pill-bg);
+  border: 1px solid var(--pill-border);
+  color: var(--pill-fg);
+
+  font-size: 13px;
+  font-weight: var(--w-medium, 560);
+  letter-spacing: 0.01em;
+  backdrop-filter: blur(10px);
+
+  transition: background 180ms ease, border-color 180ms ease, transform 180ms ease, color 180ms ease;
+}
+
+.k-pill:hover{
+  background: var(--pill-bg-hover);
+  border-color: var(--pill-border-hover);
+  color: var(--pill-fg-strong);
+  transform: translateY(-1px);
+}
+
+/* optional: clickable pills */
+.k-pill--link{
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* optional: “accent” variant (subtle studio glow) */
+.k-pill--accent{
+  border-color: rgba(190,145,255,.22);
+  box-shadow: 0 12px 60px rgba(190,145,255,.10);
+}
+
+@media (prefers-reduced-motion: reduce){
+  .k-pill{ transition: none !important; transform: none !important; }
+}

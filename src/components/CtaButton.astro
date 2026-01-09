@@ -1,0 +1,90 @@
+---
+type Variant = "primary" | "secondary" | "ghost";
+
+interface Props {
+  href: string;
+  label: string;
+  variant?: Variant;
+  magnetic?: boolean;
+  arrow?: boolean;
+  class?: string;
+}
+
+const {
+  href,
+  label,
+  variant = "primary",
+  magnetic = true,
+  arrow = true,
+  class: extraClass = "",
+} = Astro.props;
+
+const classes = `k-btn k-btn--${variant} ${magnetic ? "k-btn--magnetic" : ""} ${extraClass}`.trim();
+
+const hasShine = variant === "primary";
+---
+
+<a
+  href={href}
+  class={classes}
+  data-magnetic={magnetic ? "true" : "false"}
+>
+  <span class="k-btn__label">{label}</span>
+
+  {hasShine && <span class="k-btn__shine" aria-hidden="true"></span>}
+
+  {arrow && (
+    <span class={variant === "primary" ? "k-btn__arrow" : "k-btn__arrow2"} aria-hidden="true">
+      →
+    </span>
+  )}
+</a>
+
+<script>
+  (() => {
+    if (window.__KERSIVO_MAGNETIC__) return;
+    window.__KERSIVO_MAGNETIC__ = true;
+
+    const reduced =
+      window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (reduced) return;
+
+    // Only desktop-ish pointers
+    const fine = window.matchMedia && window.matchMedia("(pointer: fine)").matches;
+    if (!fine) return;
+
+    const strength = 10;
+
+    const attach = (el) => {
+      if (!el || el.__magneticAttached) return;
+      el.__magneticAttached = true;
+
+      const onLeave = () => {
+        el.style.setProperty("--tx", "0px");
+        el.style.setProperty("--ty", "0px");
+      };
+
+      const onMove = (e) => {
+        const r = el.getBoundingClientRect();
+        const dx = (e.clientX - (r.left + r.width / 2)) / (r.width / 2);
+        const dy = (e.clientY - (r.top + r.height / 2)) / (r.height / 2);
+
+        el.style.setProperty("--tx", (dx * strength).toFixed(2) + "px");
+        el.style.setProperty("--ty", (dy * strength).toFixed(2) + "px");
+      };
+
+      el.addEventListener("pointerleave", onLeave, { passive: true });
+      el.addEventListener("pointermove", onMove, { passive: true });
+    };
+
+    const scan = () => {
+      document.querySelectorAll('.k-btn[data-magnetic="true"]').forEach(attach);
+    };
+
+    scan();
+
+    const mo = new MutationObserver(scan);
+    mo.observe(document.documentElement, { childList: true, subtree: true });
+  })();
+</script>

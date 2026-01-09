@@ -1,9 +1,510 @@
+@import "@fontsource-variable/inter/index.css";
+
+/* =========================
+   Kersivo — Global Styles v2
+   Premium minimal • performance-first
+   Phase 2: rhythm + prose + spacing + line-length
+   + Laser section support
+   ========================= */
+
 :root{
-  --container: 1200px;
-  --gutter: clamp(20px, 3.2vw, 56px);
+  /* Font */
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+
+  /* Base sizing */
+  --text-base: 16px;
+  --leading-base: 1.55;
+
+  /* Tracking */
+  --track-tighter: -0.06em;
+  --track-tight: -0.045em;
+  --track-normal: -0.01em;
+  --track-wide: 0.02em;
+
+  /* Weights (Inter Variable) */
+  --w-regular: 450;
+  --w-medium: 560;
+  --w-semibold: 650;
+  --w-bold: 780;
+  --w-black: 880;
+
+  /* Type scale */
+  --h1: clamp(44px, 6.2vw, 88px);
+  --h2: clamp(30px, 3.6vw, 48px);
+  --h3: clamp(22px, 2.4vw, 30px);
+  --h4: clamp(18px, 1.8vw, 22px);
+  --h5: clamp(16px, 1.35vw, 18px);
+  --h6: 14px;
+
+  --p: clamp(16px, 1.25vw, 18px);
+  --small: 13px;
+
+  /* Layout */
+  --container: 1400px;
+  --gutter: clamp(16px, 3vw, 28px);
+
+  /* Content rhythm */
+  --measure: 65ch; /* max comfortable line length */
+  --space-1: 6px;
+  --space-2: 10px;
+  --space-3: 14px;
+  --space-4: 18px;
+  --space-5: 26px;
+  --space-6: 40px;
+
+  /* Colors */
+  --bg: #07070a;
+  --fg: rgba(255,255,255,.92);
+  --muted: rgba(255,255,255,.78);
+  --muted2: rgba(255,255,255,.70);
+
+  /* Focus */
+  --focus: rgba(190,145,255,.70);
+}
+
+html{
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-optical-sizing: auto;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-kerning: normal;
+  color-scheme: dark;
+}
+
+body{
+  margin: 0;
+  font-family: var(--font-sans);
+  line-height: var(--leading-base);
+  background: var(--bg);
+  color: var(--fg);
+}
+
+/* Container utility (wide, premium) */
+.container{
+  width: min(var(--container), calc(100% - (var(--gutter) * 2)));
+  margin-inline: auto;
+}
+
+/* Text measure utility (for paragraphs / prose blocks) */
+.measure{
+  max-width: var(--measure);
+}
+
+/* Links */
+a{
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Media defaults */
+img{
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Selection */
+::selection{
+  background: rgba(190,145,255,.35);
+}
+
+/* Accessible focus */
+:focus-visible{
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 10px;
+}
+
+/* =========================
+   Headings (h1–h6)
+   ========================= */
+h1,h2,h3,h4,h5,h6{
+  margin: 0;
+  line-height: 1.05;
+  letter-spacing: var(--track-tight);
+  font-weight: var(--w-black);
+}
+
+h1{ font-size: var(--h1); letter-spacing: var(--track-tighter); }
+h2{ font-size: var(--h2); font-weight: var(--w-black); }
+h3{ font-size: var(--h3); font-weight: var(--w-bold); letter-spacing: var(--track-tight); }
+h4{ font-size: var(--h4); font-weight: var(--w-bold); letter-spacing: var(--track-normal); }
+h5{ font-size: var(--h5); font-weight: var(--w-semibold); letter-spacing: var(--track-normal); }
+h6{
+  font-size: var(--h6);
+  font-weight: var(--w-semibold);
+  letter-spacing: var(--track-wide);
+  text-transform: uppercase;
+  color: var(--muted2);
+}
+
+/* Paragraphs */
+p{
+  margin: 0;
+  font-size: var(--p);
+  letter-spacing: var(--track-normal);
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+small{
+  font-size: var(--small);
+  letter-spacing: var(--track-normal);
+  color: var(--muted2);
+}
+
+/* Lists */
+ul,ol{
+  margin: 0;
+  padding-left: 1.2em;
+  color: var(--muted);
+}
+li + li{ margin-top: 8px; }
+
+/* =========================
+   Phase 2: Prose system
+   Use: <div class="prose">...</div>
+   ========================= */
+.prose{
+  max-width: var(--measure);
+  color: var(--muted);
+}
+
+.prose > * + *{
+  margin-top: var(--space-4);
+}
+
+/* Heading rhythm inside prose */
+.prose h2{ margin-top: var(--space-6); }
+.prose h3{ margin-top: var(--space-5); }
+.prose h4{ margin-top: var(--space-4); }
+.prose h5{ margin-top: var(--space-4); }
+.prose h6{ margin-top: var(--space-3); }
+
+.prose h2, .prose h3, .prose h4, .prose h5{
+  color: var(--fg);
+}
+
+/* Tighten: heading → paragraph spacing */
+.prose h2 + p,
+.prose h3 + p,
+.prose h4 + p,
+.prose h5 + p{
+  margin-top: var(--space-2);
+}
+
+/* Lists in prose */
+.prose ul, .prose ol{
+  margin-top: var(--space-2);
+}
+
+/* Blockquote (subtle, studio) */
+.prose blockquote{
+  margin: 0;
+  padding: 14px 16px;
+  border-left: 2px solid rgba(190,145,255,.55);
+  background: rgba(255,255,255,.04);
+  border-radius: 12px;
+  color: rgba(255,255,255,.82);
+}
+
+/* Inline code (if needed later) */
+.prose code{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.95em;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  padding: 0.15em 0.35em;
+  border-radius: 8px;
+}
+
+/* Horizontal rule */
+.prose hr{
+  border: none;
+  height: 1px;
+  background: rgba(255,255,255,.10);
+  margin: var(--space-6) 0;
+}
+
+/* =========================
+   Section spacing helpers
+   + Laser section support
+   ========================= */
+.section{
+  padding: clamp(56px, 7vw, 96px) 0;
+
+  /* laser--section needs this */
+  position: relative;
+  overflow: hidden;
+}
+
+.sectionTitle{
+  display: grid;
+  gap: 10px;
+}
+
+.sectionKicker{
+  font-size: 13px;
+  letter-spacing: var(--track-wide);
+  text-transform: uppercase;
+  color: var(--muted2);
+  font-weight: var(--w-semibold);
+}
+
+.sectionHeading{
+  font-size: var(--h2);
+  font-weight: var(--w-black);
+  letter-spacing: var(--track-tight);
+  color: var(--fg);
+}
+
+.sectionLead{
+  max-width: var(--measure);
+  font-size: var(--p);
+  color: var(--muted);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  *{
+    scroll-behavior: auto !important;
+    animation: none !important;
+    transition: none !important;
+  }
+}
+@import "@fontsource-variable/inter/index.css";
+
+/* System blocks (keep these files in src/styles/) */
+@import "./cta-button.css";
+@import "./pills.css";
+@import "./laser.css";
+
+/* =========================
+   Kersivo — Global Styles v2
+   Premium minimal • performance-first
+   Phase 2: rhythm + prose + spacing + line-length
+   ========================= */
+
+:root{
+  /* Font */
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+
+  /* Base sizing */
+  --text-base: 16px;
+  --leading-base: 1.55;
+
+  /* Tracking */
+  --track-tighter: -0.06em;
+  --track-tight: -0.045em;
+  --track-normal: -0.01em;
+  --track-wide: 0.02em;
+
+  /* Weights */
+  --w-regular: 450;
+  --w-medium: 560;
+  --w-semibold: 650;
+  --w-bold: 780;
+  --w-black: 880;
+
+  /* Type scale */
+  --h1: clamp(44px, 6.2vw, 88px);
+  --h2: clamp(30px, 3.6vw, 48px);
+  --h3: clamp(22px, 2.4vw, 30px);
+  --h4: clamp(18px, 1.8vw, 22px);
+  --h5: clamp(16px, 1.35vw, 18px);
+  --h6: 14px;
+
+  --p: clamp(16px, 1.25vw, 18px);
+  --small: 13px;
+
+  /* Layout */
+  --container: 1400px;
+  --gutter: clamp(16px, 3vw, 28px);
+
+  /* Content rhythm */
+  --measure: 65ch;
+  --space-1: 6px;
+  --space-2: 10px;
+  --space-3: 14px;
+  --space-4: 18px;
+  --space-5: 26px;
+  --space-6: 40px;
+
+  /* Colors */
+  --bg: #07070a;
+  --fg: rgba(255,255,255,.92);
+  --muted: rgba(255,255,255,.78);
+  --muted2: rgba(255,255,255,.70);
+
+  /* Focus */
+  --focus: rgba(190,145,255,.70);
+}
+
+html{
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-optical-sizing: auto;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-kerning: normal;
+  color-scheme: dark;
+}
+
+body{
+  margin: 0;
+  font-family: var(--font-sans);
+  line-height: var(--leading-base);
+  background: var(--bg);
+  color: var(--fg);
 }
 
 .container{
   width: min(var(--container), calc(100% - (var(--gutter) * 2)));
-  margin: 0 auto;
+  margin-inline: auto;
+}
+
+.measure{ max-width: var(--measure); }
+
+a{ color: inherit; text-decoration: none; }
+
+img{ max-width: 100%; height: auto; display: block; }
+
+::selection{ background: rgba(190,145,255,.35); }
+
+:focus-visible{
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 10px;
+}
+
+/* Headings (h1–h6) */
+h1,h2,h3,h4,h5,h6{
+  margin: 0;
+  line-height: 1.05;
+  letter-spacing: var(--track-tight);
+  font-weight: var(--w-black);
+}
+
+h1{ font-size: var(--h1); letter-spacing: var(--track-tighter); }
+h2{ font-size: var(--h2); }
+h3{ font-size: var(--h3); font-weight: var(--w-bold); }
+h4{ font-size: var(--h4); font-weight: var(--w-bold); letter-spacing: var(--track-normal); }
+h5{ font-size: var(--h5); font-weight: var(--w-semibold); letter-spacing: var(--track-normal); }
+h6{
+  font-size: var(--h6);
+  font-weight: var(--w-semibold);
+  letter-spacing: var(--track-wide);
+  text-transform: uppercase;
+  color: var(--muted2);
+}
+
+p{
+  margin: 0;
+  font-size: var(--p);
+  letter-spacing: var(--track-normal);
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+small{
+  font-size: var(--small);
+  letter-spacing: var(--track-normal);
+  color: var(--muted2);
+}
+
+/* Lists */
+ul,ol{
+  margin: 0;
+  padding-left: 1.2em;
+  color: var(--muted);
+}
+li + li{ margin-top: 8px; }
+
+/* Prose system */
+.prose{
+  max-width: var(--measure);
+  color: var(--muted);
+}
+.prose > * + *{ margin-top: var(--space-4); }
+
+.prose h2{ margin-top: var(--space-6); }
+.prose h3{ margin-top: var(--space-5); }
+.prose h4{ margin-top: var(--space-4); }
+.prose h5{ margin-top: var(--space-4); }
+.prose h6{ margin-top: var(--space-3); }
+
+.prose h2, .prose h3, .prose h4, .prose h5{ color: var(--fg); }
+
+.prose h2 + p,
+.prose h3 + p,
+.prose h4 + p,
+.prose h5 + p{ margin-top: var(--space-2); }
+
+.prose ul, .prose ol{ margin-top: var(--space-2); }
+
+.prose blockquote{
+  margin: 0;
+  padding: 14px 16px;
+  border-left: 2px solid rgba(190,145,255,.55);
+  background: rgba(255,255,255,.04);
+  border-radius: 12px;
+  color: rgba(255,255,255,.82);
+}
+
+.prose code{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.95em;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  padding: 0.15em 0.35em;
+  border-radius: 8px;
+}
+
+.prose hr{
+  border: none;
+  height: 1px;
+  background: rgba(255,255,255,.10);
+  margin: var(--space-6) 0;
+}
+
+/* Sections (+ laser--section support needs relative/hidden) */
+.section{
+  padding: clamp(56px, 7vw, 96px) 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.sectionTitle{ display: grid; gap: 10px; }
+
+.sectionKicker{
+  font-size: 13px;
+  letter-spacing: var(--track-wide);
+  text-transform: uppercase;
+  color: var(--muted2);
+  font-weight: var(--w-semibold);
+}
+
+.sectionHeading{
+  font-size: var(--h2);
+  font-weight: var(--w-black);
+  letter-spacing: var(--track-tight);
+  color: var(--fg);
+}
+
+.sectionLead{
+  max-width: var(--measure);
+  font-size: var(--p);
+  color: var(--muted);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  *{
+    scroll-behavior: auto !important;
+    animation: none !important;
+    transition: none !important;
+  }
 }

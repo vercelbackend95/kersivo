@@ -1,0 +1,28 @@
+---
+interface Props {
+  label: string;
+  href?: string;
+  variant?: "default" | "accent";
+  class?: string;
+}
+
+const {
+  label,
+  href,
+  variant = "default",
+  class: extraClass = "",
+} = Astro.props;
+
+const classes = [
+  "k-pill",
+  href ? "k-pill--link" : "",
+  variant === "accent" ? "k-pill--accent" : "",
+  extraClass
+].filter(Boolean).join(" ");
+---
+
+{href ? (
+  <a class={classes} href={href}>{label}</a>
+) : (
+  <span class={classes}>{label}</span>
+)}
