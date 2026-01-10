@@ -1,6 +1,7 @@
 ---
 import "./hero.css";
 import "../styles/laser.css";
+import CtaButton from "./CtaButton.astro";
 ---
 
 <section class="k3-hero" aria-label="Kersivo hero">
@@ -23,16 +24,8 @@ import "../styles/laser.css";
       </p>
 
       <div class="k3-cta" data-reveal>
-        <a class="k-btn k-btn--primary" href="#contact" data-magnetic>
-          <span class="k-btn__label">Get a quote</span>
-          <span class="k-btn__shine" aria-hidden="true"></span>
-          <span class="k-btn__arrow" aria-hidden="true">→</span>
-        </a>
-
-        <a class="k-btn k-btn--ghost" href="#work">
-          <span class="k-btn__label">View work</span>
-          <span class="k-btn__arrow2" aria-hidden="true">→</span>
-        </a>
+        <CtaButton href="#contact" label="Get a quote" variant="primary" />
+        <CtaButton href="#work" label="View work" variant="ghost" magnetic={false} />
       </div>
 
       <div class="k-pills" data-reveal aria-label="Key benefits">
@@ -74,25 +67,6 @@ import "../styles/laser.css";
           el.style.setProperty("--d", i * 75 + "ms");
           io.observe(el);
         });
-      }
-
-      // magnetic CTA
-      const mag = hero.querySelector("[data-magnetic]");
-      if (mag && !reduced) {
-        const strength = 10;
-        const onLeave = () => {
-          mag.style.setProperty("--tx", "0px");
-          mag.style.setProperty("--ty", "0px");
-        };
-        const onMove = (e) => {
-          const r = mag.getBoundingClientRect();
-          const dx = (e.clientX - (r.left + r.width / 2)) / (r.width / 2);
-          const dy = (e.clientY - (r.top + r.height / 2)) / (r.height / 2);
-          mag.style.setProperty("--tx", (dx * strength).toFixed(2) + "px");
-          mag.style.setProperty("--ty", (dy * strength).toFixed(2) + "px");
-        };
-        mag.addEventListener("pointerleave", onLeave, { passive: true });
-        mag.addEventListener("pointermove", onMove, { passive: true });
       }
     })();
   </script>

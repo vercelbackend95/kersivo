@@ -149,8 +149,12 @@
 }
 
 .k-topnav__cta{
-  height: 38px;
+  /* ten sam vibe co hero (primary + shine), tylko “nav-sized” */
+  --btn-h: 38px;
+  --btn-pad: 16px;
+  font-size: 13px;
 }
+
 
 /* burger */
 .k-topnav__burger{

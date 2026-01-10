@@ -1,5 +1,6 @@
 ---
 import "./outcomes.css";
+import CtaButton from "./CtaButton.astro";
 ---
 
 <section class="k-outcomes section" aria-label="Proof and outcomes" id="proof">
@@ -68,15 +69,8 @@ import "./outcomes.css";
       </div>
 
       <div class="k-outcomes__barRight">
-        <a class="k-btn k-btn--primary" href="#contact" data-magnetic>
-          <span class="k-btn__label">Get a quote</span>
-          <span class="k-btn__shine" aria-hidden="true"></span>
-          <span class="k-btn__arrow" aria-hidden="true">→</span>
-        </a>
-        <a class="k-btn k-btn--ghost" href="#work">
-          <span class="k-btn__label">View work</span>
-          <span class="k-btn__arrow2" aria-hidden="true">→</span>
-        </a>
+        <CtaButton href="#contact" label="Get a quote" variant="primary" />
+        <CtaButton href="#work" label="View work" variant="ghost" magnetic={false} />
       </div>
     </div>
   </div>

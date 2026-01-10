@@ -1,5 +1,5 @@
 /* =========================================
-   ProofPack v2.1 — Tabs made OBVIOUS
+   ProofPack v2.1 — Tabs made OBVIOUS (single source of truth)
    ========================================= */
 
 .k-proof{
@@ -112,10 +112,13 @@
   letter-spacing: -0.01em;
 }
 
-/* TABS BAR (obvious + premium) */
+/* =========================================
+   TABS BAR — SINGLE VERSION (no duplicates)
+   ========================================= */
+
 .k-proof2__tabs{
   position: relative;
-  margin-top: 6px;
+  margin-top: 10px;
 
   display:flex;
   gap: 10px;
@@ -135,6 +138,11 @@
 
 .k-proof2__tabs::-webkit-scrollbar{ height: 0; }
 
+.k-proof2__tabs:focus-visible{
+  box-shadow: 0 0 0 4px rgba(190,145,255,.18);
+}
+
+/* Active rail “pill” behind the active tab (obvious click target) */
 .k-proof2__rail{
   position:absolute;
   left: 10px;
@@ -168,6 +176,7 @@
 
   cursor: pointer;
   user-select: none;
+  -webkit-tap-highlight-color: transparent;
 
   transition:
     transform 160ms ease,
@@ -189,6 +198,12 @@
   transform: translateY(0px);
 }
 
+.k-proof2__tab:focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(190,145,255,.18);
+}
+
+/* Active: rail does the heavy lifting, we just “sharpen” the tab */
 .k-proof2__tab.is-active{
   background: transparent; /* rail handles active bg */
   border-color: rgba(255,255,255,.10);
@@ -205,6 +220,12 @@
   background: rgba(255,255,255,.05);
   border: 1px solid rgba(255,255,255,.10);
   color: rgba(255,255,255,.92);
+}
+
+.k-proof2__tab.is-active .k-proof2__tabIcon{
+  background: rgba(190,145,255,.12);
+  border-color: rgba(190,145,255,.26);
+  box-shadow: 0 10px 40px rgba(190,145,255,.18);
 }
 
 .k-proof2__tabText{
@@ -448,133 +469,4 @@
   .k-proof2__tabChevron{
     transition: none !important;
   }
-}
-/* --- Tabs: make them obviously clickable + premium --- */
-
-.k-proof2__tabs{
-  position: relative;
-  margin-top: 10px;
-
-  display:flex;
-  gap: 10px;
-  padding: 10px;
-
-  border-radius: 20px;
-  background: rgba(255,255,255,.02);
-  border: 1px solid rgba(255,255,255,.10);
-  backdrop-filter: blur(10px);
-
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scroll-snap-type: x mandatory;
-
-  outline: none;
-}
-.k-proof2__tabs::-webkit-scrollbar{ height: 0; }
-
-.k-proof2__tabs:focus-visible{
-  box-shadow: 0 0 0 4px rgba(190,145,255,.18);
-}
-
-.k-proof2__rail{
-  position:absolute;
-  left: 10px;
-  right: auto;
-  bottom: 8px;        /* underline, not a big block */
-  height: 3px;
-  border-radius: 999px;
-  pointer-events:none;
-
-  background: rgba(190,145,255,.92);
-  box-shadow:
-    0 0 18px rgba(190,145,255,.35),
-    0 0 40px rgba(255,200,235,.18);
-  opacity: .95;
-}
-
-.k-proof2__tab{
-  position: relative;
-  scroll-snap-align: start;
-
-  min-height: 54px;   /* big hit area */
-  padding: 10px 14px;
-  border-radius: 16px;
-
-  display:inline-flex;
-  align-items:center;
-  gap: 12px;
-
-  background: rgba(0,0,0,.14);
-  border: 1px solid rgba(255,255,255,.10);
-  color: rgba(255,255,255,.82);
-
-  cursor: pointer;
-  user-select: none;
-  white-space: nowrap;
-
-  transition:
-    transform 160ms ease,
-    background 160ms ease,
-    border-color 160ms ease,
-    color 160ms ease;
-}
-
-.k-proof2__tab:hover{
-  transform: translateY(-1px);
-  background: rgba(255,255,255,.04);
-  border-color: rgba(255,255,255,.18);
-  color: rgba(255,255,255,.94);
-}
-
-.k-proof2__tab:active{ transform: translateY(0); }
-
-.k-proof2__tab:focus-visible{
-  outline: none;
-  box-shadow: 0 0 0 4px rgba(190,145,255,.18);
-}
-
-.k-proof2__tab.is-active{
-  background: rgba(190,145,255,.08);
-  border-color: rgba(190,145,255,.28);
-  color: rgba(255,255,255,.96);
-}
-
-.k-proof2__tabIcon{
-  width: 34px;
-  height: 34px;
-  border-radius: 14px;
-  display:grid;
-  place-items:center;
-
-  background: rgba(255,255,255,.05);
-  border: 1px solid rgba(255,255,255,.10);
-  color: rgba(255,255,255,.92);
-}
-
-.k-proof2__tab.is-active .k-proof2__tabIcon{
-  background: rgba(190,145,255,.12);
-  border-color: rgba(190,145,255,.26);
-  box-shadow: 0 10px 40px rgba(190,145,255,.18);
-}
-
-.k-proof2__tabText{
-  font-size: 13px;
-  letter-spacing: -0.01em;
-  font-weight: 750;
-}
-
-.k-proof2__tabChevron{
-  opacity: .45;
-  transform: translateX(0);
-  transition: transform 200ms ease, opacity 200ms ease;
-}
-
-.k-proof2__tab:hover .k-proof2__tabChevron{
-  opacity: .80;
-  transform: translateX(2px);
-}
-
-@media (prefers-reduced-motion: reduce){
-  .k-proof2__tab,
-  .k-proof2__tabChevron{ transition: none !important; }
 }

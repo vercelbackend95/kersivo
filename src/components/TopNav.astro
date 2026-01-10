@@ -1,6 +1,7 @@
 ---
 import "./topnav.css";
 import "../styles/neon-nav.css";
+import CtaButton from "./CtaButton.astro";
 ---
 
 <header class="k-topnav" data-topnav>
@@ -28,7 +29,6 @@ import "../styles/neon-nav.css";
     </a>
 
     <nav class="k-topnav__links" aria-label="Primary" data-nav-links>
-      <!-- One neon that slides under the active link -->
       <span class="k-navNeon" aria-hidden="true" data-nav-neon></span>
 
       <a class="k-topnav__link" href="#work" data-nav-link>Work</a>
@@ -40,10 +40,12 @@ import "../styles/neon-nav.css";
     <div class="k-topnav__actions">
       <a class="k-topnav__mini" href="#work">View work</a>
 
-      <a class="k-btn k-btn--secondary k-topnav__cta" href="#contact">
-        <span class="k-btn__label">Get a quote</span>
-        <span class="k-btn__arrow" aria-hidden="true">→</span>
-      </a>
+      <CtaButton
+        href="#contact"
+        label="Get a quote"
+        variant="primary"
+        class="k-topnav__cta"
+      />
 
       <button
         class="k-topnav__burger"
@@ -66,16 +68,20 @@ import "../styles/neon-nav.css";
       <a class="k-topnav__panelLink" href="#contact">Contact</a>
 
       <div class="k-topnav__panelCtas">
-        <a class="k-btn k-btn--primary k-topnav__panelPrimary" href="#contact" data-magnetic>
-          <span class="k-btn__label">Get a quote</span>
-          <span class="k-btn__shine" aria-hidden="true"></span>
-          <span class="k-btn__arrow" aria-hidden="true">→</span>
-        </a>
+        <CtaButton
+          href="#contact"
+          label="Get a quote"
+          variant="primary"
+          class="k-topnav__panelPrimary"
+        />
 
-        <a class="k-btn k-btn--ghost k-topnav__panelGhost" href="#work">
-          <span class="k-btn__label">View work</span>
-          <span class="k-btn__arrow2" aria-hidden="true">→</span>
-        </a>
+        <CtaButton
+          href="#work"
+          label="View work"
+          variant="ghost"
+          magnetic={false}
+          class="k-topnav__panelGhost"
+        />
       </div>
     </div>
   </div>
@@ -154,7 +160,6 @@ import "../styles/neon-nav.css";
       const pulseNeon = () => {
         if (reduced) return;
         neon.classList.remove("is-pulsing");
-        // force reflow so animation can replay reliably
         void neon.offsetWidth;
         neon.classList.add("is-pulsing");
         setTimeout(() => neon.classList.remove("is-pulsing"), 160);
@@ -176,12 +181,10 @@ import "../styles/neon-nav.css";
         pulseNeon();
       };
 
-      // initial active
       const initial =
         map.has(location.hash) ? location.hash : (links[0].getAttribute("href") || "#work");
       setActive(initial);
 
-      // click feels instant
       links.forEach((a) => {
         a.addEventListener("click", () => {
           const hash = (a.getAttribute("href") || "").trim();
@@ -190,7 +193,6 @@ import "../styles/neon-nav.css";
         });
       });
 
-      // keep aligned on resize + font load
       let raf = 0;
       const reflow = () => {
         cancelAnimationFrame(raf);
@@ -205,7 +207,6 @@ import "../styles/neon-nav.css";
         document.fonts.ready.then(reflow).catch(() => {});
       }
 
-      // scroll-spy (only if sections exist)
       const sections = Array.from(map.keys())
         .map((hash) => document.querySelector(hash))
         .filter(Boolean);
