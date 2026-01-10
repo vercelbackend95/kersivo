@@ -1,9 +1,9 @@
 /* =========================================
    Kersivo — TopNav (premium glass, stable mobile)
-   Goal (mobile):
-   - CTA normal width
-   - CTA moves closer to logo
-   - Burger always fits on the right
+   Mobile goal:
+   - Symmetric padding L/R (logo & burger breathe equally)
+   - CTA sits NEXT TO burger on the right
+   - Burger never clips
    ========================================= */
 
 :root{
@@ -55,9 +55,9 @@ html{
   width: min(1200px, 100%);
   margin: 0 auto;
 
-  /* iOS safe-area left/right */
-  padding-left: calc(var(--nav-pad-x) + env(safe-area-inset-left));
-  padding-right: calc(var(--nav-pad-x) + 12px + env(safe-area-inset-right));
+  /* SYMMETRY: identical breathing room left/right (+ iOS safe-area) */
+  padding-left:  calc(var(--nav-pad-x) + env(safe-area-inset-left));
+  padding-right: calc(var(--nav-pad-x) + env(safe-area-inset-right));
 
   min-height: var(--nav-h);
 
@@ -136,7 +136,7 @@ html{
   outline-offset: 3px;
 }
 
-/* Right actions (desktop) */
+/* Right actions */
 .k-topnav__actions{
   display:flex;
   align-items:center;
@@ -340,11 +340,9 @@ html{
 }
 
 /* =========================================
-   Responsive: MOBILE RULES (the important part)
+   Responsive: MOBILE RULES
    - hide desktop nav
-   - actions stretch to fill middle space
-   - CTA sits closer to logo
-   - burger stays pinned right
+   - CTA sits next to burger on the right
    ========================================= */
 
 @media (max-width: 860px){
@@ -352,23 +350,20 @@ html{
   .k-topnav__mini{ display:none; }
   .k-topnav__burger{ display:grid; }
 
-  /* THIS is the magic: actions take remaining width */
+  /* ACTIONS are a right-side cluster: CTA + burger together */
   .k-topnav__actions{
-    flex: 1 1 auto;
-    min-width: 0;
-    justify-content: space-between; /* CTA left, burger right */
-    gap: 12px;
+    margin-left: auto;
+    flex: 0 0 auto;
+    justify-content: flex-end;
+    gap: 10px;
   }
 
-  /* CTA normal width (no forced wide button) */
   .k-topnav__cta{
     --btn-h: 40px;
     --btn-pad: 14px;
     font-size: 12.5px;
-    flex: 0 0 auto;
   }
 
-  /* Burger never shrinks */
   .k-topnav__burger{
     flex: 0 0 40px;
   }
@@ -384,7 +379,7 @@ html{
     font-size: 12px;
   }
 
-  /* save a few pixels if needed */
+  /* save a few pixels */
   .k-topnav__cta .k-btn__arrow{ display:none; }
 
   .k-topnav__burger{
