@@ -394,3 +394,8 @@ html{
     transform: none !important;
   }
 }
+@media (max-width: 860px){
+  .k-topnav__actions{ min-width: 0; }
+  .k-topnav__cta{ flex: 0 1 auto; max-width: 56vw; }
+  .k-topnav__burger{ flex: 0 0 auto; }
+}
