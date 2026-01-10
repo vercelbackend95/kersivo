@@ -1,0 +1,17 @@
+---
+import "./contact.css";
+import ContactForm from "./islands/ContactForm.tsx";
+
+export interface Props {
+  email?: string;
+  whatsapp?: string;
+}
+
+const { email = "hello@kersivo.co.uk", whatsapp = "+447000000000" } = Astro.props;
+---
+
+<section class="k-contact section" id="contact" aria-label="Contact">
+  <div class="container">
+    <ContactForm client:load email={email} whatsapp={whatsapp} />
+  </div>
+</section>

@@ -1,0 +1,512 @@
+/* =========================================
+   Contact — Proof Console-size + style
+   Goal:
+   - Same “gabaryt” as ProofPack (uses .section + .container)
+   - Contact card fills container width like Proof Console
+   - Mobile-first, clean
+   ========================================= */
+
+/* NOTE: padding comes from `.section` in global.css now */
+.k-contact{
+  position: relative;
+  overflow: hidden;
+}
+
+/* ===== Frame wrapper ===== */
+.k-contact2{
+  position: relative;
+  overflow: visible;
+  width: 100%;
+  --mx: 50%;
+  --my: 20%;
+}
+
+/* Frame matches ProofPack sizing rhythm (padding clamp etc.) */
+.k-contact2__frame{
+  position: relative;
+  border-radius: 28px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.02);
+  box-shadow: 0 40px 160px rgba(0,0,0,.40);
+  overflow: hidden;
+  padding: clamp(18px, 3vw, 26px);
+}
+
+.k-contact2__frame::before{
+  content:"";
+  position:absolute;
+  inset:-1px;
+  border-radius: inherit;
+  pointer-events:none;
+  background:
+    radial-gradient(70% 120% at 30% 0%, rgba(190,145,255,.18), rgba(0,0,0,0) 58%),
+    radial-gradient(70% 120% at 90% 10%, rgba(255,200,235,.10), rgba(0,0,0,0) 62%);
+  opacity: .95;
+}
+
+/* pointer glow */
+.k-contact2__glow{
+  position:absolute;
+  inset:-1px;
+  border-radius: inherit;
+  pointer-events:none;
+  mix-blend-mode: screen;
+  opacity: .85;
+  background:
+    radial-gradient(380px 240px at var(--mx) var(--my),
+      rgba(190,145,255,.20),
+      rgba(255,200,235,.10),
+      rgba(0,0,0,0) 70%);
+}
+
+/* ===== Grid ===== */
+.k-contact2__grid{
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "left"
+    "right";
+}
+
+.k-contact2__left{ grid-area: left; }
+.k-contact2__right{ grid-area: right; }
+
+/* ===== Left (copy) ===== */
+.k-contact2__left{
+  display: grid;
+  gap: 12px;
+  max-width: 72ch;
+}
+
+.k-contact2__kickerRow{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+}
+
+.k-contact2__kicker{
+  font-size: 13px;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.70);
+  font-weight: 650;
+}
+
+.k-contact2__badge{
+  font-size: 12px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.72);
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+.k-contact2__title{
+  margin: 0;
+  font-size: clamp(34px, 4.1vw, 54px);
+  line-height: 1.03;
+  letter-spacing: -0.055em;
+}
+
+.k-contact2__grad{
+  background: linear-gradient(90deg, rgba(190,145,255,.98), rgba(255,200,235,.92));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.k-contact2__lead{
+  margin: 0;
+  color: rgba(255,255,255,.78);
+  max-width: 62ch;
+  line-height: 1.55;
+}
+
+.k-contact2__micro{
+  margin: 0;
+  color: rgba(255,255,255,.62);
+  font-size: 13px;
+}
+
+.k-contact2__bullets{
+  display:grid;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.k-contact2__bullet{
+  display:grid;
+  grid-template-columns: 22px 1fr;
+  gap: 10px;
+  align-items:start;
+  padding: 10px 10px;
+  border-radius: 16px;
+  background: rgba(0,0,0,.10);
+  border: 1px solid rgba(255,255,255,.10);
+}
+
+.k-contact2__bulletIcon{
+  width: 22px;
+  height: 22px;
+  border-radius: 10px;
+  display:grid;
+  place-items:center;
+  background: rgba(190,145,255,.10);
+  border: 1px solid rgba(190,145,255,.20);
+  color: rgba(255,255,255,.92);
+}
+
+.k-contact2__bulletTitle{
+  color: rgba(255,255,255,.92);
+  font-weight: 750;
+  letter-spacing: -0.01em;
+  font-size: 14px;
+}
+
+.k-contact2__bulletDesc{
+  margin-top: 2px;
+  color: rgba(255,255,255,.72);
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+
+/* ===== Right (console) ===== */
+.k-contact2__console{
+  position: relative;
+  border-radius: 22px;
+  padding: 14px;
+  background: rgba(255,255,255,.035);
+  border: 1px solid rgba(255,255,255,.10);
+  box-shadow: 0 22px 90px rgba(0,0,0,.30);
+  overflow: hidden;
+}
+
+.k-contact2__console::before{
+  content:"";
+  position:absolute;
+  inset:-1px;
+  border-radius: inherit;
+  pointer-events:none;
+  background:
+    radial-gradient(70% 120% at 25% 0%, rgba(190,145,255,.22), rgba(0,0,0,0) 58%),
+    radial-gradient(70% 100% at 90% 10%, rgba(255,200,235,.10), rgba(0,0,0,0) 60%);
+  opacity: .85;
+}
+
+.k-contact2__consoleTop{
+  position: relative;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.k-contact2__consoleTitle{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  color: rgba(255,255,255,.92);
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+
+.k-contact2__consoleIcon{
+  width: 34px;
+  height: 34px;
+  border-radius: 14px;
+  display:grid;
+  place-items:center;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.10);
+  color: rgba(255,255,255,.90);
+}
+
+.k-contact2__steps{
+  display:flex;
+  gap: 8px;
+  padding: 6px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.10);
+}
+
+.k-contact2__step{
+  border: 0;
+  background: transparent;
+  color: rgba(255,255,255,.72);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  font-size: 12.5px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 160ms ease, color 160ms ease;
+}
+
+.k-contact2__step:hover{ color: rgba(255,255,255,.92); }
+
+.k-contact2__step.is-active{
+  background: rgba(190,145,255,.14);
+  border: 1px solid rgba(190,145,255,.26);
+  color: rgba(255,255,255,.95);
+}
+
+/* progress row */
+.k-progress{
+  margin-top: 12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+}
+
+.k-progress__left{
+  display:flex;
+  align-items:center;
+  gap: 8px;
+  color: rgba(255,255,255,.74);
+  font-size: 12.5px;
+}
+
+.k-dot{
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255,200,235,.95);
+  box-shadow: 0 0 0 6px rgba(255,200,235,.14);
+}
+
+.k-meter{
+  flex: 0 0 140px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.10);
+  overflow:hidden;
+}
+
+.k-meter__bar{
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(105,140,255,1), rgba(170,95,255,1));
+}
+
+/* ===== Form styles ===== */
+.k-fields{
+  margin-top: 14px;
+  display:grid;
+  gap: 12px;
+}
+
+.k-row{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.k-field{ display:grid; gap: 6px; }
+
+.k-label{
+  font-size: 11px;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.62);
+  font-weight: 750;
+}
+
+.k-input,
+.k-textarea{
+  width: 100%;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.14);
+  color: rgba(255,255,255,.92);
+  padding: 12px 12px;
+  outline: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.k-input::placeholder,
+.k-textarea::placeholder{ color: rgba(255,255,255,.40); }
+
+.k-input:focus,
+.k-textarea:focus{
+  border-color: rgba(190,145,255,.28);
+  box-shadow: 0 0 0 4px rgba(190,145,255,.14);
+  background: rgba(0,0,0,.18);
+}
+
+.k-textarea{ min-height: 110px; resize: vertical; }
+
+.k-err{
+  color: rgba(255,170,210,.92);
+  font-size: 12.5px;
+}
+
+.k-bad{
+  border-color: rgba(255,170,210,.40) !important;
+  box-shadow: 0 0 0 4px rgba(255,170,210,.10);
+}
+
+/* segments */
+.k-seg{
+  display:grid;
+  grid-template-columns: 1fr 1fr 1.1fr;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.10);
+}
+
+.k-seg button{
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.12);
+  color: rgba(255,255,255,.80);
+  border-radius: 14px;
+  padding: 10px 10px;
+  font-weight: 750;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.k-seg button:hover{
+  transform: translateY(-1px);
+  background: rgba(255,255,255,.04);
+  border-color: rgba(255,255,255,.16);
+  color: rgba(255,255,255,.92);
+}
+
+.k-seg button.is-on{
+  background: rgba(190,145,255,.14);
+  border-color: rgba(190,145,255,.26);
+  color: rgba(255,255,255,.95);
+}
+
+/* chips */
+.k-chips{
+  display:flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.k-chip{
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.12);
+  color: rgba(255,255,255,.80);
+  border-radius: 999px;
+  padding: 10px 12px;
+  font-weight: 750;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.k-chip:hover{
+  transform: translateY(-1px);
+  background: rgba(255,255,255,.04);
+  border-color: rgba(255,255,255,.16);
+  color: rgba(255,255,255,.92);
+}
+
+.k-chip.is-on{
+  background: rgba(190,145,255,.14);
+  border-color: rgba(190,145,255,.26);
+  color: rgba(255,255,255,.95);
+}
+
+/* actions */
+.k-actions{
+  display:flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.k-note{
+  margin-top: 2px;
+  color: rgba(255,255,255,.62);
+  font-size: 12.5px;
+}
+
+/* toast */
+.k-toastWrap{
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  z-index: 5;
+  display:grid;
+  gap: 10px;
+}
+
+.k-toast{
+  width: min(520px, calc(100vw - 48px));
+  border-radius: 18px;
+  padding: 12px;
+  background: rgba(20,20,28,.70);
+  border: 1px solid rgba(255,255,255,.12);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 24px 120px rgba(0,0,0,.45);
+  display:flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.k-toastTitle{
+  color: rgba(255,255,255,.92);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.k-toastMsg{
+  margin-top: 4px;
+  color: rgba(255,255,255,.72);
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+
+.k-toastBtns{
+  display:flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.k-x{
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.04);
+  color: rgba(255,255,255,.90);
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+/* ===== Desktop layout — match ProofPack breakpoint (960px) ===== */
+@media (min-width: 960px){
+  .k-contact2__grid{
+    grid-template-columns: 1.05fr .95fr;
+    grid-template-areas: "left right";
+    align-items: start;
+    gap: 22px;
+  }
+  .k-row{ grid-template-columns: 1fr 1fr; }
+}
+
+/* tiny phones */
+@media (max-width: 420px){
+  .k-seg{ grid-template-columns: 1fr; }
+  .k-meter{ flex-basis: 110px; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .k-chip, .k-seg button { transition: none !important; transform: none !important; }
+}
