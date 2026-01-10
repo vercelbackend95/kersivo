@@ -52,7 +52,10 @@ html{
 .k-topnav__inner{
   width: min(1200px, 100%);
   margin: 0 auto;
-  padding: 0 var(--nav-pad-x);
+
+  /* IMPORTANT: safe-area left/right + więcej oddechu po prawej */
+  padding-left: calc(var(--nav-pad-x) + env(safe-area-inset-left));
+  padding-right: calc(var(--nav-pad-x) + 6px + env(safe-area-inset-right));
 
   min-height: var(--nav-h);
 
@@ -61,6 +64,7 @@ html{
   justify-content:space-between;
   gap: 10px;
 }
+
 
 .k-topnav__brand{
   display:inline-flex;
@@ -398,4 +402,27 @@ html{
   .k-topnav__actions{ min-width: 0; }
   .k-topnav__cta{ flex: 0 1 auto; max-width: 56vw; }
   .k-topnav__burger{ flex: 0 0 auto; }
+}
+/* Make CTA shrink-friendly on mobile */
+.k-topnav__actions{ min-width: 0; }
+
+.k-topnav__cta{
+  flex: 0 1 auto;
+  max-width: 56vw; /* hard cap so burger always fits */
+}
+
+/* If label gets tight, don't break the layout */
+.k-topnav__cta .k-btn__label{
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 12ch; /* keeps it tidy */
+}
+
+/* burger must NEVER shrink */
+.k-topnav__burger{ flex: 0 0 40px; }
+@media (max-width: 420px){
+  .k-topnav__cta{ max-width: 54vw; }
+  .k-topnav__cta .k-btn__arrow{ display:none; } /* save width */
 }
