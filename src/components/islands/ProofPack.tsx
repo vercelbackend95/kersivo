@@ -52,12 +52,7 @@ const TabIcon = ({ type }: { type: Track["icon"] }) => {
           strokeWidth="2"
           strokeLinejoin="round"
         />
-        <path
-          d="M13 8l3 3"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
+        <path d="M13 8l3 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
       </svg>
     );
   }
@@ -70,12 +65,7 @@ const TabIcon = ({ type }: { type: Track["icon"] }) => {
           strokeWidth="2"
           strokeLinejoin="round"
         />
-        <path
-          d="M8 12h8M8 16h6"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
+        <path d="M8 12h8M8 16h6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
       </svg>
     );
   }
@@ -167,21 +157,40 @@ export default function ProofPack() {
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [rail, setRail] = useState({ x: 0, w: 0 });
 
-  const measure = () => {
+  const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n));
+
+  const syncRail = () => {
     const bar = tabBarRef.current;
     const btn = tabRefs.current[active];
     if (!bar || !btn) return;
 
-    const barRect = bar.getBoundingClientRect();
-    const btnRect = btn.getBoundingClientRect();
-    const x = Math.round(btnRect.left - barRect.left);
-    const w = Math.round(btnRect.width);
+    // ✅ stable coordinates (no layout surprises)
+    const x = Math.round(btn.offsetLeft - bar.scrollLeft);
+    const w = Math.round(btn.offsetWidth);
     setRail({ x, w });
+  };
 
-    // keep active tab nicely visible on mobile
-    try {
-      btn.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
-    } catch {}
+  const keepActiveVisibleX = () => {
+    const bar = tabBarRef.current;
+    const btn = tabRefs.current[active];
+    if (!bar || !btn) return;
+
+    // ✅ iOS-safe: ONLY horizontal scroll on the tab bar (no scrollIntoView)
+    const target =
+      btn.offsetLeft - (bar.clientWidth / 2 - btn.offsetWidth / 2);
+
+    const nextLeft = clamp(Math.round(target), 0, Math.max(0, bar.scrollWidth - bar.clientWidth));
+
+    if (Math.abs(nextLeft - bar.scrollLeft) > 1) {
+      bar.scrollTo({ left: nextLeft, behavior: reduced ? "auto" : "smooth" });
+    }
+  };
+
+  const measure = () => {
+    keepActiveVisibleX();
+    // update rail now + after scroll kicks in
+    syncRail();
+    requestAnimationFrame(syncRail);
   };
 
   useEffect(() => {
@@ -192,9 +201,25 @@ export default function ProofPack() {
   useEffect(() => {
     const onResize = () => measure();
     window.addEventListener("resize", onResize, { passive: true });
+
+    const bar = tabBarRef.current;
+    if (bar) {
+      let raf = 0;
+      const onScroll = () => {
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(syncRail);
+      };
+      bar.addEventListener("scroll", onScroll, { passive: true });
+      return () => {
+        window.removeEventListener("resize", onResize);
+        bar.removeEventListener("scroll", onScroll);
+        cancelAnimationFrame(raf);
+      };
+    }
+
     return () => window.removeEventListener("resize", onResize);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active]);
+  }, []);
 
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowRight") {
@@ -251,7 +276,7 @@ export default function ProofPack() {
             Click a tab to switch view
           </div>
 
-          {/* TABS (more obvious) */}
+          {/* TABS */}
           <div
             ref={tabBarRef}
             className="k-proof2__tabs"
@@ -266,6 +291,7 @@ export default function ProofPack() {
               animate={{ x: rail.x, width: rail.w }}
               transition={reduced ? { duration: 0 } : { duration: 0.28, ease: [0.2, 0.9, 0.2, 1] }}
             />
+
             {tracks.map((x, i) => (
               <button
                 key={x.key}
@@ -280,7 +306,9 @@ export default function ProofPack() {
                   <TabIcon type={x.icon} />
                 </span>
                 <span className="k-proof2__tabText">{x.label}</span>
-                <span className="k-proof2__tabChevron" aria-hidden="true">→</span>
+                <span className="k-proof2__tabChevron" aria-hidden="true">
+                  →
+                </span>
               </button>
             ))}
           </div>
@@ -289,11 +317,15 @@ export default function ProofPack() {
             <a className="k-btn k-btn--primary" href="#contact" data-magnetic>
               <span className="k-btn__label">Get a quote</span>
               <span className="k-btn__shine" aria-hidden="true"></span>
-              <span className="k-btn__arrow" aria-hidden="true">→</span>
+              <span className="k-btn__arrow" aria-hidden="true">
+                →
+              </span>
             </a>
             <a className="k-btn k-btn--ghost" href="#work">
               <span className="k-btn__label">View work</span>
-              <span className="k-btn__arrow2" aria-hidden="true">→</span>
+              <span className="k-btn__arrow2" aria-hidden="true">
+                →
+              </span>
             </a>
           </div>
         </div>
