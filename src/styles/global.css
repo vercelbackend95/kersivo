@@ -284,3 +284,13 @@ li + li{ margin-top: 8px; }
     transition: none !important;
   }
 }
+/* Kill vertical page snapping (mobile momentum was snapping into Proof Console) */
+html, body, main{
+  scroll-snap-type: none !important;
+}
+
+/* If any sections had snap points, disable them */
+section, [data-section]{
+  scroll-snap-align: none !important;
+  scroll-snap-stop: normal !important;
+}
