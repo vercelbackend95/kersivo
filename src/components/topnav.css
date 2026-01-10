@@ -1,7 +1,9 @@
 /* =========================================
    Kersivo — TopNav (premium glass, stable mobile)
-   Fix: CTA shifted left via fixed width on mobile
-   Burger always fits + iOS safe-area
+   Goal (mobile):
+   - CTA normal width
+   - CTA moves closer to logo
+   - Burger always fits on the right
    ========================================= */
 
 :root{
@@ -62,7 +64,7 @@ html{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap: 10px;
+  gap: 12px;
 }
 
 .k-topnav__brand{
@@ -134,7 +136,7 @@ html{
   outline-offset: 3px;
 }
 
-/* Right actions */
+/* Right actions (desktop) */
 .k-topnav__actions{
   display:flex;
   align-items:center;
@@ -168,7 +170,7 @@ html{
   transform: translateY(-1px);
 }
 
-/* CTA in topnav = hero vibe, nav-sized (desktop defaults) */
+/* CTA in topnav = hero vibe, nav-sized */
 .k-topnav__cta{
   --btn-h: 40px;
   --btn-pad: 16px;
@@ -338,8 +340,11 @@ html{
 }
 
 /* =========================================
-   Responsive: MOBILE LAYOUT RULES
-   Key: CTA has fixed width so it sits LEFT of burger (no truncation)
+   Responsive: MOBILE RULES (the important part)
+   - hide desktop nav
+   - actions stretch to fill middle space
+   - CTA sits closer to logo
+   - burger stays pinned right
    ========================================= */
 
 @media (max-width: 860px){
@@ -347,36 +352,40 @@ html{
   .k-topnav__mini{ display:none; }
   .k-topnav__burger{ display:grid; }
 
-  /* CTA moved left by fixed width; burger always has its slot */
+  /* THIS is the magic: actions take remaining width */
+  .k-topnav__actions{
+    flex: 1 1 auto;
+    min-width: 0;
+    justify-content: space-between; /* CTA left, burger right */
+    gap: 12px;
+  }
+
+  /* CTA normal width (no forced wide button) */
   .k-topnav__cta{
     --btn-h: 40px;
     --btn-pad: 14px;
     font-size: 12.5px;
-
-    width: 168px;
-    max-width: 168px;
-    justify-content: center;
+    flex: 0 0 auto;
   }
 
+  /* Burger never shrinks */
   .k-topnav__burger{
     flex: 0 0 40px;
   }
 }
 
-/* Very small devices: slightly smaller CTA, still full text */
 @media (max-width: 420px){
   :root{ --nav-pad-x: 14px; }
-
   .k-topnav__name{ font-size: 17px; }
 
   .k-topnav__cta{
     --btn-h: 38px;
     --btn-pad: 12px;
     font-size: 12px;
-
-    width: 156px;
-    max-width: 156px;
   }
+
+  /* save a few pixels if needed */
+  .k-topnav__cta .k-btn__arrow{ display:none; }
 
   .k-topnav__burger{
     width: 38px;
