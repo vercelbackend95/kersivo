@@ -1,8 +1,18 @@
 /* =========================================
-   Kersivo — TopNav (premium glass, OVER HERO)
-   Fixed overlay, mobile drawer
-   iOS safe-area + neon 2-line burger
+   Kersivo — TopNav (premium glass, mobile-first stable)
+   Fix: always fits on mobile + neon burger tubes
+   + scroll-padding for anchor jumps
    ========================================= */
+
+:root{
+  --nav-h: 62px;
+  --nav-pad-x: 16px;
+}
+
+/* Anchor jumps won't hide under fixed nav */
+html{
+  scroll-padding-top: calc(var(--nav-h) + env(safe-area-inset-top) + 14px);
+}
 
 .k-skip{
   position:absolute;
@@ -18,18 +28,15 @@
 .k-skip:focus{ left: 12px; }
 
 .k-topnav{
-  --nav-h: 62px;
-
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 80;
 
-  /* iOS notch safe-area */
   padding: env(safe-area-inset-top) 0 0;
 
-  background: rgba(7,7,10,.10); /* transparent-ish so hero shines through */
+  background: rgba(7,7,10,.10);
   border-bottom: 1px solid rgba(255,255,255,0);
   backdrop-filter: blur(0px);
 
@@ -45,14 +52,14 @@
 .k-topnav__inner{
   width: min(1200px, 100%);
   margin: 0 auto;
-  padding: 0 16px;
+  padding: 0 var(--nav-pad-x);
 
   min-height: var(--nav-h);
 
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap: 12px;
+  gap: 10px;
 }
 
 .k-topnav__brand{
@@ -62,6 +69,7 @@
   color: rgba(255,255,255,.92);
   text-decoration:none;
   flex: 0 0 auto;
+  min-width: 0;
 }
 
 .k-topnav__mark{
@@ -78,9 +86,10 @@
   font-weight: var(--w-bold, 780);
   letter-spacing: -0.02em;
   font-size: 18px;
+  white-space: nowrap;
 }
 
-/* Capsule wrapper */
+/* Desktop capsule links */
 .k-topnav__links{
   position: relative;
   display:flex;
@@ -95,7 +104,6 @@
   box-shadow: 0 18px 70px rgba(0,0,0,.24);
 }
 
-/* Clean links */
 .k-topnav__link{
   display:inline-flex;
   align-items:center;
@@ -126,7 +134,7 @@
 .k-topnav__actions{
   display:flex;
   align-items:center;
-  gap: 10px;
+  gap: 8px;
   flex: 0 0 auto;
 }
 
@@ -155,15 +163,20 @@
   transform: translateY(-1px);
 }
 
-/* CTA in topnav = hero button, just nav-sized */
+/* CTA in topnav = hero vibe, just nav-sized */
 .k-topnav__cta{
   --btn-h: 40px;
   --btn-pad: 16px;
   font-size: 13px;
 }
 
+/* Make CTA shrink nicely without pushing burger out */
+.k-btn.k-topnav__cta{
+  gap: 8px;
+}
+
 /* =========================================
-   Burger — two neon tubes (matches site vibe)
+   Burger — TWO NEON TUBES (stronger design)
    ========================================= */
 
 .k-topnav__burger{
@@ -180,14 +193,16 @@
   gap: 7px;
 
   cursor:pointer;
-  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
   overflow: hidden;
+
+  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease, box-shadow 200ms ease;
 }
 
 .k-topnav__burger:hover{
   background: rgba(255,255,255,.06);
-  border-color: rgba(255,255,255,.18);
+  border-color: rgba(190,145,255,.22);
   transform: translateY(-1px);
+  box-shadow: 0 18px 60px rgba(190,145,255,.10);
 }
 
 .k-topnav__burger:focus-visible{
@@ -204,21 +219,30 @@
   border-radius: 999px;
 
   background: linear-gradient(90deg, rgba(190,145,255,.98), rgba(255,210,245,.92));
+  background-size: 180% 100%;
   box-shadow:
     0 0 12px rgba(190,145,255,.22),
     0 0 22px rgba(255,210,245,.14);
-  opacity: .95;
+  opacity: .98;
 
   transform-origin: center;
-  transition: transform 180ms cubic-bezier(.2,.9,.2,1), width 180ms cubic-bezier(.2,.9,.2,1);
+  transition:
+    transform 190ms cubic-bezier(.2,.9,.2,1),
+    width 190ms cubic-bezier(.2,.9,.2,1),
+    background-position 600ms ease;
 }
 
-/* subtle extra bloom */
+/* micro “alive” shift on hover */
+.k-topnav__burger:hover .k-topnav__burgerLine{
+  background-position: 100% 0;
+}
+
+/* subtle bloom */
 .k-topnav__burgerLine::after{
   content:"";
   position:absolute;
   inset:-10px -14px;
-  background: linear-gradient(90deg, rgba(190,145,255,.45), rgba(255,210,245,.34));
+  background: linear-gradient(90deg, rgba(190,145,255,.40), rgba(255,210,245,.30));
   filter: blur(10px);
   opacity: .55;
   pointer-events:none;
@@ -250,8 +274,7 @@
   align-items:start;
   justify-items:stretch;
 
-  /* anchored to nav height + safe area */
-  padding: calc(var(--nav-h, 62px) + env(safe-area-inset-top) + 18px) 16px 18px;
+  padding: calc(var(--nav-h) + env(safe-area-inset-top) + 18px) 16px 18px;
 
   opacity: 0;
   transform: translateY(-8px);
@@ -317,19 +340,48 @@
 }
 
 /* =========================================
-   Responsive
+   Responsive rules (THIS fixes the burger being cut)
    ========================================= */
 
 @media (max-width: 860px){
   .k-topnav__links{ display:none; }
   .k-topnav__mini{ display:none; }
   .k-topnav__burger{ display:grid; }
+
+  /* make sure actions never overflow */
+  .k-topnav__cta{
+    --btn-h: 40px;
+    --btn-pad: 14px;
+    font-size: 12.5px;
+  }
 }
 
-/* Super small screens: tighten a touch */
-@media (max-width: 380px){
-  .k-topnav__name{ font-size: 16px; }
-  .k-topnav__cta{ --btn-pad: 14px; }
+@media (max-width: 420px){
+  :root{ --nav-pad-x: 14px; }
+
+  .k-topnav__name{ font-size: 17px; }
+
+  .k-topnav__cta{
+    --btn-h: 38px;
+    --btn-pad: 12px;
+    font-size: 12px;
+  }
+
+  /* save width so burger ALWAYS fits */
+  .k-btn.k-topnav__cta .k-btn__arrow{ display:none; }
+
+  .k-topnav__burger{
+    width: 38px;
+    height: 38px;
+  }
+  .k-topnav__burgerLine{ width: 16px; }
+  .k-topnav.is-open .k-topnav__burgerLine:first-child{ transform: translateY(4px) rotate(45deg); }
+  .k-topnav.is-open .k-topnav__burgerLine:last-child{ transform: translateY(-4px) rotate(-45deg); }
+}
+
+/* Nuclear option for tiny devices: keep nav clean, CTA lives in panel */
+@media (max-width: 340px){
+  .k-topnav__cta{ display:none; }
 }
 
 /* Reduced motion */

@@ -108,5 +108,32 @@ const OG_IMAGE = `${SITE_URL}/og/kersivo-og.jpg`;
         <section id="contact" style="height: 1px;"></section>
       </main>
     </div>
+	<script>
+  (() => {
+    const navEntry = performance.getEntriesByType?.("navigation")?.[0];
+    const navType = navEntry?.type || "navigate";
+
+    const hasHash = !!location.hash && location.hash !== "#";
+    const shouldReset = !hasHash && (navType === "navigate" || navType === "reload");
+
+    if ("scrollRestoration" in history) {
+      history.scrollRestoration = shouldReset ? "manual" : "auto";
+    }
+
+    const toTop = () => {
+      // iOS bywa uparty — dajemy mu 2 strzały
+      requestAnimationFrame(() => window.scrollTo(0, 0));
+      setTimeout(() => window.scrollTo(0, 0), 60);
+    };
+
+    if (shouldReset) {
+      window.addEventListener("load", toTop, { once: true });
+      window.addEventListener("pageshow", (e) => {
+        if (e.persisted) toTop();
+      });
+    }
+  })();
+</script>
+
   </body>
 </html>
