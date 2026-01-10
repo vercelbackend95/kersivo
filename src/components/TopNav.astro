@@ -40,8 +40,12 @@ import CtaButton from "./CtaButton.astro";
     <div class="k-topnav__actions">
       <a class="k-topnav__mini" href="#work">View work</a>
 
-      <!-- SAME as hero -->
-      <CtaButton href="#contact" label="Get a quote" variant="primary" class="k-topnav__cta" />
+      <CtaButton
+        href="#contact"
+        label="Get a quote"
+        variant="primary"
+        class="k-topnav__cta"
+      />
 
       <button
         class="k-topnav__burger"
@@ -64,8 +68,19 @@ import CtaButton from "./CtaButton.astro";
       <a class="k-topnav__panelLink" href="#contact">Contact</a>
 
       <div class="k-topnav__panelCtas">
-        <CtaButton href="#contact" label="Get a quote" variant="primary" class="k-topnav__panelPrimary" />
-        <CtaButton href="#work" label="View work" variant="ghost" magnetic={false} class="k-topnav__panelGhost" />
+        <CtaButton
+          href="#contact"
+          label="Get a quote"
+          variant="primary"
+          class="k-topnav__panelPrimary"
+        />
+        <CtaButton
+          href="#work"
+          label="View work"
+          variant="ghost"
+          magnetic={false}
+          class="k-topnav__panelGhost"
+        />
       </div>
     </div>
   </div>
@@ -119,12 +134,20 @@ import CtaButton from "./CtaButton.astro";
           if (e.key === "Escape" && root.classList.contains("is-open")) close();
         });
 
+        // click on overlay closes
         panel.addEventListener("click", (e) => {
           if (e.target === panel) close();
         });
+
+        // IMPORTANT: click on any panel link closes
+        panel.querySelectorAll("a[href^='#']").forEach((a) => {
+          a.addEventListener("click", () => {
+            if (root.classList.contains("is-open")) close();
+          });
+        });
       }
 
-      // ===== neon indicator movement + scroll spy =====
+      // ===== neon indicator movement + scroll spy (desktop links) =====
       const wrap = root.querySelector("[data-nav-links]");
       const neon = root.querySelector("[data-nav-neon]");
       const links = Array.from(root.querySelectorAll("[data-nav-link]"));
