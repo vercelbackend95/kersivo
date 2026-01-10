@@ -1,19 +1,24 @@
 /* =========================================
-   Kersivo — TopNav (premium glass, stable mobile)
-   Mobile goal:
-   - Symmetric padding L/R (logo & burger breathe equally)
-   - CTA sits NEXT TO burger on the right
-   - Burger never clips
+   Kersivo — TopNav (premium glass, mobile-proof)
+   Goals:
+   - Symmetric padding L/R on EVERY device (header-level padding)
+   - CTA + burger are a right-side cluster on mobile
+   - Burger never clips (even on weird iOS viewport states)
    ========================================= */
 
 :root{
   --nav-h: 62px;
-  --nav-pad-x: 16px;
+  --nav-pad: clamp(14px, 4vw, 20px);
 }
 
 /* Anchor jumps won't hide under fixed nav */
 html{
   scroll-padding-top: calc(var(--nav-h) + env(safe-area-inset-top) + 14px);
+}
+
+.k-topnav,
+.k-topnav *{
+  box-sizing: border-box;
 }
 
 .k-skip{
@@ -29,18 +34,23 @@ html{
 }
 .k-skip:focus{ left: 12px; }
 
+/* ===== HEADER ===== */
 .k-topnav{
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  inset: 0 0 auto 0;
   z-index: 80;
 
-  padding: env(safe-area-inset-top) 0 0;
+  /* IMPORTANT: padding belongs here (symmetry + safe-area) */
+  padding-top: env(safe-area-inset-top);
+  padding-left:  calc(var(--nav-pad) + env(safe-area-inset-left));
+  padding-right: calc(var(--nav-pad) + env(safe-area-inset-right));
 
   background: rgba(7,7,10,.10);
   border-bottom: 1px solid rgba(255,255,255,0);
   backdrop-filter: blur(0px);
+
+  /* never clip children */
+  overflow: visible;
 
   transition: background 180ms ease, border-color 180ms ease, backdrop-filter 180ms ease;
 }
@@ -51,13 +61,10 @@ html{
   backdrop-filter: blur(14px);
 }
 
+/* ===== INNER ===== */
 .k-topnav__inner{
   width: min(1200px, 100%);
   margin: 0 auto;
-
-  /* SYMMETRY: identical breathing room left/right (+ iOS safe-area) */
-  padding-left:  calc(var(--nav-pad-x) + env(safe-area-inset-left));
-  padding-right: calc(var(--nav-pad-x) + env(safe-area-inset-right));
 
   min-height: var(--nav-h);
 
@@ -67,6 +74,7 @@ html{
   gap: 12px;
 }
 
+/* ===== BRAND ===== */
 .k-topnav__brand{
   display:inline-flex;
   align-items:center;
@@ -94,7 +102,7 @@ html{
   white-space: nowrap;
 }
 
-/* Desktop capsule links */
+/* ===== DESKTOP LINKS ===== */
 .k-topnav__links{
   position: relative;
   display:flex;
@@ -136,12 +144,13 @@ html{
   outline-offset: 3px;
 }
 
-/* Right actions */
+/* ===== ACTIONS ===== */
 .k-topnav__actions{
   display:flex;
   align-items:center;
   gap: 10px;
   flex: 0 0 auto;
+  min-width: 0;
 }
 
 /* optional small link (desktop) */
@@ -177,10 +186,7 @@ html{
   font-size: 13px;
 }
 
-/* =========================================
-   Burger — two neon tubes (premium)
-   ========================================= */
-
+/* ===== BURGER (neon tubes) ===== */
 .k-topnav__burger{
   width: 40px;
   height: 40px;
@@ -198,6 +204,16 @@ html{
   overflow: hidden;
 
   transition: background 160ms ease, border-color 160ms ease, transform 160ms ease, box-shadow 200ms ease;
+}
+
+.k-topnav__burger::before{
+  content:"";
+  position:absolute;
+  inset:-1px;
+  border-radius: inherit;
+  pointer-events:none;
+  background: radial-gradient(80% 120% at 30% 10%, rgba(190,145,255,.22), rgba(0,0,0,0) 60%);
+  opacity:.9;
 }
 
 .k-topnav__burger:hover{
@@ -258,10 +274,7 @@ html{
   transform: translateY(-4.5px) rotate(-45deg);
 }
 
-/* =========================================
-   Mobile panel
-   ========================================= */
-
+/* ===== MOBILE PANEL ===== */
 .k-topnav__panel{
   position: fixed;
   inset: 0;
@@ -340,9 +353,7 @@ html{
 }
 
 /* =========================================
-   Responsive: MOBILE RULES
-   - hide desktop nav
-   - CTA sits next to burger on the right
+   RESPONSIVE
    ========================================= */
 
 @media (max-width: 860px){
@@ -350,7 +361,7 @@ html{
   .k-topnav__mini{ display:none; }
   .k-topnav__burger{ display:grid; }
 
-  /* ACTIONS are a right-side cluster: CTA + burger together */
+  /* Right-side cluster: CTA + burger (always together) */
   .k-topnav__actions{
     margin-left: auto;
     flex: 0 0 auto;
@@ -370,7 +381,6 @@ html{
 }
 
 @media (max-width: 420px){
-  :root{ --nav-pad-x: 14px; }
   .k-topnav__name{ font-size: 17px; }
 
   .k-topnav__cta{
@@ -379,7 +389,7 @@ html{
     font-size: 12px;
   }
 
-  /* save a few pixels */
+  /* save width if needed */
   .k-topnav__cta .k-btn__arrow{ display:none; }
 
   .k-topnav__burger{
@@ -398,7 +408,6 @@ html{
   }
 }
 
-/* Ultra tiny devices: hide CTA in top bar, keep it in panel */
 @media (max-width: 340px){
   .k-topnav__cta{ display:none; }
 }
