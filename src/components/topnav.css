@@ -1,7 +1,7 @@
 /* =========================================
-   Kersivo — TopNav (premium glass, mobile-first stable)
-   Fix: always fits on mobile + neon burger tubes
-   + scroll-padding for anchor jumps
+   Kersivo — TopNav (premium glass, stable mobile)
+   Fix: CTA shifted left via fixed width on mobile
+   Burger always fits + iOS safe-area
    ========================================= */
 
 :root{
@@ -53,9 +53,9 @@ html{
   width: min(1200px, 100%);
   margin: 0 auto;
 
-  /* IMPORTANT: safe-area left/right + więcej oddechu po prawej */
+  /* iOS safe-area left/right */
   padding-left: calc(var(--nav-pad-x) + env(safe-area-inset-left));
-  padding-right: calc(var(--nav-pad-x) + 6px + env(safe-area-inset-right));
+  padding-right: calc(var(--nav-pad-x) + 12px + env(safe-area-inset-right));
 
   min-height: var(--nav-h);
 
@@ -64,7 +64,6 @@ html{
   justify-content:space-between;
   gap: 10px;
 }
-
 
 .k-topnav__brand{
   display:inline-flex;
@@ -135,13 +134,15 @@ html{
   outline-offset: 3px;
 }
 
+/* Right actions */
 .k-topnav__actions{
   display:flex;
   align-items:center;
-  gap: 8px;
+  gap: 10px;
   flex: 0 0 auto;
 }
 
+/* optional small link (desktop) */
 .k-topnav__mini{
   height: 38px;
   padding: 0 12px;
@@ -167,20 +168,15 @@ html{
   transform: translateY(-1px);
 }
 
-/* CTA in topnav = hero vibe, just nav-sized */
+/* CTA in topnav = hero vibe, nav-sized (desktop defaults) */
 .k-topnav__cta{
   --btn-h: 40px;
   --btn-pad: 16px;
   font-size: 13px;
 }
 
-/* Make CTA shrink nicely without pushing burger out */
-.k-btn.k-topnav__cta{
-  gap: 8px;
-}
-
 /* =========================================
-   Burger — TWO NEON TUBES (stronger design)
+   Burger — two neon tubes (premium)
    ========================================= */
 
 .k-topnav__burger{
@@ -192,7 +188,7 @@ html{
   border: 1px solid rgba(255,255,255,.12);
   backdrop-filter: blur(10px);
 
-  display:none;
+  display:none; /* enabled on mobile */
   place-items:center;
   gap: 7px;
 
@@ -236,12 +232,10 @@ html{
     background-position 600ms ease;
 }
 
-/* micro “alive” shift on hover */
 .k-topnav__burger:hover .k-topnav__burgerLine{
   background-position: 100% 0;
 }
 
-/* subtle bloom */
 .k-topnav__burgerLine::after{
   content:"";
   position:absolute;
@@ -344,7 +338,8 @@ html{
 }
 
 /* =========================================
-   Responsive rules (THIS fixes the burger being cut)
+   Responsive: MOBILE LAYOUT RULES
+   Key: CTA has fixed width so it sits LEFT of burger (no truncation)
    ========================================= */
 
 @media (max-width: 860px){
@@ -352,14 +347,23 @@ html{
   .k-topnav__mini{ display:none; }
   .k-topnav__burger{ display:grid; }
 
-  /* make sure actions never overflow */
+  /* CTA moved left by fixed width; burger always has its slot */
   .k-topnav__cta{
     --btn-h: 40px;
     --btn-pad: 14px;
     font-size: 12.5px;
+
+    width: 168px;
+    max-width: 168px;
+    justify-content: center;
+  }
+
+  .k-topnav__burger{
+    flex: 0 0 40px;
   }
 }
 
+/* Very small devices: slightly smaller CTA, still full text */
 @media (max-width: 420px){
   :root{ --nav-pad-x: 14px; }
 
@@ -369,21 +373,28 @@ html{
     --btn-h: 38px;
     --btn-pad: 12px;
     font-size: 12px;
-  }
 
-  /* save width so burger ALWAYS fits */
-  .k-btn.k-topnav__cta .k-btn__arrow{ display:none; }
+    width: 156px;
+    max-width: 156px;
+  }
 
   .k-topnav__burger{
     width: 38px;
     height: 38px;
+    flex: 0 0 38px;
   }
+
   .k-topnav__burgerLine{ width: 16px; }
-  .k-topnav.is-open .k-topnav__burgerLine:first-child{ transform: translateY(4px) rotate(45deg); }
-  .k-topnav.is-open .k-topnav__burgerLine:last-child{ transform: translateY(-4px) rotate(-45deg); }
+
+  .k-topnav.is-open .k-topnav__burgerLine:first-child{
+    transform: translateY(4px) rotate(45deg);
+  }
+  .k-topnav.is-open .k-topnav__burgerLine:last-child{
+    transform: translateY(-4px) rotate(-45deg);
+  }
 }
 
-/* Nuclear option for tiny devices: keep nav clean, CTA lives in panel */
+/* Ultra tiny devices: hide CTA in top bar, keep it in panel */
 @media (max-width: 340px){
   .k-topnav__cta{ display:none; }
 }
@@ -397,32 +408,4 @@ html{
   .k-topnav__panel{
     transform: none !important;
   }
-}
-@media (max-width: 860px){
-  .k-topnav__actions{ min-width: 0; }
-  .k-topnav__cta{ flex: 0 1 auto; max-width: 56vw; }
-  .k-topnav__burger{ flex: 0 0 auto; }
-}
-/* Make CTA shrink-friendly on mobile */
-.k-topnav__actions{ min-width: 0; }
-
-.k-topnav__cta{
-  flex: 0 1 auto;
-  max-width: 56vw; /* hard cap so burger always fits */
-}
-
-/* If label gets tight, don't break the layout */
-.k-topnav__cta .k-btn__label{
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 12ch; /* keeps it tidy */
-}
-
-/* burger must NEVER shrink */
-.k-topnav__burger{ flex: 0 0 40px; }
-@media (max-width: 420px){
-  .k-topnav__cta{ max-width: 54vw; }
-  .k-topnav__cta .k-btn__arrow{ display:none; } /* save width */
 }
