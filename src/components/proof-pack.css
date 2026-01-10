@@ -1,5 +1,5 @@
 /* =========================================
-   ProofPack v2.1 — Tabs made OBVIOUS (single source of truth)
+   ProofPack v2.2 — single tabs system + mobile console visible
    ========================================= */
 
 .k-proof{
@@ -27,6 +27,7 @@
   box-shadow: 0 40px 160px rgba(0,0,0,.40);
   overflow: hidden;
   padding: clamp(18px, 3vw, 26px);
+  isolation: isolate; /* helps Safari with blend/backdrop */
 }
 
 .k-proof2::before{
@@ -45,15 +46,25 @@
   pointer-events:none;
   mix-blend-mode: screen;
   opacity: .95;
+  z-index: 0;
 }
 
 .k-proof2__grid{
   position: relative;
+  z-index: 1;
+
   display:grid;
   grid-template-columns: 1fr;
-  gap: 18px;
-  z-index: 1;
+  gap: 16px;
+
+  /* MOBILE-FIRST: show console FIRST so it never “disappears” */
+  grid-template-areas:
+    "right"
+    "left";
 }
+
+.k-proof2__left{ grid-area: left; }
+.k-proof2__right{ grid-area: right; }
 
 /* Left */
 .k-proof2__left{
@@ -89,7 +100,7 @@
 
 .k-proof2__title{
   margin: 0;
-  font-size: clamp(36px, 4.4vw, 56px);
+  font-size: clamp(32px, 7vw, 56px);
   line-height: 1.02;
   letter-spacing: -0.055em;
 }
@@ -113,12 +124,12 @@
 }
 
 /* =========================================
-   TABS BAR — SINGLE VERSION (no duplicates)
+   TABS BAR — SINGLE VERSION (rail = active pill)
    ========================================= */
 
 .k-proof2__tabs{
   position: relative;
-  margin-top: 10px;
+  margin-top: 6px;
 
   display:flex;
   gap: 10px;
@@ -142,7 +153,7 @@
   box-shadow: 0 0 0 4px rgba(190,145,255,.18);
 }
 
-/* Active rail “pill” behind the active tab (obvious click target) */
+/* Active rail “pill” behind active tab */
 .k-proof2__rail{
   position:absolute;
   left: 10px;
@@ -194,18 +205,16 @@
   color: rgba(255,255,255,.92);
 }
 
-.k-proof2__tab:active{
-  transform: translateY(0px);
-}
+.k-proof2__tab:active{ transform: translateY(0px); }
 
 .k-proof2__tab:focus-visible{
   outline: none;
   box-shadow: 0 0 0 4px rgba(190,145,255,.18);
 }
 
-/* Active: rail does the heavy lifting, we just “sharpen” the tab */
+/* Active tab: rail does the heavy lifting */
 .k-proof2__tab.is-active{
-  background: transparent; /* rail handles active bg */
+  background: transparent;
   border-color: rgba(255,255,255,.10);
   color: rgba(255,255,255,.96);
 }
@@ -231,7 +240,7 @@
 .k-proof2__tabText{
   font-size: 13px;
   letter-spacing: -0.01em;
-  font-weight: 700;
+  font-weight: 750;
 }
 
 .k-proof2__tabChevron{
@@ -435,6 +444,18 @@
   gap: 10px;
 }
 
+/* mobile: minis side-by-side feels “designed” */
+@media (max-width: 520px){
+  .k-proof2__minis{
+    grid-template-columns: 1fr;
+  }
+}
+@media (min-width: 521px) and (max-width: 959px){
+  .k-proof2__minis{
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 .k-proof2__mini{
   border-radius: 18px;
   padding: 12px;
@@ -456,11 +477,14 @@
   line-height: 1.45;
 }
 
+/* Desktop: left + right columns */
 @media (min-width: 960px){
   .k-proof2__grid{
     grid-template-columns: 1.05fr .95fr;
     gap: 22px;
     align-items: start;
+
+    grid-template-areas: "left right";
   }
 }
 
