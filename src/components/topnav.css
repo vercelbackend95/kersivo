@@ -2,15 +2,19 @@
    Kersivo — TopNav (premium glass, mobile-proof)
    - Symmetric padding L/R on every device (header-level padding)
    - CTA + burger are a right-side cluster on mobile
-   - Burger: "real neon tubes" (core + highlight + halo + ambient + micro hum)
+   - Burger: NO circle. Only 2 neon bars (CSS-Tricks-style layered glow)
    ========================================= */
 
 :root{
   --nav-h: 62px;
   --nav-pad: clamp(14px, 4vw, 20px);
+
+  /* neon palette (tuned for your purple/pink vibe) */
+  --neon-core: rgba(255,255,255,.95);
+  --neon-a: rgba(190,145,255,.95);
+  --neon-b: rgba(255,190,245,.85);
 }
 
-/* Anchor jumps won't hide under fixed nav */
 html{
   scroll-padding-top: calc(var(--nav-h) + env(safe-area-inset-top) + 14px);
 }
@@ -39,7 +43,6 @@ html{
   inset: 0 0 auto 0;
   z-index: 80;
 
-  /* IMPORTANT: padding belongs here (symmetry + safe-area) */
   padding-top: env(safe-area-inset-top);
   padding-left:  calc(var(--nav-pad) + env(safe-area-inset-left));
   padding-right: calc(var(--nav-pad) + env(safe-area-inset-right));
@@ -49,7 +52,6 @@ html{
   backdrop-filter: blur(0px);
 
   overflow: visible;
-
   transition: background 180ms ease, border-color 180ms ease, backdrop-filter 180ms ease;
 }
 
@@ -185,96 +187,66 @@ html{
 }
 
 /* =========================================
-   Burger — REAL NEON TUBES (core + highlight + halo + ambient)
+   Burger — NO circle. Only 2 neon bars.
+   "CSS-Tricks-style": white core + layered glow (bigger blur outward)
    ========================================= */
 
 .k-topnav__burger{
-  width: 40px;
-  height: 40px;
-  border-radius: 999px;
+  /* keep a proper tap target, but visually it's "nothing" */
+  width: 44px;
+  height: 44px;
+  padding: 0;
 
-  position: relative;
   display:none; /* enabled on mobile */
   place-items:center;
-  gap: 7px;
+  gap: 9px;
 
-  background:
-    radial-gradient(120% 140% at 30% 10%, rgba(255,255,255,.10), rgba(255,255,255,0) 55%),
-    rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.12);
-  backdrop-filter: blur(12px);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
 
-  overflow: hidden;
   cursor: pointer;
-
-  box-shadow:
-    0 18px 70px rgba(0,0,0,.25),
-    inset 0 1px 0 rgba(255,255,255,.10);
-
-  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease, box-shadow 200ms ease;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* ambient glow around the button */
-.k-topnav__burger::after{
-  content:"";
-  position:absolute;
-  inset:-10px;
-  border-radius: inherit;
-  pointer-events:none;
-  background: radial-gradient(60% 60% at 50% 50%, rgba(190,145,255,.22), rgba(0,0,0,0) 70%);
-  filter: blur(10px);
-  opacity: .55;
-  transition: opacity 200ms ease;
-}
-
-.k-topnav__burger:hover{
-  transform: translateY(-1px);
-  border-color: rgba(190,145,255,.26);
-  box-shadow:
-    0 22px 85px rgba(0,0,0,.30),
-    inset 0 1px 0 rgba(255,255,255,.12);
-}
-.k-topnav__burger:hover::after{ opacity: .75; }
-
+/* a11y focus ring (since there's no circle) */
 .k-topnav__burger:focus-visible{
-  outline: 2px solid rgba(190,145,255,.70);
-  outline-offset: 3px;
+  outline: 2px solid rgba(190,145,255,.75);
+  outline-offset: 6px;
+  border-radius: 12px;
 }
 
-/* neon tube */
+/* the neon tube */
 .k-topnav__burgerLine{
-  width: 18px;
+  width: 22px;
   height: 2px;
   border-radius: 999px;
-
   position: relative;
-  transform-origin: center;
 
-  background:
-    linear-gradient(90deg,
-      rgba(210,185,255,.98) 0%,
-      rgba(190,145,255,1) 38%,
-      rgba(255,210,245,.96) 72%,
-      rgba(190,145,255,.98) 100%);
-  background-size: 220% 100%;
-  background-position: 0% 50%;
+  /* bright core */
+  background: var(--neon-core);
 
+  /* layered glow stack (this is the whole trick) */
   box-shadow:
-    0 0 6px rgba(190,145,255,.55),
-    0 0 14px rgba(190,145,255,.25),
-    0 0 26px rgba(255,210,245,.14);
+    0 0 2px  rgba(255,255,255,.85),
+    0 0 6px  rgba(255,255,255,.55),
+    0 0 12px var(--neon-a),
+    0 0 22px rgba(190,145,255,.55),
+    0 0 38px rgba(255,190,245,.25);
 
-  filter: saturate(1.08);
+  /* extra glow that looks great on iOS */
+  filter:
+    drop-shadow(0 0 6px rgba(190,145,255,.45))
+    drop-shadow(0 0 14px rgba(255,190,245,.18));
+
   opacity: .98;
 
-  transition:
-    transform 190ms cubic-bezier(.2,.9,.2,1),
-    width 190ms cubic-bezier(.2,.9,.2,1),
-    background-position 900ms ease,
-    box-shadow 220ms ease;
+  transform-origin: center;
+  transition: transform 190ms cubic-bezier(.2,.9,.2,1), width 190ms cubic-bezier(.2,.9,.2,1);
 }
 
-/* inner glass highlight */
+/* inner “glass highlight” to make it feel like a tube, not a flat line */
 .k-topnav__burgerLine::before{
   content:"";
   position:absolute;
@@ -283,60 +255,50 @@ html{
   top: -1px;
   height: 1px;
   border-radius: 999px;
-  background: rgba(255,255,255,.65);
-  opacity: .55;
-  filter: blur(.2px);
+  background: rgba(255,255,255,.9);
+  opacity: .35;
 }
 
-/* halo */
-.k-topnav__burgerLine::after{
-  content:"";
-  position:absolute;
-  inset:-10px -14px;
-  border-radius: 999px;
-  background: radial-gradient(70% 120% at 50% 50%, rgba(190,145,255,.42), rgba(0,0,0,0) 70%);
-  filter: blur(10px);
-  opacity: .45;
-  pointer-events:none;
-}
-
-/* subtle sweep on hover */
+/* hover = brighter (desktop only, but harmless on touch) */
 .k-topnav__burger:hover .k-topnav__burgerLine{
-  background-position: 100% 50%;
   box-shadow:
-    0 0 7px rgba(190,145,255,.70),
-    0 0 16px rgba(190,145,255,.30),
-    0 0 30px rgba(255,210,245,.18);
+    0 0 3px  rgba(255,255,255,.95),
+    0 0 8px  rgba(255,255,255,.65),
+    0 0 16px rgba(190,145,255,.95),
+    0 0 28px rgba(190,145,255,.60),
+    0 0 44px rgba(255,190,245,.30);
 }
 
 /* Open state -> neon X */
 .k-topnav.is-open .k-topnav__burgerLine:first-child{
-  width: 20px;
-  transform: translateY(4.5px) rotate(45deg);
+  width: 24px;
+  transform: translateY(5px) rotate(45deg);
 }
 .k-topnav.is-open .k-topnav__burgerLine:last-child{
-  width: 20px;
-  transform: translateY(-4.5px) rotate(-45deg);
+  width: 24px;
+  transform: translateY(-5px) rotate(-45deg);
 }
 
-/* "neon hum" — barely alive */
+/* subtle "neon hum" */
 @media (prefers-reduced-motion: no-preference){
   .k-topnav__burgerLine{
-    animation: kNeonHum 5.6s ease-in-out infinite;
+    animation: kNeonPulse 5.2s ease-in-out infinite;
   }
   .k-topnav__burgerLine:nth-child(2){
-    animation-delay: -1.9s;
+    animation-delay: -1.7s;
   }
-  @keyframes kNeonHum{
+  @keyframes kNeonPulse{
     0%, 100%{
-      filter: saturate(1.06);
-      opacity: .96;
-      transform: translateZ(0);
+      opacity: .92;
+      filter:
+        drop-shadow(0 0 5px rgba(190,145,255,.38))
+        drop-shadow(0 0 12px rgba(255,190,245,.14));
     }
     50%{
-      filter: saturate(1.18);
       opacity: 1;
-      transform: translateZ(0);
+      filter:
+        drop-shadow(0 0 7px rgba(190,145,255,.52))
+        drop-shadow(0 0 16px rgba(255,190,245,.20));
     }
   }
 }
@@ -431,7 +393,6 @@ html{
   .k-topnav__mini{ display:none; }
   .k-topnav__burger{ display:grid; }
 
-  /* Right-side cluster: CTA + burger */
   .k-topnav__actions{
     margin-left: auto;
     flex: 0 0 auto;
@@ -444,10 +405,6 @@ html{
     --btn-pad: 14px;
     font-size: 12.5px;
   }
-
-  .k-topnav__burger{
-    flex: 0 0 40px;
-  }
 }
 
 @media (max-width: 420px){
@@ -459,27 +416,22 @@ html{
     font-size: 12px;
   }
 
-  /* save width */
   .k-topnav__cta .k-btn__arrow{ display:none; }
 
   .k-topnav__burger{
-    width: 38px;
-    height: 38px;
-    flex: 0 0 38px;
+    width: 44px;
+    height: 44px;
   }
 
   .k-topnav__burgerLine{
-    width: 16px;
-  }
-  .k-topnav__burgerLine::after{
-    opacity: .52;
+    width: 20px;
   }
 
   .k-topnav.is-open .k-topnav__burgerLine:first-child{
-    transform: translateY(4px) rotate(45deg);
+    transform: translateY(5px) rotate(45deg);
   }
   .k-topnav.is-open .k-topnav__burgerLine:last-child{
-    transform: translateY(-4px) rotate(-45deg);
+    transform: translateY(-5px) rotate(-45deg);
   }
 }
 
