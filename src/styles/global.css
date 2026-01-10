@@ -1,9 +1,7 @@
 @import "@fontsource-variable/inter/index.css";
 
 /* System blocks (keep these files in src/styles/) */
-@import "./cta-button.css";
-@import "./pills.css";
-@import "./laser.css";
+
 
 /* =========================
    Kersivo — Global Styles v2

@@ -1,139 +1,18 @@
 ---
-import "../styles/global.css";
+import BaseLayout from "../layouts/BaseLayout.astro";
 
-import SiteBg from "../components/SiteBg.astro";
-import TopNav from "../components/TopNav.astro";
-import Hero from "../components/Hero.astro";
-import ProofPack from "../components/ProofPack.astro";
-
-const SITE_URL = "https://kersivo.co.uk";
-const PAGE_URL = `${SITE_URL}/`;
-const OG_IMAGE = `${SITE_URL}/og/kersivo-og.jpg`;
+import Hero from "../components/sections/Hero/Hero.astro";
+import ProofPack from "../components/sections/ProofPack/ProofPack.astro";
 ---
 
-<!doctype html>
-<html lang="en-GB">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+<BaseLayout>
+  <main id="main">
+    <Hero />
+    <ProofPack />
 
-    <title>Kersivo — Web Design & Development for UK Small Businesses</title>
-    <meta
-      name="description"
-      content="Kersivo builds premium, conversion-focused websites for UK small businesses — fast Astro builds, clean UX, and subtle motion."
-    />
-
-    <link rel="canonical" href={PAGE_URL} />
-
-    <!-- Icons -->
-    <link rel="icon" href="/favicon.ico" sizes="any" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
-    <link rel="manifest" href="/site.webmanifest" />
-    <meta name="theme-color" content="#07070A" />
-
-    <!-- Open Graph -->
-    <meta property="og:title" content="Kersivo — Web Design & Development" />
-    <meta
-      property="og:description"
-      content="Premium, performance-first websites for UK small businesses. Astro-first builds, SEO-ready, subtle high-end motion."
-    />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content={PAGE_URL} />
-    <meta property="og:image" content={OG_IMAGE} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:locale" content="en_GB" />
-
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Kersivo — Web Design & Development" />
-    <meta
-      name="twitter:description"
-      content="Premium, performance-first websites for UK small businesses. Astro-first builds, SEO-ready, subtle high-end motion."
-    />
-    <meta name="twitter:image" content={OG_IMAGE} />
-
-    <!-- Basic indexing policy -->
-    <meta name="robots" content="index,follow,max-image-preview:large" />
-
-    <!-- Schema.org JSON-LD -->
-    <script type="application/ld+json">
-      {JSON.stringify({
-        "@context": "https://schema.org",
-        "@graph": [
-          {
-            "@type": "Organization",
-            "@id": `${SITE_URL}/#org`,
-            "name": "Kersivo",
-            "url": SITE_URL,
-            "description": "Web design & development studio building premium, conversion-focused websites for UK small businesses.",
-            "areaServed": { "@type": "Country", "name": "United Kingdom" }
-          },
-          {
-            "@type": "WebSite",
-            "@id": `${SITE_URL}/#website`,
-            "url": SITE_URL,
-            "name": "Kersivo",
-            "publisher": { "@id": `${SITE_URL}/#org` },
-            "inLanguage": "en-GB"
-          },
-          {
-            "@type": "ProfessionalService",
-            "@id": `${SITE_URL}/#service`,
-            "name": "Kersivo Web Design & Development",
-            "url": SITE_URL,
-            "provider": { "@id": `${SITE_URL}/#org` },
-            "areaServed": { "@type": "Country", "name": "United Kingdom" },
-            "serviceType": ["Web design", "Web development", "SEO foundations", "Conversion optimisation"]
-          }
-        ]
-      })}
-    </script>
-  </head>
-
-  <body>
-    <SiteBg />
-
-    <div class="site-foreground">
-      <TopNav />
-
-      <main id="main">
-        <Hero />
-        <ProofPack />
-
-        <!-- anchors for nav (until real sections exist) -->
-        <section id="services" style="height: 1px;"></section>
-        <section id="process" style="height: 1px;"></section>
-        <section id="contact" style="height: 1px;"></section>
-      </main>
-    </div>
-	<script>
-  (() => {
-    const navEntry = performance.getEntriesByType?.("navigation")?.[0];
-    const navType = navEntry?.type || "navigate";
-
-    const hasHash = !!location.hash && location.hash !== "#";
-    const shouldReset = !hasHash && (navType === "navigate" || navType === "reload");
-
-    if ("scrollRestoration" in history) {
-      history.scrollRestoration = shouldReset ? "manual" : "auto";
-    }
-
-    const toTop = () => {
-      // iOS bywa uparty — dajemy mu 2 strzały
-      requestAnimationFrame(() => window.scrollTo(0, 0));
-      setTimeout(() => window.scrollTo(0, 0), 60);
-    };
-
-    if (shouldReset) {
-      window.addEventListener("load", toTop, { once: true });
-      window.addEventListener("pageshow", (e) => {
-        if (e.persisted) toTop();
-      });
-    }
-  })();
-</script>
-
-  </body>
-</html>
+    <!-- anchors for nav (until real sections exist) -->
+    <section id="services" style="height: 1px;"></section>
+    <section id="process" style="height: 1px;"></section>
+    <section id="contact" style="height: 1px;"></section>
+  </main>
+</BaseLayout>

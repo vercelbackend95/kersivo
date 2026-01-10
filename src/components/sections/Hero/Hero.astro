@@ -1,7 +1,9 @@
 ---
 import "./hero.css";
-import "../styles/laser.css";
-import CtaButton from "./CtaButton.astro";
+import "./laser.css";
+
+import CtaButton from "../../ui/CtaButton/CtaButton.astro";
+import Pill from "../../ui/Pill/Pill.astro";
 ---
 
 <section class="k3-hero" aria-label="Kersivo hero">
@@ -29,9 +31,9 @@ import CtaButton from "./CtaButton.astro";
       </div>
 
       <div class="k-pills" data-reveal aria-label="Key benefits">
-        <span class="k-pill k-pill--accent">SEO foundations</span>
-        <span class="k-pill">Astro-fast builds</span>
-        <span class="k-pill">Mobile-first</span>
+        <Pill label="SEO foundations" variant="accent" />
+        <Pill label="Astro-fast builds" />
+        <Pill label="Mobile-first" />
       </div>
     </div>
   </div>
@@ -44,30 +46,30 @@ import CtaButton from "./CtaButton.astro";
       const reduced =
         window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-      // reveal
       const items = hero.querySelectorAll("[data-reveal]");
       if (items.length) hero.classList.add("k3-reveal");
 
       if (reduced) {
         items.forEach((el) => el.classList.add("is-in"));
-      } else {
-        const io = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((en) => {
-              if (en.isIntersecting) {
-                en.target.classList.add("is-in");
-                io.unobserve(en.target);
-              }
-            });
-          },
-          { threshold: 0.18 }
-        );
-
-        items.forEach((el, i) => {
-          el.style.setProperty("--d", i * 75 + "ms");
-          io.observe(el);
-        });
+        return;
       }
+
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((en) => {
+            if (en.isIntersecting) {
+              en.target.classList.add("is-in");
+              io.unobserve(en.target);
+            }
+          });
+        },
+        { threshold: 0.18 }
+      );
+
+      items.forEach((el, i) => {
+        el.style.setProperty("--d", i * 75 + "ms");
+        io.observe(el);
+      });
     })();
   </script>
 </section>
