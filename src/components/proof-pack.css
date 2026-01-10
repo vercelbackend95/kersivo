@@ -1,21 +1,14 @@
 /* =========================================
-   ProofPack v2.2 — single tabs system + mobile console visible
+   ProofPack — CLEAN (single source of truth)
+   Fixes:
+   - Mobile order: LEFT first, then RIGHT (console, then minis)
+   - Tabs: always horizontal scroll (never 2-column wrap)
+   - Removes duplicated/competing tab styles
    ========================================= */
 
 .k-proof{
   position: relative;
   overflow: hidden;
-}
-
-.k-proof__bg{
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  opacity: .9;
-  background:
-    radial-gradient(900px 540px at 18% 18%, rgba(190,145,255,.10), transparent 60%),
-    radial-gradient(760px 520px at 82% 30%, rgba(255,200,235,.06), transparent 55%),
-    linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,0));
 }
 
 /* Main frame */
@@ -27,7 +20,6 @@
   box-shadow: 0 40px 160px rgba(0,0,0,.40);
   overflow: hidden;
   padding: clamp(18px, 3vw, 26px);
-  isolation: isolate; /* helps Safari with blend/backdrop */
 }
 
 .k-proof2::before{
@@ -46,27 +38,26 @@
   pointer-events:none;
   mix-blend-mode: screen;
   opacity: .95;
-  z-index: 0;
 }
 
+/* ===== GRID (ORDER CONTROL) ===== */
 .k-proof2__grid{
   position: relative;
+  display:grid;
+  gap: 18px;
   z-index: 1;
 
-  display:grid;
+  /* Mobile: left first, right after */
   grid-template-columns: 1fr;
-  gap: 16px;
-
-  /* MOBILE-FIRST: show console FIRST so it never “disappears” */
   grid-template-areas:
-    "right"
-    "left";
+    "left"
+    "right";
 }
 
 .k-proof2__left{ grid-area: left; }
 .k-proof2__right{ grid-area: right; }
 
-/* Left */
+/* ===== LEFT ===== */
 .k-proof2__left{
   display:grid;
   gap: 12px;
@@ -100,7 +91,7 @@
 
 .k-proof2__title{
   margin: 0;
-  font-size: clamp(32px, 7vw, 56px);
+  font-size: clamp(36px, 4.4vw, 56px);
   line-height: 1.02;
   letter-spacing: -0.055em;
 }
@@ -123,15 +114,13 @@
   letter-spacing: -0.01em;
 }
 
-/* =========================================
-   TABS BAR — SINGLE VERSION (rail = active pill)
-   ========================================= */
-
+/* ===== TABS (ALWAYS SCROLL, NEVER WRAP) ===== */
 .k-proof2__tabs{
   position: relative;
   margin-top: 6px;
 
   display:flex;
+  flex-wrap: nowrap;
   gap: 10px;
   padding: 10px;
 
@@ -142,23 +131,24 @@
 
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+
   scroll-snap-type: x mandatory;
 
   outline: none;
 }
 
-.k-proof2__tabs::-webkit-scrollbar{ height: 0; }
-
 .k-proof2__tabs:focus-visible{
   box-shadow: 0 0 0 4px rgba(190,145,255,.18);
 }
 
-/* Active rail “pill” behind active tab */
+.k-proof2__tabs::-webkit-scrollbar{ height: 0; }
+
 .k-proof2__rail{
   position:absolute;
   left: 10px;
   top: 10px;
-  height: 46px;
+  height: 54px;
   border-radius: 16px;
   pointer-events:none;
 
@@ -173,49 +163,41 @@
   position: relative;
   scroll-snap-align: start;
 
-  min-height: 46px;
-  padding: 10px 12px;
+  flex: 0 0 auto;
+  min-height: 54px;
+  padding: 10px 14px;
   border-radius: 16px;
 
   display:inline-flex;
   align-items:center;
-  gap: 10px;
+  gap: 12px;
 
   background: rgba(0,0,0,.14);
   border: 1px solid rgba(255,255,255,.10);
-  color: rgba(255,255,255,.80);
+  color: rgba(255,255,255,.82);
 
   cursor: pointer;
   user-select: none;
-  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
 
   transition:
     transform 160ms ease,
+    background 160ms ease,
     border-color 160ms ease,
-    color 160ms ease,
-    background 160ms ease;
-
-  white-space: nowrap;
+    color 160ms ease;
 }
 
 .k-proof2__tab:hover{
   transform: translateY(-1px);
   background: rgba(255,255,255,.04);
   border-color: rgba(255,255,255,.16);
-  color: rgba(255,255,255,.92);
+  color: rgba(255,255,255,.94);
 }
 
-.k-proof2__tab:active{ transform: translateY(0px); }
+.k-proof2__tab:active{ transform: translateY(0); }
 
-.k-proof2__tab:focus-visible{
-  outline: none;
-  box-shadow: 0 0 0 4px rgba(190,145,255,.18);
-}
-
-/* Active tab: rail does the heavy lifting */
 .k-proof2__tab.is-active{
-  background: transparent;
-  border-color: rgba(255,255,255,.10);
+  background: transparent; /* rail does the active */
   color: rgba(255,255,255,.96);
 }
 
@@ -231,16 +213,10 @@
   color: rgba(255,255,255,.92);
 }
 
-.k-proof2__tab.is-active .k-proof2__tabIcon{
-  background: rgba(190,145,255,.12);
-  border-color: rgba(190,145,255,.26);
-  box-shadow: 0 10px 40px rgba(190,145,255,.18);
-}
-
 .k-proof2__tabText{
   font-size: 13px;
   letter-spacing: -0.01em;
-  font-weight: 750;
+  font-weight: 700;
 }
 
 .k-proof2__tabChevron{
@@ -263,11 +239,18 @@
   margin-top: 10px;
 }
 
-/* Right */
+/* ===== RIGHT ===== */
 .k-proof2__right{
   display:grid;
   gap: 12px;
+
+  /* extra safety: if someone somewhere set order via CSS, we force it */
+  grid-template-columns: 1fr;
 }
+
+/* Console must appear before minis on mobile */
+.k-proof2__console{ order: 1; }
+.k-proof2__minis{ order: 2; }
 
 .k-proof2__console{
   position: relative;
@@ -439,21 +422,10 @@
   font-size: 12.5px;
 }
 
+/* Minis */
 .k-proof2__minis{
   display:grid;
   gap: 10px;
-}
-
-/* mobile: minis side-by-side feels “designed” */
-@media (max-width: 520px){
-  .k-proof2__minis{
-    grid-template-columns: 1fr;
-  }
-}
-@media (min-width: 521px) and (max-width: 959px){
-  .k-proof2__minis{
-    grid-template-columns: 1fr 1fr;
-  }
 }
 
 .k-proof2__mini{
@@ -477,7 +449,7 @@
   line-height: 1.45;
 }
 
-/* Desktop: left + right columns */
+/* ===== DESKTOP ===== */
 @media (min-width: 960px){
   .k-proof2__grid{
     grid-template-columns: 1.05fr .95fr;
@@ -486,6 +458,12 @@
 
     grid-template-areas: "left right";
   }
+}
+
+/* Small tweaks so tabs feel crisp on tiny screens */
+@media (max-width: 420px){
+  .k-proof2__tab{ padding: 10px 12px; }
+  .k-proof2__tabText{ font-size: 12.5px; }
 }
 
 @media (prefers-reduced-motion: reduce){
