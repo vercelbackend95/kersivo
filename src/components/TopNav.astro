@@ -40,12 +40,8 @@ import CtaButton from "./CtaButton.astro";
     <div class="k-topnav__actions">
       <a class="k-topnav__mini" href="#work">View work</a>
 
-      <CtaButton
-        href="#contact"
-        label="Get a quote"
-        variant="primary"
-        class="k-topnav__cta"
-      />
+      <!-- SAME as hero -->
+      <CtaButton href="#contact" label="Get a quote" variant="primary" class="k-topnav__cta" />
 
       <button
         class="k-topnav__burger"
@@ -54,8 +50,8 @@ import CtaButton from "./CtaButton.astro";
         aria-expanded="false"
         aria-controls="kTopnavPanel"
       >
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
+        <span class="k-topnav__burgerLine" aria-hidden="true"></span>
+        <span class="k-topnav__burgerLine" aria-hidden="true"></span>
       </button>
     </div>
   </div>
@@ -68,20 +64,8 @@ import CtaButton from "./CtaButton.astro";
       <a class="k-topnav__panelLink" href="#contact">Contact</a>
 
       <div class="k-topnav__panelCtas">
-        <CtaButton
-          href="#contact"
-          label="Get a quote"
-          variant="primary"
-          class="k-topnav__panelPrimary"
-        />
-
-        <CtaButton
-          href="#work"
-          label="View work"
-          variant="ghost"
-          magnetic={false}
-          class="k-topnav__panelGhost"
-        />
+        <CtaButton href="#contact" label="Get a quote" variant="primary" class="k-topnav__panelPrimary" />
+        <CtaButton href="#work" label="View work" variant="ghost" magnetic={false} class="k-topnav__panelGhost" />
       </div>
     </div>
   </div>
@@ -112,6 +96,7 @@ import CtaButton from "./CtaButton.astro";
         panel.hidden = false;
         root.classList.add("is-open");
         btn.setAttribute("aria-expanded", "true");
+        btn.setAttribute("aria-label", "Close menu");
         lockScroll(true);
       };
 
@@ -119,6 +104,7 @@ import CtaButton from "./CtaButton.astro";
         if (!panel || !btn) return;
         root.classList.remove("is-open");
         btn.setAttribute("aria-expanded", "false");
+        btn.setAttribute("aria-label", "Open menu");
         lockScroll(false);
         if (reduced) return (panel.hidden = true);
         setTimeout(() => (panel.hidden = true), 180);
