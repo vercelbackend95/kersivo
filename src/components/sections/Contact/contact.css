@@ -1,12 +1,13 @@
 /* =========================================
    Contact — Proof Console-size + style
-   Goal:
-   - Same “gabaryt” as ProofPack (uses .section + .container)
-   - Contact card fills container width like Proof Console
-   - Mobile-first, clean
+   - Same “gabaryt” as ProofPack (use .section + .container)
+   - Card fills container width like Proof Console
+   - Mobile-first, clean, premium
    ========================================= */
 
-/* NOTE: padding comes from `.section` in global.css now */
+/* Helps #contact land nicely under sticky topnav */
+#contact{ scroll-margin-top: 110px; }
+
 .k-contact{
   position: relative;
   overflow: hidden;
@@ -21,7 +22,7 @@
   --my: 20%;
 }
 
-/* Frame matches ProofPack sizing rhythm (padding clamp etc.) */
+/* Frame matches ProofPack sizing rhythm */
 .k-contact2__frame{
   position: relative;
   border-radius: 28px;
@@ -91,7 +92,7 @@
   font-size: 13px;
   letter-spacing: .02em;
   text-transform: uppercase;
-  color: rgba(255,255,255,.70);
+  color: rgba(255,255,255,.62);
   font-weight: 650;
 }
 
@@ -102,8 +103,9 @@
   color: rgba(255,255,255,.72);
   padding: 6px 10px;
   border-radius: 999px;
-  background: rgba(255,255,255,.03);
-  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.14);
+  border: 1px solid rgba(255,255,255,.10);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
 }
 
 .k-contact2__title{
@@ -133,6 +135,7 @@
   font-size: 13px;
 }
 
+/* bullet cards */
 .k-contact2__bullets{
   display:grid;
   gap: 10px;
@@ -148,6 +151,21 @@
   border-radius: 16px;
   background: rgba(0,0,0,.10);
   border: 1px solid rgba(255,255,255,.10);
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
+}
+
+@media (hover:hover){
+  .k-contact2__bullet:hover{
+    transform: translateY(-2px);
+    border-color: rgba(190,145,255,.22);
+    box-shadow: 0 18px 60px rgba(0,0,0,.28);
+    background: rgba(255,255,255,.025);
+  }
+}
+
+.k-contact2__bullet:focus-within{
+  border-color: rgba(190,145,255,.26);
+  box-shadow: 0 0 0 4px rgba(190,145,255,.10), 0 18px 60px rgba(0,0,0,.28);
 }
 
 .k-contact2__bulletIcon{
@@ -196,6 +214,24 @@
     radial-gradient(70% 120% at 25% 0%, rgba(190,145,255,.22), rgba(0,0,0,0) 58%),
     radial-gradient(70% 100% at 90% 10%, rgba(255,200,235,.10), rgba(0,0,0,0) 60%);
   opacity: .85;
+}
+
+/* subtle scanlines for “console” feel */
+.k-contact2__console::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  opacity:.16;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,.05) 0px,
+      rgba(255,255,255,.05) 1px,
+      rgba(0,0,0,0) 6px,
+      rgba(0,0,0,0) 10px
+    );
+  mix-blend-mode: overlay;
 }
 
 .k-contact2__consoleTop{
@@ -303,6 +339,8 @@
   margin-top: 14px;
   display:grid;
   gap: 12px;
+  position: relative;
+  z-index: 1;
 }
 
 .k-row{
@@ -430,6 +468,49 @@
   flex-wrap: wrap;
   margin-top: 4px;
 }
+/* ===== Action buttons (contact console) ===== */
+.k-act{
+  position: relative;
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  font-weight: 780;
+  letter-spacing: -0.01em;
+  color: rgba(255,255,255,.92);
+
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+  cursor: pointer;
+
+  transform: translate3d(var(--tx,0px), calc(var(--ty,0px) + var(--press,0px)), 0) scale(var(--scale,1));
+  transition:
+    transform 220ms cubic-bezier(.2,.9,.2,1),
+    background 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.k-act--ghost:hover{
+  background: rgba(255,255,255,.06);
+  border-color: rgba(255,255,255,.16);
+}
+
+.k-act--primary{
+  color: #0a0b10;
+  background: linear-gradient(135deg, rgba(105,140,255,1), rgba(170,95,255,1));
+  border-color: rgba(255,255,255,.0);
+  box-shadow: 0 22px 70px rgba(105,140,255,.22);
+}
+
+/* micro press — only primary */
+.k-act--primary:active{
+  --press: 1px;
+  --scale: .99;
+}
 
 .k-note{
   margin-top: 2px;
@@ -502,11 +583,51 @@
 }
 
 /* tiny phones */
+@media (max-width: 520px){
+  .k-contact2__frame{ padding: 16px; border-radius: 22px; }
+  .k-contact2__grid{ gap: 14px; }
+  .k-contact2__title{ font-size: 34px; }
+  .k-contact2__bullet{ padding: 9px 10px; border-radius: 14px; }
+  .k-contact2__console{ padding: 12px; border-radius: 18px; }
+}
+
 @media (max-width: 420px){
   .k-seg{ grid-template-columns: 1fr; }
   .k-meter{ flex-basis: 110px; }
 }
 
 @media (prefers-reduced-motion: reduce){
-  .k-chip, .k-seg button { transition: none !important; transform: none !important; }
+  .k-chip, .k-seg button, .k-contact2__bullet { transition: none !important; transform: none !important; }
+  .k-contact2__console::after{ display:none; }
+}
+/* ===== CTA jump highlight (0.8s glow sweep) ===== */
+.k-contact2__frame.is-highlight::after{
+  content:"";
+  position:absolute;
+  inset:-1px;
+  border-radius: inherit;
+  pointer-events:none;
+  background:
+    linear-gradient(
+      115deg,
+      rgba(0,0,0,0) 0%,
+      rgba(190,145,255,.00) 35%,
+      rgba(190,145,255,.22) 47%,
+      rgba(255,200,235,.14) 55%,
+      rgba(0,0,0,0) 72%
+    );
+  transform: translateX(-48%) skewX(-12deg);
+  opacity: 0;
+  animation: kGlowSweep 800ms cubic-bezier(.2,.9,.2,1);
+}
+
+@keyframes kGlowSweep{
+  0%   { opacity: 0; transform: translateX(-55%) skewX(-12deg); }
+  18%  { opacity: 1; }
+  65%  { opacity: .85; }
+  100% { opacity: 0; transform: translateX(55%) skewX(-12deg); }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .k-contact2__frame.is-highlight::after{ animation: none; display:none; }
 }

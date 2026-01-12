@@ -42,7 +42,8 @@
   text-decoration: none;
   user-select: none;
 
-  transform: translate3d(var(--tx, 0px), var(--ty, 0px), 0);
+transform: translate3d(var(--tx, 0px), calc(var(--ty, 0px) + var(--press, 0px)), 0) scale(var(--scale, 1));
+
   will-change: transform;
 
   transition:
@@ -53,6 +54,11 @@
     color 200ms ease;
 
   border: 1px solid transparent;
+}
+/* micro press — only primary */
+.k-btn--primary:active{
+  --press: 1px;
+  --scale: .99;
 }
 
 .k-btn:focus-visible{

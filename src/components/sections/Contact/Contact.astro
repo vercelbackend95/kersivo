@@ -1,17 +1,32 @@
 ---
 import "./contact.css";
-import ContactForm from "./islands/ContactForm.tsx";
-
-export interface Props {
-  email?: string;
-  whatsapp?: string;
-}
-
-const { email = "hello@kersivo.co.uk", whatsapp = "+447000000000" } = Astro.props;
+import ContactForm from "./islands/ContactForm";
 ---
 
-<section class="k-contact section" id="contact" aria-label="Contact">
+<section id="contact" class="k-contact section">
   <div class="container">
-    <ContactForm client:load email={email} whatsapp={whatsapp} />
+    <div class="k-contact2">
+      <div class="k-contact2__frame" data-contact-frame>
+        <span class="k-contact2__glow" aria-hidden="true"></span>
+        <ContactForm client:load />
+      </div>
+    </div>
   </div>
+
+  <script>
+    (() => {
+      const root = document.querySelector("#contact .k-contact2");
+      if (!root) return;
+
+      const onMove = (e) => {
+        const r = root.getBoundingClientRect();
+        const mx = ((e.clientX - r.left) / r.width) * 100;
+        const my = ((e.clientY - r.top) / r.height) * 100;
+        root.style.setProperty("--mx", mx.toFixed(2) + "%");
+        root.style.setProperty("--my", my.toFixed(2) + "%");
+      };
+
+      root.addEventListener("pointermove", onMove, { passive: true });
+    })();
+  </script>
 </section>

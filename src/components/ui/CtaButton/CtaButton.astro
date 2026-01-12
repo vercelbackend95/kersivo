@@ -15,20 +15,24 @@ const {
   href,
   label,
   variant = "primary",
-  magnetic = true,
   arrow = true,
   class: extraClass = "",
 } = Astro.props;
 
-const classes = `k-btn k-btn--${variant} ${magnetic ? "k-btn--magnetic" : ""} ${extraClass}`.trim();
+// magnet: tylko primary (chyba że jawnie ustawisz magnetic)
+const magnetic =
+  typeof Astro.props.magnetic === "boolean" ? Astro.props.magnetic : variant === "primary";
 
+const classes = `k-btn k-btn--${variant} ${magnetic ? "k-btn--magnetic" : ""} ${extraClass}`.trim();
 const hasShine = variant === "primary";
+const isContact = (href || "").trim() === "#contact";
 ---
 
 <a
   href={href}
   class={classes}
   data-magnetic={magnetic ? "true" : "false"}
+  data-cta={isContact ? "contact" : undefined}
 >
   <span class="k-btn__label">{label}</span>
 
@@ -48,10 +52,8 @@ const hasShine = variant === "primary";
 
     const reduced =
       window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
     if (reduced) return;
 
-    // Only desktop-ish pointers
     const fine = window.matchMedia && window.matchMedia("(pointer: fine)").matches;
     if (!fine) return;
 

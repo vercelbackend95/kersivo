@@ -15,39 +15,40 @@ interface Props {
   title?: string;
   description?: string;
 }
+
 const {
-  title = "Kersivo — Web Design & Development for UK Small Businesses",
-  description = "Kersivo builds premium, conversion-focused websites for UK small businesses — fast Astro builds, clean UX, and subtle motion.",
-} = Astro.props;
+  title = "Kersivo — Web Design & Development",
+  description = "Premium, performance-first websites for UK small businesses. Astro-first builds, SEO-ready, subtle high-end motion.",
+} = Astro.props as Props;
 ---
 
 <!doctype html>
 <html lang="en-GB">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 
     <title>{title}</title>
     <meta name="description" content={description} />
+
     <link rel="canonical" href={PAGE_URL} />
 
-    <!-- Icons -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="theme-color" content="#07070A" />
-    <!-- Open Graph -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate icon" href="/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <meta property="og:site_name" content="Kersivo" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={PAGE_URL} />
     <meta property="og:title" content="Kersivo — Web Design & Development" />
     <meta
       property="og:description"
-      content="Premium, performance-first websites for UK small businesses. Astro-first builds, SEO-ready, subtle high-end motion."
+      content="Premium design, ruthless performance, and clear messaging — built for UK small businesses."
     />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content={PAGE_URL} />
     <meta property="og:image" content={OG_IMAGE} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:locale" content="en_GB" />
 
-    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Kersivo — Web Design & Development" />
     <meta
@@ -65,30 +66,29 @@ const {
         "@graph": [
           {
             "@type": "Organization",
-            "@id": `${SITE_URL}/#org`,
-            "name": "Kersivo",
-            "url": SITE_URL,
-            "description": "Web design & development studio building premium, conversion-focused websites for UK small businesses.",
-            "areaServed": { "@type": "Country", "name": "United Kingdom" }
+            name: "Kersivo",
+            url: SITE_URL,
+            logo: `${SITE_URL}/favicon.svg`,
+            sameAs: [],
           },
           {
             "@type": "WebSite",
-            "@id": `${SITE_URL}/#website`,
-            "url": SITE_URL,
-            "name": "Kersivo",
-            "publisher": { "@id": `${SITE_URL}/#org` },
-            "inLanguage": "en-GB"
+            name: "Kersivo",
+            url: SITE_URL,
+            potentialAction: {
+              "@type": "SearchAction",
+              target: `${SITE_URL}/?q={search_term_string}`,
+              "query-input": "required name=search_term_string",
+            },
           },
           {
-            "@type": "ProfessionalService",
-            "@id": `${SITE_URL}/#service`,
-            "name": "Kersivo Web Design & Development",
-            "url": SITE_URL,
-            "provider": { "@id": `${SITE_URL}/#org` },
-            "areaServed": { "@type": "Country", "name": "United Kingdom" },
-            "serviceType": ["Web design", "Web development", "SEO foundations", "Conversion optimisation"]
-          }
-        ]
+            "@type": "Service",
+            name: "Web Design & Development",
+            provider: { "@type": "Organization", name: "Kersivo" },
+            areaServed: "GB",
+            serviceType: "Web design, development, performance and SEO foundations",
+          },
+        ],
       })}
     </script>
   </head>
@@ -96,25 +96,25 @@ const {
   <body>
     <SiteBg />
 
-    <div class="site-foreground">
+    <div id="top" class="k-shell">
       <TopNav />
-      <slot />
+      <main id="main">
+        <slot />
+      </main>
     </div>
 
-    <!-- Always start at top unless user has a hash -->
+    <!-- Always start at top (prevents Safari restoring scroll into sections) -->
     <script>
       (() => {
-        const navEntry = performance.getEntriesByType?.("navigation")?.[0];
-        const navType = navEntry?.type || "navigate";
+        const nav = performance.getEntriesByType?.("navigation")?.[0];
+        const type = nav && nav.type ? nav.type : "";
+        const isReload = type === "reload";
 
-        const hasHash = !!location.hash && location.hash !== "#";
-        const shouldReset = !hasHash && (navType === "navigate" || navType === "reload");
-
-        if ("scrollRestoration" in history) {
-          history.scrollRestoration = shouldReset ? "manual" : "auto";
-        }
+        const hasHash = !!location.hash && location.hash !== "#top";
+        const shouldReset = !hasHash;
 
         const toTop = () => {
+          window.scrollTo(0, 0);
           requestAnimationFrame(() => window.scrollTo(0, 0));
           setTimeout(() => window.scrollTo(0, 0), 60);
         };
@@ -124,7 +124,92 @@ const {
           window.addEventListener("pageshow", (e) => {
             if (e.persisted) toTop();
           });
+        } else if (isReload) {
+          // reload with hash: keep hash behavior
         }
+      })();
+    </script>
+
+    <!-- Global CTA -> #contact: smooth scroll + focus first field + 0.8s glow sweep -->
+    <script>
+      (() => {
+        const reduced =
+          window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        const isContactLink = (a) => {
+          try {
+            const u = new URL(a.getAttribute("href") || a.href || "", location.href);
+            return u.hash === "#contact";
+          } catch {
+            return (a.getAttribute("href") || "") === "#contact";
+          }
+        };
+
+        const highlight = () => {
+          const frame =
+            document.querySelector("#contact [data-contact-frame]") ||
+            document.querySelector("#contact .k-contact2__frame");
+          if (!frame) return;
+
+          frame.classList.remove("is-highlight");
+          void frame.offsetWidth;
+          frame.classList.add("is-highlight");
+          setTimeout(() => frame.classList.remove("is-highlight"), 900);
+        };
+
+        const focusFirst = () => {
+          const first =
+            document.querySelector("#contact [data-first-field]") ||
+            document.querySelector(
+              "#contact input, #contact textarea, #contact select, #contact button"
+            );
+          if (!first) return;
+          try {
+            first.focus({ preventScroll: true });
+          } catch {
+            first.focus();
+          }
+        };
+
+        const scrollToContact = () => {
+          const target = document.querySelector("#contact");
+          if (!target) return;
+
+          if (location.hash !== "#contact") {
+            history.pushState(null, "", "#contact");
+          }
+
+          target.scrollIntoView({
+            behavior: reduced ? "auto" : "smooth",
+            block: "start",
+          });
+
+          const start = performance.now();
+          const tick = () => {
+            const r = target.getBoundingClientRect();
+            const done = r.top < 140 && r.top > -80;
+            if (done || performance.now() - start > 900) {
+              highlight();
+              setTimeout(focusFirst, reduced ? 0 : 60);
+              return;
+            }
+            requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        };
+
+        document.addEventListener(
+          "click",
+          (e) => {
+            const a = e.target && e.target.closest ? e.target.closest("a") : null;
+            if (!a) return;
+            if (!isContactLink(a)) return;
+
+            e.preventDefault();
+            scrollToContact();
+          },
+          { passive: false }
+        );
       })();
     </script>
   </body>
