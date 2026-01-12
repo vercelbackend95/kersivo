@@ -19,11 +19,14 @@ export default function WorkShowcase() {
   const [device, setDevice] = useState<"desktop" | "mobile">("desktop");
 
   const focusMeta = useMemo(() => {
-    const map: Record<Focus, { title: string; desc: string; highlight: string }> = {
+    const map: Record<
+      Focus,
+      { title: string; desc: string; highlight: "quote" | "seo" | "speed" }
+    > = {
       conversion: {
         title: "Conversion-first flow",
         desc: "Clear CTA rhythm, friction-free sections, and mobile thumb-zone decisions.",
-        highlight: "conversion",
+        highlight: "quote",
       },
       seo: {
         title: "SEO-first foundation",
@@ -39,25 +42,65 @@ export default function WorkShowcase() {
     return map[focus];
   }, [focus]);
 
+  const buying = useMemo(
+    () => [
+      {
+        id: "quote" as const,
+        icon: "✓",
+        title: "Quote in 24h",
+        desc: "with a clean scope + budget range.",
+      },
+      {
+        id: "proof" as const,
+        icon: "▦",
+        title: "Proof Pack",
+        desc: "during delivery — checklists, snapshots, visible progress.",
+      },
+      {
+        id: "speed" as const,
+        icon: "⚡",
+        title: "Performance budget mindset",
+        desc: "fast by default, no bloat.",
+      },
+      {
+        id: "seo" as const,
+        icon: "⌁",
+        title: "SEO foundations",
+        desc: "schema, Open Graph, clean structure.",
+      },
+    ],
+    []
+  );
+
   return (
     <div className="k-workCard" data-focus={focus}>
       <div className="k-work__head">
         <div>
           <div className="k-work__eyebrow">WORK</div>
+
           <h2 className="k-work__title">
             One live demo. <span className="k-work__grad">Real build</span> quality.
           </h2>
+
           <p className="k-work__lead">
             No fake case studies. You get a clean system + a tailored skin — then we ship it fast.
           </p>
         </div>
 
+        {/* tags: ONLY 3, reszta w tooltip + spec strip */}
         <div className="k-work__tags" aria-label="Work tags">
           <span className="k-work__tag">Proof Pack</span>
           <span className="k-work__tag">Fast builds</span>
-          <span className="k-work__tag">No bloat</span>
           <span className="k-work__tag">Astro-first</span>
-          <span className="k-work__tag">60fps motion</span>
+
+          <span className="k-work__moreWrap">
+            <button className="k-work__moreBtn" type="button" aria-label="More details">
+              i
+            </button>
+            <span className="k-work__tooltip" role="tooltip">
+              No bloat • 60fps motion
+            </span>
+          </span>
         </div>
       </div>
 
@@ -70,6 +113,7 @@ export default function WorkShowcase() {
                 <span className="k-stage__name">Neo Gentleman — Barber Demo</span>
                 <span className="k-stage__live">LIVE</span>
               </div>
+
               <div className="k-stage__sub">
                 Premium dark vibe, sharp conversion flow, app-like motion. Frontend-only — fast by design.
               </div>
@@ -78,198 +122,193 @@ export default function WorkShowcase() {
 
           <div className="k-stage__frame">
             <div className="k-stage__chrome" aria-hidden="true">
-              <span className="k-stage__dots"></span>
+              <span className="k-stage__dots" />
               <span className="k-stage__url">kersivo.co.uk/demo</span>
               <span className="k-stage__pill">Preview</span>
             </div>
 
-            <div
-              className={cn("k-stage__viewport", device === "mobile" && "is-mobile")}
-              aria-label="Demo preview"
-            >
+            <div className={cn("k-stage__viewport", device === "mobile" && "is-mobile")} aria-label="Demo preview">
               {/* WOW: subtle scanline + glare only for Work */}
               <span className="k-stage__scan" aria-hidden="true" />
               <span className="k-stage__glare" aria-hidden="true" />
 
-              {/* placeholder area (we’ll swap to real screenshot / iframe later) */}
+              {/* placeholder (swap to screenshot/iframe later) */}
               <div className="k-stage__placeholder">
                 <div className="k-stage__phLabel">Demo preview</div>
               </div>
             </div>
 
             <div className="k-stage__controls" aria-label="Demo controls">
-              <div className="k-toggle" role="group" aria-label="Device">
+              <div className="k-toggle" role="tablist" aria-label="Device toggle">
                 <button
                   type="button"
-                  className={cn(device === "desktop" && "is-on")}
+                  className={cn("k-toggle__btn", device === "desktop" && "is-active")}
                   onClick={() => setDevice("desktop")}
+                  aria-selected={device === "desktop"}
                 >
                   Desktop
                 </button>
                 <button
                   type="button"
-                  className={cn(device === "mobile" && "is-on")}
+                  className={cn("k-toggle__btn", device === "mobile" && "is-active")}
                   onClick={() => setDevice("mobile")}
+                  aria-selected={device === "mobile"}
                 >
                   Mobile
                 </button>
               </div>
 
-              <div className="k-toggle k-toggle--focus" role="group" aria-label="Focus">
+              <div className="k-focus" role="tablist" aria-label="Focus switch">
                 <button
                   type="button"
-                  className={cn(focus === "conversion" && "is-on")}
+                  className={cn("k-focus__btn", focus === "conversion" && "is-active")}
                   onClick={() => setFocus("conversion")}
+                  aria-selected={focus === "conversion"}
                 >
                   Conversion
                 </button>
                 <button
                   type="button"
-                  className={cn(focus === "seo" && "is-on")}
+                  className={cn("k-focus__btn", focus === "seo" && "is-active")}
                   onClick={() => setFocus("seo")}
+                  aria-selected={focus === "seo"}
                 >
                   SEO
                 </button>
                 <button
                   type="button"
-                  className={cn(focus === "speed" && "is-on")}
+                  className={cn("k-focus__btn", focus === "speed" && "is-active")}
                   onClick={() => setFocus("speed")}
+                  aria-selected={focus === "speed"}
                 >
                   Speed
                 </button>
               </div>
             </div>
 
-            <div className="k-stage__focus">
-              <AnimatePresence mode="wait" initial={false}>
+            <div className="k-focusMeta" aria-live="polite">
+              <AnimatePresence mode="wait">
                 <motion.div
                   key={focus}
-                  initial={{ opacity: 0, y: 6, filter: "blur(4px)" }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, y: -6, filter: "blur(4px)" }}
-                  transition={spring}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0, transition: spring }}
+                  exit={{ opacity: 0, y: -6, transition: { duration: 0.12 } }}
                 >
-                  <div className="k-stage__focusTitle">{focusMeta.title}</div>
-                  <div className="k-stage__focusDesc">{focusMeta.desc}</div>
+                  <div className="k-focusMeta__title">{focusMeta.title}</div>
+                  <div className="k-focusMeta__desc">{focusMeta.desc}</div>
                 </motion.div>
               </AnimatePresence>
             </div>
 
-            <div className="k-specStrip" aria-label="Build specs">
+            <div className="k-specStrip" aria-label="Specs">
               <span>Build: Astro + Islands</span>
-              <span className="k-specStrip__dot">•</span>
+              <span className="k-specStrip__sep">•</span>
               <span>Motion: Framer (light)</span>
-              <span className="k-specStrip__dot">•</span>
+              <span className="k-specStrip__sep">•</span>
               <span>SEO: Schema + OG</span>
-              <span className="k-specStrip__dot">•</span>
+              <span className="k-specStrip__sep">•</span>
               <span>Delivery: Proof Pack</span>
+              <span className="k-specStrip__sep">•</span>
+              <span>JS: Minimal</span>
             </div>
 
             <div className="k-stage__ctaRow">
-              <a className="k-workBtn k-workBtn--primary" href="#" aria-label="View live demo">
+              {/* primary only ONCE per section */}
+              <a className="k-workBtn k-workBtn--primary" href="https://bourneweb-demos.vercel.app/projects/local-barber-neo-gentleman-site" target="_blank" rel="noreferrer">
                 View live demo <span aria-hidden="true">→</span>
               </a>
+
+              {/* “Get a quote” = ghost/link, bo globalny cel */}
               <a className="k-workBtn k-workBtn--ghost" href="#contact">
                 Get a quote <span aria-hidden="true">→</span>
               </a>
-              <div className="k-stage__tip">
-                Tip: switch “Focus” to see what we optimise first — conversion, SEO, or speed.
-              </div>
+
+              <div className="k-stage__tip">Switch focus to see what we optimise first.</div>
             </div>
           </div>
         </div>
 
-        {/* RIGHT: BUYING + PIPELINE */}
-        <div className="k-work__side">
+        {/* RIGHT: BUYING + TIMELINE */}
+        <div className="k-side">
           <div className="k-buy">
-            <div className="k-buy__top">
+            <div className="k-buy__head">
               <div className="k-buy__title">What you’re buying</div>
-              <div className="k-buy__hint">clear scope • visible progress</div>
+              <div className="k-buy__meta">clear scope • visible progress</div>
             </div>
 
             <div className="k-buy__list" role="list">
-              <div className="k-buy__item k-buy__item--conversion" role="listitem">
-                <div className="k-buy__icon">✓</div>
-                <div>
-                  <div className="k-buy__line">
-                    <strong>Quote in 24h</strong> with a clean scope + budget range.
-                  </div>
-                </div>
-              </div>
+              {buying.map((x) => {
+                const active =
+                  (focusMeta.highlight === "quote" && x.id === "quote") ||
+                  (focusMeta.highlight === "seo" && x.id === "seo") ||
+                  (focusMeta.highlight === "speed" && x.id === "speed");
 
-              <div className="k-buy__item k-buy__item--proof" role="listitem">
-                <div className="k-buy__icon">⧉</div>
-                <div>
-                  <div className="k-buy__line">
-                    <strong>Proof Pack</strong> during delivery — checklists, snapshots, visible progress.
+                return (
+                  <div key={x.id} className={cn("k-buy__item", active && "is-active")} role="listitem">
+                    <div className="k-buy__icon" aria-hidden="true">
+                      {x.icon}
+                    </div>
+                    <div>
+                      <div className="k-buy__line">
+                        <span className="k-buy__strong">{x.title}</span> {x.desc}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-
-              <div className="k-buy__item k-buy__item--speed" role="listitem">
-                <div className="k-buy__icon">⚡</div>
-                <div>
-                  <div className="k-buy__line">
-                    <strong>Performance budget</strong> mindset — fast by default, no bloat.
-                  </div>
-                </div>
-              </div>
-
-              <div className="k-buy__item k-buy__item--seo" role="listitem">
-                <div className="k-buy__icon">⌁</div>
-                <div>
-                  <div className="k-buy__line">
-                    <strong>SEO foundations</strong> — schema, Open Graph, clean structure.
-                  </div>
-                </div>
-              </div>
+                );
+              })}
             </div>
 
             <div className="k-buy__cta">
-              <a className="k-workBtn k-workBtn--primary" href="#contact">
+              {/* No more primary here */}
+              <a className="k-workBtn k-workBtn--ghost" href="https://bourneweb-demos.vercel.app/projects/local-barber-neo-gentleman-site" target="_blank" rel="noreferrer">
+                View demo <span aria-hidden="true">→</span>
+              </a>
+              <a className="k-workBtn k-workBtn--link" href="#contact">
                 Get a quote <span aria-hidden="true">→</span>
               </a>
-              <a className="k-workBtn k-workBtn--link" href="#">
-                View demo
-              </a>
             </div>
           </div>
 
-          <div className="k-pipe">
-            <div className="k-pipe__top">
-              <div className="k-pipe__title">Next demos</div>
-              <div className="k-pipe__badge">IN PRODUCTION</div>
+          <div className="k-timeline" aria-label="Next demos timeline">
+            <div className="k-timeline__head">
+              <div className="k-timeline__title">Next demos</div>
+              <span className="k-timeline__badge">IN PRODUCTION</span>
             </div>
 
-            {/* timeline (not cards) */}
-            <ol className="k-timeline" aria-label="Demo pipeline">
-              <li className="k-timeline__item">
-                <span className="k-timeline__dot" aria-hidden="true" />
-                <div className="k-timeline__body">
-                  <div className="k-timeline__row">
-                    <div className="k-timeline__name">Clinic intake + booking</div>
-                    <span className="k-timeline__status is-live">IN PRODUCTION</span>
+            <div className="k-timeline__track">
+              <div className="k-tlItem">
+                <div className="k-tlDot" aria-hidden="true" />
+                <div className="k-tlBody">
+                  <div className="k-tlTop">
+                    <div className="k-tlName">Clinic intake + booking</div>
+                    <span className="k-tlStatus is-live">IN PRODUCTION</span>
                   </div>
-                  <div className="k-timeline__sub">Trust stack • intake-first flow</div>
-                  <button type="button" className="k-timeline__btn">Notify me <span aria-hidden="true">→</span></button>
+                  <div className="k-tlSub">Trust stack • intake-first flow</div>
+                  <button type="button" className="k-workBtn k-workBtn--ghost k-workBtn--wide">
+                    Notify me <span aria-hidden="true">→</span>
+                  </button>
                 </div>
-              </li>
+              </div>
 
-              <li className="k-timeline__item">
-                <span className="k-timeline__dot is-dim" aria-hidden="true" />
-                <div className="k-timeline__body">
-                  <div className="k-timeline__row">
-                    <div className="k-timeline__name">Electrician local lead gen</div>
-                    <span className="k-timeline__status is-queued">QUEUED</span>
+              <div className="k-tlLine" aria-hidden="true" />
+
+              <div className="k-tlItem">
+                <div className="k-tlDot is-dim" aria-hidden="true" />
+                <div className="k-tlBody">
+                  <div className="k-tlTop">
+                    <div className="k-tlName">Electrician local lead gen</div>
+                    <span className="k-tlStatus">QUEUED</span>
                   </div>
-                  <div className="k-timeline__sub">Call-first UX • local SEO framing</div>
-                  <button type="button" className="k-timeline__btn">Notify me <span aria-hidden="true">→</span></button>
+                  <div className="k-tlSub">Call-first UX • local SEO framing</div>
+                  <button type="button" className="k-workBtn k-workBtn--ghost k-workBtn--wide">
+                    Notify me <span aria-hidden="true">→</span>
+                  </button>
                 </div>
-              </li>
-            </ol>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </div>      
     </div>
   );
 }
