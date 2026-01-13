@@ -3,17 +3,22 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
 import Hero from "../components/sections/Hero/Hero.astro";
 import Work from "../components/sections/Work/Work.astro";
+import Packages from "../components/sections/Packages/Packages.astro";
 import ProofPack from "../components/sections/ProofPack/ProofPack.astro";
 import Contact from "../components/sections/Contact/Contact.astro";
+
+
 ---
 
 <BaseLayout>
   <main id="main">
     <Hero />
     <Work />
+
+    <Packages />
+
     <ProofPack />
 
-    <section id="services" style="height: 1px;"></section>
     <section id="process" style="height: 1px;"></section>
 
     <Contact />
