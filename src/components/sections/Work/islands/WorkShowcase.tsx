@@ -85,7 +85,7 @@ const focusCopy: Record<Focus, { title: string; lines: string[] }> = {
   speed: {
     title: "Speed & quality",
     lines: [
-      "Hybrid previews: screenshot first, live iframe on demand.",
+      "Instant preview — loads fast on mobile.",
       "Minimal JS: islands only where it matters.",
       "60fps motion, respects reduced motion preferences.",
     ],
@@ -118,7 +118,6 @@ export default function WorkShowcase() {
   );
 
   const [tipOpen, setTipOpen] = useState(false);
-  const [isLivePreview, setIsLivePreview] = useState(false);
 
   const pulseRef = useRef(0);
   const [pulseKey, setPulseKey] = useState(0);
@@ -227,94 +226,109 @@ export default function WorkShowcase() {
               aria-labelledby={`k-work-device-tab-${device}`}
               aria-label="Demo preview"
             >
-              {!isLivePreview ? (
-                <div className="k-stage__shot">
-                  <img
-                    className={frameClass}
-                    src="/work/neo-gentleman.webp"
-                    alt="Neo Gentleman demo preview"
-                    loading="lazy"
-                    decoding="async"
-                    onLoad={(e) => {
-                      (e.currentTarget as HTMLImageElement).style.opacity = "1";
-                    }}
-                    onError={(e) => {
-                      (e.currentTarget as HTMLImageElement).style.opacity = "0";
-                    }}
-                  />
+              <div className="k-stage__shot">
+                <img
+                  className={frameClass}
+                  src="/work/neo-gentleman.webp"
+                  alt="Neo Gentleman demo preview"
+                  loading="lazy"
+                  decoding="async"
+                  onLoad={(e) => {
+                    (e.currentTarget as HTMLImageElement).style.opacity = "1";
+                  }}
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).style.opacity = "0";
+                  }}
+                />
 
-                  <div className="k-stage__overlay" aria-hidden="true" />
+                <div className="k-stage__overlay" aria-hidden="true" />
 
-                  <div className="k-stage__shotActions">
-                    <button
-                      type="button"
-                      className="k-stage__loadBtn"
-                      onClick={() => setIsLivePreview(true)}
-                    >
-                      Load live preview <span aria-hidden="true">→</span>
-                    </button>
-
-                    <a className="k-stage__openShot" href={DEMO_HREF} aria-label="Open demo">
-                      Open demo <span aria-hidden="true">→</span>
-                    </a>
+                {/* ACTIONS: device toggle + open demo */}
+                <div className="k-stage__shotActions">
+                  <div
+                    className="k-toggle k-toggle--shot k-toggle--compact"
+                    role="tablist"
+                    aria-label="Device"
+                    onKeyDown={(e) =>
+                      moveTab<Device>({
+                        e,
+                        keys: deviceTabs.map((t) => t.key),
+                        current: device,
+                        onChange: (next) => setDevice(next),
+                        refs: deviceTabRefs,
+                      })
+                    }
+                  >
+                    {deviceTabs.map((t, i) => (
+                      <button
+                        key={t.key}
+                        ref={(el) => {
+                          deviceTabRefs.current[i] = el;
+                        }}
+                        id={`k-work-device-tab-${t.key}`}
+                        role="tab"
+                        type="button"
+                        aria-selected={device === t.key}
+                        aria-controls="k-work-device-panel"
+                        tabIndex={device === t.key ? 0 : -1}
+                        className={cn(device === t.key && "is-on")}
+                        onClick={() => setDevice(t.key)}
+                      >
+                        {t.label}
+                      </button>
+                    ))}
                   </div>
-                </div>
-              ) : (
-                <div className="k-stage__liveWrap">
-                  <iframe
-                    className={frameClass}
-                    src={DEMO_HREF}
-                    title="Live demo"
-                    loading="lazy"
-                    referrerPolicy="no-referrer"
-                  />
-                  <button
-                    type="button"
-                    className="k-stage__closeLive"
-                    onClick={() => setIsLivePreview(false)}
-                  >
-                    Back to screenshot
-                  </button>
-                </div>
-              )}
-            </div>
 
-            {/* Controls */}
-            <div className="k-stage__controls" aria-label="Demo controls">
-              <div
-                className="k-toggle"
-                role="tablist"
-                aria-label="Device"
-                onKeyDown={(e) =>
-                  moveTab<Device>({
-                    e,
-                    keys: deviceTabs.map((t) => t.key),
-                    current: device,
-                    onChange: (next) => setDevice(next),
-                    refs: deviceTabRefs,
-                  })
-                }
-              >
-                {deviceTabs.map((t, i) => (
-                  <button
-                    key={t.key}
-                    ref={(el) => {
-                      deviceTabRefs.current[i] = el;
-                    }}
-                    id={`k-work-device-tab-${t.key}`}
-                    role="tab"
-                    type="button"
-                    aria-selected={device === t.key}
-                    aria-controls="k-work-device-panel"
-                    tabIndex={device === t.key ? 0 : -1}
-                    className={cn(device === t.key && "is-on")}
-                    onClick={() => setDevice(t.key)}
-                  >
-                    {t.label}
-                  </button>
-                ))}
+                  <a className="k-stage__openShot" href={DEMO_HREF} aria-label="Open demo">
+                    Open demo <span aria-hidden="true">→</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT */}
+          <div className="k-work__rightCol">
+            {/* NEXT DEMOS */}
+            <div className="k-pipe">
+              <div className="k-pipe__top">
+                <div className="k-pipe__title">Next demos</div>
+                <div className="k-pipe__badge">IN PRODUCTION</div>
               </div>
 
+              <ul className="k-timeline" aria-label="Demo pipeline">
+                <li className="k-timeline__item">
+                  <div className="k-timeline__dot is-on" aria-hidden="true" />
+                  <div className="k-timeline__content">
+                    <div className="k-timeline__row">
+                      <span className="k-timeline__name">Electrician</span>
+                    </div>
+                    <div className="k-timeline__meta">Service pages • quote flow • reviews</div>
+                  </div>
+                </li>
+
+                <li className="k-timeline__item">
+                  <div className="k-timeline__dot is-queued" aria-hidden="true" />
+                  <div className="k-timeline__content">
+                    <div className="k-timeline__row">
+                      <span className="k-timeline__name">Clinic intake</span>
+                    </div>
+                    <div className="k-timeline__meta">Call-first UX • local SEO framing</div>
+
+                    <CtaLink
+                      href="#contact"
+                      label="Notify me"
+                      variant="ghost"
+                      className="k-timeline__btn"
+                      ariaLabel="Notify me when Clinic intake demo is live"
+                    />
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            {/* FOCUS (soft panel) */}
+            <div className="k-sideFocus" aria-label="Priorities">
               <div
                 className="k-toggle k-toggle--focus"
                 role="tablist"
@@ -348,112 +362,35 @@ export default function WorkShowcase() {
                   </button>
                 ))}
               </div>
-            </div>
 
-            <div
-              className="k-stage__focus"
-              role="tabpanel"
-              id="k-work-focus-panel"
-              aria-labelledby={`k-work-focus-tab-${focus}`}
-            >
-              <div className="k-stage__focusTitle">{active.title}</div>
+              <div
+                className="k-sideFocus__body"
+                role="tabpanel"
+                id="k-work-focus-panel"
+                aria-labelledby={`k-work-focus-tab-${focus}`}
+              >
+                <div className="k-sideFocus__title">{active.title}</div>
 
-              <AnimatePresence mode="wait">
-                <motion.ul
-                  key={focus}
-                  className="k-stage__focusList"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.22 }}
-                >
-                  {active.lines.map((ln) => (
-                    <li key={ln}>{ln}</li>
-                  ))}
-                </motion.ul>
-              </AnimatePresence>
-            </div>
-          </div>
-
-          {/* RIGHT */}
-          <div className="k-work__rightCol">
-            {/* BUYING */}
-            <div className="k-buy">
-              <div className="k-buy__top">
-                <div className="k-buy__title">What you’re buying</div>
-                <div className="k-buy__badge">SYSTEM</div>
+                <AnimatePresence mode="wait">
+                  <motion.ul
+                    key={focus}
+                    className="k-sideFocus__list"
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.22 }}
+                  >
+                    {active.lines.map((ln) => (
+                      <li key={ln}>{ln}</li>
+                    ))}
+                  </motion.ul>
+                </AnimatePresence>
               </div>
-
-              <div className="k-buy__items" aria-label="What you're buying">
-                <div className={cn("k-buy__item", "k-buy__item--conversion", pulseKey && "is-on")}>
-                  <div className="k-buy__row">
-                    <span className="k-buy__pill">1</span>
-                    <span className="k-buy__label">Conversion flow</span>
-                  </div>
-                  <div className="k-buy__line">Clear path → fewer clicks → more enquiries.</div>
-                </div>
-
-                <div className={cn("k-buy__item", "k-buy__item--seo")}>
-                  <div className="k-buy__row">
-                    <span className="k-buy__pill">2</span>
-                    <span className="k-buy__label">SEO foundations</span>
-                  </div>
-                  <div className="k-buy__line">Built to rank locally (UK small business intent).</div>
-                </div>
-
-                <div className={cn("k-buy__item", "k-buy__item--speed")}>
-                  <div className="k-buy__row">
-                    <span className="k-buy__pill">3</span>
-                    <span className="k-buy__label">Speed & build quality</span>
-                  </div>
-                  <div className="k-buy__line">Fast, stable, and easy to extend.</div>
-                </div>
-              </div>
-            </div>
-
-            {/* NEXT DEMOS */}
-            <div className="k-pipe">
-              <div className="k-pipe__top">
-                <div className="k-pipe__title">Next demos</div>
-                <div className="k-pipe__badge">IN PRODUCTION</div>
-              </div>
-
-              <ul className="k-timeline" aria-label="Demo pipeline">
-                <li className="k-timeline__item">
-                  <div className="k-timeline__dot is-on" aria-hidden="true" />
-                  <div className="k-timeline__content">
-                    <div className="k-timeline__row">
-                      <span className="k-timeline__name">Electrician</span>
-                      <span className="k-timeline__status is-build">BUILD</span>
-                    </div>
-                    <div className="k-timeline__meta">Service pages • quote flow • reviews</div>
-                  </div>
-                </li>
-
-                <li className="k-timeline__item">
-                  <div className="k-timeline__dot is-queued" aria-hidden="true" />
-                  <div className="k-timeline__content">
-                    <div className="k-timeline__row">
-                      <span className="k-timeline__name">Clinic intake</span>
-                      <span className="k-timeline__status is-queued">QUEUED</span>
-                    </div>
-                    <div className="k-timeline__meta">Call-first UX • local SEO framing</div>
-
-                    <CtaLink
-                      href="#contact"
-                      label="Notify me"
-                      variant="ghost"
-                      className="k-timeline__btn"
-                      ariaLabel="Notify me when Clinic intake demo is live"
-                    />
-                  </div>
-                </li>
-              </ul>
             </div>
           </div>
         </div>
 
-        {/* CTA STRIP (no specs, no tip) */}
+        {/* CTA STRIP (no frame) */}
         <div className="k-ctaStrip" aria-label="Actions">
           <div className="k-stage__ctaRow k-stage__ctaRow--right">
             <div className="k-stage__ctaBtns">
@@ -462,7 +399,6 @@ export default function WorkShowcase() {
             </div>
           </div>
         </div>
-
 
         {/* subtle bg pulse */}
         <AnimatePresence>
