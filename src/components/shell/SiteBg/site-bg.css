@@ -69,5 +69,5 @@
     100%{ transform: translate3d(1.2%, -0.8%, 0) scale(1.02); }
   }
 }
-.site-bg{ z-index: 0; }
+
 .site-foreground{ position: relative; z-index: 1; }
