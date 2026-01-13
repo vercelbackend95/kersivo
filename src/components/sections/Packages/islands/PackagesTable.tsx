@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 
 type ModeKey = "website" | "seo" | "launch";
 type TierKey = "starter" | "growth" | "scale";
@@ -28,7 +28,7 @@ function cn(...x: Array<string | false | undefined | null>) {
   return x.filter(Boolean).join(" ");
 }
 
-const spring = { type: "spring" as const, stiffness: 520, damping: 40, mass: 0.8 };
+const spring = { type: "spring" as const, stiffness: 520, damping: 40, mass: 0.9 };
 
 export default function PackagesTable() {
   const reduced = useReducedMotion();
@@ -94,61 +94,156 @@ export default function PackagesTable() {
   );
 
   const [modeKey, setModeKey] = useState<ModeKey>("website");
-  const [activeTier, setActiveTier] = useState<TierKey>("growth");
+  const [lockedTier, setLockedTier] = useState<TierKey>("growth");
+  const [hoverTier, setHoverTier] = useState<TierKey | null>(null);
+
+  // hover wins, lock is fallback
+  const activeTier: TierKey = (hoverTier ?? lockedTier) as TierKey;
+
+  const stageRef = useRef<HTMLDivElement | null>(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const colRefs = useRef<Record<TierKey, HTMLDivElement | null>>({ starter: null, growth: null, scale: null });
+
+  const rafRef = useRef<number | null>(null);
+  const overlayRef = useRef<HTMLDivElement | null>(null);
+
+  const [rect, setRect] = useState({ x: 0, y: 0, w: 0, h: 0 });
 
   const mode = modes.find((m) => m.key === modeKey) || modes[0];
 
-  React.useEffect(() => {
+  useEffect(() => {
     const onMode = (e: Event) => {
       const ce = e as CustomEvent<{ modeKey?: ModeKey }>;
       const next = ce?.detail?.modeKey;
       if (!next) return;
       setModeKey(next);
-      // keep active tier stable; you can reset if you want:
-      // setActiveTier("growth");
     };
-
     window.addEventListener("k-pack-mode", onMode);
     return () => window.removeEventListener("k-pack-mode", onMode);
   }, []);
 
-  const colGlow = (tier: TierKey) => {
-    if (reduced) return {};
-    if (tier === "scale") return { "--g": "rgba(120,255,210,.18)" } as React.CSSProperties;
-    if (tier === "growth") return { "--g": "rgba(120,190,255,.18)" } as React.CSSProperties;
-    return { "--g": "rgba(190,145,255,.14)" } as React.CSSProperties;
+  const measure = (tier: TierKey) => {
+    const stage = stageRef.current;
+    const el = colRefs.current[tier];
+    if (!stage || !el) return;
+
+    const s = stage.getBoundingClientRect();
+    const r = el.getBoundingClientRect();
+
+    setRect({
+      x: r.left - s.left,
+      y: r.top - s.top,
+      w: r.width,
+      h: r.height,
+    });
+  };
+
+  // glue overlay on scroll/resize + when active changes
+  useEffect(() => {
+    measure(activeTier);
+
+    const onResize = () => measure(activeTier);
+    const onScroll = () => measure(activeTier);
+
+    window.addEventListener("resize", onResize);
+    scrollRef.current?.addEventListener("scroll", onScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("resize", onResize);
+      scrollRef.current?.removeEventListener("scroll", onScroll as any);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTier, modeKey]);
+
+  // pointer spotlight for overlay surface (no rerenders)
+  const onOverlayMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (reduced) return;
+    const el = e.currentTarget;
+    const r = el.getBoundingClientRect();
+    const x = Math.max(0, Math.min(r.width, e.clientX - r.left));
+    const y = Math.max(0, Math.min(r.height, e.clientY - r.top));
+
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      el.style.setProperty("--mx", `${x}px`);
+      el.style.setProperty("--my", `${y}px`);
+    });
   };
 
   return (
     <div className="k-packCard">
-      <div className="k-packTableWrap" aria-label="Packages comparison">
-        <div className="k-packTable" role="group" aria-label="Packages grid">
-          <div className="k-packCol k-packCol--labels" aria-hidden="true">
-            <div className="k-packTopCell k-packTopCell--labels">What you get</div>
+      <div
+        className="k-packStage"
+        ref={stageRef}
+        aria-label="Packages comparison"
+        data-active={activeTier}
+        data-hover={hoverTier ? "1" : "0"}
+      >
+        {/* OVERLAY: only surface (no text) to avoid “reset” + double rendering */}
+        <div className="k-packOverlayLayer" aria-hidden="true">
+          <motion.div
+            ref={overlayRef}
+            className={cn("k-packOverlayCol", activeTier === "scale" && "is-mint")}
+            style={
+              {
+                left: rect.x,
+                top: rect.y,
+                width: rect.w,
+                height: rect.h,
+                // animated intensity (CSS reads --p)
+                ["--p" as any]: hoverTier ? 1 : 0.75,
+              } as React.CSSProperties
+            }
+            onPointerMove={onOverlayMove}
+            initial={false}
+            animate={
+              reduced
+                ? { opacity: 1, scale: 1, y: 0 }
+                : {
+                    opacity: 1,
+                    // “approach” feeling: hover bigger, lock slightly smaller
+                    scale: hoverTier ? 1.12 : 1.08,
+                    y: hoverTier ? -18 : -12,
+                  }
+            }
+            transition={reduced ? { duration: 0 } : spring}
+          />
+        </div>
 
-            {mode.rows.map((r) => (
-              <div className="k-packCell k-packCell--label" key={r.label}>
-                {r.label}
-                {r.hint ? <span className="k-packCellHint">{r.hint}</span> : null}
-              </div>
-            ))}
-          </div>
+        {/* SCROLL AREA */}
+        <div className="k-packScroll" ref={scrollRef}>
+          <div className="k-packTable" role="group" aria-label="Packages grid">
+            {/* Labels */}
+            <div className="k-packCol k-packCol--labels" aria-hidden="true">
+              <div className="k-packTopCell k-packTopCell--labels">What you get</div>
+              {mode.rows.map((r) => (
+                <div className="k-packCell k-packCell--label" key={r.label}>
+                  {r.label}
+                  {r.hint ? <span className="k-packCellHint">{r.hint}</span> : null}
+                </div>
+              ))}
+            </div>
 
-          {mode.tiers.map((t) => {
-            const isActive = activeTier === t.key;
-
-            return (
-              <motion.div
+            {/* Tiers */}
+            {mode.tiers.map((t) => (
+              <div
                 key={t.key}
-                className={cn("k-packCol", "k-packCol--tier", isActive && "is-active", t.key === "scale" && "is-mint")}
-                style={colGlow(t.key)}
-                onPointerEnter={() => setActiveTier(t.key)}
-                onClick={() => setActiveTier(t.key)}
+                ref={(el) => {
+                  colRefs.current[t.key] = el;
+                }}
+                className={cn("k-packCol", "k-packCol--tier", t.key === "scale" && "is-mint")}
+                data-tier={t.key}
+                onPointerEnter={() => {
+                  setHoverTier(t.key);
+                  measure(t.key);
+                }}
+                onPointerLeave={() => setHoverTier(null)}
+                onClick={() => {
+                  setLockedTier(t.key);
+                  setHoverTier(null);
+                  measure(t.key);
+                }}
                 tabIndex={0}
-                initial={false}
-                animate={reduced ? {} : { y: isActive ? -8 : 0, scale: isActive ? 1.035 : 1 }}
-
-                transition={reduced ? { duration: 0 } : spring}
               >
                 <div className="k-packTopCell">
                   <div className="k-packTierName">{t.name}</div>
@@ -163,28 +258,20 @@ export default function PackagesTable() {
                   </a>
                 </div>
 
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={modeKey + ":" + t.key}
-                    className="k-packCells"
-                    initial={reduced ? { opacity: 1 } : { opacity: 0, y: 10 }}
-                    animate={reduced ? { opacity: 1 } : { opacity: 1, y: 0 }}
-                    exit={reduced ? { opacity: 1 } : { opacity: 0, y: -8 }}
-                    transition={reduced ? { duration: 0 } : { duration: 0.22, ease: [0.2, 0.9, 0.2, 1] }}
-                  >
-                    {mode.rows.map((r) => (
-                      <div className="k-packCell" key={r.label}>
-                        {r.values[t.key]}
-                      </div>
-                    ))}
-                  </motion.div>
-                </AnimatePresence>
-              </motion.div>
-            );
-          })}
+                <div className="k-packCells">
+                  {mode.rows.map((r) => (
+                    <div className="k-packCell" key={r.label}>
+                      {r.values[t.key]}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-    <div className="k-packDust" aria-hidden="true" />
+
+      <div className="k-packDust" aria-hidden="true" />
     </div>
   );
 }

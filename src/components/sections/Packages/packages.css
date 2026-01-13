@@ -1,6 +1,7 @@
 /* =========================================
    KERSIVO — PACKAGES
-   Clean + readable. NO blur on columns or CTA.
+   Readable spotlight (NO blur on text).
+   Overlay pop-out column that can escape scroll clipping.
    ========================================= */
 
 .k-pack{
@@ -9,7 +10,7 @@
 }
 
 /* -------------------------
-   Section heading
+   Section heading (outside islands)
    ------------------------- */
 .k-pack__head{
   text-align: center;
@@ -49,6 +50,7 @@
   line-height: 1.55;
 }
 
+/* pills wrapper under heading */
 .k-pack__tabs{
   margin-top: 14px;
   display: grid;
@@ -56,7 +58,7 @@
 }
 
 /* -------------------------
-   Mode pills (can stay glassy)
+   Mode pills (island)
    ------------------------- */
 .k-packPillsWrap{
   margin-top: 0;
@@ -111,7 +113,7 @@
 .k-packHint--center{ text-align: center; }
 
 /* -------------------------
-   Table card (fills space)
+   Card wrapper (island)
    ------------------------- */
 .k-packCard{
   position: relative;
@@ -125,24 +127,37 @@
   box-shadow:
     0 40px 140px rgba(0,0,0,.55),
     0 1px 0 rgba(255,255,255,.06) inset;
-  overflow: hidden;
+  overflow: visible;
   margin-top: 14px;
 }
 
-.k-packTableWrap{
-  margin-top: 0;
+/* Stage: pop-out playground */
+.k-packStage{
+  position: relative;
   border-radius: 28px;
-  border: 0;
-  background: transparent;
-  overflow: hidden;
+  overflow: visible;
+}
 
+/* Scroll: keeps horizontal scroll */
+.k-packScroll{
   overflow-x: auto;
+  overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: contain;
-
+  border-radius: 28px;
   box-shadow: 0 0 0 1px rgba(255,255,255,.05) inset;
 }
 
+/* Optional scroll bar */
+.k-packScroll::-webkit-scrollbar{ height: 10px; }
+.k-packScroll::-webkit-scrollbar-track{ background: rgba(255,255,255,.04); }
+.k-packScroll::-webkit-scrollbar-thumb{
+  background: rgba(255,255,255,.10);
+  border-radius: 999px;
+}
+.k-packScroll::-webkit-scrollbar-thumb:hover{ background: rgba(255,255,255,.14); }
+
+/* Grid */
 .k-packTable{
   display: grid;
   grid-auto-flow: column;
@@ -158,13 +173,13 @@
 }
 .k-packCol:last-child{ border-right: 0; }
 
-/* Labels sticky */
+/* Labels column sticky */
 .k-packCol--labels{
   min-width: 220px;
   background: rgba(0,0,0,.16);
   position: sticky;
   left: 0;
-  z-index: 3;
+  z-index: 6;
 }
 
 /* Top cells */
@@ -183,7 +198,7 @@
 }
 
 .k-packTierName{
-  color: rgba(255,255,255,.90);
+  color: rgba(255,255,255,.92);
   font-weight: 900;
   letter-spacing: -0.02em;
 }
@@ -207,11 +222,11 @@
   padding: 0 14px;
   border-radius: 999px;
 
-  color: rgba(255,255,255,.90);
+  color: rgba(255,255,255,.92);
   text-decoration: none;
 
   border: 1px solid rgba(255,255,255,.14);
-  background: rgba(0,0,0,.28); /* solid-ish, readable */
+  background: rgba(0,0,0,.28);
   overflow: hidden;
 
   transition:
@@ -232,13 +247,13 @@
 .k-packBuyArrow{ opacity: .9; transition: transform 220ms cubic-bezier(.2,.9,.2,1); }
 .k-packBuy:hover .k-packBuyArrow{ transform: translateX(2px); }
 
-/* Shine stays, but NO blur affecting text */
+/* Shine layer only */
 .k-packBuyShine{
   position: absolute;
   inset: -40% -25%;
   background: radial-gradient(closest-side at 50% 50%, rgba(255,255,255,.35), transparent 72%);
   opacity: 0;
-  filter: blur(10px); /* only shine layer, not backdrop blur */
+  filter: blur(10px);
   transform: translateX(-34%);
   transition: opacity 200ms ease, transform 520ms cubic-bezier(.2,.9,.2,1);
   pointer-events: none;
@@ -273,24 +288,17 @@
 }
 
 /* =========================================
-   CRISP SPOTLIGHT (NO BLUR)
-   - Expose column as object: darker base + sharp ring + lift shadow
-   - Overlay sits behind content (no effect on text)
+   Base tier ring system (for table only)
    ========================================= */
-
 .k-packCol--tier{
   outline: none;
   transform: translateZ(0);
   will-change: transform;
+  transform-origin: center 18%;
 }
 
-/* keep content above overlay */
-.k-packCol--tier > *{
-  position: relative;
-  z-index: 2;
-}
+.k-packCol--tier > *{ position: relative; z-index: 2; }
 
-/* spotlight base (behind text) */
 .k-packCol--tier::before{
   content:"";
   position:absolute;
@@ -298,12 +306,9 @@
   pointer-events:none;
   opacity: 0;
   transition: opacity 160ms ease;
-
-  /* darker, higher contrast background for readability */
   background: rgba(0,0,0,.26);
 }
 
-/* sharp ring + top sheen (behind text) */
 .k-packCol--tier::after{
   content:"";
   position:absolute;
@@ -319,29 +324,86 @@
   background: linear-gradient(180deg, rgba(255,255,255,.06), transparent 55%);
 }
 
-/* hover preview (optional) */
-.k-packCol--tier:hover::before{ opacity: .55; }
-.k-packCol--tier:hover::after{ opacity: .65; }
+.k-packCol--tier:hover::before{ opacity: .45; }
+.k-packCol--tier:hover::after{ opacity: .55; }
 
-/* active (locked) */
+/* Active is mostly visual in overlay mode — keep minimal in table */
 .k-packCol--tier.is-active{
-  z-index: 4;
-  box-shadow:
-    0 34px 120px rgba(0,0,0,.62),
-    0 0 0 1px rgba(255,255,255,.10) inset;
+  z-index: 10;
 }
+.k-packCol--tier.is-active::before{ opacity: .55; }
+.k-packCol--tier.is-active::after{ opacity: .75; }
 
-.k-packCol--tier.is-active::before{ opacity: .78; }
-.k-packCol--tier.is-active::after{ opacity: 1; }
-
-/* mint column (subtle ring tint only) */
+/* mint tint for scale (table only) */
 .k-packCol--tier.is-mint.is-active::after{
   box-shadow:
-    0 0 0 1px rgba(120,255,210,.20) inset,
+    0 0 0 1px rgba(120,255,210,.18) inset,
     0 1px 0 rgba(255,255,255,.10) inset;
 }
 
-/* Dust sparkle layer */
+/* =========================================
+   Overlay layer (the REAL pop-out card)
+   ONE card only: disable pseudo rings + set filled bg
+   ========================================= */
+.k-packOverlayLayer{
+  position: absolute;
+  inset: 0;
+  z-index: 200;
+  pointer-events: none;
+}
+
+.k-packOverlayCol{
+  position: absolute;
+  pointer-events: auto;
+  border-right: 0 !important;
+  border-radius: 22px;
+  overflow: hidden;
+
+  /* filled surface */
+  background:
+    radial-gradient(900px 520px at 40% 10%, rgba(140,170,255,.14), transparent 58%),
+    radial-gradient(720px 520px at 82% 22%, rgba(210,150,255,.12), transparent 62%),
+    linear-gradient(180deg, rgba(20,22,30,.92), rgba(8,10,14,.92));
+
+  /* single frame */
+  box-shadow:
+    0 60px 180px rgba(0,0,0,.78),
+    0 0 0 1px rgba(255,255,255,.16) inset,
+    0 1px 0 rgba(255,255,255,.10) inset;
+
+  border: 0 !important;
+}
+
+/* kill the table ring system on overlay */
+.k-packOverlayCol::before,
+.k-packOverlayCol::after{
+  content: none !important;
+  display: none !important;
+}
+
+/* stronger separators inside overlay for readability */
+.k-packOverlayCol .k-packTopCell{
+  border-bottom: 1px solid rgba(255,255,255,.10);
+  background: transparent;
+}
+.k-packOverlayCol .k-packCell{
+  border-bottom: 1px solid rgba(255,255,255,.09);
+  background: transparent;
+}
+
+/* Hide the real active column so it doesn't double-render */
+.k-packCol--tier.is-hidden{
+  opacity: 0;
+}
+.k-packCol--tier.is-hidden *{
+  pointer-events: none;
+}
+.k-packCol--tier.is-hidden::before,
+.k-packCol--tier.is-hidden::after{
+  opacity: 0 !important;
+}
+
+/* Dust sparkle */
 .k-packDust{
   position: absolute;
   inset: -1px;
@@ -356,9 +418,7 @@
     radial-gradient(2px 2px at 46% 78%, rgba(255,255,255,.12), transparent 60%);
 }
 
-/* -------------------------
-   Ghost link below island (outside)
-   ------------------------- */
+/* Ghost link below island (outside) */
 .k-pack__below{
   margin-top: 14px;
   display: flex;
@@ -385,9 +445,7 @@
   background: rgba(255,255,255,.03);
 }
 
-/* -------------------------
-   Responsive + motion safety
-   ------------------------- */
+/* Responsive + motion safety */
 @media (max-width: 720px){
   .k-pack__below{ justify-content: flex-start; }
   .k-packTable{ min-width: 940px; }
@@ -406,4 +464,148 @@
   .k-packCol--tier::after{
     transition: none !important;
   }
+}
+/* =========================================
+   Smart grow animation (overlay)
+   - cursor spotlight via --mx/--my
+   - one-shot sheen sweep
+   ========================================= */
+
+.k-packOverlayCol{
+  --mx: 50%;
+  --my: 22%;
+  transform-origin: center 18%;
+}
+
+/* spotlight that follows pointer (NO blur on text) */
+.k-packOverlayCol::before{
+  content:"";
+  position:absolute;
+  inset:-1px;
+  pointer-events:none;
+  opacity: .95;
+  background:
+    radial-gradient(520px 360px at var(--mx) var(--my), rgba(255,255,255,.10), transparent 60%),
+    radial-gradient(900px 520px at 40% 10%, rgba(140,170,255,.14), transparent 58%),
+    radial-gradient(720px 520px at 82% 22%, rgba(210,150,255,.12), transparent 62%),
+    linear-gradient(180deg, rgba(20,22,30,.92), rgba(8,10,14,.92));
+}
+
+/* sheen sweep (one-shot) */
+.k-packOverlayCol::after{
+  content:"";
+  position:absolute;
+  inset:-40% -30%;
+  pointer-events:none;
+  opacity:.0;
+  transform: translateX(-26%) rotate(8deg);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);
+  filter: blur(12px);
+  animation: k-pack-sheen 920ms cubic-bezier(.2,.9,.2,1) 1;
+}
+
+@keyframes k-pack-sheen{
+  0%{ opacity:0; transform: translateX(-28%) rotate(8deg); }
+  18%{ opacity:.55; }
+  60%{ opacity:.25; }
+  100%{ opacity:0; transform: translateX(28%) rotate(8deg); }
+}
+
+/* make hidden “real” column truly invisible */
+.k-packCol--tier.is-hidden{
+  opacity: 0;
+}
+.k-packCol--tier.is-hidden *{ pointer-events:none; }
+.k-packCol--tier.is-hidden::before,
+.k-packCol--tier.is-hidden::after{ opacity: 0 !important; }
+
+/* reduced motion: kill the sheen */
+@media (prefers-reduced-motion: reduce){
+  .k-packOverlayCol::after{ animation: none !important; opacity: 0 !important; }
+}
+/* =========================================
+   Premium hover motion (no resets)
+   ========================================= */
+
+/* overlay should never steal hover from columns */
+.k-packOverlayCol{
+  pointer-events: none;
+  position: absolute;
+  border-radius: 22px;
+  overflow: hidden;
+  border: 0 !important;
+
+  /* intensity */
+  --mx: 50%;
+  --my: 22%;
+  --p: .75;
+
+  /* filled surface */
+  background:
+    radial-gradient(520px 360px at var(--mx) var(--my), rgba(255,255,255, calc(.12 * var(--p))), transparent 62%),
+    radial-gradient(900px 520px at 40% 10%, rgba(140,170,255, calc(.14 * var(--p))), transparent 58%),
+    radial-gradient(720px 520px at 82% 22%, rgba(210,150,255, calc(.12 * var(--p))), transparent 62%),
+    linear-gradient(180deg, rgba(20,22,30,.92), rgba(8,10,14,.92));
+
+  box-shadow:
+    0 60px 180px rgba(0,0,0,.78),
+    0 0 0 1px rgba(255,255,255,.16) inset,
+    0 1px 0 rgba(255,255,255,.10) inset;
+}
+
+/* tiny sheen pulse on every move/enter (subtle) */
+.k-packOverlayCol::after{
+  content:"";
+  position:absolute;
+  inset:-40% -30%;
+  opacity: .0;
+  transform: translateX(-26%) rotate(8deg);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
+  filter: blur(12px);
+  animation: k-pack-sheen 920ms cubic-bezier(.2,.9,.2,1) 1;
+  pointer-events:none;
+}
+
+@keyframes k-pack-sheen{
+  0%{ opacity:0; transform: translateX(-28%) rotate(8deg); }
+  18%{ opacity:.45; }
+  60%{ opacity:.18; }
+  100%{ opacity:0; transform: translateX(28%) rotate(8deg); }
+}
+
+/* columns: smooth “recede” without layout shift */
+.k-packCol--tier{
+  transition:
+    transform 220ms cubic-bezier(.2,.9,.2,1),
+    filter 220ms ease,
+    opacity 220ms ease;
+  will-change: transform;
+}
+
+.k-packStage[data-hover="1"] .k-packCol--tier{
+  transform: translateY(1px) scale(.985);
+  filter: saturate(.92) contrast(.98);
+  opacity: .92;
+}
+
+/* keep the active tier crisp and confident */
+.k-packStage[data-hover="1"] .k-packCol--tier[data-tier="starter"],
+.k-packStage[data-hover="1"] .k-packCol--tier[data-tier="growth"],
+.k-packStage[data-hover="1"] .k-packCol--tier[data-tier="scale"]{
+  /* default already set above */
+}
+
+/* active tier (matches overlay) slightly up */
+.k-packStage[data-active="starter"] .k-packCol--tier[data-tier="starter"],
+.k-packStage[data-active="growth"]  .k-packCol--tier[data-tier="growth"],
+.k-packStage[data-active="scale"]   .k-packCol--tier[data-tier="scale"]{
+  transform: translateY(-1px) scale(1);
+  filter: saturate(1) contrast(1);
+  opacity: 1;
+}
+
+/* reduced motion safety */
+@media (prefers-reduced-motion: reduce){
+  .k-packCol--tier{ transition: none !important; }
+  .k-packOverlayCol::after{ animation: none !important; opacity: 0 !important; }
 }
