@@ -5,6 +5,7 @@ import WorkShowcase from "./islands/WorkShowcase";
 
 <section id="work" class="k-work section">
   <div class="container">
-    <WorkShowcase client:load />
+    <!-- Delay hydration until the section is near viewport (better perf, same SSR HTML). -->
+    <WorkShowcase client:visible />
   </div>
 </section>
