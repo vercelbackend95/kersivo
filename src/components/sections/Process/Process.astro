@@ -1,0 +1,16 @@
+---
+import "./process.css";
+import ProcessScroll from "./islands/ProcessScroll";
+---
+
+<section id="process" class="k-process" aria-label="Process">
+  <div class="container k-process__wrap">
+    <div class="k-process__top">
+      <div class="k-process__kicker">PROCESS</div>
+      <h2 class="k-process__title">How we ship, step by step.</h2>
+    </div>
+
+    <!-- Scroll-driven sticky experience -->
+    <ProcessScroll client:load />
+  </div>
+</section>
