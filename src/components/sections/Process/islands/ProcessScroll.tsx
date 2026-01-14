@@ -1,21 +1,22 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
+type Card = {
+  key: string;
+  x: number; // %
+  y: number; // %
+  w: number; // px
+  h: number; // px
+  title: string;
+  ctaTone?: "green" | "blue";
+};
+
 type Step = {
   id: string;
   title: string;
   subtitle: string;
   bullets: string[];
-  // “cards” are just visual mock screens; positions are % inside the stage
-  cards: Array<{
-    key: string;
-    x: number; // %
-    y: number; // %
-    w: number; // px
-    h: number; // px
-    tone?: "light" | "light2";
-    label?: string;
-    accent?: "green" | "blue";
-  }>;
+  spot: { x: number; y: number }; // spotlight position %
+  cards: Card[];
 };
 
 function clamp(n: number, a: number, b: number) {
@@ -23,123 +24,133 @@ function clamp(n: number, a: number, b: number) {
 }
 
 function prefersReducedMotion() {
-  return (
-    typeof window !== "undefined" &&
+  return typeof window !== "undefined" &&
     window.matchMedia &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches
-  );
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
+/**
+ * Scroll-driven sticky stepper:
+ * - Section creates scroll distance (steps * ~92vh)
+ * - Active step is derived from progress inside the section
+ * - Right scene re-renders per step with a clean “enter” animation
+ */
 export default function ProcessScroll() {
   const steps: Step[] = useMemo(
     () => [
       {
         id: "discovery",
         title: "Discovery",
-        subtitle: "A 15–30 min call to get the truth on goals + constraints.",
-        bullets: ["What you sell", "Who you sell to", "What success looks like"],
+        subtitle: "Goals, audience, constraints. We cut fluff fast.",
+        bullets: ["What you sell", "Who it’s for", "Primary enquiry action"],
+        spot: { x: 70, y: 38 },
         cards: [
-          { key: "c1", x: 56, y: 18, w: 260, h: 170, tone: "light", label: "Quick brief", accent: "green" },
-          { key: "c2", x: 44, y: 42, w: 360, h: 210, tone: "light2", label: "Site map", accent: "blue" },
-          { key: "c3", x: 68, y: 54, w: 280, h: 190, tone: "light", label: "Content needs", accent: "green" },
+          { key: "a", x: 72, y: 22, w: 260, h: 170, title: "Quick brief", ctaTone: "green" },
+          { key: "b", x: 56, y: 48, w: 420, h: 220, title: "Notes → clarity", ctaTone: "blue" },
+          { key: "c", x: 78, y: 62, w: 280, h: 190, title: "Constraints", ctaTone: "green" },
         ],
       },
       {
         id: "scope",
         title: "Scope & plan",
-        subtitle: "We lock what’s in / out. No fog, no surprise invoices.",
-        bullets: ["Pages + sections", "Lead capture", "Local SEO setup"],
+        subtitle: "We lock deliverables. Clean scope. Crisp timeline.",
+        bullets: ["Pages + sections", "Lead capture plan", "What’s in / out"],
+        spot: { x: 64, y: 44 },
         cards: [
-          { key: "c1", x: 60, y: 14, w: 260, h: 180, tone: "light", label: "Scope doc", accent: "green" },
-          { key: "c2", x: 46, y: 40, w: 380, h: 220, tone: "light2", label: "Timeline", accent: "blue" },
-          { key: "c3", x: 72, y: 56, w: 260, h: 190, tone: "light", label: "Deliverables", accent: "green" },
+          { key: "a", x: 70, y: 20, w: 280, h: 180, title: "Scope doc", ctaTone: "green" },
+          { key: "b", x: 54, y: 48, w: 430, h: 230, title: "Timeline", ctaTone: "blue" },
+          { key: "c", x: 78, y: 64, w: 270, h: 185, title: "Deliverables", ctaTone: "green" },
         ],
       },
       {
         id: "design",
         title: "Design direction",
-        subtitle: "Premium-minimal look. Clear hierarchy. Clean CTA flow.",
-        bullets: ["Hero + key sections", "Typography + spacing", "Mobile-first"],
+        subtitle: "Premium-minimal. Clear hierarchy. Mobile-first.",
+        bullets: ["Hero + key sections", "Type & spacing system", "CTA flow"],
+        spot: { x: 74, y: 40 },
         cards: [
-          { key: "c1", x: 62, y: 14, w: 250, h: 180, tone: "light2", label: "Hero draft", accent: "blue" },
-          { key: "c2", x: 44, y: 40, w: 390, h: 240, tone: "light", label: "Section system", accent: "green" },
-          { key: "c3", x: 70, y: 58, w: 270, h: 170, tone: "light2", label: "UI components", accent: "blue" },
+          { key: "a", x: 74, y: 20, w: 270, h: 180, title: "Hero draft", ctaTone: "blue" },
+          { key: "b", x: 54, y: 50, w: 450, h: 240, title: "Section system", ctaTone: "green" },
+          { key: "c", x: 78, y: 64, w: 280, h: 175, title: "UI components", ctaTone: "blue" },
         ],
       },
       {
         id: "build",
         title: "Build",
-        subtitle: "Astro-first. Minimal JS. Fast loads. Smooth, controlled motion.",
-        bullets: ["Performance baseline", "Accessible components", "Tracking-ready"],
+        subtitle: "Astro-first. Minimal JS. Fast, stable, extendable.",
+        bullets: ["Components wired", "Tracking-ready", "Performance baseline"],
+        spot: { x: 66, y: 46 },
         cards: [
-          { key: "c1", x: 58, y: 16, w: 280, h: 180, tone: "light", label: "Build checks", accent: "green" },
-          { key: "c2", x: 44, y: 42, w: 400, h: 220, tone: "light2", label: "Pages wired", accent: "blue" },
-          { key: "c3", x: 72, y: 58, w: 270, h: 190, tone: "light", label: "Lead flow", accent: "green" },
+          { key: "a", x: 70, y: 22, w: 280, h: 180, title: "Build checks", ctaTone: "green" },
+          { key: "b", x: 54, y: 50, w: 460, h: 240, title: "Pages wired", ctaTone: "blue" },
+          { key: "c", x: 78, y: 64, w: 280, h: 190, title: "Lead flow", ctaTone: "green" },
         ],
       },
       {
-        id: "polish",
+        id: "qa",
         title: "QA & polish",
-        subtitle: "We tighten everything: copy rhythm, spacing, speed, edge cases.",
+        subtitle: "Spacing, speed, a11y, edge cases. Tight finish.",
         bullets: ["Device testing", "SEO foundations", "Speed pass"],
+        spot: { x: 72, y: 44 },
         cards: [
-          { key: "c1", x: 60, y: 14, w: 280, h: 185, tone: "light2", label: "QA list", accent: "blue" },
-          { key: "c2", x: 44, y: 40, w: 390, h: 235, tone: "light", label: "Perf report", accent: "green" },
-          { key: "c3", x: 72, y: 56, w: 270, h: 190, tone: "light2", label: "SEO pass", accent: "blue" },
+          { key: "a", x: 72, y: 20, w: 300, h: 185, title: "QA list", ctaTone: "blue" },
+          { key: "b", x: 54, y: 50, w: 460, h: 240, title: "Perf report", ctaTone: "green" },
+          { key: "c", x: 80, y: 64, w: 270, h: 190, title: "SEO pass", ctaTone: "blue" },
         ],
       },
       {
         id: "launch",
         title: "Launch & aftercare",
-        subtitle: "We deploy, verify, and support the first tweaks post-launch.",
+        subtitle: "Deploy, verify, and support early tweaks post-launch.",
         bullets: ["Domain + redirects", "Analytics sanity check", "Aftercare window"],
+        spot: { x: 64, y: 42 },
         cards: [
-          { key: "c1", x: 62, y: 14, w: 260, h: 180, tone: "light", label: "Deploy", accent: "green" },
-          { key: "c2", x: 44, y: 40, w: 400, h: 220, tone: "light2", label: "Go-live checks", accent: "blue" },
-          { key: "c3", x: 72, y: 58, w: 270, h: 190, tone: "light", label: "Aftercare", accent: "green" },
+          { key: "a", x: 70, y: 20, w: 280, h: 180, title: "Deploy", ctaTone: "green" },
+          { key: "b", x: 54, y: 50, w: 470, h: 240, title: "Go-live checks", ctaTone: "blue" },
+          { key: "c", x: 78, y: 64, w: 290, h: 190, title: "Aftercare", ctaTone: "green" },
         ],
       },
     ],
     []
   );
 
-  const sectionRef = useRef<HTMLElement | null>(null);
+  const rootRef = useRef<HTMLDivElement | null>(null);
   const rafRef = useRef<number | null>(null);
   const [active, setActive] = useState(0);
-  const [hasPointer, setHasPointer] = useState(false);
+  const [enterTick, setEnterTick] = useState(0);
 
   const n = steps.length;
 
-  // scroll -> active step
   useEffect(() => {
-    const el = document.querySelector<HTMLElement>("#process .k-proc");
-    sectionRef.current = el || null;
-    if (!sectionRef.current) return;
+    const root = rootRef.current;
+    if (!root) return;
 
     const reduced = prefersReducedMotion();
 
     const update = () => {
       rafRef.current = null;
-      const root = sectionRef.current!;
       const rect = root.getBoundingClientRect();
-
-      // root height is steps * 100vh, we use progress across (height - vh)
       const vh = window.innerHeight || 1;
+
+      // how far user has progressed through the sticky section
       const scrollable = Math.max(1, rect.height - vh);
       const progressed = clamp(-rect.top, 0, scrollable);
-      const p = progressed / scrollable; // 0..1
+      const p = progressed / scrollable;
 
-      // Each step occupies ~1/n of progress
+      // Use n “bands”
       const idx = clamp(Math.floor(p * n + 1e-6), 0, n - 1);
-      setActive(idx);
-
-      // pointer detection for hover styles
-      if (!reduced && !hasPointer) setHasPointer(true);
+      setActive((prev) => {
+        if (prev !== idx) {
+          // trigger enter animation class re-apply
+          if (!reduced) setEnterTick((t) => t + 1);
+        }
+        return idx;
+      });
     };
 
     const onScroll = () => {
       if (rafRef.current) return;
-      rafRef.current = window.requestAnimationFrame(update);
+      rafRef.current = requestAnimationFrame(update);
     };
 
     update();
@@ -151,19 +162,18 @@ export default function ProcessScroll() {
       window.removeEventListener("resize", onScroll);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [n]);
 
   const jumpTo = (idx: number) => {
-    const root = sectionRef.current;
+    const root = rootRef.current;
     if (!root) return;
 
     const top = root.getBoundingClientRect().top + window.scrollY;
     const vh = window.innerHeight || 1;
-    const stepTop = top + idx * vh;
+    const target = top + idx * (0.92 * vh); // match section height “band”
 
     window.scrollTo({
-      top: stepTop,
+      top: target,
       behavior: prefersReducedMotion() ? "auto" : "smooth",
     });
   };
@@ -171,9 +181,13 @@ export default function ProcessScroll() {
   const s = steps[active];
 
   return (
-    <div className="k-proc" style={{ ["--steps" as any]: n }}>
+    <div
+      ref={rootRef}
+      className="k-proc"
+      style={{ ["--steps" as any]: n }}
+    >
       <div className="k-proc__sticky">
-        {/* Left column */}
+        {/* LEFT */}
         <div className="k-proc__left">
           <div className="k-proc__label">FOR CLIENTS</div>
 
@@ -181,13 +195,7 @@ export default function ProcessScroll() {
             {steps.map((step, idx) => (
               <li
                 key={step.id}
-                className={[
-                  "k-proc__step",
-                  idx === active ? "is-active" : "",
-                  hasPointer ? "has-pointer" : "",
-                ]
-                  .filter(Boolean)
-                  .join(" ")}
+                className={`k-proc__step ${idx === active ? "is-active" : ""}`}
               >
                 <button
                   type="button"
@@ -197,37 +205,45 @@ export default function ProcessScroll() {
                   <span className="k-proc__num" aria-hidden="true">
                     {idx + 1}
                   </span>
+
                   <span className="k-proc__text">
-                    <span className="k-proc__stepTitle">{step.title}</span>
+                    <span className="k-proc__titleLine">
+                      <span className="k-proc__stepTitle">{step.title}</span>
+                    </span>
                     <span className="k-proc__stepSub">{step.subtitle}</span>
                   </span>
                 </button>
               </li>
             ))}
           </ol>
+
+          <div className="k-proc__rail" aria-hidden="true" />
         </div>
 
-        {/* Right column */}
-        <div className="k-proc__right" aria-label="Step details">
+        {/* RIGHT */}
+        <div className="k-proc__right" aria-label="Step scene">
           <div className="k-proc__stage">
-            {/* subtle floating pixels like the reference */}
+            <div
+              className="k-proc__spot"
+              style={{
+                ["--sx" as any]: `${s.spot.x}%`,
+                ["--sy" as any]: `${s.spot.y}%`,
+              }}
+              aria-hidden="true"
+            />
+
             <span className="k-proc__px k-proc__px--1" aria-hidden="true" />
             <span className="k-proc__px k-proc__px--2" aria-hidden="true" />
             <span className="k-proc__px k-proc__px--3" aria-hidden="true" />
             <span className="k-proc__px k-proc__px--4" aria-hidden="true" />
+            <span className="k-proc__px k-proc__px--5" aria-hidden="true" />
 
-            {/* Active content */}
-            <div className="k-proc__cards" key={s.id}>
+            {/* CARDS (re-rendered per step for crisp switch) */}
+            <div className={`k-proc__cards is-enter`} key={`${s.id}-${enterTick}`}>
               {s.cards.map((c) => (
                 <div
                   key={c.key}
-                  className={[
-                    "k-proc__card",
-                    c.tone === "light2" ? "is-soft" : "",
-                    c.accent === "blue" ? "is-blue" : "is-green",
-                  ]
-                    .filter(Boolean)
-                    .join(" ")}
+                  className="k-proc__card"
                   style={{
                     left: `${c.x}%`,
                     top: `${c.y}%`,
@@ -239,20 +255,20 @@ export default function ProcessScroll() {
                     <span className="k-proc__dot" />
                     <span className="k-proc__dot" />
                     <span className="k-proc__dot" />
-                    <span className="k-proc__cardTitle">{c.label || "Screen"}</span>
+                    <span className="k-proc__cardTitle">{c.title}</span>
                   </div>
 
                   <div className="k-proc__cardBody">
                     <div className="k-proc__row" />
                     <div className="k-proc__row" />
                     <div className="k-proc__row k-proc__row--short" />
-                    <div className="k-proc__cta" />
+                    <div className="k-proc__row k-proc__row--micro" />
+                    <div className={`k-proc__cta ${c.ctaTone === "blue" ? "is-blue" : ""}`} />
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Bottom content note (matches “right side changes per step”) */}
             <div className="k-proc__detail">
               <div className="k-proc__detailTitle">{s.title}</div>
               <ul className="k-proc__bullets">
@@ -265,7 +281,7 @@ export default function ProcessScroll() {
         </div>
       </div>
 
-      {/* Spacer that creates the scroll “steps” */}
+      {/* scroll distance */}
       <div className="k-proc__spacer" aria-hidden="true" />
     </div>
   );
