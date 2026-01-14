@@ -1,14 +1,13 @@
 /* =========================================
    KERSIVO — PROCESS (2026 showcase)
-   NO outer frames. Sticky stepper + UI scenes.
-   Mini progress + vertical track.
+   Mobile-first: Step Cards Deck
+   Desktop: Sticky stepper + UI scenes
    ========================================= */
 
 .k-process{
   position: relative;
   padding: clamp(72px, 8vw, 124px) 0;
 
-  /* premium deep wash */
   background:
     radial-gradient(1100px 720px at 62% 42%, rgba(0, 120, 190, .28), transparent 60%),
     radial-gradient(900px 720px at 36% 78%, rgba(140, 90, 255, .14), transparent 62%),
@@ -32,7 +31,7 @@
 
 .k-process__head{
   text-align: center;
-  margin: 0 auto clamp(26px, 3vw, 42px);
+  margin: 0 auto clamp(20px, 3vw, 42px);
   max-width: 72ch;
 }
 
@@ -59,399 +58,579 @@
   line-height: 1.55;
 }
 
-/* =============================
-   Sticky stage
-   ============================= */
+/* =========================================================
+   MOBILE-FIRST: Cards Deck
+   ========================================================= */
 
-.k-proc{
+.k-procM{
   position: relative;
-  height: calc(var(--steps, 6) * 92vh);
+  margin-top: clamp(10px, 2vw, 14px);
 }
 
-.k-proc__sticky{
-  position: sticky;
-  top: calc(var(--nav-h) + 12px);
-  height: calc(100vh - (var(--nav-h) + 12px));
-
-  display: grid;
-  grid-template-columns: 440px 1fr;
-  gap: clamp(22px, 3vw, 62px);
-  align-items: center;
-}
-
-/* =============================
-   Left — stepper + progress
-   ============================= */
-
-.k-proc__left{
-  position: relative;
-  padding-left: 2px;
-}
-
-.k-proc__labelRow{
-  display: flex;
+.k-procM__top{
+  display:flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 14px;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
-.k-proc__label{
-  font-size: 14px;
+.k-procM__label{
+  font-size: 12px;
   letter-spacing: .22em;
   text-transform: uppercase;
   color: rgba(255,255,255,.70);
 }
 
-.k-proc__progress{
-  display: inline-flex;
-  align-items: center;
+.k-procM__progress{
+  display:inline-flex;
+  align-items:center;
   gap: 10px;
-  color: rgba(255,255,255,.72);
-  font-weight: 850;
+  font-weight: 900;
   letter-spacing: -0.01em;
-  font-size: 13px;
+  color: rgba(255,255,255,.78);
+  font-size: 12px;
+}
+.k-procM__num{ font-variant-numeric: tabular-nums; color: rgba(255,255,255,.86); }
+.k-procM__slash{ opacity: .6; }
+.k-procM__tot{ opacity: .72; }
+
+.k-procM__dots{
+  display:flex;
+  align-items:center;
+  gap: 8px;
+  margin: 10px 0 14px;
+}
+.k-procM__dot{
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+  cursor: pointer;
+  padding: 0;
+  transition: transform 180ms cubic-bezier(.2,.9,.2,1), background 180ms ease, border-color 180ms ease;
+}
+.k-procM__dot:hover{ transform: translateY(-1px); border-color: rgba(190,145,255,.28); }
+.k-procM__dot.is-on{
+  background: rgba(46,255,176,.90);
+  border-color: rgba(46,255,176,.45);
+  box-shadow: 0 12px 40px rgba(46,255,176,.16);
 }
 
-.k-proc__progressNum{
-  font-variant-numeric: tabular-nums;
-  color: rgba(255,255,255,.82);
+.k-procM__rail{
+  display:flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding: 6px 2px 10px;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
 }
-
-/* vertical track */
-.k-proc__track{
-  position: absolute;
-  left: 15px; /* aligned with numbers */
-  top: 64px;
-  bottom: 8px;
-  width: 2px;
+.k-procM__rail::-webkit-scrollbar{ height: 10px; }
+.k-procM__rail::-webkit-scrollbar-track{ background: rgba(255,255,255,.04); }
+.k-procM__rail::-webkit-scrollbar-thumb{
   background: rgba(255,255,255,.10);
   border-radius: 999px;
-  overflow: hidden;
 }
 
-.k-proc__trackFill{
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: calc(var(--prog, 0) * 100%);
-  background: linear-gradient(180deg, rgba(46,255,176,.0), rgba(46,255,176,.92));
-  box-shadow: 0 0 0 1px rgba(46,255,176,.08);
-  border-radius: 999px;
-}
-
-.k-proc__steps{
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  gap: 10px;
-}
-
-/* each step */
-.k-proc__step{
+.k-procM__card{
+  flex: 0 0 auto;
+  width: min(86vw, 540px);
+  scroll-snap-align: center;
   position: relative;
 }
 
-.k-proc__stepBtn{
+.k-procM__cardBtn{
   width: 100%;
+  text-align: left;
   border: 0;
   background: transparent;
-  color: inherit;
+  padding: 0;
   cursor: pointer;
-
-  display: grid;
-  grid-template-columns: 54px 1fr;
-  gap: 14px;
-  align-items: center;
-
-  padding: 10px 6px;
-  border-radius: 14px;
-  transition: transform 180ms cubic-bezier(.2,.9,.2,1);
 }
 
-.k-proc__stepBtn:hover{ transform: translateY(-1px); }
+.k-procM__card{
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.18));
+  box-shadow:
+    0 30px 120px rgba(0,0,0,.46),
+    0 1px 0 rgba(255,255,255,.06) inset;
+  overflow: hidden;
+  transform: translateZ(0);
+  transition: transform 220ms cubic-bezier(.2,.9,.2,1), border-color 220ms ease, box-shadow 220ms ease;
+}
 
-.k-proc__num{
-  width: 36px;
-  height: 36px;
-  display: grid;
-  place-items: center;
-  border-radius: 10px;
-  font-weight: 900;
+.k-procM__card.is-active{
+  transform: translateY(-2px);
+  border-color: rgba(46,255,176,.22);
+  box-shadow:
+    0 34px 140px rgba(0,0,0,.54),
+    0 0 0 1px rgba(46,255,176,.10) inset;
+}
 
-  color: rgba(255,255,255,.62);
-  background: rgba(255,255,255,.03);
-  border: 1px solid rgba(255,255,255,.10);
+.k-procM__cardHead{
+  display:grid;
+  grid-template-columns: 44px 1fr;
+  gap: 12px;
+  padding: 14px 14px 10px;
+  align-items: start;
+}
+
+.k-procM__badge{
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  display:grid;
+  place-items:center;
+  font-weight: 950;
+  color: rgba(255,255,255,.74);
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.12);
   box-shadow: 0 0 0 1px rgba(0,0,0,.18) inset;
 }
 
-.k-proc__text{ display: grid; gap: 4px; }
-.k-proc__stepTitle{
+.k-procM__card.is-active .k-procM__badge{
+  background: rgba(46,255,176,.92);
+  border-color: rgba(46,255,176,.40);
+  color: #07110d;
+  box-shadow: 0 22px 80px rgba(46,255,176,.14);
+}
+
+.k-procM__titles{ display:grid; gap: 6px; }
+.k-procM__title{
   font-weight: 950;
   letter-spacing: -0.02em;
-  color: rgba(255,255,255,.84);
+  color: rgba(255,255,255,.92);
 }
-.k-proc__stepSub{
-  color: rgba(255,255,255,.62);
+.k-procM__sub{
+  color: rgba(255,255,255,.68);
   font-size: 13px;
   line-height: 1.35;
   max-width: 44ch;
 }
 
-/* active marker (no frames, just light + accent) */
-.k-proc__step::before{
-  content:"";
-  position:absolute;
-  left: -10px;
-  top: 50%;
-  width: 6px;
-  height: 22px;
-  border-radius: 999px;
-  transform: translateY(-50%);
-  background: rgba(46,255,176,0);
-  box-shadow: 0 0 0 rgba(46,255,176,0);
-  transition: background 220ms ease, box-shadow 220ms ease;
-}
-
-.k-proc__step.is-active::before{
-  background: rgba(46,255,176,.92);
-  box-shadow: 0 0 26px rgba(46,255,176,.22);
-}
-
-/* sexy active step */
-.k-proc__step.is-active .k-proc__num{
-  background: rgba(46,255,176,.92);
-  border-color: rgba(46,255,176,.40);
-  color: #07110d;
-  box-shadow:
-    0 26px 90px rgba(46,255,176,.14),
-    0 0 0 1px rgba(255,255,255,.10) inset;
-}
-
-.k-proc__step.is-active .k-proc__stepTitle{
-  color: rgba(255,255,255,.96);
-}
-
-/* micro pulse when step changes */
-.k-proc__step.is-pulse .k-proc__num{
-  animation: kPulse 520ms cubic-bezier(.2,.9,.2,1) both;
-}
-@keyframes kPulse{
-  0%{ transform: scale(1); }
-  45%{ transform: scale(1.06); }
-  100%{ transform: scale(1); }
-}
-
-/* =============================
-   Right — scenes (UI collage)
-   ============================= */
-
-.k-proc__right{
-  position: relative;
-  height: 100%;
-  display: grid;
-  align-items: center;
-}
-
-.k-proc__stage{
-  position: relative;
-  width: min(900px, 100%);
-  height: min(590px, 66vh);
-  margin-left: auto;
-}
-
-/* step spotlight that moves */
-.k-proc__spot{
-  position: absolute;
-  inset: -20%;
-  background:
-    radial-gradient(560px 380px at var(--sx, 68%) var(--sy, 42%),
-      rgba(255,255,255,.10), transparent 62%);
-  opacity: .75;
-  pointer-events: none;
-}
-
-/* float pixels */
-.k-proc__px{
-  position:absolute;
-  width: 9px;
-  height: 9px;
-  background: rgba(46,255,176,.88);
-  box-shadow: 0 0 24px rgba(46,255,176,.22);
-  opacity: .85;
-  transform: translateZ(0);
-  animation: kpx 7s ease-in-out infinite;
-  pointer-events:none;
-}
-.k-proc__px--1{ left: 12%; top: 18%; width: 7px; height: 7px; animation-delay: -1.4s; }
-.k-proc__px--2{ left: 24%; top: 74%; width: 10px; height: 10px; opacity: .65; animation-delay: -3.2s; }
-.k-proc__px--3{ left: 88%; top: 22%; width: 6px; height: 6px; opacity: .6; animation-delay: -2.1s; }
-.k-proc__px--4{ left: 78%; top: 78%; width: 8px; height: 8px; opacity: .7; animation-delay: -4.8s; }
-.k-proc__px--5{ left: 62%; top: 10%; width: 7px; height: 7px; opacity: .55; animation-delay: -5.9s; }
-
-@keyframes kpx{
-  0%,100%{ transform: translateY(0); }
-  50%{ transform: translateY(-12px); }
-}
-
-/* subtle “device plane” layer — structure without frames */
-.k-proc__plane{
-  position: absolute;
-  inset: 6% 8%;
-  border-radius: 28px;
-  background:
-    radial-gradient(900px 520px at 50% 0%, rgba(255,255,255,.06), transparent 62%),
-    linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,0));
-  opacity: .85;
-  pointer-events:none;
-  filter: blur(0px);
-}
-
-/* cards group */
-.k-proc__cards{
-  position: absolute;
-  inset: 0;
-}
-
-/* entering animation */
-.k-proc__cards.is-enter .k-proc__card{
-  animation: kcardIn 520ms cubic-bezier(.2,.9,.2,1) both;
-}
-.k-proc__cards.is-enter .k-proc__card:nth-child(2){ animation-delay: 70ms; }
-.k-proc__cards.is-enter .k-proc__card:nth-child(3){ animation-delay: 120ms; }
-.k-proc__cards.is-enter .k-proc__card:nth-child(4){ animation-delay: 170ms; }
-
-@keyframes kcardIn{
-  from{ opacity: 0; transform: translate(-50%, -50%) translateY(18px) scale(.985) rotate(var(--r, 0deg)); }
-  to{ opacity: 1; transform: translate(-50%, -50%) translateY(0) scale(1) rotate(var(--r, 0deg)); }
-}
-
-/* a single “UI screen” */
-.k-proc__card{
-  position: absolute;
-  transform: translate(-50%, -50%);
-  border-radius: 14px;
-  background: rgba(255,255,255,.96);
-  color: rgba(12,14,18,.92);
-  box-shadow:
-    0 46px 130px rgba(0,0,0,.48),
-    0 0 0 1px rgba(255,255,255,.20) inset;
-  overflow: hidden;
-  will-change: transform, opacity;
-}
-
-.k-proc__cardTop{
-  height: 38px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 12px;
-  background: rgba(14,16,20,.04);
-  border-bottom: 1px solid rgba(14,16,20,.10);
-}
-.k-proc__dot{
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  background: rgba(14,16,20,.18);
-}
-.k-proc__cardTitle{
-  margin-left: 8px;
-  font-size: 12px;
-  font-weight: 950;
-  letter-spacing: -0.01em;
-  color: rgba(14,16,20,.72);
-}
-
-.k-proc__cardBody{
-  padding: 12px;
-  display: grid;
-  gap: 10px;
-}
-.k-proc__row{
-  height: 10px;
-  border-radius: 999px;
-  background: rgba(14,16,20,.08);
-}
-.k-proc__row--short{ width: 62%; }
-.k-proc__row--micro{ height: 8px; width: 48%; opacity: .92; }
-
-.k-proc__cta{
-  margin-top: 6px;
-  height: 34px;
-  border-radius: 10px;
-  background: rgba(46,255,176,.92);
-  box-shadow: 0 18px 54px rgba(46,255,176,.16);
-}
-.k-proc__cta.is-blue{
-  background: rgba(110,160,255,.92);
-  box-shadow: 0 18px 54px rgba(110,160,255,.14);
-}
-
-/* right bottom mini detail (tiny, not texty) */
-.k-proc__detail{
-  position: absolute;
-  right: 0;
-  bottom: -8px;
-  width: min(360px, 92%);
-  color: rgba(255,255,255,.78);
-}
-.k-proc__detailTitle{
-  font-weight: 950;
-  letter-spacing: -0.02em;
-  color: rgba(255,255,255,.92);
-  margin-bottom: 8px;
-}
-.k-proc__chips{
-  display: flex;
+.k-procM__chips{
+  display:flex;
   flex-wrap: wrap;
   gap: 8px;
+  padding: 0 14px 12px;
 }
-.k-proc__chip{
-  display: inline-flex;
-  align-items: center;
+
+.k-procM__chip{
+  display:inline-flex;
+  align-items:center;
   gap: 8px;
   height: 30px;
   padding: 0 12px;
   border-radius: 999px;
   border: 1px solid rgba(255,255,255,.12);
-  background: rgba(0,0,0,.18);
+  background: rgba(0,0,0,.16);
   color: rgba(255,255,255,.78);
   font-size: 12px;
   font-weight: 850;
 }
-.k-proc__chipDot{
+
+.k-procM__chipDot{
   width: 7px; height: 7px;
   border-radius: 99px;
   background: rgba(46,255,176,.92);
-  box-shadow: 0 0 22px rgba(46,255,176,.18);
+  box-shadow: 0 0 18px rgba(46,255,176,.16);
 }
 
-/* spacer */
-.k-proc__spacer{ height: 1px; }
+/* tiny scene thumb */
+.k-procM__thumb{
+  position: relative;
+  height: 150px;
+  margin: 0 10px 12px;
+  border-radius: 18px;
+  overflow: hidden;
 
-/* =============================
-   Responsive
-   ============================= */
-@media (max-width: 980px){
-  .k-proc{ height: auto; }
-  .k-proc__sticky{
+  background:
+    radial-gradient(640px 320px at 50% 0%, rgba(255,255,255,.06), transparent 70%),
+    linear-gradient(180deg, rgba(255,255,255,.04), rgba(0,0,0,.10));
+  border: 1px solid rgba(255,255,255,.10);
+}
+
+.k-procM__thumbSpot{
+  position:absolute;
+  inset: -30%;
+  background: radial-gradient(520px 320px at var(--sx, 60%) var(--sy, 40%), rgba(255,255,255,.10), transparent 62%);
+  opacity: .85;
+}
+
+.k-procM__miniCard{
+  position:absolute;
+  width: 64px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.96);
+  box-shadow: 0 20px 60px rgba(0,0,0,.35);
+  opacity: .95;
+}
+.k-procM__miniCard--2{ opacity: .88; transform: translate(-50%,-50%) rotate(1deg) scale(.98); }
+.k-procM__miniCard--3{ opacity: .78; transform: translate(-50%,-50%) rotate(-2deg) scale(.96); }
+
+/* =========================================================
+   DESKTOP: Sticky stepper + scene
+   ========================================================= */
+
+@media (min-width: 981px){
+  .k-procM{ display:none; }
+
+  .k-proc{
     position: relative;
-    top: auto;
-    height: auto;
-    grid-template-columns: 1fr;
-    gap: 22px;
-    align-items: start;
+    height: calc(var(--steps, 6) * 92vh);
   }
-  .k-proc__track{ display:none; }
-  .k-proc__stage{ margin: 16px auto 0; height: 520px; }
+
+  .k-proc__sticky{
+    position: sticky;
+    top: calc(var(--nav-h) + 12px);
+    height: calc(100vh - (var(--nav-h) + 12px));
+
+    display: grid;
+    grid-template-columns: 440px 1fr;
+    gap: clamp(22px, 3vw, 62px);
+    align-items: center;
+  }
+
+  .k-proc__left{
+    position: relative;
+    padding-left: 2px;
+  }
+
+  .k-proc__labelRow{
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  .k-proc__label{
+    font-size: 14px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.70);
+  }
+
+  .k-proc__progress{
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: rgba(255,255,255,.72);
+    font-weight: 850;
+    letter-spacing: -0.01em;
+    font-size: 13px;
+  }
+
+  .k-proc__progressNum{
+    font-variant-numeric: tabular-nums;
+    color: rgba(255,255,255,.82);
+  }
+
+  .k-proc__track{
+    position: absolute;
+    left: 15px;
+    top: 64px;
+    bottom: 8px;
+    width: 2px;
+    background: rgba(255,255,255,.10);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .k-proc__trackFill{
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: calc(var(--prog, 0) * 100%);
+    background: linear-gradient(180deg, rgba(46,255,176,.0), rgba(46,255,176,.92));
+    box-shadow: 0 0 0 1px rgba(46,255,176,.08);
+    border-radius: 999px;
+  }
+
+  .k-proc__steps{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 10px;
+  }
+
+  .k-proc__step{ position: relative; }
+
+  .k-proc__stepBtn{
+    width: 100%;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+
+    display: grid;
+    grid-template-columns: 54px 1fr;
+    gap: 14px;
+    align-items: center;
+
+    padding: 10px 6px;
+    border-radius: 14px;
+    transition: transform 180ms cubic-bezier(.2,.9,.2,1);
+  }
+  .k-proc__stepBtn:hover{ transform: translateY(-1px); }
+
+  .k-proc__num{
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    font-weight: 900;
+
+    color: rgba(255,255,255,.62);
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.10);
+    box-shadow: 0 0 0 1px rgba(0,0,0,.18) inset;
+  }
+
+  .k-proc__text{ display: grid; gap: 4px; }
+  .k-proc__stepTitle{
+    font-weight: 950;
+    letter-spacing: -0.02em;
+    color: rgba(255,255,255,.84);
+  }
+  .k-proc__stepSub{
+    color: rgba(255,255,255,.62);
+    font-size: 13px;
+    line-height: 1.35;
+    max-width: 44ch;
+  }
+
+  .k-proc__step::before{
+    content:"";
+    position:absolute;
+    left: -10px;
+    top: 50%;
+    width: 6px;
+    height: 22px;
+    border-radius: 999px;
+    transform: translateY(-50%);
+    background: rgba(46,255,176,0);
+    box-shadow: 0 0 0 rgba(46,255,176,0);
+    transition: background 220ms ease, box-shadow 220ms ease;
+  }
+
+  .k-proc__step.is-active::before{
+    background: rgba(46,255,176,.92);
+    box-shadow: 0 0 26px rgba(46,255,176,.22);
+  }
+
+  .k-proc__step.is-active .k-proc__num{
+    background: rgba(46,255,176,.92);
+    border-color: rgba(46,255,176,.40);
+    color: #07110d;
+    box-shadow:
+      0 26px 90px rgba(46,255,176,.14),
+      0 0 0 1px rgba(255,255,255,.10) inset;
+  }
+
+  .k-proc__step.is-active .k-proc__stepTitle{
+    color: rgba(255,255,255,.96);
+  }
+
+  .k-proc__step.is-pulse .k-proc__num{
+    animation: kPulse 520ms cubic-bezier(.2,.9,.2,1) both;
+  }
+  @keyframes kPulse{
+    0%{ transform: scale(1); }
+    45%{ transform: scale(1.06); }
+    100%{ transform: scale(1); }
+  }
+
+  .k-proc__right{
+    position: relative;
+    height: 100%;
+    display: grid;
+    align-items: center;
+  }
+
+  .k-proc__stage{
+    position: relative;
+    width: min(900px, 100%);
+    height: min(590px, 66vh);
+    margin-left: auto;
+  }
+
+  .k-proc__spot{
+    position: absolute;
+    inset: -20%;
+    background:
+      radial-gradient(560px 380px at var(--sx, 68%) var(--sy, 42%),
+        rgba(255,255,255,.10), transparent 62%);
+    opacity: .75;
+    pointer-events: none;
+  }
+
+  .k-proc__px{
+    position:absolute;
+    width: 9px;
+    height: 9px;
+    background: rgba(46,255,176,.88);
+    box-shadow: 0 0 24px rgba(46,255,176,.22);
+    opacity: .85;
+    transform: translateZ(0);
+    animation: kpx 7s ease-in-out infinite;
+    pointer-events:none;
+  }
+  .k-proc__px--1{ left: 12%; top: 18%; width: 7px; height: 7px; animation-delay: -1.4s; }
+  .k-proc__px--2{ left: 24%; top: 74%; width: 10px; height: 10px; opacity: .65; animation-delay: -3.2s; }
+  .k-proc__px--3{ left: 88%; top: 22%; width: 6px; height: 6px; opacity: .6; animation-delay: -2.1s; }
+  .k-proc__px--4{ left: 78%; top: 78%; width: 8px; height: 8px; opacity: .7; animation-delay: -4.8s; }
+  .k-proc__px--5{ left: 62%; top: 10%; width: 7px; height: 7px; opacity: .55; animation-delay: -5.9s; }
+
+  @keyframes kpx{
+    0%,100%{ transform: translateY(0); }
+    50%{ transform: translateY(-12px); }
+  }
+
+  .k-proc__plane{
+    position: absolute;
+    inset: 6% 8%;
+    border-radius: 28px;
+    background:
+      radial-gradient(900px 520px at 50% 0%, rgba(255,255,255,.06), transparent 62%),
+      linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,0));
+    opacity: .85;
+    pointer-events:none;
+  }
+
+  .k-proc__cards{ position: absolute; inset: 0; }
+
+  .k-proc__cards.is-enter .k-proc__card{
+    animation: kcardIn 520ms cubic-bezier(.2,.9,.2,1) both;
+  }
+  .k-proc__cards.is-enter .k-proc__card:nth-child(2){ animation-delay: 70ms; }
+  .k-proc__cards.is-enter .k-proc__card:nth-child(3){ animation-delay: 120ms; }
+  .k-proc__cards.is-enter .k-proc__card:nth-child(4){ animation-delay: 170ms; }
+
+  @keyframes kcardIn{
+    from{ opacity: 0; transform: translate(-50%, -50%) translateY(18px) scale(.985); }
+    to{ opacity: 1; transform: translate(-50%, -50%) translateY(0) scale(1); }
+  }
+
+  .k-proc__card{
+    position: absolute;
+    transform: translate(-50%, -50%);
+    border-radius: 14px;
+    background: rgba(255,255,255,.96);
+    color: rgba(12,14,18,.92);
+    box-shadow:
+      0 46px 130px rgba(0,0,0,.48),
+      0 0 0 1px rgba(255,255,255,.20) inset;
+    overflow: hidden;
+    will-change: transform, opacity;
+  }
+
+  .k-proc__cardTop{
+    height: 38px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: rgba(14,16,20,.04);
+    border-bottom: 1px solid rgba(14,16,20,.10);
+  }
+  .k-proc__dot{
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(14,16,20,.18);
+  }
+  .k-proc__cardTitle{
+    margin-left: 8px;
+    font-size: 12px;
+    font-weight: 950;
+    letter-spacing: -0.01em;
+    color: rgba(14,16,20,.72);
+  }
+
+  .k-proc__cardBody{
+    padding: 12px;
+    display: grid;
+    gap: 10px;
+  }
+  .k-proc__row{
+    height: 10px;
+    border-radius: 999px;
+    background: rgba(14,16,20,.08);
+  }
+  .k-proc__row--short{ width: 62%; }
+  .k-proc__row--micro{ height: 8px; width: 48%; opacity: .92; }
+
+  .k-proc__cta{
+    margin-top: 6px;
+    height: 34px;
+    border-radius: 10px;
+    background: rgba(46,255,176,.92);
+    box-shadow: 0 18px 54px rgba(46,255,176,.16);
+  }
+  .k-proc__cta.is-blue{
+    background: rgba(110,160,255,.92);
+    box-shadow: 0 18px 54px rgba(110,160,255,.14);
+  }
+
+  .k-proc__detail{
+    position: absolute;
+    right: 0;
+    bottom: -8px;
+    width: min(360px, 92%);
+    color: rgba(255,255,255,.78);
+  }
+  .k-proc__detailTitle{
+    font-weight: 950;
+    letter-spacing: -0.02em;
+    color: rgba(255,255,255,.92);
+    margin-bottom: 8px;
+  }
+  .k-proc__chips{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .k-proc__chip{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 30px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(0,0,0,.18);
+    color: rgba(255,255,255,.78);
+    font-size: 12px;
+    font-weight: 850;
+  }
+  .k-proc__chipDot{
+    width: 7px; height: 7px;
+    border-radius: 99px;
+    background: rgba(46,255,176,.92);
+    box-shadow: 0 0 22px rgba(46,255,176,.18);
+  }
+
+  .k-proc__spacer{ height: 1px; }
 }
 
-/* motion safety */
+/* =========================================================
+   Motion safety
+   ========================================================= */
 @media (prefers-reduced-motion: reduce){
-  .k-proc__stepBtn{ transition: none !important; transform: none !important; }
+  .k-procM__dot,
+  .k-procM__card,
+  .k-proc__stepBtn{
+    transition: none !important;
+    transform: none !important;
+  }
   .k-proc__px{ animation: none !important; }
   .k-proc__cards.is-enter .k-proc__card{ animation: none !important; opacity: 1 !important; }
 }
