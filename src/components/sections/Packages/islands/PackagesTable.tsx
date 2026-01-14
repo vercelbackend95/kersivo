@@ -1,7 +1,6 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 
-type ModeKey = "website" | "seo" | "launch";
-type TierKey = "starter" | "growth" | "scale";
+type TierKey = "base" | "plus" | "bespoke";
 
 type Row = {
   label: string;
@@ -17,131 +16,163 @@ type Tier = {
   ctaHref: string;
 };
 
-type Mode = {
-  key: ModeKey;
-  tiers: Tier[];
-  rows: Row[];
-};
-
 function cn(...x: Array<string | false | undefined | null>) {
   return x.filter(Boolean).join(" ");
 }
 
+function QuoteCta({ href, label }: { href: string; label: string }) {
+  // Uses your global .k-btn system (same purple CTA vibe as TopNav/Hero)
+  return (
+    <a className="k-btn k-btn--primary k-packCta" href={href}>
+      <span className="k-btn__label">{label}</span>
+      <span className="k-btn__shine" aria-hidden="true" />
+      <span className="k-btn__arrow" aria-hidden="true">
+        →
+      </span>
+    </a>
+  );
+}
+
 export default function PackagesTable() {
-  const modes: Mode[] = useMemo(
+  const tiers: Tier[] = useMemo(
+    () => [
+      { key: "base", name: "Base", price: "From £750", cta: "Get a quote", ctaHref: "#contact" },
+      { key: "plus", name: "Plus", price: "From £1,350", cta: "Get a quote", ctaHref: "#contact" },
+      { key: "bespoke", name: "Bespoke", price: "From £2,450", cta: "Get a quote", ctaHref: "#contact" },
+    ],
+    []
+  );
+
+  const rows: Row[] = useMemo(
     () => [
       {
-        key: "website",
-        tiers: [
-          { key: "starter", name: "Starter", price: "From £750", cta: "Get a quote", ctaHref: "#contact" },
-          { key: "growth", name: "Growth", price: "From £1,350", cta: "Get a quote", ctaHref: "#contact" },
-          { key: "scale", name: "Scale", price: "From £2,450", cta: "Get a quote", ctaHref: "#contact" },
-        ],
-        rows: [
-          { label: "Best for", values: { starter: "Single service", growth: "Local business", scale: "Multi-service" } },
-          { label: "Pages/sections", values: { starter: "Up to 5", growth: "Up to 10", scale: "Up to 18" } },
-          { label: "Design", values: { starter: "Premium base + tweaks", growth: "Tailored system", scale: "Bespoke" } },
-          { label: "Copy support", values: { starter: "Light polish", growth: "Key sections", scale: "Full polish" } },
-          { label: "Forms", values: { starter: "1 lead form", growth: "2–3 forms", scale: "Multi-step" } },
-          { label: "Delivery", values: { starter: "5–7 days", growth: "7–12 days", scale: "12–20 days" } },
-          { label: "Revisions", values: { starter: "1 round", growth: "2 rounds", scale: "3 rounds" } },
-          { label: "Support", values: { starter: "7 days", growth: "14 days", scale: "30 days" } },
-        ],
+        label: "Best for",
+        values: {
+          base: "Single-location service business",
+          plus: "Growing local business",
+          bespoke: "Multi-location / advanced flows",
+        },
       },
       {
-        key: "seo",
-        tiers: [
-          { key: "starter", name: "Starter", price: "From £350", cta: "Get a quote", ctaHref: "#contact" },
-          { key: "growth", name: "Growth", price: "From £650", cta: "Get a quote", ctaHref: "#contact" },
-          { key: "scale", name: "Scale", price: "From £1,150", cta: "Get a quote", ctaHref: "#contact" },
-        ],
-        rows: [
-          { label: "Best for", values: { starter: "New site", growth: "Competitive area", scale: "Multi-location" } },
-          { label: "On-page setup", values: { starter: "Core pages", growth: "Core + intent", scale: "Full map" } },
-          { label: "Metadata", values: { starter: "Basics", growth: "Full set", scale: "Templates" } },
-          { label: "Schema", values: { starter: "Basic", growth: "Local + FAQ", scale: "Richer set" } },
-          { label: "Sitemap/robots", values: { starter: "Yes", growth: "Yes", scale: "Yes + audit" } },
-          { label: "Internal links", values: { starter: "Light", growth: "Structured", scale: "Strategy" } },
-          { label: "Delivery", values: { starter: "2–3 days", growth: "4–6 days", scale: "7–10 days" } },
-          { label: "Notes", values: { starter: "Clean baseline", growth: "Intent focus", scale: "Scale-ready" } },
-        ],
+        label: "Pages/sections",
+        values: {
+          base: "Up to 5",
+          plus: "Up to 10",
+          bespoke: "Up to 18 (or sitemap-based)",
+        },
       },
       {
-        key: "launch",
-        tiers: [
-          { key: "starter", name: "Starter", price: "From £550", cta: "Get a quote", ctaHref: "#contact" },
-          { key: "growth", name: "Growth", price: "From £950", cta: "Get a quote", ctaHref: "#contact" },
-          { key: "scale", name: "Scale", price: "From £1,650", cta: "Get a quote", ctaHref: "#contact" },
-        ],
-        rows: [
-          { label: "Best for", values: { starter: "Simple offer", growth: "Most businesses", scale: "Harder sell" } },
-          { label: "Hero + CTA", values: { starter: "Yes", growth: "Yes + variants", scale: "Yes + testing" } },
-          { label: "Sections", values: { starter: "3–4", growth: "5–7", scale: "8–10" } },
-          { label: "Trust cues", values: { starter: "Basic", growth: "Stronger", scale: "Full set" } },
-          { label: "Contact flow", values: { starter: "Simple", growth: "Guided", scale: "Multi-step" } },
-          { label: "Delivery", values: { starter: "48–72h", growth: "3–5 days", scale: "5–8 days" } },
-          { label: "Handover", values: { starter: "Clean", growth: "Checklist", scale: "Extras" } },
-          { label: "Aftercare", values: { starter: "7 days", growth: "14 days", scale: "30 days" } },
-        ],
+        label: "Design",
+        values: {
+          base: "Premium base, customised to your brand",
+          plus: "Tailored layout system + stronger hierarchy",
+          bespoke: "Bespoke design + custom sections",
+        },
+      },
+      {
+        label: "Copy support",
+        values: {
+          base: "Structure + light polish",
+          plus: "Key sections rewritten for clarity",
+          bespoke: "Full polish + messaging pass",
+        },
+      },
+      {
+        label: "Lead capture",
+        hint: "Client understands this instantly. Includes booking in a simple variant.",
+        values: {
+          base: "1 form + basic booking request",
+          plus: "Multi-step enquiry + booking integration",
+          bespoke: "Advanced flows + automation-ready handoff",
+        },
+      },
+      {
+        label: "Local SEO setup",
+        hint: "Setup and foundations — not “rank #1” fairy tales.",
+        values: {
+          base: "On-page basics + local intent guidance",
+          plus: "Local schema + clearer intent mapping",
+          bespoke: "Multi-location structure + templates",
+        },
+      },
+
+      /* ✅ NEW ROW: Payments & deposits (under Local SEO setup) */
+      {
+        label: "Payments & deposits",
+        hint: "Stripe setup for deposits / pay-in-full where it makes sense.",
+        values: {
+          base: "Not included",
+          plus: "Included (Stripe setup)",
+          bespoke: "Included (Stripe setup)",
+        },
+      },
+
+      {
+        label: "Performance",
+        values: {
+          base: "Fast build + image optimisation",
+          plus: "Performance budget + tighter assets",
+          bespoke: "Perf budget + monitoring-ready setup",
+        },
+      },
+      {
+        label: "Delivery",
+        values: {
+          base: "7–10 working days",
+          plus: "10–15 working days",
+          bespoke: "3–6 weeks (scope-based)",
+        },
+      },
+      {
+        label: "Revisions",
+        values: {
+          base: "1 round",
+          plus: "2 rounds",
+          bespoke: "3 rounds",
+        },
+      },
+      {
+        label: "Aftercare",
+        values: {
+          base: "14 days",
+          plus: "30 days",
+          bespoke: "60 days",
+        },
       },
     ],
     []
   );
 
-  const [modeKey, setModeKey] = useState<ModeKey>("website");
-
-  useEffect(() => {
-    const onMode = (e: Event) => {
-      const ce = e as CustomEvent<{ modeKey?: ModeKey }>;
-      const next = ce?.detail?.modeKey;
-      if (!next) return;
-      setModeKey(next);
-    };
-    window.addEventListener("k-pack-mode", onMode);
-    return () => window.removeEventListener("k-pack-mode", onMode);
-  }, []);
-
-  const mode = modes.find((m) => m.key === modeKey) || modes[0];
-
   return (
     <div className="k-packCard" aria-label="Packages comparison">
       <div className="k-packStage">
         <div className="k-packScroll">
-          {/* ONE GRID. One row = one truth. */}
           <div className="k-packMatrix" role="table" aria-label="Packages table">
             {/* Header row */}
             <div className="k-packHeadCell k-packHeadCell--label" role="columnheader">
               What you get
             </div>
 
-            {mode.tiers.map((t) => (
-              <div
-                key={t.key}
-                className={cn("k-packHeadCell", t.key === "scale" && "is-mint")}
-                role="columnheader"
-              >
+            {tiers.map((t) => (
+              <div key={t.key} className={cn("k-packHeadCell")} role="columnheader">
                 <div className="k-packTierName">{t.name}</div>
                 <div className="k-packTierPrice">{t.price}</div>
 
-                <a className="k-packBuy" href={t.ctaHref}>
-                  <span className="k-packBuyText">{t.cta}</span>
-                  <span className="k-packBuyArrow" aria-hidden="true">
-                    →
-                  </span>
-                  <span className="k-packBuyShine" aria-hidden="true" />
-                </a>
+                <div className="k-packCtaWrap">
+                  <QuoteCta href={t.ctaHref} label={t.cta} />
+                </div>
               </div>
             ))}
 
             {/* Data rows */}
-            {mode.rows.map((r) => (
+            {rows.map((r) => (
               <React.Fragment key={r.label}>
                 <div className="k-packCell k-packCell--label k-packStickyCell" role="rowheader">
                   <span className="k-packLabelText">{r.label}</span>
                   {r.hint ? <span className="k-packCellHint">{r.hint}</span> : null}
                 </div>
 
-                {mode.tiers.map((t) => (
+                {tiers.map((t) => (
                   <div key={t.key} className="k-packCell" role="cell">
                     {r.values[t.key]}
                   </div>

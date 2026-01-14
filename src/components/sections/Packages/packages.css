@@ -1,6 +1,7 @@
 /* =========================================
    KERSIVO — PACKAGES
-   FIX: one-grid table so sticky labels align perfectly (no “step lines”)
+   One-grid table so sticky labels align perfectly
+   Tabs removed. Truth lives in the table.
    ========================================= */
 
 .k-pack{
@@ -9,7 +10,7 @@
 }
 
 /* -------------------------
-   Section heading (outside islands)
+   Section heading
    ------------------------- */
 .k-pack__head{
   text-align: center;
@@ -48,68 +49,6 @@
   font-size: var(--p);
   line-height: 1.55;
 }
-
-/* pills wrapper under heading */
-.k-pack__tabs{
-  margin-top: 14px;
-  display: grid;
-  justify-items: center;
-}
-
-/* -------------------------
-   Mode pills (island)
-   ------------------------- */
-.k-packPillsWrap{
-  margin-top: 0;
-  display: grid;
-  gap: 10px;
-}
-.k-packPillsWrap--center{ justify-items: center; }
-
-.k-packPills{
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.10);
-  background: rgba(0,0,0,.22);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  width: fit-content;
-  max-width: 100%;
-}
-
-.k-packPillsRail{
-  position: absolute;
-  left: 6px;
-  top: 6px;
-  height: calc(100% - 12px);
-  border-radius: 999px;
-  background: rgba(255,255,255,.08);
-  border: 1px solid rgba(255,255,255,.12);
-  box-shadow: 0 18px 60px rgba(0,0,0,.28);
-  pointer-events: none;
-}
-
-.k-packPill{
-  position: relative;
-  border: 0;
-  background: transparent;
-  color: rgba(255,255,255,.72);
-  font-weight: 800;
-  font-size: 12px;
-  padding: 10px 14px;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: color 160ms ease, transform 160ms cubic-bezier(.2,.8,.2,1);
-}
-.k-packPill:hover{ color: rgba(255,255,255,.92); transform: translateY(-1px); }
-.k-packPill.is-on{ color: rgba(255,255,255,.94); }
-
-.k-packHint{ color: rgba(255,255,255,.62); font-size: 12px; }
-.k-packHint--center{ text-align: center; }
 
 /* -------------------------
    Table shell
@@ -152,7 +91,7 @@
 .k-packScroll::-webkit-scrollbar-thumb:hover{ background: rgba(255,255,255,.14); }
 
 /* -------------------------
-   ✅ One-grid table (fixes row misalignment)
+   ✅ One-grid table
    4 columns: labels + 3 tiers
    ------------------------- */
 .k-packMatrix{
@@ -161,7 +100,7 @@
   min-width: 1060px;
 }
 
-/* shared vertical separators without “double lines” */
+/* shared vertical separators */
 .k-packMatrix > *{
   border-right: 1px solid rgba(255,255,255,.08);
 }
@@ -172,12 +111,13 @@
 /* header cells */
 .k-packHeadCell{
   padding: 14px 14px 12px;
-  min-height: 96px;
+  min-height: 104px;
   display: grid;
   align-content: center;
   gap: 6px;
   border-bottom: 1px solid rgba(255,255,255,.08);
   background: rgba(0,0,0,.10);
+  position: relative;
 }
 
 .k-packHeadCell--label{
@@ -187,7 +127,7 @@
   background: rgba(0,0,0,.16);
 }
 
-/* clean separator line for sticky column (prevents jagged seam) */
+/* clean seam for sticky column */
 .k-packHeadCell--label::after,
 .k-packStickyCell::after{
   content:"";
@@ -200,6 +140,31 @@
   pointer-events:none;
 }
 
+/* tier headings */
+.k-packTierName{
+  color: rgba(255,255,255,.92);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.k-packTierPrice{
+  color: rgba(255,255,255,.74);
+  font-size: 13px;
+  font-weight: 750;
+}
+
+/* CTA wrapper spacing */
+.k-packCtaWrap{
+  margin-top: 8px;
+}
+
+/* Make global .k-btn fit table cells */
+.k-packCta{
+  --btn-h: 42px;
+  --btn-pad: 16px;
+  font-size: 12px;
+}
+
 /* data cells */
 .k-packCell{
   padding: 12px 14px;
@@ -208,9 +173,10 @@
   font-size: 13px;
   line-height: 1.35;
   background: rgba(0,0,0,.10);
+  position: relative;
 }
 
-/* sticky labels cells */
+/* sticky label cells */
 .k-packStickyCell{
   position: sticky;
   left: 0;
@@ -222,7 +188,6 @@
 .k-packHeadCell--label,
 .k-packStickyCell{
   border-right: 0 !important;
-  position: sticky;
 }
 
 /* label styling */
@@ -232,76 +197,11 @@
 }
 .k-packLabelText{ display: inline-block; }
 
-/* tier headings */
-.k-packTierName{
-  color: rgba(255,255,255,.92);
-  font-weight: 900;
-  letter-spacing: -0.02em;
-}
-.k-packTierPrice{
-  color: rgba(255,255,255,.74);
-  font-size: 13px;
-  font-weight: 750;
-}
-
 .k-packCellHint{
   display: block;
   margin-top: 6px;
   font-size: 12px;
   color: rgba(255,255,255,.45);
-}
-
-/* Buy CTA */
-.k-packBuy{
-  margin-top: 8px;
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-
-  height: 42px;
-  padding: 0 14px;
-  border-radius: 999px;
-
-  color: rgba(255,255,255,.92);
-  text-decoration: none;
-
-  border: 1px solid rgba(255,255,255,.14);
-  background: rgba(0,0,0,.28);
-  overflow: hidden;
-
-  transition:
-    transform 180ms cubic-bezier(.2,.8,.2,1),
-    border-color 180ms ease,
-    box-shadow 180ms ease,
-    background 180ms ease;
-}
-
-.k-packBuy:hover{
-  transform: translateY(-1px);
-  border-color: rgba(255,255,255,.22);
-  background: rgba(0,0,0,.34);
-  box-shadow: 0 18px 60px rgba(0,0,0,.30);
-}
-
-.k-packBuyText{ font-weight: 850; font-size: 12px; }
-.k-packBuyArrow{ opacity: .9; transition: transform 220ms cubic-bezier(.2,.9,.2,1); }
-.k-packBuy:hover .k-packBuyArrow{ transform: translateX(2px); }
-
-.k-packBuyShine{
-  position: absolute;
-  inset: -40% -25%;
-  background: radial-gradient(closest-side at 50% 50%, rgba(255,255,255,.35), transparent 72%);
-  opacity: 0;
-  filter: blur(10px);
-  transform: translateX(-34%);
-  transition: opacity 200ms ease, transform 520ms cubic-bezier(.2,.9,.2,1);
-  pointer-events: none;
-}
-.k-packBuy:hover .k-packBuyShine{
-  opacity: .45;
-  transform: translateX(34%);
 }
 
 /* Dust sparkle */
@@ -320,7 +220,7 @@
 }
 
 /* -------------------------
-   Ghost link below island (outside)
+   Ghost link below section
    ------------------------- */
 .k-pack__below{
   margin-top: 14px;
@@ -360,11 +260,56 @@
 }
 
 @media (prefers-reduced-motion: reduce){
-  .k-packPill,
-  .k-packBuy,
-  .k-packGhost{
-    transition: none !important;
-    transform: none !important;
-  }
-  .k-packBuyShine{ opacity: 0 !important; }
+  .k-packGhost{ transition: none !important; transform: none !important; }
+}
+/* -------------------------
+   Add-ons (under table) — short & premium
+   ------------------------- */
+.k-packAddons{
+  margin-top: 14px;
+  display: flex;
+  justify-content: center;
+}
+
+.k-packAddons__inner{
+  width: min(980px, 100%);
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.14);
+  box-shadow:
+    0 22px 90px rgba(0,0,0,.22),
+    0 1px 0 rgba(255,255,255,.06) inset;
+  padding: clamp(14px, 2vw, 18px);
+}
+
+.k-packAddons__title{
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: rgba(255,255,255,.88);
+  margin-bottom: 10px;
+}
+
+.k-packAddons__chips{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.k-packAddons__chip{
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.03);
+  color: rgba(255,255,255,.78);
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+.k-packAddons__note{
+  margin-top: 12px;
+  color: rgba(255,255,255,.56);
+  font-size: 12px;
 }
