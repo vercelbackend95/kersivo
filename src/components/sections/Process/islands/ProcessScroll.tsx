@@ -134,18 +134,16 @@ export default function ProcessScroll() {
     []
   );
 
-  // SSR-safe: always render BOTH DOMs; JS only enhances after mount.
-// SSR-safe: always render BOTH DOMs; JS only enhances after mount.
-const [mounted, setMounted] = useState(false);
-useEffect(() => setMounted(true), []);
+  // SSR-safe: render BOTH DOMs; JS enhances after mount
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
-// HOOKI NIGDY WARUNKOWO.
-const desktopMQ = useMedia("(min-width: 981px)");
-const isDesktop = mounted && desktopMQ;
+  // HOOKI NIGDY WARUNKOWO.
+  const desktopMQ = useMedia("(min-width: 981px)");
+  const isDesktop = mounted && desktopMQ;
 
   const n = steps.length;
 
-  // shared state
   const [active, setActive] = useState(0);
 
   // one-shot sweep on active change (desktop only)
@@ -154,7 +152,7 @@ const isDesktop = mounted && desktopMQ;
     if (!mounted || !isDesktop) return;
     if (reducedMotion()) return;
     setSweepIdx(active);
-    const t = window.setTimeout(() => setSweepIdx(null), 720);
+    const t = window.setTimeout(() => setSweepIdx(null), 760);
     return () => window.clearTimeout(t);
   }, [active, mounted, isDesktop]);
 
@@ -231,6 +229,30 @@ const isDesktop = mounted && desktopMQ;
   const [local, setLocal] = useState(0); // 0..1 within active step
   const [pulseIdx, setPulseIdx] = useState<number | null>(null);
   const [enterTick, setEnterTick] = useState(0);
+
+  const pulseTRef = useRef<number | null>(null);
+  const sweepTRef = useRef<number | null>(null);
+
+  const fireStepFx = (idx: number) => {
+    if (reducedMotion()) return;
+
+    // pulse
+    setPulseIdx(idx);
+    if (pulseTRef.current) window.clearTimeout(pulseTRef.current);
+    pulseTRef.current = window.setTimeout(() => setPulseIdx(null), 520);
+
+    // sweep
+    setSweepIdx(idx);
+    if (sweepTRef.current) window.clearTimeout(sweepTRef.current);
+    sweepTRef.current = window.setTimeout(() => setSweepIdx(null), 760);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (pulseTRef.current) window.clearTimeout(pulseTRef.current);
+      if (sweepTRef.current) window.clearTimeout(sweepTRef.current);
+    };
+  }, []);
 
   const maybeSnap = () => {
     if (!mounted || !isDesktop) return;
@@ -348,18 +370,22 @@ const isDesktop = mounted && desktopMQ;
   const onStepKeyDown = (idx: number, e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown" || e.key === "ArrowRight") {
       e.preventDefault();
+      fireStepFx(clamp(idx + 1, 0, n - 1));
       jumpTo(clamp(idx + 1, 0, n - 1));
     }
     if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
       e.preventDefault();
+      fireStepFx(clamp(idx - 1, 0, n - 1));
       jumpTo(clamp(idx - 1, 0, n - 1));
     }
     if (e.key === "Home") {
       e.preventDefault();
+      fireStepFx(0);
       jumpTo(0);
     }
     if (e.key === "End") {
       e.preventDefault();
+      fireStepFx(n - 1);
       jumpTo(n - 1);
     }
   };
@@ -367,6 +393,8 @@ const isDesktop = mounted && desktopMQ;
   const s = steps[active];
   const cur = String(active + 1).padStart(2, "0");
   const tot = String(n).padStart(2, "0");
+
+  const timelineNote = "Typical timeline: 2–4 weeks (varies by scope)";
 
   // parallax driver for desktop scene
   const t = (local - 0.5) * 2;
@@ -378,19 +406,20 @@ const isDesktop = mounted && desktopMQ;
   return (
     <>
       {/* =========================
-          MOBILE DOM (always rendered; CSS decides visibility)
+          MOBILE DOM
          ========================= */}
       <div className="k-procM" aria-label="Process (mobile)">
         <div className="k-procM__top">
           <div className="k-procM__label">FOR CLIENTS</div>
+
           <div className="k-procM__progress" aria-label={`Step ${active + 1} of ${n}`}>
             <span className="k-procM__num">{cur}</span>
             <span className="k-procM__slash">/</span>
             <span className="k-procM__tot">{tot}</span>
+            <span className="k-procM__time">{timelineNote}</span>
           </div>
         </div>
 
-        {/* a11y: don't aria-hide the whole group if it contains buttons */}
         <div className="k-procM__dots" role="tablist" aria-label="Steps">
           {steps.map((_, i) => (
             <button
@@ -399,10 +428,41 @@ const isDesktop = mounted && desktopMQ;
               role="tab"
               aria-selected={i === active}
               className={"k-procM__dot" + (i === active ? " is-on" : "")}
-              onClick={() => scrollToCard(i)}
+              onClick={() => {
+                fireStepFx(i);
+                scrollToCard(i);
+              }}
               aria-label={`Go to step ${i + 1}`}
             />
           ))}
+        </div>
+
+        <div className="k-procM__nav" aria-label="Step navigation">
+          <button
+            type="button"
+            className="k-procM__navBtn"
+            onClick={() => {
+              const next = Math.max(0, active - 1);
+              fireStepFx(next);
+              scrollToCard(next);
+            }}
+            disabled={active === 0}
+          >
+            ←
+          </button>
+
+          <button
+            type="button"
+            className="k-procM__navBtn is-next"
+            onClick={() => {
+              const next = Math.min(n - 1, active + 1);
+              fireStepFx(next);
+              scrollToCard(next);
+            }}
+            disabled={active === n - 1}
+          >
+            Next step →
+          </button>
         </div>
 
         <div ref={railRef} className="k-procM__rail" aria-label="Process steps">
@@ -415,7 +475,14 @@ const isDesktop = mounted && desktopMQ;
                 data-step-card={idx}
                 className={"k-procM__card" + (on ? " is-active" : "")}
               >
-                <button type="button" className="k-procM__cardBtn" onClick={() => scrollToCard(idx)}>
+                <button
+                  type="button"
+                  className="k-procM__cardBtn"
+                  onClick={() => {
+                    fireStepFx(idx);
+                    scrollToCard(idx);
+                  }}
+                >
                   <div className="k-procM__cardHead">
                     <div className="k-procM__badge">{idx + 1}</div>
                     <div className="k-procM__titles">
@@ -433,7 +500,6 @@ const isDesktop = mounted && desktopMQ;
                     ))}
                   </div>
 
-                  {/* tiny “scene thumbnail” */}
                   <div className="k-procM__thumb" aria-hidden="true">
                     <span
                       className="k-procM__thumbSpot"
@@ -462,7 +528,7 @@ const isDesktop = mounted && desktopMQ;
       </div>
 
       {/* =========================
-          DESKTOP DOM (always rendered; CSS decides visibility)
+          DESKTOP DOM
          ========================= */}
       <div
         ref={rootRef}
@@ -478,10 +544,12 @@ const isDesktop = mounted && desktopMQ;
           <div className="k-proc__left">
             <div className="k-proc__labelRow">
               <div className="k-proc__label">FOR CLIENTS</div>
+
               <div className="k-proc__progress" aria-label={`Step ${active + 1} of ${n}`}>
                 <span className="k-proc__progressNum">{cur}</span>
                 <span style={{ opacity: 0.65 }}>/</span>
                 <span style={{ opacity: 0.7 }}>{tot}</span>
+                <span className="k-proc__time">{timelineNote}</span>
               </div>
             </div>
 
@@ -505,7 +573,10 @@ const isDesktop = mounted && desktopMQ;
                   <button
                     type="button"
                     className="k-proc__stepBtn"
-                    onClick={() => jumpTo(idx)}
+                    onClick={() => {
+                      fireStepFx(idx);
+                      jumpTo(idx);
+                    }}
                     onKeyDown={(e) => onStepKeyDown(idx, e)}
                   >
                     <span className="k-proc__num" aria-hidden="true">

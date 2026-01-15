@@ -1,6 +1,7 @@
 ---
 import "./process.css";
 import ProcessScroll from "./islands/ProcessScroll";
+import CtaButton from "../../ui/CtaButton/CtaButton.astro";
 ---
 
 <section id="process" class="k-process" aria-label="Process">
@@ -14,5 +15,14 @@ import ProcessScroll from "./islands/ProcessScroll";
     </header>
 
     <ProcessScroll client:visible />
+
+    <div class="k-process__lock" aria-label="Next step">
+      <p class="k-process__lockText">Ready to map your build?</p>
+
+      <div class="k-process__lockCtas">
+        <CtaButton href="#contact" label="Get a quote" variant="ghost" magnetic={false} />
+        <a class="k-process__lockLink" href="#work">See work</a>
+      </div>
+    </div>
   </div>
 </section>

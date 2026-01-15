@@ -59,10 +59,58 @@
   line-height: 1.55;
 }
 
+/* lock-in moment */
+.k-process__lock{
+  margin: clamp(18px, 2.4vw, 34px) auto 0;
+  max-width: 980px;
+
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 14px;
+
+  padding: 14px 16px;
+
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(0,0,0,.18));
+  box-shadow: 0 30px 120px rgba(0,0,0,.35);
+}
+
+.k-process__lockText{
+  margin: 0;
+  font-weight: 900;
+  color: rgba(255,255,255,.88);
+  letter-spacing: -0.02em;
+}
+
+.k-process__lockCtas{
+  display:flex;
+  align-items:center;
+  gap: 12px;
+}
+
+.k-process__lockLink{
+  color: rgba(255,255,255,.70);
+  font-weight: 850;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255,255,255,.22);
+}
+.k-process__lockLink:hover{ color: rgba(255,255,255,.90); }
+
+@media (max-width: 520px){
+  .k-process__lock{
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+  .k-process__lockCtas{
+    justify-content: center;
+  }
+}
+
 /* =========================================================
    SSR-safe visibility rules:
-   - On mobile: show cards deck (.k-procM), hide desktop rig (.k-proc)
-   - On desktop: inverse
    ========================================================= */
 .k-proc{ display: none; }
 .k-procM{ display: block; }
@@ -99,16 +147,24 @@
   letter-spacing: -0.01em;
   color: rgba(255,255,255,.78);
   font-size: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 .k-procM__num{ font-variant-numeric: tabular-nums; color: rgba(255,255,255,.86); }
 .k-procM__slash{ opacity: .6; }
 .k-procM__tot{ opacity: .72; }
+.k-procM__time{
+  margin-left: 10px;
+  font-weight: 750;
+  font-size: 11px;
+  color: rgba(255,255,255,.46);
+}
 
 .k-procM__dots{
   display:flex;
   align-items:center;
   gap: 8px;
-  margin: 10px 0 14px;
+  margin: 10px 0 10px;
 }
 
 .k-procM__dot{
@@ -128,15 +184,44 @@
   box-shadow: 0 12px 40px rgba(46,255,176,.16);
 }
 
+/* micro navigation (iOS-ish) */
+.k-procM__nav{
+  display:flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 2px 12px;
+}
+
+.k-procM__navBtn{
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+  color: rgba(255,255,255,.72);
+  height: 34px;
+  padding: 0 12px;
+  font-weight: 850;
+  cursor: pointer;
+  transition: transform 180ms cubic-bezier(.2,.9,.2,1), border-color 180ms ease, background 180ms ease;
+}
+.k-procM__navBtn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.18); }
+.k-procM__navBtn:disabled{ opacity: .35; cursor: default; }
+.k-procM__navBtn.is-next{
+  background: rgba(0,0,0,.18);
+}
+
 .k-procM__rail{
   display:flex;
   gap: 14px;
   overflow-x: auto;
-  padding: 6px 2px 10px;
+
+  /* peek next */
+  padding: 6px 14px 10px;
+
   scroll-snap-type: x mandatory;
   overscroll-behavior-x: contain;
   -webkit-overflow-scrolling: touch;
 }
+
 .k-procM__rail::-webkit-scrollbar{ height: 10px; }
 .k-procM__rail::-webkit-scrollbar-track{ background: rgba(255,255,255,.04); }
 .k-procM__rail::-webkit-scrollbar-thumb{
@@ -146,7 +231,10 @@
 
 .k-procM__card{
   flex: 0 0 auto;
-  width: min(86vw, 540px);
+
+  /* peek next */
+  width: min(82vw, 520px);
+
   scroll-snap-align: center;
   position: relative;
 
@@ -212,13 +300,14 @@
   font-weight: 950;
   letter-spacing: -0.02em;
   color: rgba(255,255,255,.92);
+  font-size: 15px;
 }
 
 .k-procM__sub{
   color: rgba(255,255,255,.68);
   font-size: 13px;
   line-height: 1.35;
-  max-width: 44ch;
+  max-width: 40ch;
 }
 
 .k-procM__chips{
@@ -336,6 +425,8 @@
     font-weight: 850;
     letter-spacing: -0.01em;
     font-size: 13px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
   }
 
   .k-proc__progressNum{
@@ -343,6 +434,16 @@
     color: rgba(255,255,255,.82);
   }
 
+  .k-proc__time{
+    margin-left: 12px;
+    font-weight: 750;
+    font-size: 12px;
+    color: rgba(255,255,255,.46);
+    letter-spacing: .01em;
+    white-space: nowrap;
+  }
+
+  /* TRACK = instrument */
   .k-proc__track{
     position: absolute;
     left: 15px;
@@ -351,10 +452,9 @@
     width: 2px;
     background: rgba(255,255,255,.10);
     border-radius: 999px;
-    overflow: hidden;
+    overflow: visible; /* allow head glow */
   }
 
-  /* LED track fill + hot core */
   .k-proc__trackFill{
     position: absolute;
     left: 0;
@@ -385,6 +485,23 @@
     filter: blur(.2px);
   }
 
+  /* head (diamond) at the top of fill */
+  .k-proc__trackFill::before{
+    content:"";
+    position:absolute;
+    left: 50%;
+    top: -6px;
+    width: 12px;
+    height: 12px;
+    transform: translateX(-50%) rotate(45deg);
+    border-radius: 3px;
+    background: rgba(46,255,176,.95);
+    box-shadow:
+      0 0 0 1px rgba(46,255,176,.25),
+      0 0 22px rgba(46,255,176,.22),
+      0 14px 50px rgba(46,255,176,.12);
+  }
+
   .k-proc__steps{
     list-style: none;
     padding: 0;
@@ -397,7 +514,7 @@
 
   .k-proc__stepBtn{
     width: 100%;
-    border: 0;
+    border: 1px solid transparent;
     background: transparent;
     color: inherit;
     cursor: pointer;
@@ -413,7 +530,11 @@
     position: relative;
     overflow: hidden;
 
-    transition: transform 180ms cubic-bezier(.2,.9,.2,1);
+    transition:
+      transform 180ms cubic-bezier(.2,.9,.2,1),
+      background 220ms ease,
+      border-color 220ms ease,
+      box-shadow 220ms ease;
   }
 
   .k-proc__stepBtn:hover{ transform: translateY(-1px); }
@@ -434,17 +555,19 @@
 
   .k-proc__text{ display: grid; gap: 4px; }
 
+  /* typography focus */
   .k-proc__stepTitle{
     font-weight: 950;
     letter-spacing: -0.02em;
     color: rgba(255,255,255,.84);
+    font-size: 14.5px;
   }
 
   .k-proc__stepSub{
     color: rgba(255,255,255,.62);
     font-size: 13px;
     line-height: 1.35;
-    max-width: 44ch;
+    max-width: 38ch;
   }
 
   /* left marker */
@@ -467,7 +590,36 @@
     box-shadow: 0 0 26px rgba(46,255,176,.22);
   }
 
-  /* active state */
+  /* ACTIVE STEP = glass lift + inner highlight */
+  .k-proc__step.is-active .k-proc__stepBtn{
+    transform: translateY(-1px);
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.14));
+    border-color: rgba(255,255,255,.10);
+    box-shadow:
+      0 24px 90px rgba(0,0,0,.32),
+      0 1px 0 rgba(255,255,255,.08) inset;
+  }
+
+  .k-proc__step.is-active .k-proc__stepBtn:hover{
+    transform: translateY(-2px);
+  }
+
+  .k-proc__step.is-active .k-proc__stepBtn::before{
+    content:"";
+    position:absolute;
+    left: 10px;
+    right: 10px;
+    top: 8px;
+    height: 1px;
+    background: linear-gradient(90deg,
+      transparent,
+      rgba(255,255,255,.28),
+      transparent
+    );
+    opacity: .9;
+    pointer-events:none;
+  }
+
   .k-proc__step.is-active .k-proc__num{
     background: rgba(46,255,176,.92);
     border-color: rgba(46,255,176,.40);
@@ -491,23 +643,30 @@
     100%{ transform: scale(1); }
   }
 
-  /* one-shot shimmer sweep */
+  /* glow sweep through whole row (not only number) */
   .k-proc__step.is-sweep .k-proc__stepBtn::after{
     content:"";
     position:absolute;
-    inset: -40% -30%;
-    background: radial-gradient(closest-side at 50% 50%, rgba(255,255,255,.22), transparent 70%);
-    transform: translateX(-34%);
+    inset: -40% -20%;
+    background: linear-gradient(110deg,
+      transparent 0%,
+      rgba(46,255,176,.00) 35%,
+      rgba(46,255,176,.18) 48%,
+      rgba(255,255,255,.16) 52%,
+      rgba(46,255,176,.10) 56%,
+      transparent 70%
+    );
+    transform: translateX(-38%);
     opacity: 0;
-    filter: blur(10px);
+    filter: blur(8px);
     pointer-events:none;
-    animation: kProcSweep 720ms cubic-bezier(.2,.9,.2,1) both;
+    animation: kProcSweep 760ms cubic-bezier(.2,.9,.2,1) both;
   }
 
   @keyframes kProcSweep{
-    0%{ opacity: 0; transform: translateX(-34%); }
-    25%{ opacity: .55; }
-    100%{ opacity: 0; transform: translateX(34%); }
+    0%{ opacity: 0; transform: translateX(-38%); }
+    20%{ opacity: .65; }
+    100%{ opacity: 0; transform: translateX(38%); }
   }
 
   .k-proc__right{
