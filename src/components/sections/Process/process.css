@@ -2,6 +2,7 @@
    KERSIVO — PROCESS (2026 showcase)
    Mobile-first: Step Cards Deck
    Desktop: Sticky stepper + UI scenes
+   SSR-safe: BOTH DOM blocks exist; CSS decides visibility
    ========================================= */
 
 .k-process{
@@ -59,6 +60,14 @@
 }
 
 /* =========================================================
+   SSR-safe visibility rules:
+   - On mobile: show cards deck (.k-procM), hide desktop rig (.k-proc)
+   - On desktop: inverse
+   ========================================================= */
+.k-proc{ display: none; }
+.k-procM{ display: block; }
+
+/* =========================================================
    MOBILE-FIRST: Cards Deck
    ========================================================= */
 
@@ -101,6 +110,7 @@
   gap: 8px;
   margin: 10px 0 14px;
 }
+
 .k-procM__dot{
   width: 10px;
   height: 10px;
@@ -139,18 +149,7 @@
   width: min(86vw, 540px);
   scroll-snap-align: center;
   position: relative;
-}
 
-.k-procM__cardBtn{
-  width: 100%;
-  text-align: left;
-  border: 0;
-  background: transparent;
-  padding: 0;
-  cursor: pointer;
-}
-
-.k-procM__card{
   border-radius: 22px;
   border: 1px solid rgba(255,255,255,.12);
   background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.18));
@@ -168,6 +167,15 @@
   box-shadow:
     0 34px 140px rgba(0,0,0,.54),
     0 0 0 1px rgba(46,255,176,.10) inset;
+}
+
+.k-procM__cardBtn{
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
 }
 
 .k-procM__cardHead{
@@ -199,11 +207,13 @@
 }
 
 .k-procM__titles{ display:grid; gap: 6px; }
+
 .k-procM__title{
   font-weight: 950;
   letter-spacing: -0.02em;
   color: rgba(255,255,255,.92);
 }
+
 .k-procM__sub{
   color: rgba(255,255,255,.68);
   font-size: 13px;
@@ -268,7 +278,9 @@
   background: rgba(255,255,255,.96);
   box-shadow: 0 20px 60px rgba(0,0,0,.35);
   opacity: .95;
+  transform: translate(-50%,-50%) rotate(0deg);
 }
+
 .k-procM__miniCard--2{ opacity: .88; transform: translate(-50%,-50%) rotate(1deg) scale(.98); }
 .k-procM__miniCard--3{ opacity: .78; transform: translate(-50%,-50%) rotate(-2deg) scale(.96); }
 
@@ -277,7 +289,8 @@
    ========================================================= */
 
 @media (min-width: 981px){
-  .k-procM{ display:none; }
+  .k-proc{ display: block; }
+  .k-procM{ display: none; }
 
   .k-proc{
     position: relative;
@@ -341,15 +354,35 @@
     overflow: hidden;
   }
 
+  /* LED track fill + hot core */
   .k-proc__trackFill{
     position: absolute;
     left: 0;
     bottom: 0;
     width: 100%;
     height: calc(var(--prog, 0) * 100%);
-    background: linear-gradient(180deg, rgba(46,255,176,.0), rgba(46,255,176,.92));
-    box-shadow: 0 0 0 1px rgba(46,255,176,.08);
     border-radius: 999px;
+
+    background:
+      linear-gradient(180deg, rgba(46,255,176,.0), rgba(46,255,176,.92)),
+      linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,0));
+    box-shadow:
+      0 0 0 1px rgba(46,255,176,.08),
+      0 0 18px rgba(46,255,176,.10);
+    overflow: hidden;
+  }
+
+  .k-proc__trackFill::after{
+    content:"";
+    position:absolute;
+    left: 50%;
+    top: -10px;
+    width: 1px;
+    height: calc(100% + 20px);
+    transform: translateX(-50%);
+    background: rgba(255,255,255,.55);
+    opacity: .32;
+    filter: blur(.2px);
   }
 
   .k-proc__steps{
@@ -376,8 +409,13 @@
 
     padding: 10px 6px;
     border-radius: 14px;
+
+    position: relative;
+    overflow: hidden;
+
     transition: transform 180ms cubic-bezier(.2,.9,.2,1);
   }
+
   .k-proc__stepBtn:hover{ transform: translateY(-1px); }
 
   .k-proc__num{
@@ -395,11 +433,13 @@
   }
 
   .k-proc__text{ display: grid; gap: 4px; }
+
   .k-proc__stepTitle{
     font-weight: 950;
     letter-spacing: -0.02em;
     color: rgba(255,255,255,.84);
   }
+
   .k-proc__stepSub{
     color: rgba(255,255,255,.62);
     font-size: 13px;
@@ -407,6 +447,7 @@
     max-width: 44ch;
   }
 
+  /* left marker */
   .k-proc__step::before{
     content:"";
     position:absolute;
@@ -426,6 +467,7 @@
     box-shadow: 0 0 26px rgba(46,255,176,.22);
   }
 
+  /* active state */
   .k-proc__step.is-active .k-proc__num{
     background: rgba(46,255,176,.92);
     border-color: rgba(46,255,176,.40);
@@ -442,10 +484,30 @@
   .k-proc__step.is-pulse .k-proc__num{
     animation: kPulse 520ms cubic-bezier(.2,.9,.2,1) both;
   }
+
   @keyframes kPulse{
     0%{ transform: scale(1); }
     45%{ transform: scale(1.06); }
     100%{ transform: scale(1); }
+  }
+
+  /* one-shot shimmer sweep */
+  .k-proc__step.is-sweep .k-proc__stepBtn::after{
+    content:"";
+    position:absolute;
+    inset: -40% -30%;
+    background: radial-gradient(closest-side at 50% 50%, rgba(255,255,255,.22), transparent 70%);
+    transform: translateX(-34%);
+    opacity: 0;
+    filter: blur(10px);
+    pointer-events:none;
+    animation: kProcSweep 720ms cubic-bezier(.2,.9,.2,1) both;
+  }
+
+  @keyframes kProcSweep{
+    0%{ opacity: 0; transform: translateX(-34%); }
+    25%{ opacity: .55; }
+    100%{ opacity: 0; transform: translateX(34%); }
   }
 
   .k-proc__right{
@@ -541,12 +603,14 @@
     background: rgba(14,16,20,.04);
     border-bottom: 1px solid rgba(14,16,20,.10);
   }
+
   .k-proc__dot{
     width: 8px;
     height: 8px;
     border-radius: 999px;
     background: rgba(14,16,20,.18);
   }
+
   .k-proc__cardTitle{
     margin-left: 8px;
     font-size: 12px;
@@ -560,11 +624,13 @@
     display: grid;
     gap: 10px;
   }
+
   .k-proc__row{
     height: 10px;
     border-radius: 999px;
     background: rgba(14,16,20,.08);
   }
+
   .k-proc__row--short{ width: 62%; }
   .k-proc__row--micro{ height: 8px; width: 48%; opacity: .92; }
 
@@ -575,6 +641,7 @@
     background: rgba(46,255,176,.92);
     box-shadow: 0 18px 54px rgba(46,255,176,.16);
   }
+
   .k-proc__cta.is-blue{
     background: rgba(110,160,255,.92);
     box-shadow: 0 18px 54px rgba(110,160,255,.14);
@@ -587,17 +654,20 @@
     width: min(360px, 92%);
     color: rgba(255,255,255,.78);
   }
+
   .k-proc__detailTitle{
     font-weight: 950;
     letter-spacing: -0.02em;
     color: rgba(255,255,255,.92);
     margin-bottom: 8px;
   }
+
   .k-proc__chips{
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
   }
+
   .k-proc__chip{
     display: inline-flex;
     align-items: center;
@@ -611,6 +681,7 @@
     font-size: 12px;
     font-weight: 850;
   }
+
   .k-proc__chipDot{
     width: 7px; height: 7px;
     border-radius: 99px;
@@ -632,5 +703,12 @@
     transform: none !important;
   }
   .k-proc__px{ animation: none !important; }
-  .k-proc__cards.is-enter .k-proc__card{ animation: none !important; opacity: 1 !important; }
+  .k-proc__cards.is-enter .k-proc__card{
+    animation: none !important;
+    opacity: 1 !important;
+  }
+  .k-proc__step.is-sweep .k-proc__stepBtn::after{
+    animation: none !important;
+    opacity: 0 !important;
+  }
 }
