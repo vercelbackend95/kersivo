@@ -7,15 +7,28 @@
   position: relative;
   overflow: hidden;
   color: rgba(255,255,255,92);
-  min-height: 100svh;
+
+  /* was: 100svh (za wysoki) */
+  min-height: clamp(560px, 74svh, 820px);
 
   /* nav overlays hero */
   padding:
-    calc(var(--nav-h, 64px) + clamp(26px, 6vh, 54px))
+    calc(var(--nav-h, 64px) + clamp(18px, 4.5vh, 42px))
     0
-    clamp(72px, 10vh, 140px);
+    clamp(36px, 5.5vh, 78px);
 
   background: transparent; /* IMPORTANT: no seam */
+}
+
+/* delikatnie krótszy hero na dużych ekranach (żeby nie było “pustyni”) */
+@media (min-width: 900px){
+  .k3-hero{
+    min-height: clamp(560px, 68svh, 760px);
+    padding:
+      calc(var(--nav-h, 64px) + clamp(18px, 4vh, 40px))
+      0
+      clamp(32px, 4.5vh, 66px);
+  }
 }
 
 .k3-wrap{ position: relative; z-index: 2; }

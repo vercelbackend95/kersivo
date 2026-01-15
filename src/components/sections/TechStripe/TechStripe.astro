@@ -1,0 +1,91 @@
+---
+import "./tech-stripe.css";
+
+const tech = [
+  {
+    name: "Astro",
+    svg: `<svg viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="currentColor" d="M6.62 2.5h10.76l2.29 15.33c-.1-.06-.2-.11-.32-.15-1.21-.44-2.68-.56-4.06-.35-1.9.3-3.3 1.28-4.67 1.28s-2.3-.6-2.3-1.66c0-1.1 1.03-1.76 2.66-1.76 1.02 0 1.98.25 2.72.7l-.42-2.83H8.74l-.52 3.35c-.08.53-.37 1-.8 1.29-.45.3-1 .4-1.54.28L4.33 17.7 6.62 2.5Zm2.74 8.85h4.9l-.66-4.48h-3.6l-.64 4.48Z"/>
+    </svg>`,
+  },
+  {
+    name: "React",
+    svg: `<svg viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="currentColor" d="M12 14.2a2.2 2.2 0 1 1 0-4.4 2.2 2.2 0 0 1 0 4.4Zm0-12.2c2.05 0 3.93.27 5.33.73 1.53.5 2.52 1.26 2.85 2.2.33.95.01 2.1-.9 3.3-.33.44-.73.87-1.18 1.28.45.41.85.84 1.18 1.28.91 1.2 1.23 2.35.9 3.3-.33.94-1.32 1.7-2.85 2.2-1.4.46-3.28.73-5.33.73-2.05 0-3.93-.27-5.33-.73-1.53-.5-2.52-1.26-2.85-2.2-.33-.95-.01-2.1.9-3.3.33-.44.73-.87 1.18-1.28-.45-.41-.85-.84-1.18-1.28-.91-1.2-1.23-2.35-.9-3.3.33-.94 1.32-1.7 2.85-2.2C8.07 2.27 9.95 2 12 2Zm0 2c-1.86 0-3.54.24-4.74.63-1.07.35-1.7.8-1.86 1.25-.17.48.02 1.2.61 1.98.25.34.57.68.93 1-.33.25-.67.55-1 .88-1.26 1.26-1.98 2.5-1.75 3.15.16.45.79.9 1.86 1.25 1.2.39 2.88.63 4.74.63s3.54-.24 4.74-.63c1.07-.35 1.7-.8 1.86-1.25.23-.65-.49-1.89-1.75-3.15-.33-.33-.67-.63-1-.88.36-.32.68-.66.93-1 .59-.78.78-1.5.61-1.98-.16-.45-.79-.9-1.86-1.25C15.54 4.24 13.86 4 12 4Z"/>
+    </svg>`,
+  },
+  {
+    name: "TypeScript",
+    svg: `<svg viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="currentColor" d="M3.5 4.5h17v15h-17v-15Zm2 2v11h13v-11h-13Zm3.5 2h6v2h-2v6h-2v-6h-2v-2Zm10.3 7.9c.5 0 .9-.1 1.2-.3.3-.2.4-.5.4-.8 0-.3-.1-.6-.4-.8-.3-.2-.8-.5-1.6-.8-.9-.3-1.6-.7-2.1-1.1-.5-.4-.8-1-.8-1.8 0-.9.3-1.6 1-2.1.7-.5 1.6-.8 2.7-.8.7 0 1.4.1 2 .4.6.3 1.1.7 1.5 1.3l-1.7 1.1c-.4-.6-1-.9-1.8-.9-.4 0-.7.1-1 .2-.2.2-.4.4-.4.7 0 .3.1.5.3.7.2.2.7.4 1.4.7 1 .4 1.8.8 2.3 1.2.6.4.9 1.1.9 2 0 1-.4 1.8-1.1 2.3-.7.5-1.7.8-2.9.8-1 0-1.9-.2-2.6-.6-.7-.4-1.3-1-1.7-1.7l1.8-1c.5.8 1.2 1.2 2.2 1.2Z"/>
+    </svg>`,
+  },
+  {
+    name: "Framer Motion",
+    svg: `<svg viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="currentColor" d="M6 3h12v6H12v3h6v9H6v-6h6v-3H6V3Zm2 2v4h8V5H8Zm0 10v4h8v-4H8Z"/>
+    </svg>`,
+  },
+  {
+    name: "Vercel",
+    svg: `<svg viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="currentColor" d="M12 4 22 20H2L12 4Z"/>
+    </svg>`,
+  },
+  {
+    name: "Cloudflare",
+    svg: `<svg viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="currentColor" d="M10.6 18.5H6.2c-1.7 0-3.1-1.3-3.1-3 0-1.4 1-2.6 2.3-2.9.4-2.6 2.7-4.6 5.4-4.6 1.9 0 3.6.9 4.6 2.3.4-.2.9-.3 1.4-.3 1.8 0 3.3 1.4 3.3 3.2v.2c1.2.4 2 1.5 2 2.8 0 1.7-1.4 3.1-3.1 3.1H10.6Z"/>
+    </svg>`,
+  },
+  {
+    name: "Figma",
+    svg: `<svg viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="currentColor" d="M9 3a4 4 0 0 0 0 8h2V3H9Zm0 10a4 4 0 0 0 0 8 4 4 0 0 0 4-4v-4H9Zm6-10h-2v8h2a4 4 0 1 0 0-8Zm0 10h-2v4a4 4 0 1 0 2-4Zm-6-2h2V13H9a4 4 0 1 1 0-8h2v6Z"/>
+    </svg>`,
+  },
+  {
+    name: "SEO / Schema",
+    svg: `<svg viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="currentColor" d="M10 4h9v9h-2V7.41l-6.3 6.3-1.4-1.42 6.3-6.29H10V4ZM5 7h5v2H7v10h10v-3h2v5H5V7Z"/>
+    </svg>`,
+  },
+  {
+    name: "Web Vitals",
+    svg: `<svg viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="currentColor" d="M3 12h4l2-5 3 10 2-6h7v2h-6l-3 9-3-10-1.2 3H3v-3Z"/>
+    </svg>`,
+  },
+];
+---
+
+<section class="k-techStripe" aria-label="Technologies we use">
+  <div class="k-techStripe__frame" role="region" aria-label="Tech marquee">
+    <p class="k-techStripe__sr">
+      Our tech stack: {tech.map((t) => t.name).join(", ")}.
+    </p>
+
+    <div class="k-techStripe__mask">
+      <div class="k-techStripe__track" style="--duration: 36s">
+        <ul class="k-techStripe__row" role="list">
+          {tech.map((t) => (
+            <li class="k-techStripe__item">
+              <span class="k-techStripe__icon" set:html={t.svg} />
+              <span class="k-techStripe__word">{t.name}</span>
+            </li>
+          ))}
+        </ul>
+
+        {/* duplicate for seamless loop */}
+        <ul class="k-techStripe__row" role="list" aria-hidden="true">
+          {tech.map((t) => (
+            <li class="k-techStripe__item">
+              <span class="k-techStripe__icon" set:html={t.svg} />
+              <span class="k-techStripe__word">{t.name}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

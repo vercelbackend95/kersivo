@@ -1,0 +1,189 @@
+---
+import "./footer.css";
+import CtaButton from "../../ui/CtaButton/CtaButton.astro";
+
+const year = new Date().getFullYear();
+
+const nav = [
+  {
+    title: "Product",
+    links: [
+      { label: "Work", href: "#work" },
+      { label: "Services", href: "#services" },
+      { label: "Process", href: "#process" },
+      { label: "Contact", href: "#contact" },
+    ],
+  },
+  {
+    title: "Resources",
+    links: [
+      { label: "Pricing", href: "#packages" },
+      { label: "FAQ", href: "#contact" },
+      { label: "Support", href: "#contact" },
+      { label: "Documentation", href: "#" },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { label: "About", href: "#" },
+      { label: "Partners", href: "#" },
+      { label: "Careers", href: "#" },
+      { label: "Contact", href: "#contact" },
+    ],
+  },
+];
+
+const legal = [
+  { label: "Privacy Policy", href: "/privacy-policy/" },
+  { label: "Terms of Service", href: "/terms/" },
+  { label: "Cookies Settings", href: "/cookies/" },
+];
+---
+
+<section class="k-footer2" aria-label="Footer">
+  <div class="k-footer2__wrap container">
+    <!-- TOP CTA CLOUD (like the screenshot) -->
+    <div class="k-footcta" role="region" aria-label="Call to action">
+      <div class="k-footcta__inner">
+        <h2 class="k-footcta__title">Ready to upgrade your website?</h2>
+        <p class="k-footcta__sub">
+          Premium design, ruthless performance, and a conversion-led structure — built for UK small businesses.
+        </p>
+
+        <div class="k-footcta__actions">
+          <CtaButton href="#contact" label="Get a quote" variant="primary" />
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER CLOUD CARD -->
+    <footer class="k-footcard" role="contentinfo">
+      <div class="k-footcard__top">
+        <div class="k-footcard__brand">
+          <a class="k-footcard__logo" href="/" aria-label="Kersivo home">
+            <span class="k-footcard__mark" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M12 2l1.2 5.1L18 8.3l-4.4 2.4L12 16l-1.6-5.3L6 8.3l4.8-1.2L12 2Z"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M19.5 13l.6 2.3 2.4.6-2.4.6-.6 2.3-.6-2.3-2.4-.6 2.4-.6.6-2.3Z"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+            <span class="k-footcard__name">Kersivo</span>
+          </a>
+
+          <p class="k-footcard__blurb">
+            We turn messy ideas into clean, premium websites — fast, SEO-ready, and built to convert.
+          </p>
+
+          <div class="k-footcard__social" aria-label="Social links">
+            <a class="k-footcard__icon" href="#" aria-label="X">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d="M16.8 3H20l-7 8.02L21.5 21H15l-5.1-6.3L4.2 21H1l7.6-8.7L2.5 3H9l4.6 5.7L16.8 3Z"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </a>
+
+            <a class="k-footcard__icon" href="#" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4Z"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                />
+                <path
+                  d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                />
+                <path
+                  d="M17.5 6.6h.01"
+                  stroke="currentColor"
+                  stroke-width="2.4"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </a>
+
+            <a class="k-footcard__icon" href="#" aria-label="LinkedIn">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M4.5 9.5V20" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" />
+                <path d="M4.5 6.3h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+                <path
+                  d="M9.2 20v-6.2c0-1.9 1.1-3.2 3-3.2s2.9 1.3 2.9 3.2V20"
+                  stroke="currentColor"
+                  stroke-width="1.9"
+                  stroke-linecap="round"
+                />
+                <path d="M9.2 11v9" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" />
+              </svg>
+            </a>
+
+            <a class="k-footcard__icon" href="#" aria-label="GitHub">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M9.2 19.7c-3.6 1.1-3.6-1.9-5-2.3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+                <path
+                  d="M14.8 21v-2.7c0-.8.3-1.4.8-1.8-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.4 1.2-3.3-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a10.9 10.9 0 0 1 5.8 0C22.8 4.3 23.8 4.6 23.8 4.6c.6 1.6.2 2.8.1 3.1.8.9 1.2 2 1.2 3.3 0 4.5-2.7 5.5-5.3 5.8.5.4.9 1.2.9 2.4V21"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M12 2.8c-5 0-9 3.9-9 8.9 0 4 2.6 7.4 6.2 8.6"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <nav class="k-footcard__nav" aria-label="Footer navigation">
+          {nav.map((col) => (
+            <div class="k-footcard__col">
+              <h3 class="k-footcard__title">{col.title}</h3>
+              <ul class="k-footcard__list">
+                {col.links.map((l) => (
+                  <li><a class="k-footcard__link" href={l.href}>{l.label}</a></li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </nav>
+      </div>
+
+      <div class="k-footcard__divider" aria-hidden="true"></div>
+
+      <div class="k-footcard__bottom">
+        <div class="k-footcard__copy">© {year} Kersivo. All rights reserved.</div>
+
+        <div class="k-footcard__legal" aria-label="Legal links">
+          {legal.map((l, i) => (
+            <>
+              <a class="k-footcard__legalLink" href={l.href}>{l.label}</a>
+              {i < legal.length - 1 ? <span class="k-footcard__dot" aria-hidden="true">·</span> : null}
+            </>
+          ))}
+        </div>
+      </div>
+    </footer>
+
+    <!-- GIANT GHOST WORD (coming out from under) -->
+    <div class="k-footer2__ghost" aria-hidden="true">Kersivo</div>
+  </div>
+</section>
