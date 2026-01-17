@@ -1,0 +1,503 @@
+/* =========================
+   Services — Mosaic Modules (v3)
+   - No arrows
+   - SVG icon slot per tile
+   - Desktop grid rebuilt (no dead space)
+   ========================= */
+
+.k-services{
+  padding: clamp(56px, 7vw, 92px) 0;
+}
+
+.k-services__inner{
+  position: relative;
+}
+
+.k-services__head{
+  display: grid;
+  gap: 14px;
+  margin-bottom: clamp(18px, 3vw, 28px);
+}
+
+.k-services__kicker h6{
+  opacity: .9;
+}
+
+.k-services__copy{
+  display: grid;
+  gap: 10px;
+}
+
+.k-services__copy h2{
+  max-width: 18ch;
+}
+
+.k-services__copy p{
+  max-width: 72ch;
+  color: rgba(255,255,255,.72);
+}
+
+/* ===== Grid ===== */
+.k-services__grid{
+  display: grid;
+  gap: clamp(12px, 1.5vw, 16px);
+  grid-template-columns: 1fr;
+}
+
+/* tablet: 2 cols */
+@media (min-width: 740px){
+  .k-services__head{
+    grid-template-columns: 220px 1fr;
+    align-items: end;
+    gap: 18px;
+  }
+
+  .k-services__grid{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-flow: dense;
+  }
+}
+
+/* desktop: 12 cols -> precise mosaic, no holes */
+@media (min-width: 1040px){
+  .k-services__grid{
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-auto-flow: dense;
+  }
+}
+
+/* ===== Tile base ===== */
+.k-svcTile{
+  position: relative;
+  border-radius: 22px;
+  overflow: hidden;
+  isolation: isolate;
+
+  padding: 18px 18px 16px;
+  min-height: 190px;
+
+  background: rgba(255,255,255,.02);
+  border: 1px solid rgba(255,255,255,.08);
+
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 14px;
+
+  transform: translateY(10px);
+  opacity: 0;
+
+  transition:
+    transform 520ms cubic-bezier(.2,.9,.2,1),
+    border-color 520ms cubic-bezier(.2,.9,.2,1),
+    box-shadow 520ms cubic-bezier(.2,.9,.2,1),
+    opacity 520ms ease,
+    background 520ms ease;
+}
+
+.k-svcTile.is-in{
+  transform: translateY(0);
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce){
+  .k-svcTile{
+    transform: none;
+    opacity: 1;
+    transition: none;
+  }
+}
+
+/* links only */
+.k-svcTile--link{
+  cursor: pointer;
+}
+
+/* gradient stroke (expensive edge) */
+.k-svcTile::after{
+  content:"";
+  position:absolute;
+  inset: 0;
+  border-radius: 22px;
+  pointer-events: none;
+  padding: 1px;
+  background: linear-gradient(140deg,
+    rgba(255,255,255,.16),
+    rgba(190,145,255,.10),
+    rgba(120,255,210,.06),
+    rgba(255,255,255,.06)
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: .55;
+}
+
+/* subtle inner highlight */
+.k-svcTile::before{
+  content:"";
+  position:absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,0) 55%),
+    radial-gradient(700px 180px at 50% 0%, rgba(255,255,255,.08), transparent 70%);
+  opacity: .55;
+}
+
+.k-svcTile:focus-visible{
+  outline: 2px solid rgba(190,145,255,.65);
+  outline-offset: 3px;
+}
+
+/* lift + glow (subtle, premium) */
+@media (hover: hover){
+  .k-svcTile:hover{
+    transform: translateY(-3px);
+    border-color: rgba(255,255,255,.14);
+    box-shadow:
+      0 22px 70px rgba(0,0,0,.62),
+      0 0 0 1px rgba(255,255,255,.02) inset;
+  }
+}
+
+/* ===== Top row (icon + pill) ===== */
+.k-svcTile__top{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.k-svcTile__topLeft{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.k-svcTile__icon{
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+
+  color: rgba(255,255,255,.82);
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.10);
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.35),
+    0 0 0 1px rgba(255,255,255,.02) inset;
+
+  flex: 0 0 auto;
+}
+
+.k-svcTile__icon svg{
+  width: 18px;
+  height: 18px;
+  opacity: .92;
+}
+
+/* CTA icon slightly stronger */
+.k-svcTile__icon--cta{
+  background: rgba(190,145,255,.10);
+  border-color: rgba(190,145,255,.22);
+  color: rgba(255,255,255,.92);
+}
+
+/* ===== Content ===== */
+.k-svcTile__title{
+  font-size: clamp(18px, 1.6vw, 22px);
+  letter-spacing: var(--track-tight);
+  text-shadow: 0 12px 28px rgba(0,0,0,.45);
+}
+
+.k-svcTile__desc{
+  font-size: 15px;
+  line-height: 1.55;
+  color: rgba(255,255,255,.74);
+  max-width: 56ch;
+}
+
+/* micro bullets = product clarity */
+.k-svcTile__bullets{
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+  max-width: 60ch;
+}
+
+.k-svcTile__bullets li{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: rgba(255,255,255,.64);
+}
+
+.k-svcTile__bullets li::before{
+  content:"";
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.22);
+  box-shadow: 0 0 0 5px rgba(255,255,255,.06);
+}
+
+/* ===== Footer row ===== */
+.k-svcTile__foot{
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.k-svcTile__meta{
+  font-size: 13px;
+  color: rgba(255,255,255,.62);
+  letter-spacing: var(--track-normal);
+}
+
+/* ===== Background layers ===== */
+.k-svcTile__bg{
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  background:
+    radial-gradient(1000px 520px at 10% 0%, rgba(190,145,255,.20), transparent 55%),
+    radial-gradient(900px 520px at 90% 10%, rgba(140,210,255,.14), transparent 60%),
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0) 42%),
+    rgba(5,5,8,.55);
+  transform: translateZ(0);
+}
+
+.k-svcTile__grain{
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  opacity: .22;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,.06), transparent 28%),
+    radial-gradient(circle at 70% 40%, rgba(255,255,255,.05), transparent 30%),
+    radial-gradient(circle at 40% 80%, rgba(255,255,255,.04), transparent 32%);
+  mix-blend-mode: overlay;
+}
+
+/* shine sweep */
+.k-svcTile__shine{
+  position: absolute;
+  inset: -40% -60%;
+  pointer-events: none;
+  background: linear-gradient(110deg,
+    rgba(255,255,255,0) 38%,
+    rgba(255,255,255,.12) 50%,
+    rgba(255,255,255,0) 62%
+  );
+  transform: translateX(-24%) rotate(8deg);
+  opacity: 0;
+  transition:
+    transform 820ms cubic-bezier(.2,.9,.2,1),
+    opacity 520ms ease;
+  z-index: 0;
+}
+
+@media (hover: hover){
+  .k-svcTile:hover .k-svcTile__shine{
+    transform: translateX(24%) rotate(8deg);
+    opacity: .95;
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .k-svcTile__shine{ display:none; }
+}
+
+/* ===== Size mapping (tablet baseline) ===== */
+.k-svcTile--sm{ min-height: 180px; }
+.k-svcTile--md{ min-height: 210px; }
+.k-svcTile--lg{ min-height: 250px; }
+.k-svcTile--xl{ min-height: 270px; }
+
+@media (min-width: 740px){
+  .k-svcTile--xl{ grid-column: span 2; grid-row: span 2; }
+  .k-svcTile--lg{ grid-column: span 2; }
+}
+
+/* ===== Desktop spans (12-col) ===== */
+@media (min-width: 1040px){
+  /* defaults: md/sm behave like 3-col blocks */
+  .k-svcTile--sm{ grid-column: span 3; }
+  .k-svcTile--md{ grid-column: span 3; }
+  .k-svcTile--lg{ grid-column: span 6; } /* fallback */
+  .k-svcTile--xl{ grid-column: span 6; grid-row: span 2; }
+
+  /* explicit spans (from classes) */
+  .k-svcTile--span4{ grid-column: span 4; }
+  .k-svcTile--span6{ grid-column: span 6; }
+  .k-svcTile--span8{ grid-column: span 8; }
+  .k-svcTile--span12{ grid-column: 1 / -1; }
+
+  /* if you want LG to be 8 by default later, we keep it explicit for now */
+}
+
+/* ===== Tones ===== */
+.k-svcTile--build .k-svcTile__bg{
+  background:
+    radial-gradient(900px 540px at 18% 10%, rgba(190,145,255,.24), transparent 58%),
+    radial-gradient(900px 560px at 86% 12%, rgba(120,255,210,.12), transparent 58%),
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0) 44%),
+    rgba(5,5,8,.55);
+}
+
+.k-svcTile--landing .k-svcTile__bg{
+  background:
+    radial-gradient(820px 520px at 10% 0%, rgba(255,210,120,.14), transparent 58%),
+    radial-gradient(900px 560px at 88% 18%, rgba(190,145,255,.20), transparent 62%),
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0) 44%),
+    rgba(5,5,8,.55);
+}
+
+.k-svcTile--seo .k-svcTile__bg{
+  background:
+    radial-gradient(820px 520px at 12% 0%, rgba(120,210,255,.18), transparent 58%),
+    radial-gradient(980px 620px at 84% 26%, rgba(190,145,255,.16), transparent 62%),
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0) 44%),
+    rgba(5,5,8,.55);
+}
+
+.k-svcTile--copy .k-svcTile__bg{
+  background:
+    radial-gradient(920px 520px at 18% 6%, rgba(255,255,255,.10), transparent 60%),
+    radial-gradient(900px 560px at 90% 20%, rgba(190,145,255,.14), transparent 62%),
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0) 44%),
+    rgba(5,5,8,.55);
+}
+
+.k-svcTile--tracking .k-svcTile__bg{
+  background:
+    radial-gradient(900px 520px at 12% 0%, rgba(120,255,210,.14), transparent 58%),
+    radial-gradient(980px 620px at 86% 26%, rgba(120,210,255,.12), transparent 62%),
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0) 44%),
+    rgba(5,5,8,.55);
+}
+
+.k-svcTile--ui .k-svcTile__bg{
+  background:
+    radial-gradient(980px 640px at 18% 0%, rgba(190,145,255,.22), transparent 60%),
+    radial-gradient(980px 620px at 88% 26%, rgba(255,210,120,.10), transparent 62%),
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0) 44%),
+    rgba(5,5,8,.55);
+}
+
+.k-svcTile--care .k-svcTile__bg{
+  background:
+    radial-gradient(880px 560px at 14% 0%, rgba(255,255,255,.10), transparent 60%),
+    radial-gradient(980px 620px at 86% 30%, rgba(120,255,210,.10), transparent 62%),
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0) 44%),
+    rgba(5,5,8,.55);
+}
+
+/* ===== CTA tile ===== */
+.k-svcTile--cta{
+  padding: 20px 20px 18px;
+  border-color: rgba(255,255,255,.10);
+  background: rgba(255,255,255,.03);
+}
+
+.k-svcTile--cta .k-svcTile__bg{
+  background:
+    radial-gradient(900px 620px at 20% 10%, rgba(190,145,255,.26), transparent 60%),
+    radial-gradient(980px 620px at 86% 22%, rgba(120,210,255,.14), transparent 64%),
+    linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0) 44%),
+    rgba(5,5,8,.55);
+}
+
+.k-svcTile__ctaTop{
+  display: grid;
+  gap: 10px;
+}
+
+.k-svcTile__ctaKicker{
+  margin: 0;
+  opacity: .95;
+}
+
+.k-svcTile__ctaTitle{
+  font-size: clamp(22px, 2.1vw, 30px);
+  letter-spacing: var(--track-tight);
+  margin: 0;
+}
+
+.k-svcTile__ctaDesc{
+  margin: 0;
+  max-width: 58ch;
+  color: rgba(255,255,255,.74);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.k-svcTile__ctaMini{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.k-miniChip{
+  font-size: 12px;
+  color: rgba(255,255,255,.78);
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.10);
+  padding: 6px 10px;
+  border-radius: 999px;
+}
+
+.k-svcTile__ctaBtns{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.k-svcTile__ctaGhost{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: var(--w-semibold);
+  color: rgba(255,255,255,.84);
+  opacity: .9;
+  padding: 10px 2px;
+  border-bottom: 1px solid rgba(255,255,255,.18);
+  transition: opacity 220ms ease, border-color 220ms ease;
+}
+
+@media (hover:hover){
+  .k-svcTile__ctaGhost:hover{
+    opacity: 1;
+    border-color: rgba(190,145,255,.55);
+  }
+}
+
+.k-svcTile__ctaNote{
+  margin: 0;
+  font-size: 13px;
+  color: rgba(255,255,255,.62);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.k-dot{
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(120,255,210,.65);
+  box-shadow: 0 0 0 6px rgba(120,255,210,.10);
+}
