@@ -1,12 +1,8 @@
 ---
 import "./services.css";
 import Pill from "../../ui/Pill/Pill.astro";
-import CtaButton from "../../ui/CtaButton/CtaButton.astro";
 
-/**
- * SVG icons as strings (Astro-safe), injected via set:html.
- * Stroke-only, inherits currentColor.
- */
+/** Astro-safe SVG strings (set:html). */
 const ICONS: Record<string, string> = {
   build: `
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -14,119 +10,101 @@ const ICONS: Record<string, string> = {
       <path d="M20 20H4" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
     </svg>
   `,
-  landing: `
+  scheduling: `
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M4 7h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
-      <path d="M4 12h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
-      <path d="M4 17h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
-      <path d="M18 12l2 2 3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+      <path d="M7 3v3M17 3v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+      <path d="M4 8h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+      <path d="M6 6h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path>
+      <path d="M8 12h4M8 16h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
     </svg>
   `,
-  seo: `
+  wallet: `
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M10.5 14.5l-2 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
-      <path d="M11 6a6 6 0 104.2 10.2L20 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+      <path d="M3 7a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path>
+      <path d="M17 12h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+      <path d="M7 9h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
     </svg>
   `,
-  copy: `
+  inbox: `
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M6 7h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
-      <path d="M6 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
-      <path d="M6 17h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+      <path d="M4 5h16l-2 7h-4l-2 2h-4l-2-2H6L4 5z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path>
+      <path d="M4 12v7h16v-7" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path>
     </svg>
   `,
-  tracking: `
+  gifts: `
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M5 19V9" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
-      <path d="M12 19V5" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
-      <path d="M19 19v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+      <path d="M20 12v8a2 2 0 01-2 2H6a2 2 0 01-2-2v-8" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path>
+      <path d="M4 8h16v4H4V8z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path>
+      <path d="M12 8v14" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+      <path d="M12 8c-2.5 0-4-1-4-2.5S9 3 10.5 3C12 3 12 5 12 6.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+      <path d="M12 8c2.5 0 4-1 4-2.5S15 3 13.5 3C12 3 12 5 12 6.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
     </svg>
   `,
-  ui: `
+  reminders: `
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M4 7a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V7z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path>
-      <path d="M7 9h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
-      <path d="M7 13h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
-    </svg>
-  `,
-  care: `
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M12 3l7 4v6c0 5-3 8-7 8s-7-3-7-8V7l7-4z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path>
-      <path d="M9 12l2 2 4-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-    </svg>
-  `,
-  cta: `
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M4 12h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
-      <path d="M14 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+      <path d="M12 22a2 2 0 002-2H10a2 2 0 002 2z" fill="currentColor" opacity=".55"></path>
+      <path d="M18 16v-5a6 6 0 10-12 0v5l-2 2h16l-2-2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path>
     </svg>
   `,
 };
 
-const tiles = [
+const cards = [
   {
-    size: "xl",
-    span: 6,
-    tone: "build",
-    icon: "build",
+    key: "build",
+    tone: "violet",
+    media: "customization",
+    mosaic: "leftTall",
     tag: "Build",
     title: "Astro performance build",
     desc: "Static-first speed with a studio finish. Clean code, fast loads, strong fundamentals.",
     meta: "Best for: full sites",
-    points: ["Core Web Vitals-ready", "SEO hygiene baked in"],
+    bullets: ["Core Web Vitals-ready", "SEO hygiene baked in"],
   },
   {
-    size: "md",
-    tone: "landing",
-    icon: "landing",
+    key: "scheduling",
+    tone: "rose",
+    media: "scheduling",
+    mosaic: "topWide",
     tag: "Conversion",
     title: "Landing pages that convert",
     desc: "Message clarity + flow. Designed to turn browsers into enquiries — without shouting.",
     meta: "Best for: ads & promos",
   },
   {
-    size: "md",
-    tone: "seo",
-    icon: "seo",
-    tag: "SEO",
-    title: "Local SEO foundations",
-    desc: "Structure, schema, on-page hygiene. Built to rank for intent — not vanity.",
-    meta: "Best for: UK locals",
-  },
-  {
-    size: "sm",
-    tone: "copy",
-    icon: "copy",
+    key: "wallet",
+    tone: "mint",
+    media: "wallet",
+    mosaic: "midLeft",
     tag: "Clarity",
     title: "Copy & structure",
     desc: "We shape the words and hierarchy so your offer lands instantly.",
     meta: "Best for: fuzzy offers",
   },
   {
-    size: "sm",
-    tone: "tracking",
-    icon: "tracking",
+    key: "inbox",
+    tone: "amber",
+    media: "inbox",
+    mosaic: "midRight",
+    tag: "SEO",
+    title: "Local SEO foundations",
+    desc: "Structure, schema, on-page hygiene. Built to rank for intent — not vanity.",
+    meta: "Best for: UK locals",
+  },
+  {
+    key: "gifts",
+    tone: "sunset",
+    media: "gifts",
+    mosaic: "bottomWide",
     tag: "Signals",
     title: "Tracking & analytics",
     desc: "Events that matter. Know what converts — and what just looks pretty.",
     meta: "Best for: decisions",
   },
   {
-    size: "lg",
-    span: 8,
-    tone: "ui",
-    icon: "ui",
-    tag: "Design",
-    title: "Premium UI system",
-    desc: "A tight design language: typography, spacing, components — consistent everywhere.",
-    meta: "Best for: brand lift",
-    points: ["Typography + spacing system", "Reusable components library"],
-  },
-  {
-    size: "md",
-    span: 4,
-    tone: "care",
-    icon: "care",
+    key: "reminders",
+    tone: "sky",
+    media: "reminders",
+    mosaic: "bottomRight",
     tag: "Support",
     title: "Care plan",
     desc: "Updates, fixes, small improvements. Keep it sharp after launch.",
@@ -136,141 +114,78 @@ const tiles = [
 ];
 ---
 
-<section id="services" class="k-services" aria-labelledby="services-title" data-services>
+<section id="services" class="k-services k-services--appTiles" aria-labelledby="services-title" data-services>
   <div class="container k-services__inner">
-    <header class="k-services__head">
-      <div class="k-services__kicker">
-        <h6>Services</h6>
-      </div>
+    <!-- Header: centered like PACKAGES -->
+    <header class="k-svcHead">
+      <div class="k-svcHead__kicker">SERVICES</div>
 
-      <div class="k-services__copy">
-        <h2 id="services-title">A clean set of modules. Built to sell — and stay fast.</h2>
-        <p class="measure">
-          Packages are just bundles of these building blocks. Pick a package, or we tailor the mix around your
-          goal, timeline, and audience.
-        </p>
-      </div>
+      <h2 class="k-svcHead__title" id="services-title">
+        Six modules. One clean system.
+        <span class="k-svcHead__grad">Built to convert.</span>
+      </h2>
+
+      <p class="k-svcHead__lead">
+        Clear scope, clean build, and a site that’s ready to earn — without fluffy promises.
+      </p>
     </header>
 
-    <div class="k-services__grid" role="list" aria-label="Kersivo services">
-      {tiles.map((t) =>
-        t.href ? (
-          <a
-            class={[
-              "k-svcTile",
-              `k-svcTile--${t.size}`,
-              `k-svcTile--${t.tone}`,
-              t.span ? `k-svcTile--span${t.span}` : "",
-              "k-svcTile--link",
-            ]
-              .filter(Boolean)
-              .join(" ")}
-            href={t.href}
-            role="listitem"
-            data-svc-tile
-          >
-            <span class="k-svcTile__bg" aria-hidden="true"></span>
-            <span class="k-svcTile__grain" aria-hidden="true"></span>
+    <div class="k-tiles" role="list" aria-label="Kersivo services">
+      {cards.map((c) => {
+        const cls = [
+          "k-tile",
+          `k-tile--tone-${c.tone}`,
+          `k-tile--mosaic-${c.mosaic}`,
+          c.href ? "k-tile--link" : "",
+        ].filter(Boolean).join(" ");
 
-            <div class="k-svcTile__top">
-              <div class="k-svcTile__topLeft">
-                <span class="k-svcTile__icon" aria-hidden="true" set:html={ICONS[t.icon]} />
-                <Pill label={t.tag} />
+        const Inner = (
+          <>
+            <span class="k-tile__bg" aria-hidden="true"></span>
+            <span class="k-tile__paper" aria-hidden="true"></span>
+
+            <div class="k-tile__top">
+              <div class="k-tile__topLeft">
+                <span class="k-tile__icon" aria-hidden="true" set:html={ICONS[c.key]} />
+                <Pill label={c.tag} />
               </div>
             </div>
 
-            <div class="k-svcTile__content">
-              <h3 class="k-svcTile__title">{t.title}</h3>
-              <p class="k-svcTile__desc">{t.desc}</p>
+            <div class={["k-tile__media", `k-tile__media--${c.media}`].join(" ")} aria-hidden="true">
+              <div class="k-m__a"></div>
+              <div class="k-m__b"></div>
+              <div class="k-m__c"></div>
+              <div class="k-m__d"></div>
+              <div class="k-m__e"></div>
+            </div>
 
-              {t.points?.length ? (
-                <ul class="k-svcTile__bullets" aria-label="Highlights">
-                  {t.points.map((p) => <li>{p}</li>)}
+            <div class="k-tile__content">
+              <h3 class="k-tile__title">{c.title}</h3>
+              <p class="k-tile__desc">{c.desc}</p>
+
+              {c.bullets?.length ? (
+                <ul class="k-tile__bullets" aria-label="Highlights">
+                  {c.bullets.map((b) => <li>{b}</li>)}
                 </ul>
               ) : null}
             </div>
 
-            <div class="k-svcTile__foot">
-              <span class="k-svcTile__meta">{t.meta}</span>
-              <span class="k-svcTile__shine" aria-hidden="true"></span>
+            <div class="k-tile__foot">
+              <span class="k-tile__meta">{c.meta}</span>
             </div>
+          </>
+        );
+
+        return c.href ? (
+          <a class={cls} href={c.href} role="listitem" data-svc-tile>
+            {Inner}
           </a>
         ) : (
-          <div
-            class={[
-              "k-svcTile",
-              `k-svcTile--${t.size}`,
-              `k-svcTile--${t.tone}`,
-              t.span ? `k-svcTile--span${t.span}` : "",
-            ]
-              .filter(Boolean)
-              .join(" ")}
-            role="listitem"
-            data-svc-tile
-          >
-            <span class="k-svcTile__bg" aria-hidden="true"></span>
-            <span class="k-svcTile__grain" aria-hidden="true"></span>
-
-            <div class="k-svcTile__top">
-              <div class="k-svcTile__topLeft">
-                <span class="k-svcTile__icon" aria-hidden="true" set:html={ICONS[t.icon]} />
-                <Pill label={t.tag} />
-              </div>
-            </div>
-
-            <div class="k-svcTile__content">
-              <h3 class="k-svcTile__title">{t.title}</h3>
-              <p class="k-svcTile__desc">{t.desc}</p>
-
-              {t.points?.length ? (
-                <ul class="k-svcTile__bullets" aria-label="Highlights">
-                  {t.points.map((p) => <li>{p}</li>)}
-                </ul>
-              ) : null}
-            </div>
-
-            <div class="k-svcTile__foot">
-              <span class="k-svcTile__meta">{t.meta}</span>
-              <span class="k-svcTile__shine" aria-hidden="true"></span>
-            </div>
+          <div class={cls} role="listitem" data-svc-tile>
+            {Inner}
           </div>
-        )
-      )}
-
-      <div class="k-svcTile k-svcTile--cta k-svcTile--xl k-svcTile--span12" role="listitem" data-svc-tile>
-        <span class="k-svcTile__bg" aria-hidden="true"></span>
-        <span class="k-svcTile__grain" aria-hidden="true"></span>
-
-        <div class="k-svcTile__ctaTop">
-          <div class="k-svcTile__topLeft">
-            <span class="k-svcTile__icon k-svcTile__icon--cta" aria-hidden="true" set:html={ICONS.cta} />
-            <h6 class="k-svcTile__ctaKicker">Ready?</h6>
-          </div>
-
-          <h3 class="k-svcTile__ctaTitle">Get a quote</h3>
-          <p class="k-svcTile__ctaDesc">
-            Tell us what you’re building. We’ll reply with a clear plan, timeline, and a fixed quote.
-          </p>
-
-          <div class="k-svcTile__ctaMini">
-            <span class="k-miniChip">UK small businesses</span>
-            <span class="k-miniChip">Fast + SEO-first</span>
-            <span class="k-miniChip">No fluff</span>
-          </div>
-        </div>
-
-        <div class="k-svcTile__ctaBtns">
-          <CtaButton href="#contact" label="Get a quote" variant="primary" class="k-svcTile__ctaPrimary" />
-          <a class="k-svcTile__ctaGhost" href="#packages">See packages →</a>
-        </div>
-
-        <p class="k-svcTile__ctaNote">
-          <span class="k-dot" aria-hidden="true"></span>
-          Typical reply: within 24 hours (UK time).
-        </p>
-
-        <span class="k-svcTile__shine" aria-hidden="true"></span>
-      </div>
+        );
+      })}
     </div>
   </div>
 
@@ -298,7 +213,7 @@ const tiles = [
             io.unobserve(e.target);
           });
         },
-        { threshold: 0.16, rootMargin: "120px 0px" }
+        { threshold: 0.2, rootMargin: "120px 0px" }
       );
 
       tiles.forEach((el) => io.observe(el));
