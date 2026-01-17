@@ -18,7 +18,10 @@ import Pill from "../../ui/Pill/Pill.astro";
 
       <h1 class="k3-h1" data-reveal>
         We craft <span class="k3-grad">high-end</span><br class="k3-br" />
-        websites that <span class="k3-grad2 k3-underline">convert</span>.
+        websites that
+        <span class="k3-underline k3-wordSwap" data-rotating-word>
+          <span class="k3-grad2" data-word-inner>convert</span>
+        </span>
       </h1>
 
       <p class="k3-sub" data-reveal>
@@ -49,6 +52,7 @@ import Pill from "../../ui/Pill/Pill.astro";
       const items = hero.querySelectorAll("[data-reveal]");
       if (items.length) hero.classList.add("k3-reveal");
 
+      // ===== reveal =====
       if (reduced) {
         items.forEach((el) => el.classList.add("is-in"));
         return;
@@ -69,6 +73,105 @@ import Pill from "../../ui/Pill/Pill.astro";
       items.forEach((el, i) => {
         el.style.setProperty("--d", i * 75 + "ms");
         io.observe(el);
+      });
+
+      // ===== laser-synced word swap =====
+      const wrap = hero.querySelector("[data-rotating-word]");
+      const inner = hero.querySelector("[data-word-inner]");
+      const h1 = hero.querySelector(".k3-h1");
+
+      if (!wrap || !inner || !h1) return;
+
+      const words = [
+        "convert",
+        "sell",
+        "rank",
+        "book",
+        "grow",
+        "close",
+        "perform",
+      ];
+
+      const HIT = 0.54;
+
+      const readLaserSeconds = () => {
+        const v = getComputedStyle(wrap).getPropertyValue("--laser-duration").trim();
+        const n = parseFloat(v);
+        return Number.isFinite(n) && n > 0 ? n : 2.6;
+      };
+
+      let running = false;
+      let idx = 0;
+      let tCycle = 0;
+      let tHit = 0;
+      let tType = 0;
+
+      const clearTimers = () => {
+        clearTimeout(tCycle);
+        clearTimeout(tHit);
+        clearInterval(tType);
+        tCycle = 0;
+        tHit = 0;
+        tType = 0;
+      };
+
+      const typeTo = (next) => {
+        wrap.classList.add("is-typing");
+        inner.textContent = "";
+
+        let i = 0;
+        clearInterval(tType);
+
+        tType = setInterval(() => {
+          i += 1;
+          inner.textContent = next.slice(0, i);
+          if (i >= next.length) {
+            clearInterval(tType);
+            tType = 0;
+            setTimeout(() => wrap.classList.remove("is-typing"), 220);
+          }
+        }, 28);
+      };
+
+      const tick = () => {
+        const dur = readLaserSeconds() * 1000;
+
+        tHit = setTimeout(() => {
+          idx = (idx + 1) % words.length;
+          typeTo(words[idx]);
+        }, dur * HIT);
+
+        tCycle = setTimeout(() => {
+          clearTimeout(tHit);
+          tick();
+        }, dur);
+      };
+
+      const start = () => {
+        if (running) return;
+        running = true;
+        setTimeout(() => tick(), 120);
+      };
+
+      const io2 = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (!e.isIntersecting) return;
+            start();
+            io2.disconnect();
+          });
+        },
+        { threshold: 0.25 }
+      );
+      io2.observe(h1);
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+          clearTimers();
+          running = false;
+        } else {
+          if (h1.classList.contains("is-in")) start();
+        }
       });
     })();
   </script>
