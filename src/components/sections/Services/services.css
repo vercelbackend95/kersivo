@@ -1,9 +1,8 @@
 /* =========================================================
    Kersivo — Services (App Tiles Mosaic)
-   - Even gaps, no overlap
-   - One tall tile spans 2 vertical slots
-   - No wrapper panel behind the tiles
-   - Decorative media clipped inside each tile
+   FIX (bulletproof): no fixed grid-auto-rows
+   - rows are auto-sized -> never overlaps
+   - min-heights preserve the mosaic proportions
    ========================================================= */
 
 .k-services--appTiles{
@@ -53,22 +52,20 @@
 }
 
 /* =========================
-   GRID (free-floating tiles)
-   - No areas / no fixed row tracks (prevents visual overlap)
+   GRID (no fixed row tracks)
    ========================= */
 
 .k-tiles{
   --gap: clamp(16px, 1.8vw, 24px);
+  --rowH: clamp(210px, 16.2vw, 248px); /* desktop “unit height” */
 
   display: grid;
   grid-auto-flow: dense;
+  gap: var(--gap);
+
   align-items: stretch;
   align-content: start;
 
-  /* equal gutters */
-  gap: var(--gap);
-
-  /* NO wrapper panel */
   padding: 0;
   background: transparent;
   border: 0;
@@ -79,31 +76,25 @@
   box-sizing: border-box;
 }
 
-/* Desktop mosaic: explicit spans (bulletproof) */
+/* Desktop mosaic: spans only, rows are AUTO (key fix) */
 @media (min-width: 1040px){
   .k-tiles{
     grid-template-columns: 1.35fr 1fr 1fr;
-    grid-auto-rows: clamp(210px, 16.2vw, 248px);
+    /* IMPORTANT: do NOT set grid-auto-rows here */
   }
 
-  /* one card spans TWO vertical slots */
   .k-tile--mosaic-leftTall{ grid-row: span 2; }
-
-  /* wide cards span 2 columns */
   .k-tile--mosaic-topWide{ grid-column: span 2; }
   .k-tile--mosaic-bottomWide{ grid-column: span 2; }
-
-  /* small detail: slightly more breathing room inside the tall tile */
-  .k-tile--mosaic-leftTall .k-tile__media{ min-height: 140px; }
 }
 
 /* =========================
-   TILE BASE (no overlap)
+   TILE BASE (anti-overlap)
    ========================= */
 
 .k-tile{
   position: relative;
-  overflow: hidden; /* clips decorative media (NOT shadows) */
+  overflow: hidden;
   border-radius: 28px;
   isolation: isolate;
 
@@ -117,17 +108,22 @@
   background: rgba(255,255,255,.03);
   border: 1px solid rgba(255,255,255,.10);
 
+  /* reveal */
   opacity: 0;
   transition:
     opacity 520ms ease,
     border-color 420ms cubic-bezier(.2,.9,.2,1),
     box-shadow 420ms cubic-bezier(.2,.9,.2,1);
 
-  /* IMPORTANT: no lift + no z-index games */
+  /* ABSOLUTELY NO layout-affecting motion */
   transform: none;
   z-index: 0;
 
-  /* Shadow tuned to NEVER read as overlap (tight + negative spread) */
+  /* allow grid to size correctly (critical!) */
+  min-width: 0;
+  min-height: 0;
+  align-self: stretch;
+
   box-shadow:
     0 26px 78px -66px rgba(0,0,0,.92),
     0 1px 0 rgba(255,255,255,.06) inset;
@@ -139,11 +135,20 @@
   .k-tile{ opacity: 1; transition: none; }
 }
 
+/* Preserve proportions without fixed grid rows */
 @media (min-width: 1040px){
-  .k-tile{ height: 100%; }
+  .k-tile{
+    min-height: var(--rowH);
+    height: auto; /* let content grow -> rows grow -> no overlap */
+  }
+
+  /* tall tile = 2 units + one gap */
+  .k-tile--mosaic-leftTall{
+    min-height: calc(var(--rowH) * 2 + var(--gap));
+  }
 }
 
-/* Hover: no translate, no stacking change */
+/* Hover: no translate, no “lift” */
 @media (hover:hover){
   .k-tile:hover{
     border-color: rgba(255,255,255,.14);
@@ -152,6 +157,9 @@
       0 1px 0 rgba(255,255,255,.07) inset;
   }
 }
+
+/* Kill pill hover lift inside tiles (optional stability) */
+.k-tile .k-pill:hover{ transform: none; }
 
 .k-tile--link{
   text-decoration: none;
@@ -227,6 +235,7 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
 }
 
 .k-tile__icon{
@@ -249,7 +258,7 @@
 }
 
 /* =========================
-   MEDIA COLLAGE
+   MEDIA COLLAGE (clipped)
    ========================= */
 
 .k-tile__media{
@@ -258,7 +267,14 @@
   overflow: hidden;
   background: rgba(255,255,255,.03);
   border: 1px solid rgba(255,255,255,.10);
-  min-height: 120px;
+
+  /* stable media block so cards feel consistent */
+  height: 124px;
+}
+
+@media (min-width: 1040px){
+  .k-tile__media{ height: 132px; }
+  .k-tile--mosaic-leftTall .k-tile__media{ height: 150px; }
 }
 
 .k-m__a,.k-m__b,.k-m__c,.k-m__d,.k-m__e{
@@ -407,6 +423,8 @@
    TEXT
    ========================= */
 
+.k-tile__content{ min-width: 0; min-height: 0; }
+
 .k-tile__title{
   font-size: clamp(18px, 1.15vw, 22px);
   letter-spacing: var(--track-tight);
@@ -460,7 +478,7 @@
 }
 
 /* =========================
-   RESPONSIVE (tablet/mobile)
+   Responsive
    ========================= */
 
 @media (max-width: 1039px){
@@ -481,9 +499,7 @@
 }
 
 @media (max-width: 739px){
-  .k-tiles{
-    grid-template-columns: 1fr;
-  }
+  .k-tiles{ grid-template-columns: 1fr; }
 
   .k-tile{
     border-radius: 20px;
@@ -492,7 +508,7 @@
   }
 
   .k-tile__media{
-    min-height: 104px;
+    height: 108px;
     border-radius: 18px;
   }
 
@@ -510,7 +526,7 @@
 }
 
 /* =========================
-   TONES
+   Tones
    ========================= */
 
 .k-tile--tone-violet .k-tile__bg{
