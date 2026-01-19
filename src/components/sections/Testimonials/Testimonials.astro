@@ -1,0 +1,232 @@
+---
+import "./testimonials.css";
+
+type Testimonial = {
+  quote: string;
+  name: string;
+  role: string;
+};
+
+interface Props {
+  kicker?: string;
+  title?: string;
+  subtitle?: string;
+
+  leftStatValue?: string;     // "98%"
+  leftStatLabel?: string;     // "Customer satisfaction rate"
+
+  rightStatValue?: string;    // "+2K"
+  rightStatLabel?: string;    // "Happy Customers"
+
+  avatars?: { label: string }[]; // simple “faces” placeholders (no images)
+
+  testimonials?: Testimonial[];
+}
+
+const {
+  kicker = "REVIEWS",
+  title = "What people say",
+  subtitle = "Short, real words from people I’ve worked with — focused on delivery, clarity, and taste.",
+
+  leftStatValue = "98%",
+  leftStatLabel = "Customer satisfaction rate",
+
+  rightStatValue = "+2K",
+  rightStatLabel = "Happy Customers",
+
+  avatars = [{ label: "A" }, { label: "S" }, { label: "M" }, { label: "J" }],
+
+  testimonials = [
+    {
+      quote:
+        "Partnering with Bartek changed everything. Clear direction, sharp taste, and delivery that actually lands.",
+      name: "Sophia Martinez",
+      role: "Product Designer",
+    },
+    {
+      quote:
+        "No fluff — just organised execution. Milestones were clear and the polish level was genuinely premium.",
+      name: "Tom W.",
+      role: "Small Business Owner (UK)",
+    },
+    {
+      quote:
+        "Detail-obsessed in the best way. Everything feels intentional, fast, and built to convert — especially on mobile.",
+      name: "Aisha K.",
+      role: "Founder (UK)",
+    },
+  ],
+} = Astro.props as Props;
+
+// tiny id for scoping multiple instances if needed
+const uid = `k-rev-${Math.random().toString(16).slice(2)}`;
+---
+
+<section id="reviews" class="section k-reviews" data-reviews-root={uid}>
+  <div class="container">
+    <header class="k-reviews__head sectionTitle">
+      <h6>{kicker}</h6>
+      <div class="k-reviews__headRow">
+        <div class="k-reviews__titles">
+          <h2>{title}</h2>
+          <p class="k-reviews__sub measure">{subtitle}</p>
+        </div>
+
+        <div class="k-reviews__note" aria-hidden="true">
+          <span class="k-reviews__noteDot"></span>
+          <span>References available on request.</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="k-reviews__grid">
+      <!-- LEFT: portrait + big stat -->
+      <article class="k-reviews__card k-reviews__card--left" aria-label="Satisfaction highlight">
+        <div class="k-reviews__portrait" role="img" aria-label="Studio portrait placeholder">
+          <div class="k-reviews__portraitGlow" aria-hidden="true"></div>
+          <div class="k-reviews__portraitGrain" aria-hidden="true"></div>
+        </div>
+
+        <div class="k-reviews__stat">
+          <div class="k-reviews__statValue">{leftStatValue}</div>
+          <div class="k-reviews__statLabel">{leftStatLabel}</div>
+        </div>
+      </article>
+
+      <!-- RIGHT: top mini stat + main quote carousel -->
+      <div class="k-reviews__right">
+        <article class="k-reviews__card k-reviews__card--mini" aria-label="Happy customers highlight">
+          <div class="k-reviews__avatarRow" aria-hidden="true">
+            <div class="k-reviews__avatars">
+              {avatars.slice(0, 4).map((a, i) => (
+                <span class="k-reviews__avatar" style={`--i:${i}`} title={a.label}>
+                  <span class="k-reviews__avatarInner">{a.label}</span>
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div class="k-reviews__miniStat">
+            <div class="k-reviews__miniValue">{rightStatValue}</div>
+            <div class="k-reviews__miniLabel">{rightStatLabel}</div>
+          </div>
+        </article>
+
+        <article class="k-reviews__card k-reviews__card--main" aria-label="Testimonials">
+          <div class="k-reviews__mainInner">
+            <div class="k-reviews__track" data-track>
+              {testimonials.map((t, idx) => (
+                <div class="k-reviews__slide" data-slide tabindex={idx === 0 ? 0 : -1}>
+                  <p class="k-reviews__quote">“{t.quote}”</p>
+
+                  <div class="k-reviews__person">
+                    <span class="k-reviews__personAvatar" aria-hidden="true"></span>
+                    <div class="k-reviews__personMeta">
+                      <div class="k-reviews__personName">{t.name}</div>
+                      <div class="k-reviews__personRole">{t.role}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div class="k-reviews__controls" aria-label="Testimonial controls">
+              <button class="k-reviews__btn" type="button" data-prev aria-label="Previous testimonial">
+                <span aria-hidden="true">‹</span>
+              </button>
+              <button class="k-reviews__btn" type="button" data-next aria-label="Next testimonial">
+                <span aria-hidden="true">›</span>
+              </button>
+            </div>
+
+            <div class="k-reviews__progress" aria-hidden="true">
+              <span data-cur>01</span>
+              <span class="k-reviews__slash">/</span>
+              <span data-total>{String(testimonials.length).padStart(2, "0")}</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <p class="k-reviews__disclaimer">
+      *Testimonials are from people I’ve worked with on projects, design, or delivery — not necessarily web design clients (yet).
+    </p>
+  </div>
+
+  <script is:inline>
+    {String.raw`
+      (() => {
+        const rootId = ${JSON.stringify(uid)};
+        const root = document.querySelector('[data-reviews-root="'+rootId+'"]');
+        if (!root) return;
+
+        const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        const track = root.querySelector('[data-track]');
+        const slides = track ? Array.from(track.querySelectorAll('[data-slide]')) : [];
+        const btnPrev = root.querySelector('[data-prev]');
+        const btnNext = root.querySelector('[data-next]');
+        const curEl = root.querySelector('[data-cur]');
+        const total = slides.length || 1;
+
+        let index = 0;
+
+        const fmt = (n) => String(n).padStart(2, '0');
+
+        const setIndex = (next) => {
+          if (!slides.length) return;
+          index = (next + slides.length) % slides.length;
+
+          const left = slides[index].offsetLeft;
+          track.scrollTo({ left, behavior: reduced ? 'auto' : 'smooth' });
+
+          slides.forEach((s, i) => s.tabIndex = i === index ? 0 : -1);
+          if (curEl) curEl.textContent = fmt(index + 1);
+        };
+
+        const onPrev = () => setIndex(index - 1);
+        const onNext = () => setIndex(index + 1);
+
+        btnPrev && btnPrev.addEventListener('click', onPrev);
+        btnNext && btnNext.addEventListener('click', onNext);
+
+        // snap -> update index on user scroll
+        let raf = 0;
+        const updateFromScroll = () => {
+          raf = 0;
+          if (!slides.length) return;
+
+          const x = track.scrollLeft;
+          let best = 0;
+          let bestDist = Infinity;
+
+          for (let i = 0; i < slides.length; i++) {
+            const d = Math.abs(slides[i].offsetLeft - x);
+            if (d < bestDist) { bestDist = d; best = i; }
+          }
+          if (best !== index) {
+            index = best;
+            slides.forEach((s, i) => s.tabIndex = i === index ? 0 : -1);
+            if (curEl) curEl.textContent = fmt(index + 1);
+          }
+        };
+
+        track && track.addEventListener('scroll', () => {
+          if (raf) return;
+          raf = requestAnimationFrame(updateFromScroll);
+        }, { passive: true });
+
+        // keyboard
+        root.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowLeft') onPrev();
+          if (e.key === 'ArrowRight') onNext();
+        });
+
+        // init
+        if (curEl) curEl.textContent = fmt(1);
+        setTimeout(() => setIndex(0), 0);
+      })();
+    `}
+  </script>
+</section>
