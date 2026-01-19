@@ -1,0 +1,47 @@
+---
+import "./who-for.css";
+import CtaButton from "../../ui/CtaButton/CtaButton.astro";
+import WhoForVibes from "./WhoForVibes.tsx";
+
+const vibes = [
+  { key: "startup", label: "New business", line: "A clean launch site that looks established from day one.", tags: ["Credibility", "Clarity", "Momentum"] },
+  { key: "grow", label: "Growing fast", line: "Built to handle more pages, more leads, less chaos.", tags: ["Structure", "Scale", "Conversion"] },
+  { key: "premium", label: "Premium brand", line: "Minimal, calm, expensive-looking — without the bloat.", tags: ["Typography", "Polish", "UX"] },
+  { key: "rebuild", label: "Rebuild / refresh", line: "Same business — sharper message, faster site, better results.", tags: ["Before→After", "Performance", "Clean IA"] },
+  { key: "multi", label: "Multi-location", line: "Location pages that feel consistent and easy to navigate.", tags: ["SEO hygiene", "Maps-ready", "Consistency"] },
+  { key: "local", label: "Local services", line: "Made to turn nearby searches into booked calls.", tags: ["Trust", "Speed", "Clear CTA"] },
+];
+---
+
+<section class="k-who3" id="who-its-for" aria-label="Who it's for">
+  <div class="container k-who3__container">
+    <header class="k-who3__head">
+      <div class="k-who3__kicker">
+        <h6>WHO IT’S FOR</h6>
+        <span class="k-who3__pulse" aria-hidden="true"></span>
+      </div>
+
+      <div class="k-who3__title">
+        <h2>Pick your vibe. We’ll build the site around it.</h2>
+        <p class="measure">Tap what feels closest — the promise updates in real-time.</p>
+      </div>
+    </header>
+
+    <!-- HARD WRAPPER: stays inside container, never full-bleed -->
+    <div class="k-who3__stage">
+      <WhoForVibes client:visible vibes={vibes} />
+    </div>
+
+    <div class="k-who3__cta">
+      <div class="k-who3__ctaCopy">
+        <h4>Ready when you are.</h4>
+        <p class="measure">One short form. Clear next step. No fluff theatre.</p>
+      </div>
+
+      <div class="k-who3__ctaBtns">
+        <CtaButton href="#contact" label="Get a quote" variant="primary" />
+        <CtaButton href="#work" label="View work" variant="ghost" />
+      </div>
+    </div>
+  </div>
+</section>

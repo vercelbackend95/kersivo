@@ -92,6 +92,11 @@ body{
   color: var(--fg);
 }
 
+/* FIX: stop horizontal page drift caused by glow/blur layers */
+html, body{
+  overflow-x: hidden;
+}
+
 /* Container utility (wide, premium) */
 .container{
   width: min(var(--container), calc(100% - (var(--gutter) * 2)));

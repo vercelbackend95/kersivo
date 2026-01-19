@@ -114,6 +114,7 @@ const {
         const shouldReset = !hasHash;
 
         const toTop = () => {
+          // hard reset both axes (fixes “mysterious left drift”)
           window.scrollTo(0, 0);
           requestAnimationFrame(() => window.scrollTo(0, 0));
           setTimeout(() => window.scrollTo(0, 0), 60);
@@ -130,7 +131,7 @@ const {
       })();
     </script>
 
-    <!-- Global CTA -> #contact: smooth scroll + focus first field + 0.8s glow sweep -->
+    <!-- Global CTA -> #contact: smooth scroll + focus first field + glow sweep -->
     <script>
       (() => {
         const reduced =
@@ -175,6 +176,9 @@ const {
           const target = document.querySelector("#contact");
           if (!target) return;
 
+          // nuke any horizontal offset first
+          window.scrollTo({ left: 0, top: window.scrollY, behavior: "auto" });
+
           if (location.hash !== "#contact") {
             history.pushState(null, "", "#contact");
           }
@@ -182,6 +186,7 @@ const {
           target.scrollIntoView({
             behavior: reduced ? "auto" : "smooth",
             block: "start",
+            inline: "nearest", // IMPORTANT: never scroll sideways
           });
 
           const start = performance.now();
