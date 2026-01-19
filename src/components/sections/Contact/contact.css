@@ -6,7 +6,9 @@
    ========================================= */
 
 /* Helps #contact land nicely under sticky topnav */
-#contact{ scroll-margin-top: 110px; }
+#contact{
+  scroll-margin-top: calc(var(--nav-h, 84px) + env(safe-area-inset-top) + 14px);
+}
 
 .k-contact{
   position: relative;
@@ -468,6 +470,7 @@
   flex-wrap: wrap;
   margin-top: 4px;
 }
+
 /* ===== Action buttons (contact console) ===== */
 .k-act{
   position: relative;
@@ -600,6 +603,7 @@
   .k-chip, .k-seg button, .k-contact2__bullet { transition: none !important; transform: none !important; }
   .k-contact2__console::after{ display:none; }
 }
+
 /* ===== CTA jump highlight (0.8s glow sweep) ===== */
 .k-contact2__frame.is-highlight::after{
   content:"";
