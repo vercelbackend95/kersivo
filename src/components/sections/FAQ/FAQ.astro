@@ -1,0 +1,165 @@
+---
+import "./faq.css";
+
+const items = [
+  {
+    q: "How fast can you ship a website?",
+    a: "Most small-business sites ship in 7–14 days once content is ready. If you’re stuck, we can help you structure and polish it so you don’t stall.",
+  },
+  {
+    q: "Do you handle hosting and domain setup?",
+    a: "Yes. We’ll point DNS, set canonical (non-www), and make sure redirects are clean. You keep ownership — we just make it painless.",
+  },
+  {
+    q: "What makes it “premium” — beyond visuals?",
+    tag: "Popular",
+    a: "A clean UI system, ruthless performance, and conversion hierarchy. It feels expensive because it behaves like a product: fast, calm, and intentional.",
+  },
+  {
+    q: "Will it be editable later?",
+    a: "Yes. We build with a tidy structure and handoff notes. If you want a CMS layer later, we can add it without rewriting everything.",
+  },
+  {
+    q: "What do you need from me to start?",
+    a: "A rough offer, examples you like, and any existing brand bits. If you don’t have them, we’ll extract the message from a quick call and keep moving.",
+  },
+];
+
+const defaultOpen = 2;
+---
+
+<section class="k-faq section" id="faq" aria-label="Frequently Asked Questions">
+  <div class="container">
+    <div class="k-faq__device" data-faq>
+      <div class="k-faq__inner">
+        <div class="k-faq__grid">
+          <!-- LEFT -->
+          <div class="k-faq__left">
+            <span class="k-faq__pill">FAQ</span>
+
+            <h2 class="k-faq__title">Frequently Asked Questions</h2>
+
+            <p class="k-faq__lead">
+              Straight answers, no fog. If something’s not here — ping us and we’ll reply quickly.
+            </p>
+
+            <div class="k-faq__form" role="group" aria-label="Phone callback">
+              <div class="k-faq__field">
+                <span class="k-faq__flag" aria-hidden="true">🇬🇧</span>
+                <input
+                  class="k-faq__input"
+                  type="tel"
+                  inputmode="tel"
+                  autocomplete="tel"
+                  placeholder="+44 (000)000-0000"
+                  aria-label="Your phone number"
+                />
+              </div>
+
+              <button class="k-faq__submit" type="button" data-faq-submit>
+                Submit
+              </button>
+            </div>
+
+            <div class="k-faq__note">We reply within 24 hours.</div>
+          </div>
+
+          <!-- RIGHT -->
+          <div class="k-faq__right" aria-label="FAQ accordion">
+            <div class="k-faq__accordion" data-accordion>
+              {
+                items.map((it, i) => {
+                  const isOpen = i === defaultOpen;
+                  const btnId = `faq-q-${i}`;
+                  const panelId = `faq-a-${i}`;
+
+                  return (
+                    <div class={`k-faq__item ${isOpen ? "is-open" : ""}`} data-item>
+                      <button
+                        class="k-faq__q"
+                        id={btnId}
+                        type="button"
+                        aria-expanded={isOpen ? "true" : "false"}
+                        aria-controls={panelId}
+                        data-q
+                      >
+                        <span class="k-faq__qLeft">
+                          <span class="k-faq__icon" aria-hidden="true">?</span>
+                          <span class="k-faq__qText">{it.q}</span>
+                          {it.tag ? <span class="k-faq__tag">{it.tag}</span> : null}
+                        </span>
+
+                        <span class="k-faq__chev" aria-hidden="true">⌄</span>
+                      </button>
+
+                      <div
+                        class="k-faq__a"
+                        id={panelId}
+                        role="region"
+                        aria-labelledby={btnId}
+                        data-a
+                        {...(!isOpen ? { hidden: true } : {})}
+                      >
+                        <p>{it.a}</p>
+                      </div>
+                    </div>
+                  );
+                })
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        (() => {
+          const root = document.querySelector("[data-faq]");
+          if (!root) return;
+
+          const reduced =
+            window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+          // Submit -> scroll to contact (no backend yet, but feels intentional)
+          const submit = root.querySelector("[data-faq-submit]");
+          if (submit) {
+            submit.addEventListener("click", () => {
+              const target = document.querySelector("#contact");
+              if (!target) return;
+              target.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+              if (location.hash !== "#contact") history.pushState(null, "", "#contact");
+            });
+          }
+
+          // Accordion (single-open)
+          const items = Array.from(root.querySelectorAll("[data-item]"));
+          const closeAll = () => {
+            items.forEach((it) => {
+              it.classList.remove("is-open");
+              const btn = it.querySelector("[data-q]");
+              const panel = it.querySelector("[data-a]");
+              if (btn) btn.setAttribute("aria-expanded", "false");
+              if (panel) panel.hidden = true;
+            });
+          };
+
+          items.forEach((it) => {
+            const btn = it.querySelector("[data-q]");
+            const panel = it.querySelector("[data-a]");
+            if (!btn || !panel) return;
+
+            btn.addEventListener("click", () => {
+              const open = it.classList.contains("is-open");
+              closeAll();
+
+              if (!open) {
+                it.classList.add("is-open");
+                btn.setAttribute("aria-expanded", "true");
+                panel.hidden = false;
+              }
+            });
+          });
+        })();
+      </script>
+    </div>
+  </div>
+</section>
