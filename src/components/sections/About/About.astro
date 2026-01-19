@@ -1,0 +1,132 @@
+---
+import "./about.css";
+---
+
+<section class="k-about section" id="about" aria-label="About us">
+  <div class="container">
+    <div class="k-about__grid">
+      <!-- LEFT -->
+      <div class="k-about__left">
+        <h2 class="k-about__title">
+          Built for sellers,<br />
+          Backed by <span class="k-about__muted">Innovation</span>
+        </h2>
+
+        <div class="k-about__tabs" role="tablist" aria-label="About tabs">
+          <button
+            class="k-about__tab is-active"
+            type="button"
+            role="tab"
+            aria-selected="true"
+            data-about-tab="story"
+          >
+            Our Story
+          </button>
+
+          <button
+            class="k-about__tab"
+            type="button"
+            role="tab"
+            aria-selected="false"
+            data-about-tab="mission"
+          >
+            Our Mission
+          </button>
+
+          <button
+            class="k-about__tab"
+            type="button"
+            role="tab"
+            aria-selected="false"
+            data-about-tab="vision"
+          >
+            Our Vision
+          </button>
+        </div>
+
+        <div class="k-about__copy" aria-live="polite">
+          <p data-about-copy>
+            At Kersivo, we design premium, performance-first websites for UK small businesses. Clear messaging,
+            clean builds, and calm high-end motion — all tuned to convert without the noise.
+          </p>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="k-about__right">
+        <figure class="k-about__media" aria-label="Team working">
+          <!-- Replace with your real image -->
+          <img
+            class="k-about__img"
+            src="/img/about/about-team.webp"
+            alt="Two people working on a laptop"
+            loading="lazy"
+            decoding="async"
+          />
+          <div class="k-about__glass" aria-hidden="true"></div>
+        </figure>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const root = document.querySelector("#about");
+      if (!root) return;
+
+      const reduced =
+        window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      const btns = Array.from(root.querySelectorAll("[data-about-tab]"));
+      const copy = root.querySelector("[data-about-copy]");
+      if (!btns.length || !copy) return;
+
+      const TEXT = {
+        story:
+          "At Kersivo, we design premium, performance-first websites for UK small businesses. Clear messaging, clean builds, and calm high-end motion — all tuned to convert without the noise.",
+        mission:
+          "Ship studio-grade websites that load fast, read clearly, and guide visitors to action. No fluff, no bloated stacks — just reliable delivery and conversion-focused structure.",
+        vision:
+          "A new standard for small business websites in the UK: high-end design, ruthless performance, and a process that feels as smooth as the final product.",
+      };
+
+      const setActive = (key) => {
+        btns.forEach((b) => {
+          const isOn = b.getAttribute("data-about-tab") === key;
+          b.classList.toggle("is-active", isOn);
+          b.setAttribute("aria-selected", isOn ? "true" : "false");
+        });
+
+        if (reduced) {
+          copy.textContent = TEXT[key] || TEXT.story;
+          return;
+        }
+
+        // silky swap (no layout jump, no clown animation)
+        const wrap = root.querySelector(".k-about__copy");
+        if (!wrap) return;
+
+        wrap.classList.remove("is-swap");
+        void wrap.offsetWidth;
+        wrap.classList.add("is-swap");
+
+        // swap mid-animation for clean feel
+        setTimeout(() => {
+          copy.textContent = TEXT[key] || TEXT.story;
+        }, 110);
+
+        setTimeout(() => {
+          wrap.classList.remove("is-swap");
+        }, 320);
+      };
+
+      btns.forEach((b) => {
+        b.addEventListener("click", () => {
+          const key = b.getAttribute("data-about-tab");
+          if (!key) return;
+          setActive(key);
+        });
+      });
+    })();
+  </script>
+</section>
