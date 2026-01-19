@@ -1,6 +1,7 @@
 /* =========================
-   Testimonials / Reviews — Premium Proof Panel
-   Mobile-first • zero 100vw drift • scroll-snap carousel
+   Reviews — premium panel
+   FIX: footer INSIDE slide (no overlay = no disappearing)
+   FIX: stop clipping bottom panel (no 100px hacks)
    ========================= */
 
 .k-reviews{
@@ -21,9 +22,7 @@
   }
 }
 
-.k-reviews__sub{
-  max-width: 62ch;
-}
+.k-reviews__sub{ max-width: 62ch; }
 
 .k-reviews__note{
   display: inline-flex;
@@ -59,7 +58,6 @@
   gap: 18px;
 }
 
-/* Desktop: 2 columns like reference */
 @media (min-width: 980px){
   .k-reviews__grid{
     grid-template-columns: 0.95fr 1.45fr;
@@ -73,11 +71,8 @@
   gap: 18px;
 }
 
-/* On desktop: mini stat at top, main quote below */
 @media (min-width: 980px){
-  .k-reviews__right{
-    grid-template-rows: 132px 1fr;
-  }
+  .k-reviews__right{ grid-template-rows: 132px 1fr; }
 }
 
 /* Card base */
@@ -86,15 +81,20 @@
   border-radius: 26px;
   border: 1px solid rgba(255,255,255,.11);
   background: rgba(255,255,255,.03);
-  overflow: hidden;
+  overflow: hidden; /* keep premium rounding */
   isolation: isolate;
 }
 
-.k-reviews__card::before{
+.k-reviews__card::before,
+.k-reviews__card::after{
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
+  z-index: 0;
+}
+
+.k-reviews__card::before{
   background:
     linear-gradient(180deg, rgba(255,255,255,.10), transparent 26%),
     radial-gradient(1200px 420px at 20% 10%, rgba(190,145,255,.10), transparent 60%),
@@ -103,15 +103,13 @@
 }
 
 .k-reviews__card::after{
-  content: "";
-  position: absolute;
   inset: -2px;
-  pointer-events: none;
   background: radial-gradient(800px 240px at 30% 0%, rgba(255,255,255,.10), transparent 55%);
   opacity: .55;
 }
 
-/* Subtle lift on hover (desktop only) */
+.k-reviews__card > *{ position: relative; z-index: 1; }
+
 @media (hover:hover){
   .k-reviews__card{
     transition: transform .28s ease, border-color .28s ease, background-color .28s ease;
@@ -123,17 +121,19 @@
   }
 }
 
-/* LEFT card layout */
+/* LEFT */
 .k-reviews__card--left{
-  min-height: 520px;
+  min-height: 600px;
   display: grid;
   grid-template-rows: 1fr auto;
 }
 
 @media (max-width: 979px){
-  .k-reviews__card--left{
-    min-height: 420px;
-  }
+  .k-reviews__card--left{ min-height: 480px; }
+}
+
+@media (max-width: 520px){
+  .k-reviews__card--left{ min-height: 420px; }
 }
 
 .k-reviews__portrait{
@@ -167,7 +167,6 @@
 }
 
 .k-reviews__stat{
-  position: relative;
   padding: 26px 26px 28px;
   display: grid;
   gap: 8px;
@@ -187,7 +186,7 @@
   letter-spacing: -0.01em;
 }
 
-/* MINI stat */
+/* MINI */
 .k-reviews__card--mini{
   padding: 18px 20px;
   display: grid;
@@ -246,7 +245,7 @@
   letter-spacing: -0.01em;
 }
 
-/* MAIN quote card */
+/* MAIN */
 .k-reviews__card--main{
   padding: 0;
   min-height: 360px;
@@ -254,23 +253,24 @@
 
 .k-reviews__mainInner{
   position: relative;
-  height: 100%;
   padding: clamp(18px, 2.6vw, 30px);
-  display: grid;
-  gap: 16px;
+  /* IMPORTANT: nie wymuszamy height:100% — to często jest źródłem ucięć przy paddingach */
 }
 
+/* Track */
 .k-reviews__track{
-  position: relative;
   display: flex;
+
   overflow-x: auto;
+  overflow-y: hidden; /* no micro vertical scroll */
+
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
+
   border-radius: 18px;
 }
 
-/* hide scrollbar */
 .k-reviews__track::-webkit-scrollbar{ display:none; }
 .k-reviews__track{ scrollbar-width: none; }
 
@@ -278,106 +278,187 @@
   scroll-snap-align: start;
   flex: 0 0 100%;
   min-width: 100%;
-  padding: clamp(4px, 1vw, 10px);
-  display: grid;
-  align-content: space-between;
-  gap: 18px;
 }
 
+/* KEY FIX:
+   box-sizing + brak height:100% + bez konfliktu padding/height
+   panel siedzi w środku i nie wpada pod clipping
+*/
+.k-reviews__slideInner{
+  box-sizing: border-box;
+
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+
+  /* premium layout: quote u góry, panel na dole */
+  gap: clamp(12px, 1.8vw, 18px);
+
+  padding: clamp(10px, 1.4vw, 14px);
+  padding-bottom: clamp(22px, 2.6vw, 30px); /* realny “safe area” (zamiast 100px margin hacka) */
+}
+
+/* Quote */
 .k-reviews__quote{
-  font-size: clamp(20px, 2.6vw, 38px);
-  line-height: 1.12;
-  letter-spacing: -0.04em;
+  font-size: clamp(22px, 2.6vw, 40px);
+  line-height: 1.10;
+  letter-spacing: -0.045em;
   color: rgba(255,255,255,.92);
   margin: 0;
-  max-width: 38ch;
+  max-width: 40ch;
 }
 
-.k-reviews__person{
+/* Bottom panel */
+.k-reviews__bottomPanel{
+  margin-top: auto; /* dopycha na dół, ale wciąż w ramach safe-area */
+
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding-top: 2px;
+  justify-content: space-between;
+  gap: 16px;
+
+  padding: 14px 14px;
+  border-radius: 18px;
+
+  background: rgba(0,0,0,.22);
+  border: 1px solid rgba(255,255,255,.10);
+  backdrop-filter: blur(10px);
+
+  /* requested: remove shadow */
+  box-shadow: none;
 }
 
-.k-reviews__personAvatar{
+/* Author */
+.k-reviews__author{
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.k-reviews__authorImg{
   width: 44px;
   height: 44px;
   border-radius: 999px;
   border: 1px solid rgba(255,255,255,.14);
+  box-shadow: 0 14px 34px rgba(0,0,0,.45);
+  object-fit: cover;
+  flex: 0 0 auto;
+}
+
+.k-reviews__authorImg--ph{
   background:
-    radial-gradient(16px 16px at 30% 30%, rgba(255,255,255,.18), transparent 62%),
-    radial-gradient(42px 28px at 70% 75%, rgba(120,255,220,.14), transparent 62%),
+    radial-gradient(18px 18px at 30% 28%, rgba(255,255,255,.16), transparent 62%),
+    radial-gradient(46px 30px at 70% 78%, rgba(190,145,255,.18), transparent 62%),
     rgba(255,255,255,.05);
 }
 
-.k-reviews__personName{
-  font-weight: 650;
+.k-reviews__authorMeta{
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.k-reviews__authorName{
+  font-weight: 720;
   letter-spacing: -0.02em;
-  color: rgba(255,255,255,.90);
-  line-height: 1.15;
+  color: rgba(255,255,255,.92);
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.k-reviews__personRole{
-  font-size: 13px;
-  color: rgba(255,255,255,.66);
+.k-reviews__authorRole{
+  font-size: 12.5px;
+  color: rgba(255,255,255,.68);
   letter-spacing: -0.01em;
-  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* Controls bottom-right like reference */
+/* Controls */
 .k-reviews__controls{
-  position: absolute;
-  right: clamp(14px, 2.2vw, 22px);
-  bottom: clamp(14px, 2.2vw, 22px);
   display: inline-flex;
-  gap: 10px;
-  z-index: 5;
+  gap: 12px;
+  flex: 0 0 auto;
 }
 
 .k-reviews__btn{
-  width: 46px;
-  height: 46px;
+  width: 54px;
+  height: 54px;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.14);
-  background: rgba(0,0,0,.22);
-  color: rgba(255,255,255,.86);
+
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.02);
+  color: rgba(255,255,255,.92);
+
   display: grid;
   place-items: center;
+
   cursor: pointer;
-  line-height: 1;
-  font-size: 20px;
   user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  box-shadow:
+    0 16px 40px rgba(0,0,0,.45),
+    inset 0 1px 0 rgba(255,255,255,.08);
+
   transition: transform .22s ease, border-color .22s ease, background-color .22s ease;
 }
 
 .k-reviews__btn:hover{
   transform: translateY(-1px);
-  border-color: rgba(255,255,255,.22);
-  background: rgba(0,0,0,.28);
+  border-color: rgba(255,255,255,.26);
+  background: rgba(255,255,255,.035);
 }
 
 .k-reviews__btn:active{
   transform: translateY(0px) scale(.98);
 }
 
+/* Chevrons — pure CSS */
+.k-reviews__chev{
+  width: 12px;
+  height: 12px;
+  display: block;
+  border-right: 2px solid rgba(255,255,255,.92);
+  border-top: 2px solid rgba(255,255,255,.92);
+  opacity: .95;
+}
+
+.k-reviews__chev--left{
+  transform: rotate(-135deg);
+  margin-left: 2px;
+}
+
+.k-reviews__chev--right{
+  transform: rotate(45deg);
+  margin-right: 2px;
+}
+
+/* Progress */
 .k-reviews__progress{
   position: absolute;
   left: clamp(16px, 2.2vw, 22px);
-  bottom: clamp(16px, 2.2vw, 22px);
+  top: clamp(14px, 2vw, 18px);
+  z-index: 2;
   font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(255,255,255,.58);
+  color: rgba(255,255,255,.62);
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  z-index: 5;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.18);
+  backdrop-filter: blur(10px);
 }
 
-.k-reviews__slash{
-  opacity: .55;
-}
+.k-reviews__slash{ opacity: .55; }
 
 /* Disclaimer */
 .k-reviews__disclaimer{
@@ -388,7 +469,13 @@
   max-width: 86ch;
 }
 
-/* Reduced motion */
+@media (max-width: 520px){
+  .k-reviews__btn{ width: 50px; height: 50px; }
+  .k-reviews__authorImg{ width: 42px; height: 42px; }
+  .k-reviews__bottomPanel{ border-radius: 16px; padding: 12px; }
+  .k-reviews__slideInner{ min-height: 300px; }
+}
+
 @media (prefers-reduced-motion: reduce){
   .k-reviews__track{ scroll-behavior: auto; }
   .k-reviews__btn,
