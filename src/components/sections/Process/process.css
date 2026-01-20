@@ -1,7 +1,7 @@
 /* =========================================
    Kersivo — Process
-   Card → air → line → air → card
-   + sticky orb with ink trail + reactive tail
+   Bubble cards + air + hairline separators
+   (orb removed)
    ========================================= */
 
 .k-process{}
@@ -11,23 +11,6 @@
   margin-bottom: clamp(18px, 2.6vw, 28px);
 }
 
-/* layout: list + orb column */
-.k-process__layout{
-  display: grid;
-  grid-template-columns: 1fr 54px;
-  gap: clamp(16px, 2.2vw, 24px);
-  align-items: start;
-}
-
-@media (max-width: 900px){
-  .k-process__layout{ grid-template-columns: 1fr 42px; }
-}
-
-@media (max-width: 560px){
-  .k-process__layout{ grid-template-columns: 1fr; }
-  .k-process__orbCol{ display: none; }
-}
-
 /* =========================
    List + separator spacing
    ========================= */
@@ -35,35 +18,53 @@
 .k-process__list{
   /* controls “~50px on eye” spacing */
   --procSep: clamp(26px, 4.8vw, 54px);
-
   display: flex;
   flex-direction: column;
 }
 
-/* hairline between cards, with air around it */
-.k-procSep{
-  height: 1px;
-  margin-block: var(--procSep);
-  background: rgba(255,255,255,.12);
+/* =========================
+   Row-owned separator (cannot go missing)
+   ========================= */
 
-  /* premium fade at edges */
-  mask-image: linear-gradient(to right,
+.k-procRow{
+  position: relative;
+  isolation: isolate; /* predictable stacking vs glows */
+}
+
+/* For every row except last: add air + line + air */
+.k-procRow:not(:last-child){
+  padding-bottom: calc((var(--procSep) * 2) + 1px);
+}
+
+/* Visible separator: gradient hairline, above glows */
+.k-procRow:not(:last-child)::after{
+  content:"";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: var(--procSep);
+  height: 1px;
+  z-index: 5;
+  pointer-events: none;
+
+  background: linear-gradient(
+    to right,
     transparent 0%,
-    #000 8%,
-    #000 92%,
-    transparent 100%);
+    rgba(255,255,255,.22) 12%,
+    rgba(255,255,255,.28) 50%,
+    rgba(255,255,255,.22) 88%,
+    transparent 100%
+  );
 }
 
 /* =========================
    Bubble card (each step)
    ========================= */
 
-.k-procRow{
-  position: relative;
-}
-
-/* the card itself */
 .k-procRow__inner{
+  position: relative;
+  z-index: 6;
+
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
   gap: clamp(16px, 2.4vw, 26px);
@@ -318,139 +319,4 @@
   background: rgba(255,255,255,.04);
   border: 1px solid rgba(255,255,255,.12);
   backdrop-filter: blur(10px);
-}
-
-/* =========================
-   Right scroll orb (only in this section)
-   ========================= */
-
-.k-process__orbCol{
-  position: relative;
-}
-
-.k-process__orbSticky{
-  position: sticky;
-  top: 18vh;
-  height: 64vh;
-  display: grid;
-  place-items: center;
-}
-
-.k-procRail{
-  position: relative;
-  width: 30px;
-  height: 100%; /* ✅ critical: without this maxY can become 0 */
-  border-radius: 999px;
-
-  opacity: 0;
-  transform: translateY(6px);
-  transition: opacity 220ms ease, transform 220ms cubic-bezier(.2,.9,.2,1);
-}
-
-.k-process.is-active .k-procRail{
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* faint base rail line */
-.k-procRail::before{
-  content:"";
-  position:absolute;
-  left: 50%;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  transform: translateX(-.5px);
-  background: rgba(255,255,255,.16);
-  opacity: .60;
-}
-
-/* permanent ink (progress) */
-.k-procInk{
-  position: absolute;
-  left: 50%;
-  top: 0;
-  width: 1px;
-  transform: translateX(-.5px);
-  height: 0px;
-
-  background:
-    linear-gradient(to bottom,
-      rgba(255,255,255,.00),
-      rgba(255,255,255,.12) 18%,
-      rgba(190,145,255,.30) 70%,
-      rgba(255,190,245,.18)
-    );
-
-  opacity: .95;
-}
-
-/* reactive tail (speed-based) */
-.k-procTail{
-  --tailY: 0px;
-  --tailH: 20px;
-
-  position: absolute;
-  left: 50%;
-  top: 0;
-  width: 3px;
-  height: var(--tailH);
-
-  transform: translate3d(-50%, var(--tailY), 0);
-  border-radius: 999px;
-
-  background:
-    linear-gradient(to bottom,
-      rgba(255,255,255,.00),
-      rgba(255,255,255,.55),
-      rgba(190,145,255,.55),
-      rgba(255,190,245,.10)
-    );
-
-  filter: blur(.25px);
-  opacity: 0; /* JS controls */
-  pointer-events: none;
-}
-
-/* orb */
-.k-procOrb{
-  --y: 0px;
-
-  position: absolute;
-  left: 50%;
-  top: 0;
-  transform: translate3d(-50%, var(--y), 0);
-
-  width: 16px;
-  height: 16px;
-  border-radius: 999px;
-
-  background: rgba(10,10,14,.85);
-  border: 1px solid rgba(255,255,255,.28);
-
-  box-shadow:
-    0 0 0 6px rgba(190,145,255,.12),
-    0 18px 80px rgba(190,145,255,.20),
-    0 0 24px rgba(255,255,255,.10);
-
-  will-change: transform;
-}
-
-.k-procOrb::before{
-  content:"";
-  position:absolute;
-  inset: 4px;
-  border-radius: inherit;
-  background: rgba(255,255,255,.92);
-  box-shadow:
-    0 0 10px rgba(255,255,255,.45),
-    0 0 18px rgba(190,145,255,.35);
-  opacity: .92;
-}
-
-@media (prefers-reduced-motion: reduce){
-  .k-procRail,
-  .k-procOrb{
-    transition: none !important;
-  }
 }

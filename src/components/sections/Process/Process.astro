@@ -53,7 +53,7 @@ const steps = [
 ];
 ---
 
-<section id="process" class="k-process section" data-process>
+<section id="process" class="k-process section">
   <div class="container">
     <div class="k-process__head">
       <div class="sectionTitle">
@@ -65,206 +65,60 @@ const steps = [
       </div>
     </div>
 
-    <div class="k-process__layout">
-      <!-- LIST (track this for scroll progress) -->
-      <div class="k-process__list" role="list" data-proc-track>
-        {steps.map((s, i) => (
-          <>
-            <article class="k-procRow" role="listitem">
-              <div class="k-procRow__inner">
-                <!-- MEDIA (left) -->
-                <div class={`k-procMedia k-procMedia--tone-${s.tone}`} aria-hidden="true">
-                  <div class="k-procMedia__glow"></div>
+    <div class="k-process__list" role="list">
+      {steps.map((s) => (
+        <article class="k-procRow" role="listitem">
+          <div class="k-procRow__inner">
+            <!-- MEDIA (left) -->
+            <div class={`k-procMedia k-procMedia--tone-${s.tone}`} aria-hidden="true">
+              <div class="k-procMedia__glow"></div>
 
-                  <div class="k-procMedia__frame">
-                    <div class="k-procMedia__topbar">
-                      <span class="k-procDot"></span>
-                      <span class="k-procDot"></span>
-                      <span class="k-procDot"></span>
-                      <span class="k-procMedia__label">Kersivo / Sprint</span>
-                    </div>
-
-                    <div class="k-procMedia__canvas">
-                      <div class="k-procCard k-procCard--a">
-                        <div class="k-procCard__title">Next steps</div>
-                        <div class="k-procCard__row"></div>
-                        <div class="k-procCard__row"></div>
-                        <div class="k-procCard__row"></div>
-                      </div>
-
-                      <div class="k-procCard k-procCard--b">
-                        <div class="k-procCard__title">Checklist</div>
-                        <div class="k-procPill"></div>
-                        <div class="k-procPill"></div>
-                        <div class="k-procPill"></div>
-                      </div>
-
-                      <div class="k-procRing">
-                        <span class="k-procRing__val">100</span>
-                        <span class="k-procRing__lbl">quality</span>
-                      </div>
-                    </div>
-                  </div>
+              <div class="k-procMedia__frame">
+                <div class="k-procMedia__topbar">
+                  <span class="k-procDot"></span>
+                  <span class="k-procDot"></span>
+                  <span class="k-procDot"></span>
+                  <span class="k-procMedia__label">Kersivo / Sprint</span>
                 </div>
 
-                <!-- TEXT (right) -->
-                <div class="k-procText">
-                  <div class="k-procNo">{s.no}</div>
-                  <h3 class="k-procTitle">{s.title}</h3>
-                  <p class="k-procBody">{s.body}</p>
+                <div class="k-procMedia__canvas">
+                  <div class="k-procCard k-procCard--a">
+                    <div class="k-procCard__title">Next steps</div>
+                    <div class="k-procCard__row"></div>
+                    <div class="k-procCard__row"></div>
+                    <div class="k-procCard__row"></div>
+                  </div>
 
-                  <div class="k-procChips" aria-label="Highlights">
-                    {s.chips.map((c) => (
-                      <span class="k-procChip">{c}</span>
-                    ))}
+                  <div class="k-procCard k-procCard--b">
+                    <div class="k-procCard__title">Checklist</div>
+                    <div class="k-procPill"></div>
+                    <div class="k-procPill"></div>
+                    <div class="k-procPill"></div>
+                  </div>
+
+                  <div class="k-procRing">
+                    <span class="k-procRing__val">100</span>
+                    <span class="k-procRing__lbl">quality</span>
                   </div>
                 </div>
               </div>
-            </article>
+            </div>
 
-            {i !== steps.length - 1 && <div class="k-procSep" aria-hidden="true"></div>}
-          </>
-        ))}
-      </div>
+            <!-- TEXT (right) -->
+            <div class="k-procText">
+              <div class="k-procNo">{s.no}</div>
+              <h3 class="k-procTitle">{s.title}</h3>
+              <p class="k-procBody">{s.body}</p>
 
-      <!-- ORB COLUMN -->
-      <aside class="k-process__orbCol" aria-hidden="true">
-        <div class="k-process__orbSticky">
-          <div class="k-procRail" data-proc-rail>
-            <span class="k-procInk" data-proc-ink></span>
-            <span class="k-procTail" data-proc-tail></span>
-            <span class="k-procOrb" data-proc-orb></span>
+              <div class="k-procChips" aria-label="Highlights">
+                {s.chips.map((c) => (
+                  <span class="k-procChip">{c}</span>
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
-      </aside>
+        </article>
+      ))}
     </div>
   </div>
-
-  <script>
-    (() => {
-      const root = document.querySelector("[data-process]");
-      if (!root) return;
-
-      const reduced =
-        window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-      const track = root.querySelector("[data-proc-track]");
-      const rail = root.querySelector("[data-proc-rail]");
-      const orb = root.querySelector("[data-proc-orb]");
-      const ink = root.querySelector("[data-proc-ink]");
-      const tail = root.querySelector("[data-proc-tail]");
-      if (!track || !rail || !orb || !ink || !tail) return;
-
-      const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
-
-      if (reduced) {
-        root.classList.add("is-active");
-        orb.style.setProperty("--y", "0px");
-        ink.style.height = "0px";
-        tail.style.opacity = "0";
-        return;
-      }
-
-      let active = false;
-      let raf = 0;
-      let lastY = 0;
-
-      const getAbsTop = (el) => el.getBoundingClientRect().top + window.scrollY;
-
-      const measure = () => {
-        const rr = rail.getBoundingClientRect();
-        const orbSize = 16; // sync with CSS
-        return { maxY: Math.max(0, rr.height - orbSize) };
-      };
-
-      // ✅ bulletproof progress: based on scrollY + absolute offsets of the LIST
-      const computeProgress = () => {
-        const vh = window.innerHeight || 1;
-
-        // tune: where inside viewport we consider "start" and "end"
-        const startLine = vh * 0.22;
-        const endLine   = vh * 0.78;
-
-        const top = getAbsTop(track);
-        const bottom = top + track.offsetHeight;
-
-        // start when list top hits startLine, end when list bottom hits endLine
-        const start = top - startLine;
-        const end = bottom - endLine;
-
-        const span = Math.max(1, end - start);
-        const p = (window.scrollY - start) / span;
-
-        return clamp(p, 0, 1);
-      };
-
-      const tick = () => {
-        raf = 0;
-        if (!active) return;
-
-        const p = computeProgress();
-        const { maxY } = measure();
-
-        const y = p * maxY;
-
-        // velocity for reactive tail
-        const dy = y - lastY;
-        const speed = Math.abs(dy);
-        const dir = dy >= 0 ? 1 : -1;
-        lastY = y;
-
-        // orb follows scroll (inside sticky rail)
-        orb.style.setProperty("--y", y.toFixed(2) + "px");
-
-        // permanent ink trail (progress)
-        const inkH = clamp(y + 8, 0, maxY);
-        ink.style.height = inkH.toFixed(2) + "px";
-
-        // reactive tail (speed-based)
-        const tailH = clamp(12 + speed * 10, 14, 96);
-        const tailY = clamp(y + (dir > 0 ? -2 : -(tailH - 10)), 0, maxY);
-
-        tail.style.setProperty("--tailY", tailY.toFixed(2) + "px");
-        tail.style.setProperty("--tailH", tailH.toFixed(2) + "px");
-
-        const o = clamp(0.25 + speed * 0.015, 0.22, 0.85);
-        tail.style.opacity = o.toFixed(2);
-      };
-
-      const requestTick = () => {
-        if (raf) return;
-        raf = requestAnimationFrame(tick);
-      };
-
-      const onEnter = () => {
-        root.classList.add("is-active");
-
-        // prime so it doesn't jump
-        const { maxY } = measure();
-        lastY = computeProgress() * maxY;
-
-        requestTick();
-        window.addEventListener("scroll", requestTick, { passive: true });
-        window.addEventListener("resize", requestTick, { passive: true });
-      };
-
-      const onExit = () => {
-        root.classList.remove("is-active");
-        window.removeEventListener("scroll", requestTick);
-        window.removeEventListener("resize", requestTick);
-      };
-
-      const io = new IntersectionObserver(
-        (entries) => {
-          const on = entries.some((e) => e.isIntersecting);
-          active = on;
-          if (on) onEnter();
-          else onExit();
-        },
-        { threshold: 0.01 }
-      );
-
-      io.observe(root);
-    })();
-  </script>
 </section>
