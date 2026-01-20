@@ -151,10 +151,6 @@ export default function ProcessScroll() {
     activeRef.current = active;
   }, [active]);
 
-  // gate: true only when #process section is in view
-  const inProcessRef = useRef(false);
-  const [inProcess, setInProcess] = useState(false);
-
   // one-shot sweep on active change (desktop only)
   const [sweepIdx, setSweepIdx] = useState<number | null>(null);
   useEffect(() => {
@@ -240,10 +236,14 @@ export default function ProcessScroll() {
   const pulseTRef = useRef<number | null>(null);
   const sweepTRef = useRef<number | null>(null);
 
-  // WHEEL-LOCK state
+  // ===== “pin + wheel stepper” state
   const wheelLockOn = useRef(false);
   const wheelAcc = useRef(0);
   const wheelCooldown = useRef<number | null>(null);
+  const lockedYRef = useRef<number | null>(null);
+
+  // anti-relock window (trackpad momentum)
+  const suppressRelockUntil = useRef(0);
 
   const fireStepFx = (idx: number) => {
     if (reducedMotion()) return;
@@ -261,45 +261,13 @@ export default function ProcessScroll() {
     return () => {
       if (pulseTRef.current) window.clearTimeout(pulseTRef.current);
       if (sweepTRef.current) window.clearTimeout(sweepTRef.current);
+      if (wheelCooldown.current) window.clearTimeout(wheelCooldown.current);
     };
   }, []);
 
-  // Observe SECTION #process (wrapper in Process.astro)
-  useEffect(() => {
-    if (!mounted) return;
-
-    const section = document.getElementById("process");
-    if (!section) return;
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        const on = !!entry?.isIntersecting && (entry.intersectionRatio ?? 0) > 0.01;
-
-        inProcessRef.current = on;
-        setInProcess(on);
-
-        // leaving: reset lock so normal page scroll returns
-        if (!on) {
-          wheelLockOn.current = false;
-          wheelAcc.current = 0;
-        }
-      },
-      {
-        // activate early; the "stop" should feel immediate
-        root: null,
-        rootMargin: "-20% 0px -20% 0px",
-        threshold: [0, 0.01, 0.05, 0.15, 0.35],
-      }
-    );
-
-    io.observe(section);
-    return () => io.disconnect();
-  }, [mounted]);
-
-  const scrollToStepCenter = (idx: number, behavior: ScrollBehavior) => {
+  const computeStepCenterY = (idx: number) => {
     const root = rootRef.current;
-    if (!root) return;
+    if (!root) return window.scrollY;
 
     const rect = root.getBoundingClientRect();
     const vh = window.innerHeight || 1;
@@ -308,9 +276,7 @@ export default function ProcessScroll() {
     const rootTop = rect.top + window.scrollY;
 
     const targetP = (idx + 0.5) / n;
-    const targetY = rootTop + targetP * scrollable;
-
-    window.scrollTo({ top: targetY, behavior });
+    return rootTop + targetP * scrollable;
   };
 
   const nearestStepFromScroll = () => {
@@ -327,6 +293,61 @@ export default function ProcessScroll() {
     return clamp(Math.round(p * n - 0.5), 0, n - 1);
   };
 
+  const inProcessZoneNow = () => {
+    const root = rootRef.current;
+    if (!root) return false;
+
+    const rect = root.getBoundingClientRect();
+    const vh = window.innerHeight || 1;
+
+    // “kadr” na stickym: root musi obejmować środek ekranu
+    return rect.top < vh * 0.35 && rect.bottom > vh * 0.65;
+  };
+
+  const setStepNoScroll = (idx: number) => {
+    const next = clamp(idx, 0, n - 1);
+    activeRef.current = next;
+    setActive(next);
+
+    // keep UI indicators in sync even without scrolling the page
+    setProg((next + 0.5) / n);
+    setLocal(0.5);
+  };
+
+  const unlockAndLetPageFlow = (dir: 1 | -1) => {
+    wheelLockOn.current = false;
+    wheelAcc.current = 0;
+    lockedYRef.current = null;
+
+    // nie pozwól na natychmiastowy re-lock (momentum z trackpada)
+    suppressRelockUntil.current = Date.now() + 650;
+
+    const root = rootRef.current;
+    const vh = window.innerHeight || 1;
+
+    if (!root) {
+      window.scrollTo({ top: Math.max(0, window.scrollY + dir * vh * 0.65), behavior: "auto" });
+      return;
+    }
+
+    const rect = root.getBoundingClientRect();
+    const rootTop = rect.top + window.scrollY;
+    const rootBottom = rootTop + rect.height;
+
+    // Wyjdź poza strefę aktywacji:
+    // Down: spraw, by rect.bottom przestał być > 0.65vh
+    // Up: spraw, by rect.top przestał być < 0.35vh
+    let target = window.scrollY;
+
+    if (dir > 0) {
+      target = rootBottom - vh * 0.58; // poniżej Process (poza kadr)
+    } else {
+      target = rootTop - vh * 0.42; // powyżej Process (poza kadr)
+    }
+
+    window.scrollTo({ top: Math.max(0, target), behavior: "auto" });
+  };
+
   // Desktop scroll progress (only when NOT locked)
   useEffect(() => {
     if (!mounted) return;
@@ -338,7 +359,7 @@ export default function ProcessScroll() {
     const reduced = reducedMotion();
     let pulseT: number | null = null;
 
-    // ensure rig has scroll length
+    // ensure rig has scroll length (in case CSS got mutated)
     try {
       const min = Math.max(1, n * BAND_VH + 30);
       root.style.setProperty("min-height", `${min}vh`, "important");
@@ -354,7 +375,6 @@ export default function ProcessScroll() {
     const update = () => {
       rafRef.current = null;
 
-      // if we are locked, don't let normal scroll update override the step
       if (wheelLockOn.current) return;
 
       const rect = root.getBoundingClientRect();
@@ -394,61 +414,84 @@ export default function ProcessScroll() {
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
-
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       if (pulseT) window.clearTimeout(pulseT);
-
-      if (wheelCooldown.current) window.clearTimeout(wheelCooldown.current);
-      wheelCooldown.current = null;
     };
   }, [mounted, isDesktop, n, BAND_VH]);
 
-  // ✅ GLOBAL wheel handler on desktop; it activates ONLY inside #process
+  // ===== WHEEL-LOCK: “zatrzymaj się na Process, kółko przewija kroki”
   useEffect(() => {
     if (!mounted || !isDesktop) return;
-    if (reducedMotion()) return;
 
     const root = rootRef.current;
     if (!root) return;
 
-    const setStepNoScroll = (idx: number) => {
-      const next = clamp(idx, 0, n - 1);
-      activeRef.current = next;
-      setActive(next);
+    const reduced = reducedMotion();
 
-      // keep UI indicators in sync even without scrolling the page
-      setProg((next + 0.5) / n);
-      setLocal(0.5);
+    const pinIfNeeded = (idx: number) => {
+      const vh = window.innerHeight || 1;
+      const targetY = computeStepCenterY(idx);
+
+      const dist = Math.abs(window.scrollY - targetY);
+      if (dist < vh * 0.22) {
+        window.scrollTo({ top: targetY, behavior: "auto" });
+        lockedYRef.current = targetY;
+      } else {
+        lockedYRef.current = window.scrollY;
+      }
+    };
+
+    const hardPinScroll = () => {
+      if (!wheelLockOn.current) return;
+      const y = lockedYRef.current;
+      if (y == null) return;
+
+      if (Math.abs(window.scrollY - y) > 2) {
+        window.scrollTo({ top: y, behavior: "auto" });
+      }
     };
 
     const onWheel = (e: WheelEvent) => {
-      // outside process: do nothing, normal page scroll
-      if (!inProcessRef.current) return;
+      if (reduced) return;
 
-      // inside process: we own the wheel
+      // po wyjściu: nie łap natychmiast locka (momentum)
+      if (Date.now() < suppressRelockUntil.current) return;
+
+      const inZone = inProcessZoneNow();
+
+      // poza kadrem Process — oddaj scroll stronie
+      if (!inZone) {
+        if (wheelLockOn.current) {
+          wheelLockOn.current = false;
+          wheelAcc.current = 0;
+          lockedYRef.current = null;
+        }
+        return;
+      }
+
+      // w Process — bierzemy kontrolę
       e.preventDefault();
 
-      const r = root.getBoundingClientRect();
-      const vh = window.innerHeight || 1;
-
-      // first touch: engage lock + align once (small correction inside process)
+      // wejście w lock
       if (!wheelLockOn.current) {
         wheelLockOn.current = true;
         wheelAcc.current = 0;
 
         const near = nearestStepFromScroll();
         setStepNoScroll(near);
-
-        // tiny align so the sticky matches the “photo pose”
-        scrollToStepCenter(near, "auto");
+        pinIfNeeded(near);
       }
+
+      // utrzymuj pin (trackpad momentum / klawisze)
+      hardPinScroll();
 
       wheelAcc.current += e.deltaY;
 
-      const threshold = Math.max(60, vh * 0.06);
+      const vh = window.innerHeight || 1;
+      const threshold = Math.max(70, vh * 0.065);
       if (Math.abs(wheelAcc.current) < threshold) return;
 
-      const dir = wheelAcc.current > 0 ? 1 : -1;
+      const dir: 1 | -1 = wheelAcc.current > 0 ? 1 : -1;
       wheelAcc.current = 0;
 
       if (wheelCooldown.current) return;
@@ -460,38 +503,53 @@ export default function ProcessScroll() {
       const atFirst = cur === 0;
       const atLast = cur === n - 1;
 
-      // edges: release lock and allow page to continue
+      // krawędzie: puść lock i WYJDŹ poza strefę Process
       if (dir < 0 && atFirst) {
-        wheelLockOn.current = false;
-        // nudge up a hair so you clearly exit the section
-        window.scrollTo({ top: window.scrollY - 24, behavior: "auto" });
+        unlockAndLetPageFlow(-1);
         return;
       }
       if (dir > 0 && atLast) {
-        wheelLockOn.current = false;
-        window.scrollTo({ top: window.scrollY + vh * 0.45, behavior: "auto" });
+        unlockAndLetPageFlow(1);
         return;
       }
 
       const next = clamp(cur + dir, 0, n - 1);
       fireStepFx(next);
       setStepNoScroll(next);
+
+      // pin zostaje “jak na zdjęciu”
+      hardPinScroll();
     };
 
-    // optional: block “Space / PageDown” while locked (prevents bypass)
-    const onKey = (e: KeyboardEvent) => {
-      if (!inProcessRef.current) return;
+    const onScroll = () => {
       if (!wheelLockOn.current) return;
+
+      // jak już wyszedłeś (albo ktoś przewinął inaczej) — puść lock
+      if (!inProcessZoneNow()) {
+        wheelLockOn.current = false;
+        wheelAcc.current = 0;
+        lockedYRef.current = null;
+        return;
+      }
+
+      hardPinScroll();
+    };
+
+    const onKey = (e: KeyboardEvent) => {
+      if (!wheelLockOn.current) return;
+      if (!inProcessZoneNow()) return;
 
       const keys = [" ", "PageDown", "PageUp", "Home", "End", "ArrowDown", "ArrowUp"];
       if (keys.includes(e.key)) e.preventDefault();
     };
 
     window.addEventListener("wheel", onWheel, { passive: false, capture: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("keydown", onKey, { passive: false, capture: true });
 
     return () => {
       window.removeEventListener("wheel", onWheel, true as any);
+      window.removeEventListener("scroll", onScroll);
       window.removeEventListener("keydown", onKey, true as any);
       if (wheelCooldown.current) window.clearTimeout(wheelCooldown.current);
       wheelCooldown.current = null;
@@ -502,16 +560,14 @@ export default function ProcessScroll() {
     const next = clamp(idx, 0, n - 1);
     fireStepFx(next);
 
-    // engage lock (so next wheel scroll continues inside Process)
+    // włącz lock “na miejscu” (ale bez scrollTo)
     wheelLockOn.current = true;
     wheelAcc.current = 0;
 
-    activeRef.current = next;
-    setActive(next);
-    setProg((next + 0.5) / n);
-    setLocal(0.5);
+    setStepNoScroll(next);
 
-    // IMPORTANT: no window.scrollTo here. zero teleport.
+    // pin na aktualnym scrollY, żeby klik nie zrobił żadnego ruchu strony
+    if (lockedYRef.current == null) lockedYRef.current = window.scrollY;
   };
 
   const onStepKeyDown = (idx: number, e: React.KeyboardEvent) => {
@@ -712,7 +768,14 @@ export default function ProcessScroll() {
                   <button
                     type="button"
                     className="k-proc__stepBtn"
-                    onClick={() => setStepFromClickNoScroll(idx)} // ✅ NO SCROLL
+                    onPointerDown={(e) => {
+                      if (isDesktop) e.preventDefault();
+                    }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setStepFromClickNoScroll(idx); // ✅ NO SCROLL
+                    }}
                     onKeyDown={(e) => onStepKeyDown(idx, e)}
                   >
                     <span className="k-proc__num" aria-hidden="true">
