@@ -193,10 +193,12 @@ const uid = `k-rev-${Math.random().toString(16).slice(2)}`;
           if (!slides.length) return;
           index = mod(next, slides.length);
 
-          slides[index].scrollIntoView({
+          // ✅ Reliable horizontal scroll: move the TRACK to the slide's offset
+          const left = slides[index].offsetLeft;
+
+          track.scrollTo({
+            left,
             behavior: reduced ? 'auto' : 'smooth',
-            block: 'nearest',
-            inline: 'start',
           });
 
           syncUI();

@@ -103,6 +103,14 @@ import CtaButton from "../../ui/CtaButton/CtaButton.astro";
       const btn = root.querySelector(".k-topnav__burger");
       const panel = root.querySelector("#kTopnavPanel");
 
+      // ✅ HARD RESET on boot: ensure the overlay panel starts closed and non-interactive
+      if (panel) panel.hidden = true;
+      root.classList.remove("is-open");
+      if (btn) {
+        btn.setAttribute("aria-expanded", "false");
+        btn.setAttribute("aria-label", "Open menu");
+      }
+
       const lockScroll = (locked) => {
         document.documentElement.style.overflow = locked ? "hidden" : "";
       };

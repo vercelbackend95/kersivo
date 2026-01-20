@@ -481,3 +481,21 @@
   .k-reviews__btn,
   .k-reviews__card{ transition: none !important; }
 }
+/* TEMP: ultra-proste strzałki, żeby na pewno było widać i klikało */
+.k-reviews__controls .k-reviews__btn{
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  font-size: 20px;
+  line-height: 1;
+  color: rgba(255,255,255,.9);
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.14);
+  cursor: pointer;
+}
+
+.k-reviews__controls .k-reviews__btn:active{
+  transform: translateY(1px);
+}

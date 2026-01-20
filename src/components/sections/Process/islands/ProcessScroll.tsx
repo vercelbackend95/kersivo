@@ -134,17 +134,26 @@ export default function ProcessScroll() {
     []
   );
 
-  // SSR-safe: render BOTH DOMs; JS enhances after mount
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
-  // HOOKI NIGDY WARUNKOWO.
   const desktopMQ = useMedia("(min-width: 981px)");
   const isDesktop = mounted && desktopMQ;
 
   const n = steps.length;
+  const BAND_VH = 92;
 
   const [active, setActive] = useState(0);
+
+  // latest active for handlers (no stale closure)
+  const activeRef = useRef(0);
+  useEffect(() => {
+    activeRef.current = active;
+  }, [active]);
+
+  // gate: true only when #process section is in view
+  const inProcessRef = useRef(false);
+  const [inProcess, setInProcess] = useState(false);
 
   // one-shot sweep on active change (desktop only)
   const [sweepIdx, setSweepIdx] = useState<number | null>(null);
@@ -157,7 +166,7 @@ export default function ProcessScroll() {
   }, [active, mounted, isDesktop]);
 
   // =========================
-  // MOBILE: cards deck (snap)
+  // MOBILE: snap rail
   // =========================
   const railRef = useRef<HTMLDivElement | null>(null);
 
@@ -218,30 +227,31 @@ export default function ProcessScroll() {
   };
 
   // =========================
-  // DESKTOP: sticky scroll rig
+  // DESKTOP: sticky rig
   // =========================
   const rootRef = useRef<HTMLDivElement | null>(null);
   const rafRef = useRef<number | null>(null);
-  const scrollStopT = useRef<number | null>(null);
-  const snappingRef = useRef(false);
 
-  const [prog, setProg] = useState(0); // 0..1 overall
-  const [local, setLocal] = useState(0); // 0..1 within active step
+  const [prog, setProg] = useState(0);
+  const [local, setLocal] = useState(0);
   const [pulseIdx, setPulseIdx] = useState<number | null>(null);
   const [enterTick, setEnterTick] = useState(0);
 
   const pulseTRef = useRef<number | null>(null);
   const sweepTRef = useRef<number | null>(null);
 
+  // WHEEL-LOCK state
+  const wheelLockOn = useRef(false);
+  const wheelAcc = useRef(0);
+  const wheelCooldown = useRef<number | null>(null);
+
   const fireStepFx = (idx: number) => {
     if (reducedMotion()) return;
 
-    // pulse
     setPulseIdx(idx);
     if (pulseTRef.current) window.clearTimeout(pulseTRef.current);
     pulseTRef.current = window.setTimeout(() => setPulseIdx(null), 520);
 
-    // sweep
     setSweepIdx(idx);
     if (sweepTRef.current) window.clearTimeout(sweepTRef.current);
     sweepTRef.current = window.setTimeout(() => setSweepIdx(null), 760);
@@ -254,41 +264,70 @@ export default function ProcessScroll() {
     };
   }, []);
 
-  const maybeSnap = () => {
-    if (!mounted || !isDesktop) return;
-    if (reducedMotion()) return;
-    if (snappingRef.current) return;
+  // Observe SECTION #process (wrapper in Process.astro)
+  useEffect(() => {
+    if (!mounted) return;
 
+    const section = document.getElementById("process");
+    if (!section) return;
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        const on = !!entry?.isIntersecting && (entry.intersectionRatio ?? 0) > 0.01;
+
+        inProcessRef.current = on;
+        setInProcess(on);
+
+        // leaving: reset lock so normal page scroll returns
+        if (!on) {
+          wheelLockOn.current = false;
+          wheelAcc.current = 0;
+        }
+      },
+      {
+        // activate early; the "stop" should feel immediate
+        root: null,
+        rootMargin: "-20% 0px -20% 0px",
+        threshold: [0, 0.01, 0.05, 0.15, 0.35],
+      }
+    );
+
+    io.observe(section);
+    return () => io.disconnect();
+  }, [mounted]);
+
+  const scrollToStepCenter = (idx: number, behavior: ScrollBehavior) => {
     const root = rootRef.current;
     if (!root) return;
 
     const rect = root.getBoundingClientRect();
     const vh = window.innerHeight || 1;
 
-    if (rect.bottom < vh * 0.25 || rect.top > vh * 0.65) return;
+    const scrollable = Math.max(1, rect.height - vh);
+    const rootTop = rect.top + window.scrollY;
+
+    const targetP = (idx + 0.5) / n;
+    const targetY = rootTop + targetP * scrollable;
+
+    window.scrollTo({ top: targetY, behavior });
+  };
+
+  const nearestStepFromScroll = () => {
+    const root = rootRef.current;
+    if (!root) return 0;
+
+    const rect = root.getBoundingClientRect();
+    const vh = window.innerHeight || 1;
 
     const scrollable = Math.max(1, rect.height - vh);
     const progressed = clamp(-rect.top, 0, scrollable);
     const p = progressed / scrollable;
 
-    const nearest = clamp(Math.round(p * n - 0.5), 0, n - 1);
-    const targetP = (nearest + 0.5) / n;
-
-    const rootTop = rect.top + window.scrollY;
-    const targetY = rootTop + targetP * scrollable;
-
-    const dist = Math.abs(window.scrollY - targetY);
-    const threshold = vh * 0.12;
-    if (dist > threshold) return;
-
-    snappingRef.current = true;
-    window.scrollTo({ top: targetY, behavior: "smooth" });
-
-    window.setTimeout(() => {
-      snappingRef.current = false;
-    }, 520);
+    return clamp(Math.round(p * n - 0.5), 0, n - 1);
   };
 
+  // Desktop scroll progress (only when NOT locked)
   useEffect(() => {
     if (!mounted) return;
     if (!isDesktop) return;
@@ -299,8 +338,24 @@ export default function ProcessScroll() {
     const reduced = reducedMotion();
     let pulseT: number | null = null;
 
+    // ensure rig has scroll length
+    try {
+      const min = Math.max(1, n * BAND_VH + 30);
+      root.style.setProperty("min-height", `${min}vh`, "important");
+
+      const spacer = root.querySelector<HTMLElement>(".k-proc__spacer");
+      if (spacer) {
+        spacer.style.setProperty("display", "block", "important");
+        spacer.style.setProperty("position", "static", "important");
+        spacer.style.setProperty("height", `${Math.max(1, n * BAND_VH)}vh`, "important");
+      }
+    } catch {}
+
     const update = () => {
       rafRef.current = null;
+
+      // if we are locked, don't let normal scroll update override the step
+      if (wheelLockOn.current) return;
 
       const rect = root.getBoundingClientRect();
       const vh = window.innerHeight || 1;
@@ -329,14 +384,7 @@ export default function ProcessScroll() {
     };
 
     const onScroll = () => {
-      snappingRef.current = false;
-
       if (!rafRef.current) rafRef.current = window.requestAnimationFrame(update);
-
-      if (scrollStopT.current) window.clearTimeout(scrollStopT.current);
-      scrollStopT.current = window.setTimeout(() => {
-        maybeSnap();
-      }, 140);
     };
 
     update();
@@ -346,47 +394,142 @@ export default function ProcessScroll() {
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      if (scrollStopT.current) window.clearTimeout(scrollStopT.current);
-      if (pulseT) window.clearTimeout(pulseT);
-    };
-  }, [mounted, isDesktop, n]);
 
-  const jumpTo = (idx: number) => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (pulseT) window.clearTimeout(pulseT);
+
+      if (wheelCooldown.current) window.clearTimeout(wheelCooldown.current);
+      wheelCooldown.current = null;
+    };
+  }, [mounted, isDesktop, n, BAND_VH]);
+
+  // ✅ GLOBAL wheel handler on desktop; it activates ONLY inside #process
+  useEffect(() => {
+    if (!mounted || !isDesktop) return;
+    if (reducedMotion()) return;
+
     const root = rootRef.current;
     if (!root) return;
 
-    const top = root.getBoundingClientRect().top + window.scrollY;
-    const vh = window.innerHeight || 1;
-    const band = 0.92 * vh;
-    const target = top + idx * band;
+    const setStepNoScroll = (idx: number) => {
+      const next = clamp(idx, 0, n - 1);
+      activeRef.current = next;
+      setActive(next);
 
-    window.scrollTo({
-      top: target,
-      behavior: reducedMotion() ? "auto" : "smooth",
-    });
+      // keep UI indicators in sync even without scrolling the page
+      setProg((next + 0.5) / n);
+      setLocal(0.5);
+    };
+
+    const onWheel = (e: WheelEvent) => {
+      // outside process: do nothing, normal page scroll
+      if (!inProcessRef.current) return;
+
+      // inside process: we own the wheel
+      e.preventDefault();
+
+      const r = root.getBoundingClientRect();
+      const vh = window.innerHeight || 1;
+
+      // first touch: engage lock + align once (small correction inside process)
+      if (!wheelLockOn.current) {
+        wheelLockOn.current = true;
+        wheelAcc.current = 0;
+
+        const near = nearestStepFromScroll();
+        setStepNoScroll(near);
+
+        // tiny align so the sticky matches the “photo pose”
+        scrollToStepCenter(near, "auto");
+      }
+
+      wheelAcc.current += e.deltaY;
+
+      const threshold = Math.max(60, vh * 0.06);
+      if (Math.abs(wheelAcc.current) < threshold) return;
+
+      const dir = wheelAcc.current > 0 ? 1 : -1;
+      wheelAcc.current = 0;
+
+      if (wheelCooldown.current) return;
+      wheelCooldown.current = window.setTimeout(() => {
+        wheelCooldown.current = null;
+      }, 220);
+
+      const cur = activeRef.current;
+      const atFirst = cur === 0;
+      const atLast = cur === n - 1;
+
+      // edges: release lock and allow page to continue
+      if (dir < 0 && atFirst) {
+        wheelLockOn.current = false;
+        // nudge up a hair so you clearly exit the section
+        window.scrollTo({ top: window.scrollY - 24, behavior: "auto" });
+        return;
+      }
+      if (dir > 0 && atLast) {
+        wheelLockOn.current = false;
+        window.scrollTo({ top: window.scrollY + vh * 0.45, behavior: "auto" });
+        return;
+      }
+
+      const next = clamp(cur + dir, 0, n - 1);
+      fireStepFx(next);
+      setStepNoScroll(next);
+    };
+
+    // optional: block “Space / PageDown” while locked (prevents bypass)
+    const onKey = (e: KeyboardEvent) => {
+      if (!inProcessRef.current) return;
+      if (!wheelLockOn.current) return;
+
+      const keys = [" ", "PageDown", "PageUp", "Home", "End", "ArrowDown", "ArrowUp"];
+      if (keys.includes(e.key)) e.preventDefault();
+    };
+
+    window.addEventListener("wheel", onWheel, { passive: false, capture: true });
+    window.addEventListener("keydown", onKey, { passive: false, capture: true });
+
+    return () => {
+      window.removeEventListener("wheel", onWheel, true as any);
+      window.removeEventListener("keydown", onKey, true as any);
+      if (wheelCooldown.current) window.clearTimeout(wheelCooldown.current);
+      wheelCooldown.current = null;
+    };
+  }, [mounted, isDesktop, n]);
+
+  const setStepFromClickNoScroll = (idx: number) => {
+    const next = clamp(idx, 0, n - 1);
+    fireStepFx(next);
+
+    // engage lock (so next wheel scroll continues inside Process)
+    wheelLockOn.current = true;
+    wheelAcc.current = 0;
+
+    activeRef.current = next;
+    setActive(next);
+    setProg((next + 0.5) / n);
+    setLocal(0.5);
+
+    // IMPORTANT: no window.scrollTo here. zero teleport.
   };
 
   const onStepKeyDown = (idx: number, e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown" || e.key === "ArrowRight") {
       e.preventDefault();
-      fireStepFx(clamp(idx + 1, 0, n - 1));
-      jumpTo(clamp(idx + 1, 0, n - 1));
+      setStepFromClickNoScroll(idx + 1);
     }
     if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
       e.preventDefault();
-      fireStepFx(clamp(idx - 1, 0, n - 1));
-      jumpTo(clamp(idx - 1, 0, n - 1));
+      setStepFromClickNoScroll(idx - 1);
     }
     if (e.key === "Home") {
       e.preventDefault();
-      fireStepFx(0);
-      jumpTo(0);
+      setStepFromClickNoScroll(0);
     }
     if (e.key === "End") {
       e.preventDefault();
-      fireStepFx(n - 1);
-      jumpTo(n - 1);
+      setStepFromClickNoScroll(n - 1);
     }
   };
 
@@ -470,11 +613,7 @@ export default function ProcessScroll() {
             const on = idx === active;
 
             return (
-              <article
-                key={step.id}
-                data-step-card={idx}
-                className={"k-procM__card" + (on ? " is-active" : "")}
-              >
+              <article key={step.id} data-step-card={idx} className={"k-procM__card" + (on ? " is-active" : "")}>
                 <button
                   type="button"
                   className="k-procM__cardBtn"
@@ -573,10 +712,7 @@ export default function ProcessScroll() {
                   <button
                     type="button"
                     className="k-proc__stepBtn"
-                    onClick={() => {
-                      fireStepFx(idx);
-                      jumpTo(idx);
-                    }}
+                    onClick={() => setStepFromClickNoScroll(idx)} // ✅ NO SCROLL
                     onKeyDown={(e) => onStepKeyDown(idx, e)}
                   >
                     <span className="k-proc__num" aria-hidden="true">

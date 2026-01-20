@@ -324,11 +324,24 @@ html{
   opacity: 0;
   transform: translateY(-8px);
   transition: opacity 180ms ease, transform 180ms cubic-bezier(.2,.9,.2,1);
+
+  /* ✅ CRITICAL: panel cannot intercept clicks while closed */
+  pointer-events: none;
+  visibility: hidden;
 }
 
 .k-topnav.is-open .k-topnav__panel{
   opacity: 1;
   transform: translateY(0);
+
+  /* ✅ now it's interactive */
+  pointer-events: auto;
+  visibility: visible;
+}
+
+/* ✅ absolute safety: when hidden attribute exists, force it off */
+.k-topnav__panel[hidden]{
+  display: none !important;
 }
 
 .k-topnav__panelInner{
