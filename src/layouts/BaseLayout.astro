@@ -7,7 +7,6 @@ import TopNav from "../components/shell/TopNav/TopNav.astro";
 const SITE_URL = "https://kersivo.co.uk";
 const OG_IMAGE = `${SITE_URL}/og/kersivo-og.jpg`;
 
-// canonical dla każdej strony
 const pathname = Astro.url.pathname.endsWith("/") ? Astro.url.pathname : `${Astro.url.pathname}/`;
 const PAGE_URL = `${SITE_URL}${pathname}`;
 
@@ -105,16 +104,16 @@ const {
 
     <!-- Always start at top (prevents Safari restoring scroll into sections) -->
     <script>
+      // @ts-nocheck
       (() => {
         const nav = performance.getEntriesByType?.("navigation")?.[0];
-        const type = nav && nav.type ? nav.type : "";
+        const type = (nav && nav.type) ? nav.type : "";
         const isReload = type === "reload";
 
         const hasHash = !!location.hash && location.hash !== "#top";
         const shouldReset = !hasHash;
 
         const toTop = () => {
-          // hard reset both axes (fixes “mysterious left drift”)
           window.scrollTo(0, 0);
           requestAnimationFrame(() => window.scrollTo(0, 0));
           setTimeout(() => window.scrollTo(0, 0), 60);
@@ -122,9 +121,12 @@ const {
 
         if (shouldReset) {
           window.addEventListener("load", toTop, { once: true });
-          window.addEventListener("pageshow", (e) => {
-            if (e.persisted) toTop();
-          });
+
+          const onPageShow = (e) => {
+            if (e && e.persisted) toTop();
+          };
+
+          window.addEventListener("pageshow", onPageShow);
         } else if (isReload) {
           // reload with hash: keep hash behavior
         }
@@ -133,6 +135,7 @@ const {
 
     <!-- Global CTA -> #contact: smooth scroll + focus first field + glow sweep -->
     <script>
+      // @ts-nocheck
       (() => {
         const reduced =
           window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -176,7 +179,6 @@ const {
           const target = document.querySelector("#contact");
           if (!target) return;
 
-          // nuke any horizontal offset first
           window.scrollTo({ left: 0, top: window.scrollY, behavior: "auto" });
 
           if (location.hash !== "#contact") {
@@ -186,7 +188,7 @@ const {
           target.scrollIntoView({
             behavior: reduced ? "auto" : "smooth",
             block: "start",
-            inline: "nearest", // IMPORTANT: never scroll sideways
+            inline: "nearest",
           });
 
           const start = performance.now();
@@ -206,8 +208,10 @@ const {
         document.addEventListener(
           "click",
           (e) => {
-            const a = e.target && e.target.closest ? e.target.closest("a") : null;
+            const t = e.target;
+            const a = t && t.closest ? t.closest("a") : null;
             if (!a) return;
+
             if (!isContactLink(a)) return;
 
             e.preventDefault();

@@ -1,124 +1,18 @@
 ---
+import ProcessIgnite from "./islands/ProcessIgnite";
 import "./process.css";
-
-const steps = [
-  {
-    no: "01",
-    title: "Strategy & Architecture",
-    body:
-      "We map the offer, the pages, and the conversion flow — so the build has a spine, not vibes.",
-    tone: "sky",
-    chips: ["Workshop", "Sitemap", "Offer clarity"],
-  },
-  {
-    no: "02",
-    title: "Web Design",
-    body:
-      "Premium UI, clean hierarchy, and a layout that reads fast — on mobile first, always.",
-    tone: "violet",
-    chips: ["UI system", "Copy blocks", "Mobile-first"],
-  },
-  {
-    no: "03",
-    title: "Development",
-    body:
-      "Astro-first build, performance-led, accessible, and componentised for future growth.",
-    tone: "blue",
-    chips: ["Astro", "A11y", "60fps"],
-  },
-  {
-    no: "04",
-    title: "SEO & Tracking",
-    body:
-      "Technical SEO foundations + tracking setup, so you can measure what actually earns.",
-    tone: "mint",
-    chips: ["Core Web Vitals", "Schema", "Analytics"],
-  },
-  {
-    no: "05",
-    title: "Launch & Handover",
-    body:
-      "Smooth launch, redirects, QA, and a handover that doesn’t leave you guessing.",
-    tone: "pink",
-    chips: ["QA", "Redirects", "Handover"],
-  },
-  {
-    no: "06",
-    title: "Iteration & Support",
-    body:
-      "Post-launch tweaks, content drops, and ongoing improvements — keep it sharp, keep it earning.",
-    tone: "amber",
-    chips: ["Updates", "Improvements", "Support"],
-  },
-];
 ---
 
-<section id="process" class="k-process section">
+<section id="process" class="section k-processPill" aria-label="Process">
   <div class="container">
-    <div class="k-process__head">
-      <div class="sectionTitle">
-        <div class="sectionKicker">Process</div>
-        <h2 class="sectionHeading">From idea to launch — in calm, precise steps.</h2>
-        <p class="sectionLead">
-          No chaos. No mystery. Just a high-end workflow that ships a site built to perform.
-        </p>
-      </div>
+    <div class="sectionTitle">
+      <div class="sectionKicker">Process</div>
+      <h2 class="sectionHeading">A premium flow, without the noise.</h2>
+      <p class="sectionLead measure">
+        Five calm checkpoints. Each one removes doubt — and nudges conversions forward.
+      </p>
     </div>
 
-    <div class="k-process__list" role="list">
-      {steps.map((s) => (
-        <article class="k-procRow" role="listitem">
-          <div class="k-procRow__inner">
-            <!-- MEDIA (left) -->
-            <div class={`k-procMedia k-procMedia--tone-${s.tone}`} aria-hidden="true">
-              <div class="k-procMedia__glow"></div>
-
-              <div class="k-procMedia__frame">
-                <div class="k-procMedia__topbar">
-                  <span class="k-procDot"></span>
-                  <span class="k-procDot"></span>
-                  <span class="k-procDot"></span>
-                  <span class="k-procMedia__label">Kersivo / Sprint</span>
-                </div>
-
-                <div class="k-procMedia__canvas">
-                  <div class="k-procCard k-procCard--a">
-                    <div class="k-procCard__title">Next steps</div>
-                    <div class="k-procCard__row"></div>
-                    <div class="k-procCard__row"></div>
-                    <div class="k-procCard__row"></div>
-                  </div>
-
-                  <div class="k-procCard k-procCard--b">
-                    <div class="k-procCard__title">Checklist</div>
-                    <div class="k-procPill"></div>
-                    <div class="k-procPill"></div>
-                    <div class="k-procPill"></div>
-                  </div>
-
-                  <div class="k-procRing">
-                    <span class="k-procRing__val">100</span>
-                    <span class="k-procRing__lbl">quality</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- TEXT (right) -->
-            <div class="k-procText">
-              <div class="k-procNo">{s.no}</div>
-              <h3 class="k-procTitle">{s.title}</h3>
-              <p class="k-procBody">{s.body}</p>
-
-              <div class="k-procChips" aria-label="Highlights">
-                {s.chips.map((c) => (
-                  <span class="k-procChip">{c}</span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </article>
-      ))}
-    </div>
+    <ProcessIgnite client:load />
   </div>
 </section>
