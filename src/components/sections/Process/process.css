@@ -1,7 +1,7 @@
 /* =========================================
    Kersivo — Process
    Card → air → line → air → card
-   + orb with ink trail + reactive tail
+   + sticky orb with ink trail + reactive tail
    ========================================= */
 
 .k-process{}
@@ -339,7 +339,7 @@
 .k-procRail{
   position: relative;
   width: 30px;
-  height: 100%;
+  height: 100%; /* ✅ critical: without this maxY can become 0 */
   border-radius: 999px;
 
   opacity: 0;

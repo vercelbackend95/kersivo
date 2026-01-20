@@ -66,8 +66,8 @@ const steps = [
     </div>
 
     <div class="k-process__layout">
-      <!-- LIST -->
-      <div class="k-process__list" role="list">
+      <!-- LIST (track this for scroll progress) -->
+      <div class="k-process__list" role="list" data-proc-track>
         {steps.map((s, i) => (
           <>
             <article class="k-procRow" role="listitem">
@@ -148,11 +148,14 @@ const steps = [
       const reduced =
         window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+      const track = root.querySelector("[data-proc-track]");
       const rail = root.querySelector("[data-proc-rail]");
       const orb = root.querySelector("[data-proc-orb]");
       const ink = root.querySelector("[data-proc-ink]");
       const tail = root.querySelector("[data-proc-tail]");
-      if (!rail || !orb || !ink || !tail) return;
+      if (!track || !rail || !orb || !ink || !tail) return;
+
+      const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 
       if (reduced) {
         root.classList.add("is-active");
@@ -164,29 +167,34 @@ const steps = [
 
       let active = false;
       let raf = 0;
-      let last = 0;
+      let lastY = 0;
 
-      const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+      const getAbsTop = (el) => el.getBoundingClientRect().top + window.scrollY;
 
       const measure = () => {
         const rr = rail.getBoundingClientRect();
-        const orbSize = 16; // keep in sync with CSS
+        const orbSize = 16; // sync with CSS
         return { maxY: Math.max(0, rr.height - orbSize) };
       };
 
-      // ✅ Progress starts when section enters viewport, ends after last card leaves
+      // ✅ bulletproof progress: based on scrollY + absolute offsets of the LIST
       const computeProgress = () => {
-        const r = root.getBoundingClientRect();
         const vh = window.innerHeight || 1;
 
-        // tune these if you want: where progress begins/ends inside viewport
-        const startLine = vh * 0.18; // start moving when section top crosses ~18% of viewport
-        const endLine = vh * 0.82;   // finish when section bottom crosses ~82% of viewport
+        // tune: where inside viewport we consider "start" and "end"
+        const startLine = vh * 0.22;
+        const endLine   = vh * 0.78;
 
-        const span = r.height - (endLine - startLine);
-        if (span <= 0) return 0;
+        const top = getAbsTop(track);
+        const bottom = top + track.offsetHeight;
 
-        const p = (startLine - r.top) / span;
+        // start when list top hits startLine, end when list bottom hits endLine
+        const start = top - startLine;
+        const end = bottom - endLine;
+
+        const span = Math.max(1, end - start);
+        const p = (window.scrollY - start) / span;
+
         return clamp(p, 0, 1);
       };
 
@@ -199,20 +207,20 @@ const steps = [
 
         const y = p * maxY;
 
-        // velocity (for reactive tail)
-        const dy = y - last;
+        // velocity for reactive tail
+        const dy = y - lastY;
         const speed = Math.abs(dy);
         const dir = dy >= 0 ? 1 : -1;
-        last = y;
+        lastY = y;
 
-        // orb
+        // orb follows scroll (inside sticky rail)
         orb.style.setProperty("--y", y.toFixed(2) + "px");
 
-        // permanent ink
+        // permanent ink trail (progress)
         const inkH = clamp(y + 8, 0, maxY);
         ink.style.height = inkH.toFixed(2) + "px";
 
-        // reactive tail
+        // reactive tail (speed-based)
         const tailH = clamp(12 + speed * 10, 14, 96);
         const tailY = clamp(y + (dir > 0 ? -2 : -(tailH - 10)), 0, maxY);
 
@@ -228,23 +236,32 @@ const steps = [
         raf = requestAnimationFrame(tick);
       };
 
+      const onEnter = () => {
+        root.classList.add("is-active");
+
+        // prime so it doesn't jump
+        const { maxY } = measure();
+        lastY = computeProgress() * maxY;
+
+        requestTick();
+        window.addEventListener("scroll", requestTick, { passive: true });
+        window.addEventListener("resize", requestTick, { passive: true });
+      };
+
+      const onExit = () => {
+        root.classList.remove("is-active");
+        window.removeEventListener("scroll", requestTick);
+        window.removeEventListener("resize", requestTick);
+      };
+
       const io = new IntersectionObserver(
         (entries) => {
           const on = entries.some((e) => e.isIntersecting);
           active = on;
-
-          if (on) {
-            root.classList.add("is-active");
-            requestTick();
-            window.addEventListener("scroll", requestTick, { passive: true });
-            window.addEventListener("resize", requestTick, { passive: true });
-          } else {
-            root.classList.remove("is-active");
-            window.removeEventListener("scroll", requestTick);
-            window.removeEventListener("resize", requestTick);
-          }
+          if (on) onEnter();
+          else onExit();
         },
-        { threshold: 0.02 } // ✅ start earlier, don't “stick” at the first card
+        { threshold: 0.01 }
       );
 
       io.observe(root);
