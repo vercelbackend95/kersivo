@@ -402,3 +402,57 @@ html[data-zoomed="1"] .k-processPill__frame::before{ display:none !important; }
   .k-processPill__main::after{ opacity: .18; }
   .k-processPill__frame{ opacity: .35; }
 }
+/* =========================================
+   PACKAGES — Mobile polish (no frames on label column)
+   - label column stays aligned + sticky
+   - but looks "frameless" on mobile
+   - reduces iOS sticky/scroll ghosting
+   ========================================= */
+
+@media (max-width: 720px){
+  /* a touch less "empty space" on the left */
+  .k-packMatrix{
+    grid-template-columns: 220px repeat(3, minmax(240px, 1fr));
+    min-width: 940px;
+  }
+
+  /* ===== Frameless label column (header + rows) ===== */
+  .k-packHeadCell--label,
+  .k-packStickyCell{
+    /* keep sticky, but remove all “cell box” visuals */
+    border-bottom: 0 !important;
+    background: linear-gradient(
+      90deg,
+      rgba(7,7,10,.92) 0%,
+      rgba(7,7,10,.86) 78%,
+      rgba(7,7,10,0) 100%
+    ) !important;
+
+    /* iOS compositing stability (kills text smear/ghosting) */
+    isolation: isolate;
+    contain: paint;
+    transform: translateZ(0);
+  }
+
+  /* kill the seam line that we draw for sticky column */
+  .k-packHeadCell--label::after,
+  .k-packStickyCell::after{
+    display: none !important;
+  }
+
+  /* kill the “grid row lines” inside the label column only */
+  .k-packCell.k-packCell--label{
+    border-bottom: 0 !important;
+  }
+
+  /* optional: make dust calmer on mobile so it doesn't fight readability */
+  .k-packDust{ opacity: .45; }
+}
+
+/* tighter phones */
+@media (max-width: 420px){
+  .k-packMatrix{
+    grid-template-columns: 200px repeat(3, minmax(230px, 1fr));
+    min-width: 900px;
+  }
+}
