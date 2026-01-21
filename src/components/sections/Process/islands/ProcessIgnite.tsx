@@ -46,8 +46,7 @@ const blocks: Block[] = [
     heading: "Design system & layout",
     lead: "High-end UI decisions early: spacing, type, components — then the page flows.",
     title: "Premium minimal, not sterile",
-    copy:
-      "We build a small design system so everything feels intentional — like a product, not a template.",
+    copy: "We build a small design system so everything feels intentional — like a product, not a template.",
     list: [
       { b: "Type & rhythm:", t: "clean hierarchy, readable density." },
       { b: "Components:", t: "cards, pills, CTAs, micro-proof." },
@@ -60,8 +59,7 @@ const blocks: Block[] = [
     heading: "Build, polish, ship",
     lead: "Astro-first. Fast by default. Then we polish the edges until it feels expensive.",
     title: "Shipping quality",
-    copy:
-      "Performance, SEO, accessibility — handled from day one. No last-minute duct tape.",
+    copy: "Performance, SEO, accessibility — handled from day one. No last-minute duct tape.",
     list: [
       { b: "Speed:", t: "tight CSS, minimal JS, 60fps." },
       { b: "SEO:", t: "clean markup, metadata, structure." },
@@ -91,12 +89,6 @@ function reducedMotion(): boolean {
     : false;
 }
 
-const heatTriangle = (p: number) => {
-  // p: 0..1 -> heat: 0..1..0 (triangle)
-  const t = 1 - Math.abs(2 * p - 1);
-  return Math.max(0, Math.min(1, t));
-};
-
 export default function ProcessIgnite() {
   const wrapRefs = useRef<HTMLDivElement[]>([]);
   const data = useMemo(() => blocks, []);
@@ -104,7 +96,7 @@ export default function ProcessIgnite() {
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
-    // iOS Safari: address-bar resize & refresh storms
+    // iOS Safari: address bar resize → refresh storms
     ScrollTrigger.config({
       ignoreMobileResize: true,
       limitCallbacks: true,
@@ -116,14 +108,14 @@ export default function ProcessIgnite() {
     const reduced = reducedMotion();
     const html = document.documentElement;
 
-    // ---- Kill old triggers (HMR-safe)
+    // Kill old triggers (HMR safe)
     ScrollTrigger.getAll().forEach((t) => {
       const id = (t.vars as any)?.id;
-      if (typeof id === "string" && id.startsWith("procHeat-")) t.kill();
+      if (typeof id === "string" && id.startsWith("procLite-")) t.kill();
     });
 
-    // ---- init heat + perf hints
-    const setters = wraps.map((w) => {
+    // Perf hints + cheap setters
+    const heatSetters = wraps.map((w) => {
       w.style.setProperty("--heat", "0");
       const main = w.querySelector(".k-processPill__main") as HTMLElement | null;
       if (main) {
@@ -133,7 +125,7 @@ export default function ProcessIgnite() {
       return gsap.quickSetter(w, "--heat", "");
     });
 
-    // ---- active class: event-driven (no ticker, no layout scans)
+    // Active state: event-driven (no per-frame scanning)
     let activeIdx = -1;
     const setActive = (idx: number) => {
       if (idx === activeIdx) return;
@@ -143,39 +135,61 @@ export default function ProcessIgnite() {
       }
     };
 
-    // ---- triggers
+    // Helper: animate heat with overwrite (stable on iOS)
+    const toHeat = (i: number, value: number, dir: "up" | "down") => {
+      html.dataset.scrollDir = dir;
+      if (reduced) {
+        heatSetters[i](value);
+        return;
+      }
+      gsap.to(wraps[i], {
+        ["--heat" as any]: value,
+        duration: value > 0 ? 0.55 : 0.45,
+        ease: value > 0 ? "power2.out" : "power2.in",
+        overwrite: true,
+      });
+    };
+
+    // Build triggers: no scrub (scrub on iOS = jank/crash bait)
     wraps.forEach((el, i) => {
       ScrollTrigger.create({
-        id: `procHeat-${i}`,
+        id: `procLite-${i}`,
         trigger: el,
-        start: "top 85%",
-        end: "bottom 15%",
-        scrub: reduced ? false : 0.65,
+        start: "top 78%",
+        end: "bottom 22%",
         invalidateOnRefresh: true,
 
-        onEnter: () => setActive(i),
-        onEnterBack: () => setActive(i),
-
-        onUpdate: (self) => {
-          // direction for frame wipe
-          html.dataset.scrollDir = self.direction < 0 ? "up" : "down";
-
-          // heat
-          const p = self.progress;
-          const h = reduced ? 1 : heatTriangle(p);
-          setters[i](h);
+        onEnter: (self) => {
+          setActive(i);
+          toHeat(i, 1, self.direction < 0 ? "up" : "down");
+        },
+        onLeave: (self) => {
+          toHeat(i, 0, self.direction < 0 ? "up" : "down");
+        },
+        onEnterBack: (self) => {
+          setActive(i);
+          toHeat(i, 1, self.direction < 0 ? "up" : "down");
+        },
+        onLeaveBack: (self) => {
+          toHeat(i, 0, self.direction < 0 ? "up" : "down");
         },
       });
     });
 
-    // initial
+    // Init: light the first card a bit so it doesn't feel dead on load
     setActive(0);
+    if (!reduced) {
+      gsap.to(wraps[0], { ["--heat" as any]: 0.65, duration: 0.6, ease: "power2.out", overwrite: true });
+    } else {
+      heatSetters[0](0.65);
+    }
+
     ScrollTrigger.refresh();
 
     return () => {
       ScrollTrigger.getAll().forEach((t) => {
         const id = (t.vars as any)?.id;
-        if (typeof id === "string" && id.startsWith("procHeat-")) t.kill();
+        if (typeof id === "string" && id.startsWith("procLite-")) t.kill();
       });
     };
   }, []);
@@ -210,9 +224,7 @@ export default function ProcessIgnite() {
                   </li>
                   <li className="k-processPill__step">
                     <span className="k-processPill__dot" />
-                    <span className="k-processPill__stepText">
-                      Keep it lean. Keep it premium.
-                    </span>
+                    <span className="k-processPill__stepText">Keep it lean. Keep it premium.</span>
                   </li>
                 </ol>
 
@@ -241,9 +253,7 @@ export default function ProcessIgnite() {
 
               <div className="k-processPill__note">
                 <h6>Built for UK small businesses</h6>
-                <p>
-                  Clear scope. Clean build. The kind of website that looks expensive — and loads like it.
-                </p>
+                <p>Clear scope. Clean build. The kind of website that looks expensive — and loads like it.</p>
               </div>
             </div>
           </div>

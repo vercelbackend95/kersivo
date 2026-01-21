@@ -1,7 +1,7 @@
 /* =========================================
-   Process — Premium scroll light
-   --heat: 0..1 (ScrollTrigger scrub)
-   html[data-scroll-dir="down|up"] controls FRAME direction.
+   Process — mobile-first stability for iOS
+   --heat: 0..1 (animated on enter/leave, no scrub)
+   html[data-scroll-dir="down|up"] controls frame origin (desktop)
    ========================================= */
 
 .k-processPill__stack{
@@ -10,7 +10,6 @@
   gap: clamp(14px, 2.6vw, 20px);
 }
 
-/* IMPORTANT: allow stretching on small screens */
 .k-processPill__wrap{
   display: grid;
   justify-items: center;
@@ -40,7 +39,7 @@
   gap: clamp(12px, 2.2vw, 18px);
   padding: clamp(12px, 1.6vw, 16px);
 
-  opacity: calc(.58 + var(--heat) * .42);
+  opacity: calc(.62 + var(--heat) * .38);
   transform: translateZ(0) translateY(calc(-2px * var(--heat)));
 
   contain: paint;
@@ -54,10 +53,10 @@
   inset: 0;
   pointer-events:none;
   background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0) 52%);
-  opacity: calc(.10 + var(--heat) * .18);
+  opacity: calc(.10 + var(--heat) * .16);
 }
 
-/* inside fill */
+/* inside fill (still premium, but not insane) */
 .k-processPill__main::after{
   content:"";
   position:absolute;
@@ -65,37 +64,28 @@
   pointer-events:none;
 
   background:
-    linear-gradient(180deg,
-      rgba(255,255,255, .06),
-      rgba(255,255,255, 0) 60%
-    ),
-    radial-gradient(140% 110% at 50% 20%,
-      rgba(170,95,255,.22),
-      transparent 62%
-    ),
-    radial-gradient(140% 110% at 50% 90%,
-      rgba(105,140,255,.16),
-      transparent 62%
-    );
+    linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0) 62%),
+    radial-gradient(120% 90% at 50% 25%, rgba(170,95,255,.22), transparent 65%),
+    radial-gradient(120% 90% at 50% 95%, rgba(105,140,255,.14), transparent 65%);
 
-  opacity: calc(var(--heat) * .95);
+  opacity: calc(var(--heat) * .92);
 }
 
-/* rim + ambient glow driven by heat */
+/* rim + ambient glow */
 .k-processPill__wrap .k-processPill__main{
   box-shadow:
     0 18px 70px rgba(0,0,0,.36),
     0 0 0 1px rgba(255,255,255, calc(.03 + var(--heat) * .08)) inset,
-    0 0 180px rgba(170,95,255, calc(var(--heat) * .12));
-  border-color: rgba(255,255,255, calc(.08 + var(--heat) * .03));
+    0 0 170px rgba(170,95,255, calc(var(--heat) * .10));
+  border-color: rgba(255,255,255, calc(.08 + var(--heat) * .04));
 }
 
 .k-processPill__wrap.is-active .k-processPill__main{
-  border-color: rgba(170,95,255, calc(.24 + var(--heat) * .55));
+  border-color: rgba(170,95,255, calc(.18 + var(--heat) * .55));
 }
 
 /* =========================
-   FRAME (ring)
+   FRAME — desktop version (mask ring)
    ========================= */
 .k-processPill__frame{
   position: absolute;
@@ -115,8 +105,8 @@
   opacity: calc(var(--heat) * 1);
 
   box-shadow:
-    0 0 0 1px rgba(170,95,255, calc(var(--heat) * .40)) inset,
-    0 0 140px rgba(170,95,255, calc(var(--heat) * .16));
+    0 0 0 1px rgba(170,95,255, calc(var(--heat) * .32)) inset,
+    0 0 140px rgba(170,95,255, calc(var(--heat) * .14));
 
   transform: translateZ(0);
 }
@@ -168,7 +158,7 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
 }
 
 /* =========================
-   LEFT
+   LEFT / RIGHT
    ========================= */
 .k-processPill__left{
   border-radius: 20px;
@@ -210,7 +200,7 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
 .k-processPill__step{
   display: grid;
   grid-template-columns: 10px 1fr;
-  align-items: center;
+  align-items: start;
   gap: 10px;
   min-width: 0;
 }
@@ -219,10 +209,11 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
   width: 8px;
   height: 8px;
   border-radius: 999px;
+  margin-top: 5px;
   background: rgba(255,255,255, calc(.62 + var(--heat) * .30));
   box-shadow:
     0 0 0 2px rgba(255,255,255, calc(.10 + var(--heat) * .08)),
-    0 0 18px rgba(170,95,255, calc(var(--heat) * .20));
+    0 0 18px rgba(170,95,255, calc(var(--heat) * .18));
 }
 
 .k-processPill__stepText{
@@ -230,9 +221,7 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
   font-weight: var(--w-medium);
   letter-spacing: var(--track-normal);
   color: rgba(255,255,255, calc(.74 + var(--heat) * .18));
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.45;
 }
 
 /* meter */
@@ -251,7 +240,7 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
   border-radius: 999px;
   background: linear-gradient(90deg, rgba(105,140,255,1), rgba(170,95,255,1));
   opacity: calc(.30 + var(--heat) * .70);
-  box-shadow: 0 12px 50px rgba(105,140,255, calc(var(--heat) * .16));
+  box-shadow: 0 12px 50px rgba(105,140,255, calc(var(--heat) * .14));
 }
 
 /* micro */
@@ -276,9 +265,6 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
   letter-spacing: var(--track-normal);
 }
 
-/* =========================
-   RIGHT
-   ========================= */
 .k-processPill__right{
   border-radius: 20px;
   padding: clamp(12px, 2.2vw, 18px) clamp(14px, 2.6vw, 22px);
@@ -324,75 +310,69 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
 .k-processPill__note h6{ margin-bottom: 6px; }
 
 /* =========================
-   RESPONSIVE (real)
+   RESPONSIVE — make it actually smaller on iPhone
    ========================= */
 
-/* Don’t fight the container: stretch within it */
+/* Stretch inside container instead of vw games */
 @media (max-width: 980px){
-  .k-processPill__wrap{
-    justify-items: stretch;
-  }
-  .k-processPill__main{
-    width: 100%;
-    max-width: 1100px;
-  }
+  .k-processPill__wrap{ justify-items: stretch; }
+  .k-processPill__main{ width: 100%; }
 }
 
-/* Mobile: 1 column, tighter paddings, keep effects */
+/* Mobile layout + size reduction */
 @media (max-width: 860px){
   .k-processPill__main{
     grid-template-columns: 1fr;
-    gap: 12px;
-    padding: 12px;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 18px;
 
-    /* cheaper glass on iOS, still premium */
-    backdrop-filter: blur(8px);
+    /* cheaper paint for iOS */
+    backdrop-filter: blur(7px);
     box-shadow:
-      0 14px 54px rgba(0,0,0,.34),
+      0 12px 44px rgba(0,0,0,.34),
       0 0 0 1px rgba(255,255,255,.03) inset;
-  }
-
-  .k-processPill__wrap .k-processPill__main{
-    box-shadow:
-      0 14px 54px rgba(0,0,0,.34),
-      0 0 0 1px rgba(255,255,255, calc(.03 + var(--heat) * .08)) inset,
-      0 0 140px rgba(170,95,255, calc(var(--heat) * .10));
   }
 
   .k-processPill__left,
   .k-processPill__right{
-    border-radius: 18px;
+    border-radius: 16px;
   }
 
-  .k-processPill__left{
-    padding: 14px;
-  }
+  .k-processPill__left{ padding: 12px; }
+  .k-processPill__right{ padding: 12px 12px 14px; gap: 9px; }
 
-  .k-processPill__right{
-    padding: 14px 14px 16px;
-  }
-
-  .k-processPill__step{
-    align-items: start;
-  }
-
-  .k-processPill__dot{
-    margin-top: 5px;
-  }
+  .k-processPill__miniKicker{ font-size: 11px; }
 
   .k-processPill__stepText{
-    white-space: normal;
-    overflow: visible;
-    text-overflow: clip;
-    line-height: 1.45;
+    font-size: 13px;
+    /* clamp to reduce height */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
   }
 
   .k-processPill__title{
-    font-size: clamp(18px, 4.9vw, 22px);
+    font-size: clamp(18px, 4.8vw, 22px);
   }
 
   .k-processPill__copy{
-    max-width: 70ch;
+    /* clamp: keeps card from becoming a skyscraper */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    overflow: hidden;
+  }
+
+  .k-processPill__list{ margin-top: 2px; }
+  .k-processPill__list li + li{ margin-top: 6px; }
+
+  .k-processPill__note p{
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
   }
 }
 
@@ -402,17 +382,33 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
     align-items: flex-start;
     gap: 6px;
   }
-  .k-processPill__meter{
-    height: 9px;
+  .k-processPill__meter{ height: 9px; }
+}
+
+/* =========================
+   iOS Safari fallback: kill the heaviest part (mask-composite frame)
+   Keep glow + border so it still feels premium.
+   ========================= */
+@supports (-webkit-touch-callout: none){
+  @media (max-width: 860px){
+    .k-processPill__frame{
+      padding: 0;
+      -webkit-mask: none;
+      -webkit-mask-composite: initial;
+      mask-composite: initial;
+
+      border: 1px solid rgba(170,95,255, calc(.12 + var(--heat) * .55));
+      box-shadow:
+        0 0 0 1px rgba(255,255,255, calc(.04 + var(--heat) * .08)) inset,
+        0 0 90px rgba(170,95,255, calc(var(--heat) * .18));
+    }
+    .k-processPill__frame::before{ display: none; }
   }
 }
 
 /* motion safety */
 @media (prefers-reduced-motion: reduce){
-  .k-processPill__main{
-    transform: none;
-    opacity: 1;
-  }
+  .k-processPill__main{ transform: none; opacity: 1; }
   .k-processPill__main::after{ opacity: .18; }
   .k-processPill__frame{ opacity: .35; }
 }
