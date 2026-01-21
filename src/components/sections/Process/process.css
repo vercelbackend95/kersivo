@@ -2,11 +2,8 @@
    Process — Premium scroll light
    --heat: 0..1 (GSAP scrub)
    html[data-scroll-dir="down|up"] controls FRAME direction.
-
-   Desktop: one premium glass card (left + right inside)
-   Mobile: "two beats" layout:
-     1) left summary stays as the only glass card
-     2) right content becomes normal section text under it
+   FRAME: seam-free ring fill (scale + soft edge) — no clip-path seam
+   FILL: uniform across whole card (no corner blobs)
    ========================================= */
 
 .k-processPill__stack{
@@ -22,7 +19,7 @@
 }
 
 /* =========================
-   MAIN (desktop glass shell)
+   MAIN
    ========================= */
 .k-processPill__main{
   width: min(80vw, 1100px);
@@ -62,7 +59,7 @@
 }
 
 /* =========================
-   FILL INSIDE — uniform on whole card (desktop)
+   FILL INSIDE — uniform on whole card
    ========================= */
 .k-processPill__main::after{
   content:"";
@@ -70,6 +67,7 @@
   inset: 0;
   pointer-events:none;
 
+  /* soft even wash across full surface */
   background:
     linear-gradient(180deg,
       rgba(255,255,255, .06),
@@ -101,7 +99,7 @@
 }
 
 /* =========================
-   FRAME — seam-free directional fill (desktop shell)
+   FRAME — seam-free directional fill (scale + soft edge)
    ========================= */
 .k-processPill__frame{
   position: absolute;
@@ -110,6 +108,7 @@
   pointer-events: none;
   z-index: 2;
 
+  /* ring cut-out */
   padding: 1px;
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
@@ -117,6 +116,7 @@
   -webkit-mask-composite: xor;
   mask-composite: exclude;
 
+  /* hide any internal edge artifacts */
   overflow: hidden;
 
   opacity: calc(var(--heat) * 1);
@@ -128,6 +128,7 @@
   transform: translateZ(0);
 }
 
+/* actual colored fill, scaled */
 .k-processPill__frame::before{
   content:"";
   position:absolute;
@@ -143,6 +144,7 @@
   transform-origin: top;
   will-change: transform;
 
+  /* feather edge so there is no seam line */
   -webkit-mask-image: linear-gradient(
     to bottom,
     rgba(0,0,0,1) 0%,
@@ -157,6 +159,7 @@
   );
 }
 
+/* scroll UP => fill from bottom */
 html[data-scroll-dir="up"] .k-processPill__frame::before{
   transform-origin: bottom;
 
@@ -175,7 +178,7 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
 }
 
 /* =========================
-   LEFT (the summary card)
+   LEFT
    ========================= */
 .k-processPill__left{
   border-radius: 20px;
@@ -217,7 +220,7 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
 .k-processPill__step{
   display: grid;
   grid-template-columns: 10px 1fr;
-  align-items: start;
+  align-items: center;
   gap: 10px;
   min-width: 0;
 }
@@ -226,7 +229,6 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
   width: 8px;
   height: 8px;
   border-radius: 999px;
-  margin-top: 4px;
   background: rgba(255,255,255, calc(.62 + var(--heat) * .30));
   box-shadow:
     0 0 0 2px rgba(255,255,255, calc(.10 + var(--heat) * .08)),
@@ -285,7 +287,7 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
 }
 
 /* =========================
-   RIGHT (content)
+   RIGHT
    ========================= */
 .k-processPill__right{
   border-radius: 20px;
@@ -332,99 +334,26 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
 .k-processPill__note h6{ margin-bottom: 6px; }
 
 /* =========================
-   RESPONSIVE (the real fix)
+   RESPONSIVE
    ========================= */
-
-/* Tablet & down: stop centering with vw widths, use container width */
-@media (max-width: 980px){
-  .k-processPill__main{ width: 100%; }
-}
-
-/* Mobile: convert from "one big glass shell" into "summary card + prose" */
 @media (max-width: 860px){
-  .k-processPill__wrap{
-    justify-items: stretch;
-  }
-
   .k-processPill__main{
-    width: 100%;
+    width: min(92vw, 900px);
     grid-template-columns: 1fr;
-
-    /* kill the outer glass shell on mobile */
-    background: transparent;
-    border: 0;
-    box-shadow: none;
-    backdrop-filter: none;
-    padding: 0;
-    gap: 14px;
-
-    opacity: 1;              /* don’t fade whole block on mobile */
-    transform: none;
-    contain: none;
   }
-
-  /* kill shell overlays (frame + fills) — left card stays premium on its own */
-  .k-processPill__frame{ display: none; }
-  .k-processPill__main::before,
-  .k-processPill__main::after{ display: none; }
-
-  /* left becomes THE card */
-  .k-processPill__left{
-    border-radius: 22px;
-    padding: 16px;
-  }
-
-  /* let bullet lines breathe (no ellipsis prisons) */
   .k-processPill__stepText{
     white-space: normal;
     overflow: visible;
     text-overflow: clip;
-    line-height: 1.45;
-  }
-
-  /* right becomes normal content below the card */
-  .k-processPill__right{
-    padding: 2px 2px 0;
-    gap: 10px;
-  }
-
-  .k-processPill__copy{ max-width: 65ch; }
-
-  .k-processPill__note{
-    margin-top: 10px;
   }
 }
 
-/* Small phones: tighten micro row + meter a bit */
-@media (max-width: 420px){
-  .k-processPill__left{ padding: 14px; }
-
-  .k-processPill__micro{
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-  }
-
-  .k-processPill__meter{ height: 9px; }
-
-  .k-processPill__title{
-    font-size: clamp(18px, 4.8vw, 22px);
-  }
-}
-
-/* Super small: keep it readable, not cramped */
-@media (max-width: 360px){
-  .k-processPill__step{ grid-template-columns: 9px 1fr; gap: 9px; }
-  .k-processPill__dot{ width: 7px; height: 7px; }
-}
-
-/* =========================
-   Motion safety
-   ========================= */
+/* motion safety */
 @media (prefers-reduced-motion: reduce){
   .k-processPill__main{
     transform: none;
     opacity: 1;
   }
+  .k-processPill__main::after{ opacity: .18; }
   .k-processPill__frame{ opacity: .35; }
 }
