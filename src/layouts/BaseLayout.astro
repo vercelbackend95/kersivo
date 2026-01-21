@@ -221,5 +221,40 @@ const {
         );
       })();
     </script>
+
+    <!-- Global iOS pinch-zoom detector: toggles html[data-zoomed="1"] -->
+    <script>
+      // @ts-nocheck
+      (() => {
+        const html = document.documentElement;
+        const vv = window.visualViewport;
+
+        const set = (on) => {
+          if (on) html.dataset.zoomed = "1";
+          else delete html.dataset.zoomed;
+        };
+
+        let raf = 0;
+        const update = () => {
+          if (raf) return;
+          raf = requestAnimationFrame(() => {
+            raf = 0;
+            const scale = (vv && vv.scale) ? vv.scale : 1;
+            set(scale > 1.001);
+          });
+        };
+
+        if (vv) {
+          vv.addEventListener("resize", update);
+          vv.addEventListener("scroll", update);
+        }
+
+        // Safari gesture hooks (best effort)
+        window.addEventListener("gesturestart", () => set(true), { passive: true });
+        window.addEventListener("gestureend", update, { passive: true });
+
+        update();
+      })();
+    </script>
   </body>
 </html>

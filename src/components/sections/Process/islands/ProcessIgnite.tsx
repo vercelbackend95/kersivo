@@ -33,7 +33,7 @@ const blocks: Block[] = [
     lead: "We align on goals, audience, and the offer. Clear scope — no fog, no fluff.",
     title: "We define the win",
     copy:
-      "You’ll know exactly what we’re building, who it's for, and what it should achieve. This keeps everything fast and sharp.",
+      "You’ll know exactly what we’re building, who it’s for, and what it should achieve. This keeps everything fast and sharp.",
     list: [
       { b: "Scope:", t: "pages, sections, priority content." },
       { b: "Message:", t: "headline, proof, CTA strategy." },
@@ -46,7 +46,8 @@ const blocks: Block[] = [
     heading: "Design system & layout",
     lead: "High-end UI decisions early: spacing, type, components — then the page flows.",
     title: "Premium minimal, not sterile",
-    copy: "We build a small design system so everything feels intentional — like a product, not a template.",
+    copy:
+      "We build a small design system so everything feels intentional — like a product, not a template.",
     list: [
       { b: "Type & rhythm:", t: "clean hierarchy, readable density." },
       { b: "Components:", t: "cards, pills, CTAs, micro-proof." },
@@ -59,7 +60,8 @@ const blocks: Block[] = [
     heading: "Build, polish, ship",
     lead: "Astro-first. Fast by default. Then we polish the edges until it feels expensive.",
     title: "Shipping quality",
-    copy: "Performance, SEO, accessibility — handled from day one. No last-minute duct tape.",
+    copy:
+      "Performance, SEO, accessibility — handled from day one. No last-minute duct tape.",
     list: [
       { b: "Speed:", t: "tight CSS, minimal JS, 60fps." },
       { b: "SEO:", t: "clean markup, metadata, structure." },
@@ -107,25 +109,21 @@ export default function ProcessIgnite() {
     const reduced = reducedMotion();
     const html = document.documentElement;
 
+    // kill old triggers (HMR safe)
     ScrollTrigger.getAll().forEach((t) => {
       const id = (t.vars as any)?.id;
       if (typeof id === "string" && id.startsWith("procEvt-")) t.kill();
     });
 
-    const heatSetters = wraps.map((w) => {
-      w.style.setProperty("--heat", "0");
-      return gsap.quickSetter(w, "--heat", "");
-    });
+    // init
+    wraps.forEach((w) => w.style.setProperty("--heat", "0"));
 
-    const triggers: ScrollTrigger[] = [];
-
-    const setHeat = (i: number, v: number, dir: "up" | "down") => {
-      html.dataset.scrollDir = dir;
+    const setHeat = (el: HTMLElement, v: number) => {
       if (reduced) {
-        heatSetters[i](v);
+        el.style.setProperty("--heat", String(v));
         return;
       }
-      gsap.to(wraps[i], {
+      gsap.to(el, {
         ["--heat" as any]: v,
         duration: v > 0 ? 0.55 : 0.38,
         ease: v > 0 ? "power2.out" : "power2.in",
@@ -140,6 +138,8 @@ export default function ProcessIgnite() {
       wraps.forEach((w, i) => w.classList.toggle("is-active", i === idx));
     };
 
+    const triggers: ScrollTrigger[] = [];
+
     wraps.forEach((el, i) => {
       const st = ScrollTrigger.create({
         id: `procEvt-${i}`,
@@ -147,86 +147,39 @@ export default function ProcessIgnite() {
         start: "top 78%",
         end: "bottom 22%",
         invalidateOnRefresh: true,
+
         onEnter: (self) => {
+          html.dataset.scrollDir = self.direction < 0 ? "up" : "down";
           setActive(i);
-          setHeat(i, 1, self.direction < 0 ? "up" : "down");
+          setHeat(el, 1);
         },
-        onLeave: (self) => setHeat(i, 0, self.direction < 0 ? "up" : "down"),
+        onLeave: (self) => {
+          html.dataset.scrollDir = self.direction < 0 ? "up" : "down";
+          setHeat(el, 0);
+        },
         onEnterBack: (self) => {
+          html.dataset.scrollDir = self.direction < 0 ? "up" : "down";
           setActive(i);
-          setHeat(i, 1, self.direction < 0 ? "up" : "down");
+          setHeat(el, 1);
         },
-        onLeaveBack: (self) => setHeat(i, 0, self.direction < 0 ? "up" : "down"),
+        onLeaveBack: (self) => {
+          html.dataset.scrollDir = self.direction < 0 ? "up" : "down";
+          setHeat(el, 0);
+        },
       });
+
       triggers.push(st);
     });
 
-    // ---- Pinch-zoom guard (hard mode)
-    const vv = (window as any).visualViewport as VisualViewport | undefined;
-    let zoomed = false;
-    let raf = 0;
-
-    const applyZoom = (z: boolean) => {
-      if (z === zoomed) return;
-      zoomed = z;
-
-      if (zoomed) {
-        html.dataset.zoomed = "1";
-        triggers.forEach((t) => t.disable(false));
-        wraps.forEach((_, idx) => heatSetters);
-        gsap.killTweensOf(wraps);
-      } else {
-        delete html.dataset.zoomed;
-        triggers.forEach((t) => t.enable(false));
-        ScrollTrigger.refresh();
-      }
-    };
-
-    const onVV = () => {
-      if (raf) return;
-      raf = window.requestAnimationFrame(() => {
-        raf = 0;
-        const scale = vv?.scale ?? 1;
-        // aggressive threshold (iOS can crash even on tiny zoom)
-        applyZoom(scale > 1.001);
-      });
-    };
-
-    const onGestureStart = () => applyZoom(true);
-    const onGestureEnd = () => onVV();
-
-    if (vv) {
-      vv.addEventListener("resize", onVV);
-      vv.addEventListener("scroll", onVV);
-    }
-
-    // gesture events (Safari)
-    window.addEventListener("gesturestart", onGestureStart as any, { passive: true } as any);
-    window.addEventListener("gestureend", onGestureEnd as any, { passive: true } as any);
-
+    // initial
     setActive(0);
-    if (!reduced) {
-      gsap.to(wraps[0], { ["--heat" as any]: 0.55, duration: 0.55, ease: "power2.out", overwrite: true });
-    } else {
-      heatSetters[0](0.55);
-    }
+    setHeat(wraps[0], reduced ? 0.55 : 0.55);
 
     ScrollTrigger.refresh();
 
     return () => {
-      if (vv) {
-        vv.removeEventListener("resize", onVV);
-        vv.removeEventListener("scroll", onVV);
-      }
-      window.removeEventListener("gesturestart", onGestureStart as any);
-      window.removeEventListener("gestureend", onGestureEnd as any);
-
-      if (raf) window.cancelAnimationFrame(raf);
-
-      ScrollTrigger.getAll().forEach((t) => {
-        const id = (t.vars as any)?.id;
-        if (typeof id === "string" && id.startsWith("procEvt-")) t.kill();
-      });
+      triggers.forEach((t) => t.kill());
+      gsap.killTweensOf(wraps);
     };
   }, []);
 
