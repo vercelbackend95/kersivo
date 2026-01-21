@@ -13,7 +13,7 @@ const vibes = [
 ];
 ---
 
-<section class="k-who3" id="who-its-for" aria-label="Who it's for">
+<section class="k-who3 section" id="who-its-for" aria-label="Who it's for">
   <div class="container k-who3__container">
     <header class="k-who3__head">
       <div class="k-who3__kicker">
@@ -27,7 +27,7 @@ const vibes = [
       </div>
     </header>
 
-    <!-- HARD WRAPPER: stays inside container, never full-bleed -->
+    <!-- HARD WRAPPER: stays inside container, never full-bleed, never drifts -->
     <div class="k-who3__stage">
       <WhoForVibes client:visible vibes={vibes} />
     </div>

@@ -1,5 +1,104 @@
 /* =========================
-   WHO IT’S FOR — A+ Console
+   WHO IT’S FOR — wrapper / layout (k-who3)
+   Fixes:
+   - no sideways drift on mobile
+   - stage is always inside container
+   - island glow/blur cannot expand page width
+   ========================= */
+
+.k-who3{
+  position: relative;
+
+  /* HARD STOP for horizontal drift created by glows/blur inside the island */
+  overflow-x: clip;
+}
+@supports not (overflow: clip){
+  .k-who3{ overflow-x: hidden; }
+}
+
+.k-who3__container{
+  position: relative;
+  min-width: 0;
+}
+
+.k-who3__head{
+  display: grid;
+  gap: 14px;
+  margin-bottom: clamp(18px, 3vw, 28px);
+}
+
+.k-who3__kicker{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.k-who3__pulse{
+  width: 26px;
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(190,145,255,0), rgba(190,145,255,.75), rgba(190,145,255,0));
+  opacity: .9;
+}
+
+.k-who3__title p{
+  margin-top: 10px;
+  color: var(--muted);
+}
+
+/* Stage = the “console frame” */
+.k-who3__stage{
+  /* MUST NOT be wider than container */
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+
+  /* contain paint so blur/glow doesn’t affect layout width */
+  contain: paint;
+
+  /* keep everything clipped to the card */
+  overflow: hidden;
+
+  border-radius: 26px;
+}
+
+/* CTA strip under console */
+.k-who3__cta{
+  margin-top: clamp(18px, 3vw, 28px);
+  padding: 18px;
+  border-radius: 24px;
+  background: rgba(255,255,255,.02);
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+  display: grid;
+  gap: 14px;
+}
+
+@media (min-width: 860px){
+  .k-who3__cta{
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 18px;
+    padding: 20px 22px;
+  }
+}
+
+.k-who3__ctaCopy p{ margin-top: 8px; }
+
+.k-who3__ctaBtns{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+@media (min-width: 860px){
+  .k-who3__ctaBtns{ justify-content: flex-end; }
+}
+
+/* =========================
+   WHO IT’S FOR — A+ Console (island styles)
    Apple-ish clarity + one subtle holographic signature
    Less borders • more air • spotlight under active pill
    ========================= */
@@ -57,6 +156,9 @@
   /* FIX: keep paint inside (glow/blur safety) */
   max-width: 100%;
   contain: paint;
+
+  /* extra: never allow accidental width expansion */
+  min-width: 0;
 }
 
 /* Subtle noise + depth */
@@ -116,6 +218,7 @@
 .k-whoLite__card > *{
   position: relative;
   z-index: 1;
+  min-width: 0;
 }
 
 /* =========================
@@ -127,10 +230,15 @@
   justify-content: space-between;
   align-items: baseline;
   gap: 14px;
+  min-width: 0;
 }
 
 @media (min-width: 520px){
   .k-whoLite__top{ padding: 20px 22px 14px; }
+}
+
+.k-whoLite__topLeft{
+  min-width: 0;
 }
 
 .k-whoLite__topLeft small{
@@ -141,6 +249,7 @@
 
 /* Meter: pill + micro bar */
 .k-whoLite__meter{
+  flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -230,7 +339,10 @@
   scroll-snap-type: x mandatory;
   scroll-snap-stop: always;
   -webkit-overflow-scrolling: touch;
+
+  /* key: contain scroll to this rail only */
   overscroll-behavior-x: contain;
+
   scrollbar-width: none;
   scroll-padding-inline: 14px;
 
@@ -380,6 +492,7 @@
   padding: 16px 16px;
   position: relative;
   z-index: 2; /* FIX: never behind ribbon/glow */
+  min-width: 0;
 }
 
 @media (min-width: 520px){
@@ -395,7 +508,7 @@
     0 18px 60px rgba(0,0,0,.22);
 }
 
-/* Micro proof — whisper-quiet confidence (top-right) */
+/* Micro proof */
 .k-whoLite__microProof{
   position: absolute;
   top: 12px;
@@ -503,43 +616,6 @@
   box-shadow:
     0 0 0 4px rgba(190,145,255,.10),
     0 0 14px rgba(190,145,255,.18);
-}
-
-/* =========================
-   CTA row
-   ========================= */
-.k-whoLite__cta{
-  margin-top: clamp(18px, 3vw, 28px);
-  padding: 18px;
-  border-radius: 24px;
-  background: rgba(255,255,255,.02);
-  border: 1px solid rgba(255,255,255,.08);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
-  display: grid;
-  gap: 14px;
-}
-
-@media (min-width: 860px){
-  .k-whoLite__cta{
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    gap: 18px;
-    padding: 20px 22px;
-  }
-}
-
-.k-whoLite__ctaCopy p{ margin-top: 8px; }
-
-.k-whoLite__ctaBtns{
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: flex-start;
-  align-items: center;
-}
-
-@media (min-width: 860px){
-  .k-whoLite__ctaBtns{ justify-content: flex-end; }
 }
 
 @media (prefers-reduced-motion: reduce){
