@@ -98,10 +98,16 @@ export default function ProcessIgnite() {
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
+    // iOS/Safari address-bar resize can cause jitter / refresh storms
+    ScrollTrigger.config({ ignoreMobileResize: true });
+
     const wraps = wrapRefs.current.filter(Boolean);
     if (!wraps.length) return;
 
     const reduced = reducedMotion();
+    const isMobile =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(max-width: 860px)")?.matches;
 
     // ---- Kill old triggers (HMR-safe)
     ScrollTrigger.getAll().forEach((t) => {
@@ -129,7 +135,8 @@ export default function ProcessIgnite() {
     const setDir = () => {
       raf = 0;
       const y = window.scrollY || 0;
-      const dir = y > lastY ? "down" : y < lastY ? "up" : (html.dataset.scrollDir || "down");
+      const dir =
+        y > lastY ? "down" : y < lastY ? "up" : html.dataset.scrollDir || "down";
       lastY = y;
       html.dataset.scrollDir = dir;
     };
@@ -141,15 +148,20 @@ export default function ProcessIgnite() {
 
     window.addEventListener("scroll", onScrollDir, { passive: true });
 
-    // ---- Heat per card (scrub) : 0 -> 1 -> 0 through center band
+    // ---- Heat per card (scrub): 0 -> 1 -> 0 through a center band
+    const scrub = reduced ? false : isMobile ? 0.65 : 0.55;
+    const start = isMobile ? "top 84%" : "top 78%";
+    const end = isMobile ? "bottom 16%" : "bottom 22%";
+
     wraps.forEach((el, i) => {
       const tl = gsap.timeline({
         scrollTrigger: {
           id: `procHeat-${i}`,
           trigger: el,
-          start: "top 78%",
-          end: "bottom 22%",
-          scrub: reduced ? false : 0.55,
+          start,
+          end,
+          scrub,
+          invalidateOnRefresh: true,
         },
       });
 
@@ -157,7 +169,7 @@ export default function ProcessIgnite() {
       tl.to(el, { ["--heat" as any]: 0, duration: 0.5, ease: "none" }, 0.5);
     });
 
-    // ---- Active class (for typography emphasis only; no state, no re-render)
+    // ---- Active class (typography emphasis only)
     let activeIdx = -1;
 
     const setActive = (idx: number) => {
@@ -170,7 +182,7 @@ export default function ProcessIgnite() {
 
     const pickActive = () => {
       const vh = window.innerHeight || 1;
-      const eye = vh * 0.58;
+      const eye = vh * (isMobile ? 0.56 : 0.58);
 
       let best = 0;
       let bestDist = Infinity;
@@ -237,7 +249,9 @@ export default function ProcessIgnite() {
                   </li>
                   <li className="k-processPill__step">
                     <span className="k-processPill__dot" />
-                    <span className="k-processPill__stepText">Keep it lean. Keep it premium.</span>
+                    <span className="k-processPill__stepText">
+                      Keep it lean. Keep it premium.
+                    </span>
                   </li>
                 </ol>
 

@@ -67,7 +67,6 @@
   inset: 0;
   pointer-events:none;
 
-  /* soft even wash across full surface */
   background:
     linear-gradient(180deg,
       rgba(255,255,255, .06),
@@ -108,7 +107,6 @@
   pointer-events: none;
   z-index: 2;
 
-  /* ring cut-out */
   padding: 1px;
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
@@ -116,7 +114,6 @@
   -webkit-mask-composite: xor;
   mask-composite: exclude;
 
-  /* hide any internal edge artifacts */
   overflow: hidden;
 
   opacity: calc(var(--heat) * 1);
@@ -128,7 +125,6 @@
   transform: translateZ(0);
 }
 
-/* actual colored fill, scaled */
 .k-processPill__frame::before{
   content:"";
   position:absolute;
@@ -144,7 +140,6 @@
   transform-origin: top;
   will-change: transform;
 
-  /* feather edge so there is no seam line */
   -webkit-mask-image: linear-gradient(
     to bottom,
     rgba(0,0,0,1) 0%,
@@ -159,7 +154,6 @@
   );
 }
 
-/* scroll UP => fill from bottom */
 html[data-scroll-dir="up"] .k-processPill__frame::before{
   transform-origin: bottom;
 
@@ -334,17 +328,73 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
 .k-processPill__note h6{ margin-bottom: 6px; }
 
 /* =========================
-   RESPONSIVE
+   RESPONSIVE — keep the same CARD + ANIMATION
+   (no turning off shell / no disabling frame/fill)
    ========================= */
+
+/* stop vw width causing sideways vibes; use container width */
+@media (max-width: 980px){
+  .k-processPill__wrap{
+    justify-items: stretch;
+  }
+  .k-processPill__main{
+    width: 100%;
+  }
+}
+
+/* mobile: one column, tighter paddings, same effects */
 @media (max-width: 860px){
   .k-processPill__main{
-    width: min(92vw, 900px);
     grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 12px;
+
+    /* mobile perf: slightly cheaper glass, still premium */
+    backdrop-filter: blur(8px);
   }
+
+  .k-processPill__left,
+  .k-processPill__right{
+    border-radius: 18px;
+  }
+
+  .k-processPill__left{
+    padding: 14px;
+  }
+
+  .k-processPill__right{
+    padding: 14px 14px 16px;
+  }
+
+  .k-processPill__step{
+    align-items: start;
+  }
+
   .k-processPill__stepText{
     white-space: normal;
     overflow: visible;
     text-overflow: clip;
+    line-height: 1.45;
+  }
+
+  .k-processPill__title{
+    font-size: clamp(18px, 4.9vw, 22px);
+  }
+
+  .k-processPill__copy{
+    max-width: 70ch;
+  }
+}
+
+/* small phones: micro row stacks, meter a touch smaller */
+@media (max-width: 420px){
+  .k-processPill__micro{
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .k-processPill__meter{
+    height: 9px;
   }
 }
 
