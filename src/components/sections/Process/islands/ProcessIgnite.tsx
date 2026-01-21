@@ -189,10 +189,8 @@ export default function ProcessIgnite() {
       setActive(best);
     };
 
-    // drive active selection with GSAP ticker (smooth + synced)
     gsap.ticker.add(pickActive);
 
-    // initial
     pickActive();
     ScrollTrigger.refresh();
 
