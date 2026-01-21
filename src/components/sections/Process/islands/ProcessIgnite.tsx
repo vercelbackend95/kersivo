@@ -33,7 +33,7 @@ const blocks: Block[] = [
     lead: "We align on goals, audience, and the offer. Clear scope — no fog, no fluff.",
     title: "We define the win",
     copy:
-      "You’ll know exactly what we’re building, who it’s for, and what it should achieve. This keeps everything fast and sharp.",
+      "You’ll know exactly what we’re building, who it's for, and what it should achieve. This keeps everything fast and sharp.",
     list: [
       { b: "Scope:", t: "pages, sections, priority content." },
       { b: "Message:", t: "headline, proof, CTA strategy." },
@@ -107,13 +107,11 @@ export default function ProcessIgnite() {
     const reduced = reducedMotion();
     const html = document.documentElement;
 
-    // Kill previous instances (HMR safe)
     ScrollTrigger.getAll().forEach((t) => {
       const id = (t.vars as any)?.id;
       if (typeof id === "string" && id.startsWith("procEvt-")) t.kill();
     });
 
-    // Init + cheap setters
     const heatSetters = wraps.map((w) => {
       w.style.setProperty("--heat", "0");
       return gsap.quickSetter(w, "--heat", "");
@@ -142,7 +140,6 @@ export default function ProcessIgnite() {
       wraps.forEach((w, i) => w.classList.toggle("is-active", i === idx));
     };
 
-    // Event-driven (NO scrub, NO ticker, NO rect scans)
     wraps.forEach((el, i) => {
       const st = ScrollTrigger.create({
         id: `procEvt-${i}`,
@@ -150,7 +147,6 @@ export default function ProcessIgnite() {
         start: "top 78%",
         end: "bottom 22%",
         invalidateOnRefresh: true,
-
         onEnter: (self) => {
           setActive(i);
           setHeat(i, 1, self.direction < 0 ? "up" : "down");
@@ -162,11 +158,10 @@ export default function ProcessIgnite() {
         },
         onLeaveBack: (self) => setHeat(i, 0, self.direction < 0 ? "up" : "down"),
       });
-
       triggers.push(st);
     });
 
-    // ---- Pinch-zoom guard (Safari tab killer fix)
+    // ---- Pinch-zoom guard (hard mode)
     const vv = (window as any).visualViewport as VisualViewport | undefined;
     let zoomed = false;
     let raf = 0;
@@ -178,7 +173,7 @@ export default function ProcessIgnite() {
       if (zoomed) {
         html.dataset.zoomed = "1";
         triggers.forEach((t) => t.disable(false));
-        wraps.forEach((w, idx) => heatSetters);
+        wraps.forEach((_, idx) => heatSetters);
         gsap.killTweensOf(wraps);
       } else {
         delete html.dataset.zoomed;
@@ -192,16 +187,23 @@ export default function ProcessIgnite() {
       raf = window.requestAnimationFrame(() => {
         raf = 0;
         const scale = vv?.scale ?? 1;
-        applyZoom(scale > 1.02);
+        // aggressive threshold (iOS can crash even on tiny zoom)
+        applyZoom(scale > 1.001);
       });
     };
+
+    const onGestureStart = () => applyZoom(true);
+    const onGestureEnd = () => onVV();
 
     if (vv) {
       vv.addEventListener("resize", onVV);
       vv.addEventListener("scroll", onVV);
     }
 
-    // Initial vibe
+    // gesture events (Safari)
+    window.addEventListener("gesturestart", onGestureStart as any, { passive: true } as any);
+    window.addEventListener("gestureend", onGestureEnd as any, { passive: true } as any);
+
     setActive(0);
     if (!reduced) {
       gsap.to(wraps[0], { ["--heat" as any]: 0.55, duration: 0.55, ease: "power2.out", overwrite: true });
@@ -216,6 +218,9 @@ export default function ProcessIgnite() {
         vv.removeEventListener("resize", onVV);
         vv.removeEventListener("scroll", onVV);
       }
+      window.removeEventListener("gesturestart", onGestureStart as any);
+      window.removeEventListener("gestureend", onGestureEnd as any);
+
       if (raf) window.cancelAnimationFrame(raf);
 
       ScrollTrigger.getAll().forEach((t) => {

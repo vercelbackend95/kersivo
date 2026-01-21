@@ -1,9 +1,9 @@
 /* =========================================
-   Process — mobile centered + iOS crash-safe
-   Fixes:
-   - no vw sizing inside container (perfect equal margins)
-   - no scrub-only paint storms (works with event-driven heat)
-   - zoom-safe mode via html[data-zoomed="1"]
+   Process — centered + iOS zoom-crash hardening
+   - Symmetric gutters always
+   - FRAME owns outline (no double border)
+   - Thicker frame (2px) but still centered
+   - html[data-zoomed="1"] makes section ultra-light
    ========================================= */
 
 .k-processPill__stack{
@@ -12,7 +12,6 @@
   gap: clamp(14px, 2.6vw, 20px);
 }
 
-/* Symmetric gutters on ALL mobiles (this is what you want in the screenshot) */
 .k-processPill__wrap{
   --heat: 0;
   box-sizing: border-box;
@@ -22,10 +21,6 @@
   padding-inline: clamp(14px, 4vw, 22px);
 }
 
-/* =========================
-   MAIN — centered by design
-   (NO 80vw; it always uses container width)
-   ========================= */
 .k-processPill__main{
   box-sizing: border-box;
   width: 100%;
@@ -34,8 +29,6 @@
 
   border-radius: 20px;
   background: rgba(255,255,255,.02);
-
-  /* remove main border stroke (frame owns outline) */
   border: 1px solid transparent;
 
   backdrop-filter: blur(10px);
@@ -56,7 +49,6 @@
   will-change: opacity;
 }
 
-/* Desktop-only tiny lift (avoid transform jank on mobile) */
 @media (min-width: 861px){
   .k-processPill__main{
     transform: translateZ(0) translateY(calc(-2px * var(--heat)));
@@ -95,7 +87,7 @@
 }
 
 /* =========================
-   FRAME — single outline source
+   FRAME — thicker (2px) and clean
    ========================= */
 .k-processPill__frame{
   position: absolute;
@@ -104,7 +96,9 @@
   pointer-events: none;
   z-index: 2;
 
-  padding: 1px;
+  /* was 1px, now thicker */
+  padding: 2px;
+
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
@@ -113,11 +107,10 @@
 
   overflow: hidden;
 
-  /* subtle base stroke + heat glow */
   box-shadow:
     0 0 0 1px rgba(255,255,255,.06) inset,
     0 0 0 1px rgba(170,95,255, calc(var(--heat) * .34)) inset,
-    0 0 140px rgba(170,95,255, calc(var(--heat) * .14));
+    0 0 160px rgba(170,95,255, calc(var(--heat) * .16));
 }
 
 .k-processPill__frame::before{
@@ -176,11 +169,7 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
   padding: clamp(14px, 2.2vw, 18px);
 }
 
-.k-processPill__leftInner{
-  display: grid;
-  gap: 12px;
-  min-width: 0;
-}
+.k-processPill__leftInner{ display:grid; gap:12px; min-width:0; }
 
 .k-processPill__miniKicker{
   font-size: 12px;
@@ -191,27 +180,18 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
   opacity: calc(.78 + var(--heat) * .22);
 }
 
-.k-processPill__steps{
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 10px;
-}
+.k-processPill__steps{ margin:0; padding:0; list-style:none; display:grid; gap:10px; }
 
 .k-processPill__step{
-  display: grid;
+  display:grid;
   grid-template-columns: 10px 1fr;
-  align-items: start;
-  gap: 10px;
-  min-width: 0;
+  align-items:start;
+  gap:10px;
+  min-width:0;
 }
 
 .k-processPill__dot{
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  margin-top: 5px;
+  width: 8px; height: 8px; border-radius: 999px; margin-top: 5px;
   background: rgba(255,255,255, calc(.62 + var(--heat) * .30));
   box-shadow:
     0 0 0 2px rgba(255,255,255, calc(.10 + var(--heat) * .08)),
@@ -235,35 +215,15 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
 }
 
 .k-processPill__meterFill{
-  display:block;
-  height: 100%;
-  width: 68%;
-  border-radius: 999px;
+  display:block; height:100%; width:68%; border-radius:999px;
   background: linear-gradient(90deg, rgba(105,140,255,1), rgba(170,95,255,1));
   opacity: calc(.30 + var(--heat) * .70);
   box-shadow: 0 12px 50px rgba(105,140,255, calc(var(--heat) * .14));
 }
 
-.k-processPill__micro{
-  display:flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.k-processPill__microLabel{
-  font-size: 12px;
-  color: var(--muted2);
-  letter-spacing: var(--track-normal);
-  opacity: calc(.86 + var(--heat) * .10);
-}
-
-.k-processPill__microValue{
-  font-size: 13px;
-  color: rgba(255,255,255, calc(.82 + var(--heat) * .14));
-  font-weight: var(--w-semibold);
-  letter-spacing: var(--track-normal);
-}
+.k-processPill__micro{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; }
+.k-processPill__microLabel{ font-size:12px; color:var(--muted2); opacity: calc(.86 + var(--heat) * .10); }
+.k-processPill__microValue{ font-size:13px; color: rgba(255,255,255, calc(.82 + var(--heat) * .14)); font-weight: var(--w-semibold); }
 
 .k-processPill__right{
   border-radius: 20px;
@@ -282,33 +242,17 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
   color: rgba(255,255,255, calc(.88 + var(--heat) * .10));
 }
 
-.k-processPill__copy{
-  margin: 0;
-  max-width: 62ch;
-  color: rgba(255,255,255, calc(.66 + var(--heat) * .22));
-}
+.k-processPill__copy{ margin:0; max-width:62ch; color: rgba(255,255,255, calc(.66 + var(--heat) * .22)); }
 
-.k-processPill__list{
-  margin: 4px 0 0;
-  padding-left: 1.1em;
-  color: rgba(255,255,255, calc(.66 + var(--heat) * .22));
-}
-.k-processPill__list li + li{ margin-top: 8px; }
+.k-processPill__list{ margin:4px 0 0; padding-left:1.1em; color: rgba(255,255,255, calc(.66 + var(--heat) * .22)); }
+.k-processPill__list li + li{ margin-top:8px; }
+.k-processPill__list strong{ color: rgba(255,255,255, calc(.78 + var(--heat) * .16)); font-weight: var(--w-semibold); }
 
-.k-processPill__list strong{
-  color: rgba(255,255,255, calc(.78 + var(--heat) * .16));
-  font-weight: var(--w-semibold);
-}
-
-.k-processPill__note{
-  margin-top: 6px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(255,255,255, calc(.10 + var(--heat) * .06));
-}
-.k-processPill__note h6{ margin-bottom: 6px; }
+.k-processPill__note{ margin-top:6px; padding-top:10px; border-top: 1px solid rgba(255,255,255, calc(.10 + var(--heat) * .06)); }
+.k-processPill__note h6{ margin-bottom:6px; }
 
 /* =========================
-   MOBILE sizing
+   MOBILE
    ========================= */
 @media (max-width: 860px){
   .k-processPill__main{
@@ -333,19 +277,22 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
   .k-processPill__right{ padding: 12px 12px 14px; gap: 9px; }
 
   .k-processPill__miniKicker{ font-size: 11px; }
+
+  /* frame radius matches */
+  .k-processPill__frame,
+  .k-processPill__frame::before{
+    border-radius: 18px;
+  }
 }
 
 @media (max-width: 420px){
-  .k-processPill__micro{
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-  }
+  .k-processPill__micro{ flex-direction: column; align-items: flex-start; gap: 6px; }
   .k-processPill__meter{ height: 9px; }
 }
 
 /* =========================
-   iOS fallback: remove mask-composite ring (heavy)
+   iOS fallback: no mask-composite on mobile
+   (still single outline, thicker feel kept)
    ========================= */
 @supports (-webkit-touch-callout: none){
   @media (max-width: 860px){
@@ -355,7 +302,7 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
       -webkit-mask-composite: initial;
       mask-composite: initial;
 
-      border: 1px solid rgba(255,255,255,.06);
+      border: 2px solid rgba(255,255,255,.06);
       box-shadow:
         0 0 0 1px rgba(170,95,255, calc(var(--heat) * .55)) inset,
         0 0 90px rgba(170,95,255, calc(var(--heat) * .18));
@@ -365,23 +312,28 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
 }
 
 /* =========================
-   Zoom-safe mode (set by TSX)
-   This is the “don’t crash Safari” switch.
+   ZOOM SAFE MODE (HARD)
+   When zooming, make this section boring on purpose.
+   It prevents Safari tab death.
    ========================= */
 html[data-zoomed="1"] .k-processPill__main{
   backdrop-filter: none !important;
-  box-shadow: 0 10px 34px rgba(0,0,0,.32) !important;
+  box-shadow: 0 10px 28px rgba(0,0,0,.28) !important;
 }
-html[data-zoomed="1"] .k-processPill__main::after{
-  opacity: 0.10 !important;
-}
+html[data-zoomed="1"] .k-processPill__main::before{ opacity: 0.05 !important; }
+html[data-zoomed="1"] .k-processPill__main::after{ opacity: 0 !important; }
+html[data-zoomed="1"] .k-processPill__wrap .k-processPill__main{ box-shadow: 0 10px 28px rgba(0,0,0,.28) !important; }
+
 html[data-zoomed="1"] .k-processPill__frame{
-  border-color: rgba(255,255,255,.08) !important;
-  box-shadow: 0 0 0 1px rgba(255,255,255,.06) inset !important;
+  -webkit-mask: none !important;
+  mask-composite: initial !important;
+  border: 2px solid rgba(255,255,255,.10) !important;
+  box-shadow: none !important;
 }
+html[data-zoomed="1"] .k-processPill__frame::before{ display:none !important; }
 
 /* motion safety */
 @media (prefers-reduced-motion: reduce){
-  .k-processPill__main{ transform: none; opacity: 1; }
-  .k-processPill__main::after{ opacity: .18; }
+  .k-processPill__main{ transform:none; opacity:1; }
+  .k-processPill__main::after{ opacity:.18; }
 }
