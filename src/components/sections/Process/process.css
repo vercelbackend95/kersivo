@@ -1,9 +1,8 @@
 /* =========================================
-   Process — mobile-first stability for iOS
-   Single-source border: FRAME owns the border.
-   MAIN border is disabled to avoid double outlines.
-   --heat: 0..1 (animated on enter/leave, no scrub)
-   html[data-scroll-dir="down|up"] controls frame origin (desktop)
+   Process — responsive + iOS crash-safe
+   Single-source border: FRAME owns border (no double outlines).
+   --heat: 0..1 (enter/leave animation)
+   Extra safety: html[data-zoomed="1"] disables heavy paint.
    ========================================= */
 
 .k-processPill__stack{
@@ -12,28 +11,28 @@
   gap: clamp(14px, 2.6vw, 20px);
 }
 
+/* Wrap gets side padding so the frame never kisses screen edges */
 .k-processPill__wrap{
   display: grid;
   justify-items: center;
+  box-sizing: border-box;
+  padding-inline: clamp(10px, 3vw, 16px);
   --heat: 0;
 }
 
 /* =========================
    MAIN (glass shell)
-   NOTE: border + inset stroke removed to prevent double frame.
+   Border removed (FRAME owns border)
    ========================= */
 .k-processPill__main{
   width: min(80vw, 1100px);
+  max-width: 100%;
   border-radius: 20px;
 
   background: rgba(255,255,255,.02);
-
-  /* IMPORTANT: disable border (FRAME owns it) */
   border: 1px solid transparent;
 
-  /* IMPORTANT: remove inset “stroke” (third line look) */
   box-shadow: 0 18px 70px rgba(0,0,0,.36);
-
   backdrop-filter: blur(10px);
 
   position: relative;
@@ -45,10 +44,18 @@
   padding: clamp(12px, 1.6vw, 16px);
 
   opacity: calc(.62 + var(--heat) * .38);
-  transform: translateZ(0) translateY(calc(-2px * var(--heat)));
+  transform: translateZ(0);
 
   contain: paint;
-  will-change: transform, opacity;
+  will-change: opacity;
+}
+
+/* desktop-only lift (avoid transform jank on mobile/iOS) */
+@media (min-width: 861px){
+  .k-processPill__main{
+    transform: translateZ(0) translateY(calc(-2px * var(--heat)));
+    will-change: transform, opacity;
+  }
 }
 
 /* subtle gloss */
@@ -61,22 +68,20 @@
   opacity: calc(.10 + var(--heat) * .16);
 }
 
-/* inside fill (premium but sane on iOS) */
+/* inside fill */
 .k-processPill__main::after{
   content:"";
   position:absolute;
   inset: 0;
   pointer-events:none;
-
   background:
     linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0) 62%),
     radial-gradient(120% 90% at 50% 25%, rgba(170,95,255,.22), transparent 65%),
     radial-gradient(120% 90% at 50% 95%, rgba(105,140,255,.14), transparent 65%);
-
   opacity: calc(var(--heat) * .92);
 }
 
-/* ambient glow lives on the shell (not a border stroke) */
+/* ambient glow on shell (not a stroke) */
 .k-processPill__wrap .k-processPill__main{
   box-shadow:
     0 18px 70px rgba(0,0,0,.36),
@@ -84,8 +89,8 @@
 }
 
 /* =========================
-   FRAME — the ONLY border source (desktop: mask ring)
-   Also includes a subtle base stroke even at heat=0.
+   FRAME — the ONLY outline source
+   Desktop: masked ring + wipe
    ========================= */
 .k-processPill__frame{
   position: absolute;
@@ -95,6 +100,7 @@
   z-index: 2;
 
   padding: 1px;
+
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
@@ -103,7 +109,6 @@
 
   overflow: hidden;
 
-  /* base stroke always present + stronger when heat rises */
   box-shadow:
     0 0 0 1px rgba(255,255,255,.06) inset,
     0 0 0 1px rgba(170,95,255, calc(var(--heat) * .34)) inset,
@@ -119,10 +124,7 @@
   inset: 0;
   border-radius: 20px;
 
-  background: linear-gradient(180deg,
-    rgba(170,95,255,.95),
-    rgba(105,140,255,.65)
-  );
+  background: linear-gradient(180deg, rgba(170,95,255,.95), rgba(105,140,255,.65));
 
   transform: scaleY(var(--heat));
   transform-origin: top;
@@ -144,7 +146,6 @@
 
 html[data-scroll-dir="up"] .k-processPill__frame::before{
   transform-origin: bottom;
-
   -webkit-mask-image: linear-gradient(
     to top,
     rgba(0,0,0,1) 0%,
@@ -169,7 +170,6 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
   box-shadow:
     0 14px 60px rgba(0,0,0,.28),
     0 0 0 1px rgba(255,255,255,.02) inset;
-
   overflow: hidden;
   display: grid;
   align-items: center;
@@ -312,14 +312,13 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
 .k-processPill__note h6{ margin-bottom: 6px; }
 
 /* =========================
-   RESPONSIVE
+   RESPONSIVE — frame always fits on iPhone
    ========================= */
 @media (max-width: 980px){
   .k-processPill__wrap{ justify-items: stretch; }
   .k-processPill__main{ width: 100%; }
 }
 
-/* Mobile: smaller + cheaper paint */
 @media (max-width: 860px){
   .k-processPill__main{
     grid-template-columns: 1fr;
@@ -333,7 +332,7 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
   .k-processPill__wrap .k-processPill__main{
     box-shadow:
       0 12px 44px rgba(0,0,0,.34),
-      0 0 140px rgba(170,95,255, calc(var(--heat) * .10));
+      0 0 120px rgba(170,95,255, calc(var(--heat) * .09));
   }
 
   .k-processPill__left,
@@ -345,35 +344,6 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
   .k-processPill__right{ padding: 12px 12px 14px; gap: 9px; }
 
   .k-processPill__miniKicker{ font-size: 11px; }
-
-  .k-processPill__stepText{
-    font-size: 13px;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    overflow: hidden;
-  }
-
-  .k-processPill__title{
-    font-size: clamp(18px, 4.8vw, 22px);
-  }
-
-  .k-processPill__copy{
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 4;
-    overflow: hidden;
-  }
-
-  .k-processPill__list{ margin-top: 2px; }
-  .k-processPill__list li + li{ margin-top: 6px; }
-
-  .k-processPill__note p{
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    overflow: hidden;
-  }
 }
 
 @media (max-width: 420px){
@@ -386,9 +356,8 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
 }
 
 /* =========================
-   iOS Safari fallback: disable mask-composite ring (heavy).
-   Keep single, clean border via box-shadow + border.
-   (Still ONE outline; no doubling.)
+   iOS Safari mobile fallback: remove mask-composite (heavy)
+   Still ONE outline (no doubling).
    ========================= */
 @supports (-webkit-touch-callout: none){
   @media (max-width: 860px){
@@ -405,6 +374,22 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
     }
     .k-processPill__frame::before{ display: none; }
   }
+}
+
+/* =========================
+   Zoom-safe mode (set by TSX via html[data-zoomed="1"])
+   This prevents iOS tab crashes during pinch zoom.
+   ========================= */
+html[data-zoomed="1"] .k-processPill__main{
+  backdrop-filter: none !important;
+  box-shadow: 0 10px 34px rgba(0,0,0,.32) !important;
+}
+html[data-zoomed="1"] .k-processPill__main::after{
+  opacity: 0.12 !important;
+}
+html[data-zoomed="1"] .k-processPill__frame{
+  border-color: rgba(255,255,255,.08) !important;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.06) inset !important;
 }
 
 /* motion safety */

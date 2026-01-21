@@ -96,7 +96,6 @@ export default function ProcessIgnite() {
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
-    // iOS Safari: address bar resize → refresh storms
     ScrollTrigger.config({
       ignoreMobileResize: true,
       limitCallbacks: true,
@@ -108,24 +107,24 @@ export default function ProcessIgnite() {
     const reduced = reducedMotion();
     const html = document.documentElement;
 
-    // Kill old triggers (HMR safe)
+    // kill old triggers (HMR-safe)
     ScrollTrigger.getAll().forEach((t) => {
       const id = (t.vars as any)?.id;
       if (typeof id === "string" && id.startsWith("procLite-")) t.kill();
     });
 
-    // Perf hints + cheap setters
+    // setters
     const heatSetters = wraps.map((w) => {
       w.style.setProperty("--heat", "0");
       const main = w.querySelector(".k-processPill__main") as HTMLElement | null;
       if (main) {
-        main.style.willChange = "transform, opacity";
+        main.style.willChange = "opacity";
         main.style.transform = "translateZ(0)";
       }
       return gsap.quickSetter(w, "--heat", "");
     });
 
-    // Active state: event-driven (no per-frame scanning)
+    // active state: event-driven
     let activeIdx = -1;
     const setActive = (idx: number) => {
       if (idx === activeIdx) return;
@@ -135,7 +134,8 @@ export default function ProcessIgnite() {
       }
     };
 
-    // Helper: animate heat with overwrite (stable on iOS)
+    const triggers: ScrollTrigger[] = [];
+
     const toHeat = (i: number, value: number, dir: "up" | "down") => {
       html.dataset.scrollDir = dir;
       if (reduced) {
@@ -144,15 +144,15 @@ export default function ProcessIgnite() {
       }
       gsap.to(wraps[i], {
         ["--heat" as any]: value,
-        duration: value > 0 ? 0.55 : 0.45,
+        duration: value > 0 ? 0.55 : 0.40,
         ease: value > 0 ? "power2.out" : "power2.in",
         overwrite: true,
       });
     };
 
-    // Build triggers: no scrub (scrub on iOS = jank/crash bait)
+    // triggers — no scrub (stable on iOS)
     wraps.forEach((el, i) => {
-      ScrollTrigger.create({
+      const st = ScrollTrigger.create({
         id: `procLite-${i}`,
         trigger: el,
         start: "top 78%",
@@ -174,19 +174,63 @@ export default function ProcessIgnite() {
           toHeat(i, 0, self.direction < 0 ? "up" : "down");
         },
       });
+      triggers.push(st);
     });
 
-    // Init: light the first card a bit so it doesn't feel dead on load
+    // ---- Pinch-zoom guard (kills crashes)
+    // When zooming, iOS does heavy re-layout. Pause triggers + kill heavy CSS via html[data-zoomed].
+    const vv = (window as any).visualViewport as VisualViewport | undefined;
+    let zoomed = false;
+    let zoomRAF = 0;
+
+    const applyZoomState = (z: boolean) => {
+      if (z === zoomed) return;
+      zoomed = z;
+
+      if (zoomed) {
+        html.dataset.zoomed = "1";
+        // disable triggers + reset heat so nothing animates during zoom
+        triggers.forEach((t) => t.disable(false));
+        wraps.forEach((w, idx) => heatSetters);
+        gsap.killTweensOf(wraps);
+      } else {
+        delete html.dataset.zoomed;
+        triggers.forEach((t) => t.enable(false));
+        ScrollTrigger.refresh();
+      }
+    };
+
+    const onVV = () => {
+      if (zoomRAF) return;
+      zoomRAF = window.requestAnimationFrame(() => {
+        zoomRAF = 0;
+        const scale = vv?.scale ?? 1;
+        applyZoomState(scale > 1.02);
+      });
+    };
+
+    if (vv) {
+      vv.addEventListener("resize", onVV);
+      vv.addEventListener("scroll", onVV);
+    }
+
+    // init state
     setActive(0);
     if (!reduced) {
-      gsap.to(wraps[0], { ["--heat" as any]: 0.65, duration: 0.6, ease: "power2.out", overwrite: true });
+      gsap.to(wraps[0], { ["--heat" as any]: 0.55, duration: 0.55, ease: "power2.out", overwrite: true });
     } else {
-      heatSetters[0](0.65);
+      heatSetters[0](0.55);
     }
 
     ScrollTrigger.refresh();
 
     return () => {
+      if (vv) {
+        vv.removeEventListener("resize", onVV);
+        vv.removeEventListener("scroll", onVV);
+      }
+      if (zoomRAF) window.cancelAnimationFrame(zoomRAF);
+
       ScrollTrigger.getAll().forEach((t) => {
         const id = (t.vars as any)?.id;
         if (typeof id === "string" && id.startsWith("procLite-")) t.kill();
