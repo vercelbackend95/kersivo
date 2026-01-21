@@ -3,9 +3,21 @@ import "./work.css";
 import WorkShowcase from "./islands/WorkShowcase";
 ---
 
-<section id="work" class="k-work section">
+<section id="work" class="k-work section" aria-labelledby="work-title">
   <div class="container">
-    <!-- Delay hydration until the section is near viewport (better perf, same SSR HTML). -->
+    <header class="k-workHead">
+      <div class="k-workHead__kicker">WORK</div>
+
+      <h2 class="k-workHead__title" id="work-title">
+        One live demo.
+        <span class="k-workHead__grad">Real build quality.</span>
+      </h2>
+
+      <p class="k-workHead__lead">
+        A live demo you can actually click. Clean system + tailored skin — shipped fast.
+      </p>
+    </header>
+
     <WorkShowcase client:visible />
   </div>
 </section>

@@ -278,6 +278,50 @@ li + li{ margin-top: 8px; }
   font-size: var(--p);
   color: var(--muted);
 }
+/* =========================
+   Premium Section Header (Work-style)
+   Use:
+   <header class="k-sectionHead">...</header>
+   ========================= */
+
+.k-sectionHead{
+  text-align: center;
+  margin: 0 auto clamp(18px, 2.6vw, 26px);
+  max-width: 86ch;
+}
+
+.k-sectionHead__kicker{
+  font-size: 12px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.60);
+  margin-bottom: 10px;
+}
+
+.k-sectionHead__title{
+  margin: 0;
+  font-size: var(--h2);
+  line-height: 1.06;
+  letter-spacing: var(--track-tight);
+  font-weight: var(--w-black);
+}
+
+.k-sectionHead__grad{
+  display: block;
+  margin-top: 6px;
+  background: linear-gradient(90deg, rgba(140,170,255,1), rgba(210,150,255,1));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.k-sectionHead__lead{
+  margin: 12px auto 0;
+  max-width: var(--measure);
+  color: rgba(255,255,255,.74);
+  font-size: var(--p);
+  line-height: 1.55;
+}
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce){

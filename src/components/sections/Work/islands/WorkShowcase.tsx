@@ -117,8 +117,6 @@ export default function WorkShowcase() {
     []
   );
 
-  const [tipOpen, setTipOpen] = useState(false);
-
   const pulseRef = useRef(0);
   const [pulseKey, setPulseKey] = useState(0);
 
@@ -168,49 +166,6 @@ export default function WorkShowcase() {
   return (
     <div className="k-workCard" data-focus={focus}>
       <div className="k-work__grid">
-        {/* HEADER */}
-        <div className="k-work__head">
-          <div className="k-work__kicker">WORK</div>
-          <h2 className="k-work__h2">
-            One live demo. <span className="k-work__grad">Real build</span> quality.
-          </h2>
-          <p className="k-work__lead">
-            A live demo you can actually click. Clean system + tailored skin — shipped fast.
-          </p>
-        </div>
-
-        {/* tags */}
-        <div className="k-work__tags" aria-label="Work tags">
-          <span className="k-work__tag">Proof Pack</span>
-          <span className="k-work__tag">Fast builds</span>
-          <span className="k-work__tag">Hybrid preview</span>
-
-          {/* “More +” pill with tooltip */}
-          <span
-            className={cn("k-work__tag k-work__tag--more", tipOpen && "is-open")}
-            onMouseLeave={() => setTipOpen(false)}
-          >
-            <button
-              className="k-work__moreBtn"
-              type="button"
-              aria-label="More details"
-              aria-expanded={tipOpen}
-              aria-describedby="k-work-tip"
-              onClick={() => setTipOpen((v) => !v)}
-              onBlur={() => setTipOpen(false)}
-              onKeyDown={(e) => {
-                if (e.key === "Escape") setTipOpen(false);
-              }}
-            >
-              More <span aria-hidden="true">+</span>
-            </button>
-
-            <span id="k-work-tip" className="k-work__tip" role="tooltip">
-              Includes: conversion flow, SEO foundations, performance-first delivery, and reusable UI system.
-            </span>
-          </span>
-        </div>
-
         {/* MAIN */}
         <div className="k-work__main">
           {/* LEFT: STAGE */}
