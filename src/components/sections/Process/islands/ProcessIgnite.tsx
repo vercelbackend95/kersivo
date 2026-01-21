@@ -91,6 +91,12 @@ function reducedMotion(): boolean {
     : false;
 }
 
+const heatTriangle = (p: number) => {
+  // p: 0..1 -> heat: 0..1..0 (triangle)
+  const t = 1 - Math.abs(2 * p - 1);
+  return Math.max(0, Math.min(1, t));
+};
+
 export default function ProcessIgnite() {
   const wrapRefs = useRef<HTMLDivElement[]>([]);
   const data = useMemo(() => blocks, []);
@@ -98,16 +104,17 @@ export default function ProcessIgnite() {
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
-    // iOS/Safari address-bar resize can cause jitter / refresh storms
-    ScrollTrigger.config({ ignoreMobileResize: true });
+    // iOS Safari: address-bar resize & refresh storms
+    ScrollTrigger.config({
+      ignoreMobileResize: true,
+      limitCallbacks: true,
+    });
 
     const wraps = wrapRefs.current.filter(Boolean);
     if (!wraps.length) return;
 
     const reduced = reducedMotion();
-    const isMobile =
-      typeof window !== "undefined" &&
-      window.matchMedia?.("(max-width: 860px)")?.matches;
+    const html = document.documentElement;
 
     // ---- Kill old triggers (HMR-safe)
     ScrollTrigger.getAll().forEach((t) => {
@@ -115,63 +122,19 @@ export default function ProcessIgnite() {
       if (typeof id === "string" && id.startsWith("procHeat-")) t.kill();
     });
 
-    // ---- Init vars / perf hints
-    wraps.forEach((w) => {
+    // ---- init heat + perf hints
+    const setters = wraps.map((w) => {
       w.style.setProperty("--heat", "0");
       const main = w.querySelector(".k-processPill__main") as HTMLElement | null;
       if (main) {
         main.style.willChange = "transform, opacity";
         main.style.transform = "translateZ(0)";
       }
+      return gsap.quickSetter(w, "--heat", "");
     });
 
-    // ---- Scroll direction → html[data-scroll-dir="up|down"]
-    const html = document.documentElement;
-    html.dataset.scrollDir = "down";
-
-    let lastY = window.scrollY || 0;
-    let raf = 0;
-
-    const setDir = () => {
-      raf = 0;
-      const y = window.scrollY || 0;
-      const dir =
-        y > lastY ? "down" : y < lastY ? "up" : html.dataset.scrollDir || "down";
-      lastY = y;
-      html.dataset.scrollDir = dir;
-    };
-
-    const onScrollDir = () => {
-      if (raf) return;
-      raf = window.requestAnimationFrame(setDir);
-    };
-
-    window.addEventListener("scroll", onScrollDir, { passive: true });
-
-    // ---- Heat per card (scrub): 0 -> 1 -> 0 through a center band
-    const scrub = reduced ? false : isMobile ? 0.65 : 0.55;
-    const start = isMobile ? "top 84%" : "top 78%";
-    const end = isMobile ? "bottom 16%" : "bottom 22%";
-
-    wraps.forEach((el, i) => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          id: `procHeat-${i}`,
-          trigger: el,
-          start,
-          end,
-          scrub,
-          invalidateOnRefresh: true,
-        },
-      });
-
-      tl.to(el, { ["--heat" as any]: 1, duration: 0.5, ease: "none" }, 0);
-      tl.to(el, { ["--heat" as any]: 0, duration: 0.5, ease: "none" }, 0.5);
-    });
-
-    // ---- Active class (typography emphasis only)
+    // ---- active class: event-driven (no ticker, no layout scans)
     let activeIdx = -1;
-
     const setActive = (idx: number) => {
       if (idx === activeIdx) return;
       activeIdx = idx;
@@ -180,37 +143,36 @@ export default function ProcessIgnite() {
       }
     };
 
-    const pickActive = () => {
-      const vh = window.innerHeight || 1;
-      const eye = vh * (isMobile ? 0.56 : 0.58);
+    // ---- triggers
+    wraps.forEach((el, i) => {
+      ScrollTrigger.create({
+        id: `procHeat-${i}`,
+        trigger: el,
+        start: "top 85%",
+        end: "bottom 15%",
+        scrub: reduced ? false : 0.65,
+        invalidateOnRefresh: true,
 
-      let best = 0;
-      let bestDist = Infinity;
+        onEnter: () => setActive(i),
+        onEnterBack: () => setActive(i),
 
-      for (let i = 0; i < wraps.length; i++) {
-        const main = wraps[i].querySelector(".k-processPill__main") as HTMLElement | null;
-        if (!main) continue;
-        const r = main.getBoundingClientRect();
-        const c = (r.top + r.bottom) / 2;
-        const d = Math.abs(c - eye);
-        if (d < bestDist) {
-          bestDist = d;
-          best = i;
-        }
-      }
-      setActive(best);
-    };
+        onUpdate: (self) => {
+          // direction for frame wipe
+          html.dataset.scrollDir = self.direction < 0 ? "up" : "down";
 
-    gsap.ticker.add(pickActive);
+          // heat
+          const p = self.progress;
+          const h = reduced ? 1 : heatTriangle(p);
+          setters[i](h);
+        },
+      });
+    });
 
-    pickActive();
+    // initial
+    setActive(0);
     ScrollTrigger.refresh();
 
     return () => {
-      gsap.ticker.remove(pickActive);
-      window.removeEventListener("scroll", onScrollDir);
-      if (raf) window.cancelAnimationFrame(raf);
-
       ScrollTrigger.getAll().forEach((t) => {
         const id = (t.vars as any)?.id;
         if (typeof id === "string" && id.startsWith("procHeat-")) t.kill();
@@ -231,7 +193,6 @@ export default function ProcessIgnite() {
           style={{ ["--heat" as any]: 0 }}
         >
           <div className="k-processPill__main">
-            {/* FRAME (directional wipe) */}
             <span className="k-processPill__frame" aria-hidden="true" />
 
             <div className="k-processPill__left" aria-hidden="true">
