@@ -2,7 +2,7 @@
    Process — Premium pill (mobile wider + iOS zoom-safe)
    Key fixes:
    - NO width: min(80vw, ...)  -> always centered, full container width
-   - smaller side gutters on mobile (wider card)
+   - remove extra side padding on mobile -> matches Services width
    - remove double border (main border is transparent; frame owns stroke)
    - zoom-safe mode via html[data-zoomed="1"] (kills heavy paint)
    ========================================= */
@@ -18,7 +18,7 @@
   justify-items: center;
   --heat: 0;
 
-  /* Wider on mobile: less padding than before */
+  /* default (tablet/desktop): a bit of inner breathing room */
   padding-inline: clamp(10px, 2.6vw, 16px);
   width: 100%;
   box-sizing: border-box;
@@ -268,7 +268,7 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
 /* micro */
 .k-processPill__micro{
   display:flex;
-  align-items: baseline;
+   align-items: baseline;
   justify-content: space-between;
   gap: 10px;
 }
@@ -337,6 +337,14 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
 /* =========================
    RESPONSIVE
    ========================= */
+
+/* MOBILE: match Services width (ONLY container gutter, no extra wrap padding) */
+@media (max-width: 739px){
+  .k-processPill__wrap{
+    padding-inline: 0;
+  }
+}
+
 @media (max-width: 860px){
   .k-processPill__main{
     grid-template-columns: 1fr;
