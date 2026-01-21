@@ -503,3 +503,30 @@
     min-width: 740px;
   }
 }
+/* PACKAGES — Mobile: narrower first (label) column */
+@media (max-width: 720px){
+  .k-packMatrix{
+    grid-template-columns: 170px repeat(3, minmax(190px, 1fr));
+    min-width: 640px; /* 170 + 3*190 */
+  }
+
+  /* trochę ciaśniej w labelach, żeby nie marnować px */
+  .k-packHeadCell--label,
+  .k-packStickyCell{
+    padding-left: 12px;
+    padding-right: 10px;
+  }
+
+  .k-packHeadCell,
+  .k-packCell{
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+@media (max-width: 420px){
+  .k-packMatrix{
+    grid-template-columns: 155px repeat(3, minmax(180px, 1fr));
+    min-width: 595px; /* 155 + 3*180 */
+  }
+}
