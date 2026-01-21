@@ -439,3 +439,29 @@
     min-width: 940px;
   }
 }
+/* =========================================
+   PACKAGES — Mobile FULL-BLEED (option B)
+   Make the table card go nearly edge-to-edge
+   ========================================= */
+
+@media (max-width: 720px){
+  /* Card goes wider than container by exactly the container gutters */
+  .k-packCard{
+    width: calc(100% + (var(--gutter, 16px) * 2));
+    margin-left: calc(var(--gutter, 16px) * -1);
+    margin-right: calc(var(--gutter, 16px) * -1);
+    border-radius: 24px;
+  }
+
+  /* Keep radii consistent inside */
+  .k-packStage,
+  .k-packScroll{
+    border-radius: 24px;
+  }
+}
+
+@media (max-width: 420px){
+  .k-packCard{ border-radius: 22px; }
+  .k-packStage,
+  .k-packScroll{ border-radius: 22px; }
+}
