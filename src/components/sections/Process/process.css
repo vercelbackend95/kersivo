@@ -1,8 +1,9 @@
 /* =========================================
-   Process — responsive + iOS crash-safe
-   Single-source border: FRAME owns border (no double outlines).
-   --heat: 0..1 (enter/leave animation)
-   Extra safety: html[data-zoomed="1"] disables heavy paint.
+   Process — mobile centered + iOS crash-safe
+   Fixes:
+   - no vw sizing inside container (perfect equal margins)
+   - no scrub-only paint storms (works with event-driven heat)
+   - zoom-safe mode via html[data-zoomed="1"]
    ========================================= */
 
 .k-processPill__stack{
@@ -11,29 +12,34 @@
   gap: clamp(14px, 2.6vw, 20px);
 }
 
-/* Wrap gets side padding so the frame never kisses screen edges */
+/* Symmetric gutters on ALL mobiles (this is what you want in the screenshot) */
 .k-processPill__wrap{
+  --heat: 0;
+  box-sizing: border-box;
+  width: 100%;
   display: grid;
   justify-items: center;
-  box-sizing: border-box;
-  padding-inline: clamp(10px, 3vw, 16px);
-  --heat: 0;
+  padding-inline: clamp(14px, 4vw, 22px);
 }
 
 /* =========================
-   MAIN (glass shell)
-   Border removed (FRAME owns border)
+   MAIN — centered by design
+   (NO 80vw; it always uses container width)
    ========================= */
 .k-processPill__main{
-  width: min(80vw, 1100px);
-  max-width: 100%;
-  border-radius: 20px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1100px;
+  margin-inline: auto;
 
+  border-radius: 20px;
   background: rgba(255,255,255,.02);
+
+  /* remove main border stroke (frame owns outline) */
   border: 1px solid transparent;
 
-  box-shadow: 0 18px 70px rgba(0,0,0,.36);
   backdrop-filter: blur(10px);
+  box-shadow: 0 18px 70px rgba(0,0,0,.36);
 
   position: relative;
   overflow: hidden;
@@ -50,7 +56,7 @@
   will-change: opacity;
 }
 
-/* desktop-only lift (avoid transform jank on mobile/iOS) */
+/* Desktop-only tiny lift (avoid transform jank on mobile) */
 @media (min-width: 861px){
   .k-processPill__main{
     transform: translateZ(0) translateY(calc(-2px * var(--heat)));
@@ -58,7 +64,7 @@
   }
 }
 
-/* subtle gloss */
+/* gloss */
 .k-processPill__main::before{
   content:"";
   position:absolute;
@@ -81,7 +87,7 @@
   opacity: calc(var(--heat) * .92);
 }
 
-/* ambient glow on shell (not a stroke) */
+/* ambient glow only */
 .k-processPill__wrap .k-processPill__main{
   box-shadow:
     0 18px 70px rgba(0,0,0,.36),
@@ -89,8 +95,7 @@
 }
 
 /* =========================
-   FRAME — the ONLY outline source
-   Desktop: masked ring + wipe
+   FRAME — single outline source
    ========================= */
 .k-processPill__frame{
   position: absolute;
@@ -100,7 +105,6 @@
   z-index: 2;
 
   padding: 1px;
-
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
@@ -109,13 +113,11 @@
 
   overflow: hidden;
 
+  /* subtle base stroke + heat glow */
   box-shadow:
     0 0 0 1px rgba(255,255,255,.06) inset,
     0 0 0 1px rgba(170,95,255, calc(var(--heat) * .34)) inset,
     0 0 140px rgba(170,95,255, calc(var(--heat) * .14));
-
-  opacity: 1;
-  transform: translateZ(0);
 }
 
 .k-processPill__frame::before{
@@ -123,9 +125,7 @@
   position:absolute;
   inset: 0;
   border-radius: 20px;
-
   background: linear-gradient(180deg, rgba(170,95,255,.95), rgba(105,140,255,.65));
-
   transform: scaleY(var(--heat));
   transform-origin: top;
   will-change: transform;
@@ -226,7 +226,6 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
   line-height: 1.45;
 }
 
-/* meter */
 .k-processPill__meter{
   height: 10px;
   border-radius: 999px;
@@ -245,7 +244,6 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
   box-shadow: 0 12px 50px rgba(105,140,255, calc(var(--heat) * .14));
 }
 
-/* micro */
 .k-processPill__micro{
   display:flex;
   align-items: baseline;
@@ -295,7 +293,6 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
   padding-left: 1.1em;
   color: rgba(255,255,255, calc(.66 + var(--heat) * .22));
 }
-
 .k-processPill__list li + li{ margin-top: 8px; }
 
 .k-processPill__list strong{
@@ -308,17 +305,11 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
   padding-top: 10px;
   border-top: 1px solid rgba(255,255,255, calc(.10 + var(--heat) * .06));
 }
-
 .k-processPill__note h6{ margin-bottom: 6px; }
 
 /* =========================
-   RESPONSIVE — frame always fits on iPhone
+   MOBILE sizing
    ========================= */
-@media (max-width: 980px){
-  .k-processPill__wrap{ justify-items: stretch; }
-  .k-processPill__main{ width: 100%; }
-}
-
 @media (max-width: 860px){
   .k-processPill__main{
     grid-template-columns: 1fr;
@@ -336,9 +327,7 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
   }
 
   .k-processPill__left,
-  .k-processPill__right{
-    border-radius: 16px;
-  }
+  .k-processPill__right{ border-radius: 16px; }
 
   .k-processPill__left{ padding: 12px; }
   .k-processPill__right{ padding: 12px 12px 14px; gap: 9px; }
@@ -356,8 +345,7 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
 }
 
 /* =========================
-   iOS Safari mobile fallback: remove mask-composite (heavy)
-   Still ONE outline (no doubling).
+   iOS fallback: remove mask-composite ring (heavy)
    ========================= */
 @supports (-webkit-touch-callout: none){
   @media (max-width: 860px){
@@ -372,20 +360,20 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
         0 0 0 1px rgba(170,95,255, calc(var(--heat) * .55)) inset,
         0 0 90px rgba(170,95,255, calc(var(--heat) * .18));
     }
-    .k-processPill__frame::before{ display: none; }
+    .k-processPill__frame::before{ display:none; }
   }
 }
 
 /* =========================
-   Zoom-safe mode (set by TSX via html[data-zoomed="1"])
-   This prevents iOS tab crashes during pinch zoom.
+   Zoom-safe mode (set by TSX)
+   This is the “don’t crash Safari” switch.
    ========================= */
 html[data-zoomed="1"] .k-processPill__main{
   backdrop-filter: none !important;
   box-shadow: 0 10px 34px rgba(0,0,0,.32) !important;
 }
 html[data-zoomed="1"] .k-processPill__main::after{
-  opacity: 0.12 !important;
+  opacity: 0.10 !important;
 }
 html[data-zoomed="1"] .k-processPill__frame{
   border-color: rgba(255,255,255,.08) !important;
