@@ -465,3 +465,41 @@
   .k-packStage,
   .k-packScroll{ border-radius: 22px; }
 }
+/* =========================================
+   PACKAGES — TRUE edge-to-edge on mobile
+   + tiers (Base/Plus/Bespoke) ~20% narrower
+   Paste at the VERY BOTTOM of packages.css
+   ========================================= */
+
+@media (max-width: 720px){
+  /* TRUE full-bleed regardless of container/gutter */
+  .k-packCard{
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+
+    border-radius: 0 !important;
+    border-left: 0;
+    border-right: 0;
+  }
+
+  .k-packStage,
+  .k-packScroll{
+    border-radius: 0 !important;
+  }
+
+  /* Make tier columns ~20% narrower */
+  .k-packMatrix{
+    /* was: 220px + 3 * 240px = 940px */
+    grid-template-columns: 220px repeat(3, minmax(190px, 1fr));
+    min-width: 790px;
+  }
+}
+
+@media (max-width: 420px){
+  .k-packMatrix{
+    /* was: 200px + 3 * 230px = 900px */
+    grid-template-columns: 200px repeat(3, minmax(180px, 1fr));
+    min-width: 740px;
+  }
+}
