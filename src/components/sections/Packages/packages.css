@@ -313,3 +313,87 @@
   color: rgba(255,255,255,.56);
   font-size: 12px;
 }
+/* =========================================
+   PACKAGES — Mobile polish (no frames on label column)
+   - label column stays aligned + sticky
+   - but looks "frameless" on mobile
+   - reduces iOS sticky/scroll ghosting
+   ========================================= */
+
+@media (max-width: 720px){
+  /* a touch less "empty space" on the left */
+  .k-packMatrix{
+    grid-template-columns: 220px repeat(3, minmax(240px, 1fr));
+    min-width: 940px;
+  }
+
+  /* ===== Frameless label column (header + rows) ===== */
+  .k-packHeadCell--label,
+  .k-packStickyCell{
+    /* keep sticky, but remove all “cell box” visuals */
+    border-bottom: 0 !important;
+    background: linear-gradient(
+      90deg,
+      rgba(7,7,10,.92) 0%,
+      rgba(7,7,10,.86) 78%,
+      rgba(7,7,10,0) 100%
+    ) !important;
+
+    /* iOS compositing stability (kills text smear/ghosting) */
+    isolation: isolate;
+    contain: paint;
+    transform: translateZ(0);
+  }
+
+  /* kill the seam line that we draw for sticky column */
+  .k-packHeadCell--label::after,
+  .k-packStickyCell::after{
+    display: none !important;
+  }
+
+  /* kill the “grid row lines” inside the label column only */
+  .k-packCell.k-packCell--label{
+    border-bottom: 0 !important;
+  }
+
+  /* optional: make dust calmer on mobile so it doesn't fight readability */
+  .k-packDust{ opacity: .45; }
+}
+
+/* tighter phones */
+@media (max-width: 420px){
+  .k-packMatrix{
+    grid-template-columns: 200px repeat(3, minmax(230px, 1fr));
+    min-width: 900px;
+  }
+}
+/* =========================================
+   PACKAGES — Mobile cleanup
+   - hide hints on mobile
+   - NO visible borders/lines in the 1st (label) column
+   ========================================= */
+
+@media (max-width: 720px){
+
+  /* 1) Na mobile: nie pokazuj podpowiedzi (k-packCellHint) */
+  .k-packCellHint{ display: none !important; }
+
+  /* 2) Zabij “ramki”/linie w 1. kolumnie (labels) */
+  .k-packHeadCell--label,
+  .k-packStickyCell,
+  .k-packCell.k-packCell--label{
+    border-bottom: 0 !important;        /* brak poziomych linii w labelach */
+    box-shadow: none !important;
+  }
+
+  /* 3) Usuń pionową “szwę” sticky (to robi tę kreskę przy granicy) */
+  .k-packHeadCell--label::after,
+  .k-packStickyCell::after{
+    display: none !important;
+  }
+
+  /* 4) Usuń separator pionowy należący do 1. kolumny (grid border-right) */
+  .k-packMatrix > *:nth-child(4n + 1){
+    border-right: 0 !important;
+  }
+}
