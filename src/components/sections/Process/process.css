@@ -1,5 +1,7 @@
 /* =========================================
    Process — mobile-first stability for iOS
+   Single-source border: FRAME owns the border.
+   MAIN border is disabled to avoid double outlines.
    --heat: 0..1 (animated on enter/leave, no scrub)
    html[data-scroll-dir="down|up"] controls frame origin (desktop)
    ========================================= */
@@ -17,19 +19,22 @@
 }
 
 /* =========================
-   MAIN
+   MAIN (glass shell)
+   NOTE: border + inset stroke removed to prevent double frame.
    ========================= */
 .k-processPill__main{
   width: min(80vw, 1100px);
   border-radius: 20px;
 
   background: rgba(255,255,255,.02);
-  border: 1px solid rgba(255,255,255,.08);
-  backdrop-filter: blur(10px);
 
-  box-shadow:
-    0 18px 70px rgba(0,0,0,.36),
-    0 0 0 1px rgba(255,255,255,.03) inset;
+  /* IMPORTANT: disable border (FRAME owns it) */
+  border: 1px solid transparent;
+
+  /* IMPORTANT: remove inset “stroke” (third line look) */
+  box-shadow: 0 18px 70px rgba(0,0,0,.36);
+
+  backdrop-filter: blur(10px);
 
   position: relative;
   overflow: hidden;
@@ -56,7 +61,7 @@
   opacity: calc(.10 + var(--heat) * .16);
 }
 
-/* inside fill (still premium, but not insane) */
+/* inside fill (premium but sane on iOS) */
 .k-processPill__main::after{
   content:"";
   position:absolute;
@@ -71,21 +76,16 @@
   opacity: calc(var(--heat) * .92);
 }
 
-/* rim + ambient glow */
+/* ambient glow lives on the shell (not a border stroke) */
 .k-processPill__wrap .k-processPill__main{
   box-shadow:
     0 18px 70px rgba(0,0,0,.36),
-    0 0 0 1px rgba(255,255,255, calc(.03 + var(--heat) * .08)) inset,
     0 0 170px rgba(170,95,255, calc(var(--heat) * .10));
-  border-color: rgba(255,255,255, calc(.08 + var(--heat) * .04));
-}
-
-.k-processPill__wrap.is-active .k-processPill__main{
-  border-color: rgba(170,95,255, calc(.18 + var(--heat) * .55));
 }
 
 /* =========================
-   FRAME — desktop version (mask ring)
+   FRAME — the ONLY border source (desktop: mask ring)
+   Also includes a subtle base stroke even at heat=0.
    ========================= */
 .k-processPill__frame{
   position: absolute;
@@ -102,12 +102,14 @@
   mask-composite: exclude;
 
   overflow: hidden;
-  opacity: calc(var(--heat) * 1);
 
+  /* base stroke always present + stronger when heat rises */
   box-shadow:
-    0 0 0 1px rgba(170,95,255, calc(var(--heat) * .32)) inset,
+    0 0 0 1px rgba(255,255,255,.06) inset,
+    0 0 0 1px rgba(170,95,255, calc(var(--heat) * .34)) inset,
     0 0 140px rgba(170,95,255, calc(var(--heat) * .14));
 
+  opacity: 1;
   transform: translateZ(0);
 }
 
@@ -310,28 +312,28 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
 .k-processPill__note h6{ margin-bottom: 6px; }
 
 /* =========================
-   RESPONSIVE — make it actually smaller on iPhone
+   RESPONSIVE
    ========================= */
-
-/* Stretch inside container instead of vw games */
 @media (max-width: 980px){
   .k-processPill__wrap{ justify-items: stretch; }
   .k-processPill__main{ width: 100%; }
 }
 
-/* Mobile layout + size reduction */
+/* Mobile: smaller + cheaper paint */
 @media (max-width: 860px){
   .k-processPill__main{
     grid-template-columns: 1fr;
     gap: 10px;
     padding: 10px;
     border-radius: 18px;
-
-    /* cheaper paint for iOS */
     backdrop-filter: blur(7px);
+    box-shadow: 0 12px 44px rgba(0,0,0,.34);
+  }
+
+  .k-processPill__wrap .k-processPill__main{
     box-shadow:
       0 12px 44px rgba(0,0,0,.34),
-      0 0 0 1px rgba(255,255,255,.03) inset;
+      0 0 140px rgba(170,95,255, calc(var(--heat) * .10));
   }
 
   .k-processPill__left,
@@ -346,7 +348,6 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
 
   .k-processPill__stepText{
     font-size: 13px;
-    /* clamp to reduce height */
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
@@ -358,7 +359,6 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
   }
 
   .k-processPill__copy{
-    /* clamp: keeps card from becoming a skyscraper */
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 4;
@@ -386,8 +386,9 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
 }
 
 /* =========================
-   iOS Safari fallback: kill the heaviest part (mask-composite frame)
-   Keep glow + border so it still feels premium.
+   iOS Safari fallback: disable mask-composite ring (heavy).
+   Keep single, clean border via box-shadow + border.
+   (Still ONE outline; no doubling.)
    ========================= */
 @supports (-webkit-touch-callout: none){
   @media (max-width: 860px){
@@ -397,9 +398,9 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
       -webkit-mask-composite: initial;
       mask-composite: initial;
 
-      border: 1px solid rgba(170,95,255, calc(.12 + var(--heat) * .55));
+      border: 1px solid rgba(255,255,255,.06);
       box-shadow:
-        0 0 0 1px rgba(255,255,255, calc(.04 + var(--heat) * .08)) inset,
+        0 0 0 1px rgba(170,95,255, calc(var(--heat) * .55)) inset,
         0 0 90px rgba(170,95,255, calc(var(--heat) * .18));
     }
     .k-processPill__frame::before{ display: none; }
@@ -410,5 +411,4 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
 @media (prefers-reduced-motion: reduce){
   .k-processPill__main{ transform: none; opacity: 1; }
   .k-processPill__main::after{ opacity: .18; }
-  .k-processPill__frame{ opacity: .35; }
 }
