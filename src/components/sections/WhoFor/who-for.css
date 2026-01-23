@@ -1,609 +1,510 @@
-/* =========================
-   WHO IT’S FOR — wrapper / layout (k-who3)
-   Fixes:
-   - no sideways drift on mobile
-   - stage is always inside container
-   - island glow/blur cannot expand page width
-   ========================= */
+/* =========================================
+   WHO IT’S FOR — Linear-style morph cards
+   - Premium glass
+   - Controlled motion
+   - Square tiles (like reference)
+   - No divider line between visual + title
+   ========================================= */
 
-.k-who3{
+.k-whoL{
   position: relative;
-
-  /* HARD STOP for horizontal drift created by glows/blur inside the island */
   overflow-x: clip;
 }
 @supports not (overflow: clip){
-  .k-who3{ overflow-x: hidden; }
+  .k-whoL{ overflow-x: hidden; }
 }
 
-.k-who3__container{
+.k-whoL__container{
   position: relative;
   min-width: 0;
 }
 
-/* Header now uses global .k-sectionHead styles (Work-style, centered).
-   Keep only spacing here. */
-.k-who3__head{
-  margin-bottom: clamp(18px, 3vw, 28px);
-}
-
-/* Stage = the “console frame” */
-.k-who3__stage{
-  /* MUST NOT be wider than container */
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-
-  /* contain paint so blur/glow doesn’t affect layout width */
-  contain: paint;
-
-  /* keep everything clipped to the card */
-  overflow: hidden;
-
-  border-radius: 26px;
-}
-
-/* CTA strip under console */
-.k-who3__cta{
-  margin-top: clamp(18px, 3vw, 28px);
-  padding: 18px;
-  border-radius: 24px;
-  background: rgba(255,255,255,.02);
-  border: 1px solid rgba(255,255,255,.08);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+/* ===== Header (like screenshot) ===== */
+.k-whoL__head{
   display: grid;
-  gap: 14px;
+  gap: 18px;
+  align-items: start;
+  margin-bottom: clamp(18px, 3vw, 26px);
 }
 
-@media (min-width: 860px){
-  .k-who3__cta{
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    gap: 18px;
-    padding: 20px 22px;
+@media (min-width: 980px){
+  .k-whoL__head{
+    grid-template-columns: 1.15fr .85fr;
+    gap: clamp(22px, 3vw, 40px);
   }
 }
 
-.k-who3__ctaCopy p{ margin-top: 8px; }
-
-.k-who3__ctaBtns{
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: flex-start;
-  align-items: center;
+.k-whoL__title{
+  margin: 0;
+  font-size: clamp(40px, 4.6vw, 72px);
+  line-height: 1.02;
+  letter-spacing: -0.055em;
+  color: rgba(255,255,255,.94);
 }
 
-@media (min-width: 860px){
-  .k-who3__ctaBtns{ justify-content: flex-end; }
-}
-
-/* =========================
-   WHO IT’S FOR — A+ Console (island styles)
-   Apple-ish clarity + one subtle holographic signature
-   Less borders • more air • spotlight under active pill
-   ========================= */
-
-.k-whoLite{
-  padding: clamp(56px, 7vw, 96px) 0;
-  position: relative;
-
-  /* FIX: never let this section create horizontal scroll */
-  overflow-x: clip;
-}
-@supports not (overflow: clip){
-  .k-whoLite{ overflow-x: hidden; }
-}
-
-.k-whoLite__head{
+.k-whoL__side{
   display: grid;
-  gap: 14px;
-  margin-bottom: clamp(18px, 3vw, 28px);
-}
-
-.k-whoLite__kicker{
-  display: inline-flex;
-  align-items: center;
   gap: 10px;
+  padding-top: clamp(2px, 1vw, 8px);
+  max-width: 56ch;
 }
 
-.k-whoLite__pulse{
-  width: 26px;
-  height: 10px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, rgba(190,145,255,0), rgba(190,145,255,.75), rgba(190,145,255,0));
-  opacity: .9;
+.k-whoL__lead{
+  margin: 0;
+  color: rgba(255,255,255,.68);
+  line-height: 1.55;
+}
+.k-whoL__lead strong{
+  color: rgba(255,255,255,.86);
+  font-weight: 750;
 }
 
-.k-whoLite__title p{
-  margin-top: 10px;
-  color: var(--muted);
+.k-whoL__link{
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  color: rgba(255,255,255,.88);
+  text-decoration: none;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  width: fit-content;
+  opacity: .92;
+}
+.k-whoL__link:hover{ opacity: 1; }
+.k-whoL__link span{ transform: translateY(-.5px); }
+
+/* ===== Grid cards ===== */
+.k-whoL__grid{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
 }
 
-/* =========================
-   Card (console)
-   ========================= */
-.k-whoLite__card{
-  position: relative;
-  border-radius: 26px;
-  background: rgba(255,255,255,.02);
-  border: 1px solid rgba(255,255,255,.07);
-  box-shadow:
-    0 26px 80px rgba(0,0,0,.38),
-    inset 0 1px 0 rgba(255,255,255,.05);
-  overflow: hidden;
-  isolation: isolate;
+@media (min-width: 760px){
+  .k-whoL__grid{ grid-template-columns: repeat(3, 1fr); gap: 14px; }
+}
 
-  /* FIX: keep paint inside (glow/blur safety) */
-  max-width: 100%;
-  contain: paint;
-
-  /* extra: never allow accidental width expansion */
+/* Card as button */
+.k-whoL__card{
+  appearance: none;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  padding: 0;
+  cursor: pointer;
   min-width: 0;
 }
 
-/* Subtle noise + depth */
-.k-whoLite__card:before{
+/* ===== Tile shell (square) ===== */
+.k-whoL__cardInner{
+  position: relative;
+  border-radius: 26px;
+  overflow: hidden;
+
+  /* square tile */
+  aspect-ratio: 1 / 1;
+
+  /* layout */
+  display: flex;
+  flex-direction: column;
+
+  background: rgba(255,255,255,.02);
+  border: 1px solid rgba(255,255,255,.07);
+  box-shadow:
+    0 28px 90px rgba(0,0,0,.45),
+    inset 0 1px 0 rgba(255,255,255,.05);
+
+  isolation: isolate;
+}
+
+/* subtle top sheen */
+.k-whoL__cardInner::before{
+  content:"";
+  position:absolute;
+  inset:-1px;
+  pointer-events:none;
+  background:
+    radial-gradient(900px 420px at 18% 12%, rgba(255,255,255,.08), transparent 60%),
+    radial-gradient(900px 420px at 80% 10%, rgba(190,145,255,.10), transparent 62%);
+  opacity: .7;
+}
+
+/* inner vignette = more “single object”, less “two panels” */
+.k-whoL__cardInner::after{
   content:"";
   position:absolute;
   inset:0;
   pointer-events:none;
   background:
-    radial-gradient(900px 520px at 12% 6%, rgba(190,145,255,.14), transparent 58%),
-    radial-gradient(900px 520px at 88% 10%, rgba(255,255,255,.06), transparent 60%),
-    repeating-linear-gradient(
-      0deg,
-      rgba(255,255,255,.03) 0px,
-      rgba(255,255,255,.03) 1px,
-      rgba(0,0,0,0) 3px,
-      rgba(0,0,0,0) 6px
-    );
-  opacity: .22;
-  z-index: 0;
+    radial-gradient(900px 520px at 50% 0%, rgba(255,255,255,.06), transparent 55%),
+    radial-gradient(900px 520px at 50% 110%, rgba(0,0,0,.55), transparent 60%);
+  opacity:.7;
 }
 
-/* Signature: quiet aurora ribbon */
-.k-whoLite__card:after{
+/* ===== Visual area (NO divider line) ===== */
+.k-whoL__visual{
+  position: relative;
+  flex: 1 1 auto;
+  height: auto;                /* replaces old fixed height */
+  background: rgba(0,0,0,.16);
+  overflow: hidden;
+  border-bottom: 0 !important;  /* kills that separator line */
+}
+
+/* Visual label (tiny, like "50ms") */
+.k-whoL__visualLabel{
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  color: rgba(255,255,255,.40);
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  transform: rotate(-10deg);
+  user-select: none;
+  pointer-events: none;
+}
+
+/* ===== Bottom content (title + floating plus) ===== */
+.k-whoL__cardBottom{
+  position: relative;
+  display: block;              /* no “row” split */
+  padding: 18px 18px 18px;
+}
+
+/* Title sits bottom-left like reference */
+.k-whoL__cardTitle{
+  white-space: pre-line;
+  font-size: 19px;
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+  color: rgba(255,255,255,.92);
+  font-weight: 760;
+  max-width: 20ch;
+  padding-right: 56px; /* space for + bubble */
+}
+
+/* plus circle in bottom-right corner */
+.k-whoL__plus{
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  display:grid;
+  place-items:center;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.02);
+  box-shadow:
+    0 14px 40px rgba(0,0,0,.35),
+    inset 0 1px 0 rgba(255,255,255,.06);
+  flex: 0 0 auto;
+  opacity: 1;
+}
+
+.k-whoL__plusI{
+  font-size: 20px;
+  line-height: 1;
+  color: rgba(255,255,255,.82);
+  transform: translateY(-.5px);
+}
+
+/* hover polish */
+@media (hover:hover){
+  .k-whoL__card:hover .k-whoL__cardInner{
+    border-color: rgba(255,255,255,.10);
+    box-shadow:
+      0 34px 120px rgba(0,0,0,.55),
+      inset 0 1px 0 rgba(255,255,255,.06);
+  }
+  .k-whoL__card:hover .k-whoL__plus{
+    border-color: rgba(190,145,255,.22);
+    box-shadow:
+      0 18px 60px rgba(0,0,0,.30),
+      inset 0 1px 0 rgba(255,255,255,.06);
+  }
+}
+
+/* ===== Visuals (CSS-only “illustrations”) ===== */
+/* 1) development: stacked sheets + orb */
+.k-whoL__visual--development{
+  background:
+    radial-gradient(520px 240px at 70% 30%, rgba(190,145,255,.14), transparent 60%),
+    radial-gradient(520px 240px at 25% 10%, rgba(255,255,255,.06), transparent 62%),
+    rgba(0,0,0,.18);
+}
+.k-whoL__visual--development::before{
   content:"";
   position:absolute;
-  left:-20%;
-  right:-20%;
-  top: 44%;
-  height: 140px;
-  pointer-events:none;
-  background: linear-gradient(90deg,
-    rgba(190,145,255,0) 0%,
-    rgba(190,145,255,.12) 22%,
-    rgba(255,255,255,.08) 52%,
-    rgba(190,145,255,.10) 76%,
-    rgba(190,145,255,0) 100%
-  );
-  filter: blur(18px);
-  opacity: .55;
-  transform: rotate(-6deg);
-  z-index: 0;
-}
-
-/* cursor glow overlay (framer) */
-.k-whoLite__glow{
-  position: absolute;
-  inset: -2px;
-  border-radius: 26px;
-  pointer-events: none;
-  mix-blend-mode: screen;
-  opacity: .9;
-  z-index: 0;
-}
-
-/* ensure card children above background layers */
-.k-whoLite__card > *{
-  position: relative;
-  z-index: 1;
-  min-width: 0;
-}
-
-/* =========================
-   Top row
-   ========================= */
-.k-whoLite__top{
-  padding: 18px 18px 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 14px;
-  min-width: 0;
-}
-
-@media (min-width: 520px){
-  .k-whoLite__top{ padding: 20px 22px 14px; }
-}
-
-.k-whoLite__topLeft{
-  min-width: 0;
-}
-
-.k-whoLite__topLeft small{
-  display:block;
-  margin-top: 6px;
-  color: rgba(255,255,255,.66);
-}
-
-/* Meter: pill + micro bar */
-.k-whoLite__meter{
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 999px;
-  background: rgba(255,255,255,.02);
-  border: 1px solid rgba(255,255,255,.10);
-  color: rgba(255,255,255,.84);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
-}
-
-.k-whoLite__meterDot{
-  width: 8px;
-  height: 8px;
-  border-radius: 99px;
-  background: rgba(190,145,255,.95);
-  box-shadow:
-    0 0 0 5px rgba(190,145,255,.10),
-    0 0 18px rgba(190,145,255,.22);
-}
-
-.k-whoLite__meterWord{
-  font-size: 12px;
-  letter-spacing: var(--track-wide);
-  text-transform: uppercase;
-  opacity: .8;
-  font-weight: var(--w-semibold);
-}
-
-.k-whoLite__meterNum{
-  font-weight: var(--w-bold);
-  letter-spacing: var(--track-tight);
-}
-
-.k-whoLite__meterSlash{
-  opacity: .6;
-  font-size: 13px;
-}
-
-.k-whoLite__meterTotal{
-  opacity: .82;
-  font-weight: var(--w-semibold);
-}
-
-.k-whoLite__meterBar{
-  position: relative;
-  width: 54px;
-  height: 6px;
-  border-radius: 99px;
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.08);
-  overflow: hidden;
-  margin-left: 6px;
-}
-
-.k-whoLite__meterFill{
-  display:block;
-  height: 100%;
-  border-radius: 99px;
-  background: rgba(190,145,255,.40);
-  box-shadow: 0 0 18px rgba(190,145,255,.18);
-}
-
-/* =========================
-   Pills rail
-   ========================= */
-.k-whoLite__pillsWrap{
-  padding: 10px 10px 6px;
-}
-
-@media (min-width: 520px){
-  .k-whoLite__pillsWrap{ padding: 10px 14px 6px; }
-}
-
-.k-whoLite__pills{
-  position: relative;
-  display: flex;
-  gap: 10px;
-  padding: 8px;
-  border-radius: 18px;
-  background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0));
-  border: 1px solid rgba(255,255,255,.06);
-
-  overflow-x: auto;
-  overflow-y: hidden;
-
-  scroll-snap-type: x mandatory;
-  scroll-snap-stop: always;
-  -webkit-overflow-scrolling: touch;
-
-  /* key: contain scroll to this rail only */
-  overscroll-behavior-x: contain;
-
-  scrollbar-width: none;
-  scroll-padding-inline: 14px;
-
-  /* premium carousel: gentle edge fade */
-  mask-image: linear-gradient(90deg, transparent 0%, #000 7%, #000 93%, transparent 100%);
-}
-
-.k-whoLite__pills::-webkit-scrollbar{ display:none; }
-
-@supports not (mask-image: linear-gradient(#000,#000)){
-  .k-whoLite__pills{ mask-image: none; }
-}
-
-/* Mobile-only: center hint (subtle target line) */
-@media (max-width: 899px){
-  .k-whoLite__pills:after{
-    content:"";
-    position:absolute;
-    left: 50%;
-    top: 10px;
-    bottom: 10px;
-    width: 1px;
-    transform: translateX(-.5px);
-    background: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,.14), rgba(255,255,255,0));
-    opacity: .55;
-    pointer-events: none;
-  }
-}
-
-/* Desktop: wrap instead of rail (fix “half-cut” look) */
-@media (min-width: 900px){
-  .k-whoLite__pills{
-    flex-wrap: wrap;
-    overflow: visible;
-    scroll-snap-type: none;
-    padding: 10px;
-
-    /* rail -> wrap: no edge fade */
-    mask-image: none;
-  }
-}
-
-/* Spotlight under active pill */
-.k-whoLite__spot{
-  position: absolute;
-  left: 0;
-  top: 0;
-  border-radius: 999px;
-  pointer-events: none;
-  z-index: 0;
+  left: 16px;
+  top: 26px;
+  width: 180px;
+  height: 120px;
   background:
-    radial-gradient(120px 70px at 50% 50%, rgba(190,145,255,.22), rgba(190,145,255,0) 70%),
-    linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
-  border: 1px solid rgba(190,145,255,.22);
-  box-shadow:
-    0 18px 55px rgba(0,0,0,.35),
-    0 0 22px rgba(190,145,255,.15),
-    inset 0 1px 0 rgba(255,255,255,.08);
-}
-
-/* Pills */
-.k-whoLite__pill{
-  position: relative;
-  z-index: 1;
-  scroll-snap-align: center;
-  white-space: nowrap;
-
+    linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0));
   border: 1px solid rgba(255,255,255,.10);
-  background: rgba(255,255,255,.015);
+  border-radius: 18px;
+  box-shadow: 0 26px 90px rgba(0,0,0,.45);
+  transform: rotate(-10deg);
+  opacity: .35;
+}
+.k-whoL__visual--development::after{
+  content:"";
+  position:absolute;
+  left: 58px;
+  top: 46px;
+  width: 180px;
+  height: 120px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.10);
+  background:
+    radial-gradient(120px 90px at 70% 60%, rgba(190,145,255,.18), rgba(0,0,0,0) 70%),
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0));
+  transform: rotate(-2deg);
+  opacity: .28;
+}
+
+/* 2) speed: “50ms” arcs/rails */
+.k-whoL__visual--speed{
+  background:
+    radial-gradient(520px 260px at 75% 15%, rgba(255,255,255,.06), transparent 62%),
+    radial-gradient(520px 260px at 40% 55%, rgba(190,145,255,.12), transparent 64%),
+    rgba(0,0,0,.18);
+}
+.k-whoL__visual--speed::before{
+  content:"";
+  position:absolute;
+  inset:-20%;
+  background:
+    repeating-linear-gradient(
+      120deg,
+      rgba(255,255,255,.18) 0px,
+      rgba(255,255,255,.18) 2px,
+      rgba(0,0,0,0) 10px,
+      rgba(0,0,0,0) 22px
+    );
+  opacity: .10;
+  transform: rotate(-10deg);
+}
+.k-whoL__visual--speed::after{
+  content:"";
+  position:absolute;
+  right: -34px;
+  top: 22px;
+  width: 260px;
+  height: 260px;
   border-radius: 999px;
-  padding: 10px 12px;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  color: rgba(255,255,255,.86);
-  cursor: pointer;
-  overflow: hidden;
-
-  transition: transform .18s ease, border-color .18s ease, background .18s ease, box-shadow .18s ease;
+  background:
+    conic-gradient(from 210deg, rgba(255,255,255,.0), rgba(255,255,255,.14), rgba(255,255,255,.0) 70%);
+  mask-image: radial-gradient(circle at 50% 50%, #000 48%, transparent 62%);
+  opacity: .55;
 }
 
-.k-whoLite__pill:hover{
-  background: rgba(255,255,255,.03);
-  border-color: rgba(255,255,255,.14);
-  transform: translateY(-1px);
+/* 3) craft: grid + “create” chip */
+.k-whoL__visual--craft{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,0)),
+    rgba(0,0,0,.18);
 }
-
-.k-whoLite__pill:active{
-  transform: translateY(0px);
+.k-whoL__visual--craft::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,.08) 1px, transparent 1px);
+  background-size: 44px 44px;
+  opacity: .10;
+  transform: perspective(900px) rotateX(58deg) rotateZ(-10deg) translateY(40px);
+  transform-origin: 50% 0%;
 }
-
-.k-whoLite__pill.is-active{
-  border-color: rgba(190,145,255,.18);
-  background: rgba(255,255,255,.03);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
-  transform: translateY(-1px);
-}
-
-.k-whoLite__pillIcon{
-  width: 28px;
-  height: 28px;
+.k-whoL__visual--craft::after{
+  content:"";
+  position:absolute;
+  left: 50%;
+  top: 52%;
+  transform: translate(-50%, -50%) rotate(-18deg);
+  width: 140px;
+  height: 36px;
   border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(0,0,0,.18);
+  box-shadow: 0 18px 70px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06);
+  opacity: .9;
+}
+
+/* Modal visual is taller (but still no divider) */
+.k-whoL__visual--modal{
+  height: 230px;
+  border-bottom: 0 !important;
+}
+
+/* ===== Overlay / Modal ===== */
+.k-whoL__overlay{
+  position: fixed;
+  inset: 0;
+  z-index: 70;
   display: grid;
   place-items: center;
-  background: rgba(255,255,255,.02);
-  border: 1px solid rgba(255,255,255,.09);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
-  color: rgba(255,255,255,.82);
+  padding: 18px;
+  background: rgba(0,0,0,.58);
+  backdrop-filter: blur(10px);
 }
 
-.k-whoLite__pillText{
-  font-weight: var(--w-semibold);
-  letter-spacing: var(--track-normal);
-  font-size: 14px;
+.k-whoL__modalWrap{
+  width: min(720px, 100%);
 }
 
-/* sweep (active only; injected by Framer) */
-.k-whoLite__pillSweep{
-  position: absolute;
-  inset: -2px;
-  border-radius: 999px;
-  pointer-events: none;
-  background: linear-gradient(
-    90deg,
-    rgba(255,255,255,0) 0%,
-    rgba(190,145,255,.16) 38%,
-    rgba(255,255,255,.10) 52%,
-    rgba(255,255,255,0) 78%
-  );
-  mix-blend-mode: screen;
-  opacity: .85;
+.k-whoL__modal{
+  border-radius: 26px;
+  overflow: hidden;
+  background: rgba(10,10,14,.86);
+  border: 1px solid rgba(255,255,255,.10);
+  box-shadow: 0 60px 220px rgba(0,0,0,.70);
 }
 
-/* =========================
-   Promise area
-   ========================= */
-.k-whoLite__promise{
-  padding: 12px 14px 18px;
-}
-
-@media (min-width: 520px){
-  .k-whoLite__promise{ padding: 12px 18px 22px; }
-}
-
-.k-whoLite__promiseInner{
-  border-radius: 22px;
-  padding: 16px 16px;
+.k-whoL__modalTop{
   position: relative;
-  z-index: 2; /* FIX: never behind ribbon/glow */
-  min-width: 0;
+}
+
+.k-whoL__close{
+  position:absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(0,0,0,.22);
+  color: rgba(255,255,255,.88);
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+}
+.k-whoL__close:hover{ background: rgba(0,0,0,.30); }
+.k-whoL__close span{ font-size: 20px; transform: translateY(-1px); }
+
+/* Body */
+.k-whoL__modalBody{
+  padding: 18px 18px 18px;
 }
 
 @media (min-width: 520px){
-  .k-whoLite__promiseInner{ padding: 18px 18px; }
+  .k-whoL__modalBody{ padding: 22px 22px 22px; }
 }
 
-.k-whoLite__promiseInner--soft{
-  background:
-    linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.12));
-  border: 1px solid rgba(255,255,255,.06);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.06),
-    0 18px 60px rgba(0,0,0,.22);
-}
-
-/* Micro proof */
-.k-whoLite__microProof{
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  display: grid;
-  gap: 3px;
-  padding: 9px 10px;
-  border-radius: 14px;
-  background: rgba(255,255,255,.02);
-  border: 1px solid rgba(255,255,255,.08);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
-  color: rgba(255,255,255,.78);
-  pointer-events: none;
-  text-align: right;
-  max-width: 200px;
-}
-
-.k-whoLite__microProofTop{
-  font-size: 11px;
-  letter-spacing: var(--track-wide);
-  text-transform: uppercase;
-  opacity: .7;
-  font-weight: var(--w-semibold);
-}
-
-.k-whoLite__microProofValue{
-  font-size: 13px;
-  font-weight: var(--w-bold);
-  letter-spacing: var(--track-tight);
-  color: rgba(255,255,255,.88);
-}
-
-.k-whoLite__microProofFoot{
-  font-size: 11px;
-  opacity: .62;
-  line-height: 1.2;
-}
-
-@media (max-width: 520px){
-  .k-whoLite__microProof{
-    top: 10px;
-    right: 10px;
-    padding: 8px 9px;
-    border-radius: 13px;
-    max-width: 170px;
-  }
-}
-
-@media (max-width: 380px){
-  .k-whoLite__microProof{ display:none; }
-}
-
-.k-whoLite__promiseLabel{
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  color: rgba(255,255,255,.70);
-  font-weight: var(--w-semibold);
-  letter-spacing: var(--track-normal);
-  margin-bottom: 10px;
-}
-
-.k-whoLite__spark{
-  width: 10px;
-  height: 10px;
-  border-radius: 99px;
-  background: rgba(190,145,255,.95);
-  box-shadow:
-    0 0 0 5px rgba(190,145,255,.10),
-    0 0 18px rgba(190,145,255,.22);
-}
-
-.k-whoLite__promiseTitle{
+.k-whoL__modalTitle{
   margin: 0;
-  line-height: 1.12;
+  font-size: clamp(28px, 3.4vw, 40px);
+  line-height: 1.06;
+  letter-spacing: -0.05em;
+  color: rgba(255,255,255,.95);
+}
+
+.k-whoL__modalCopy{
+  margin-top: 10px;
+  color: rgba(255,255,255,.68);
+  line-height: 1.65;
   max-width: 62ch;
 }
+.k-whoL__modalCopy p{ margin: 10px 0 0; }
 
-/* Micro outcomes */
-.k-whoLite__wins{
-  margin-top: 12px;
+/* Quote block */
+.k-whoL__quote{
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+.k-whoL__quoteLine{
+  width: 44px;
+  height: 2px;
+  border-radius: 9px;
+  background: rgba(190,145,255,.72);
+  box-shadow: 0 0 18px rgba(190,145,255,.18);
+  margin-bottom: 10px;
+  opacity: .9;
+}
+.k-whoL__quoteText{
+  margin: 0;
+  color: rgba(255,255,255,.86);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1.5;
+}
+.k-whoL__quoteBy{
+  margin-top: 8px;
+  color: rgba(255,255,255,.52);
+  font-size: 13px;
+}
+
+/* Stats */
+.k-whoL__stats{
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.k-whoL__stat{
+  padding: 12px 12px 10px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+}
+.k-whoL__statBig{
+  font-size: 44px;
+  line-height: 1;
+  letter-spacing: -0.06em;
+  color: rgba(255,255,255,.95);
+  font-weight: 820;
+}
+.k-whoL__statSmall{
+  margin-top: 6px;
+  color: rgba(255,255,255,.56);
+  font-size: 12.5px;
+  line-height: 1.35;
+}
+
+/* Modal footer row */
+.k-whoL__modalFoot{
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,.08);
   display: flex;
   flex-wrap: wrap;
-  gap: 10px 14px;
-  color: rgba(255,255,255,.76);
-}
-
-.k-whoLite__win{
-  display: inline-flex;
+  gap: 10px;
   align-items: center;
-  gap: 9px;
+  color: rgba(255,255,255,.62);
   font-size: 13px;
-  padding: 8px 10px;
+}
+
+.k-whoL__footDot{
+  width: 8px;
+  height: 8px;
   border-radius: 999px;
-  background: rgba(255,255,255,.02);
-  border: 1px solid rgba(255,255,255,.06);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+  background: rgba(190,145,255,.95);
+  box-shadow: 0 0 0 5px rgba(190,145,255,.10);
 }
 
-.k-whoLite__winDot{
-  width: 7px;
-  height: 7px;
-  border-radius: 99px;
-  background: rgba(190,145,255,.92);
-  box-shadow:
-    0 0 0 4px rgba(190,145,255,.10),
-    0 0 14px rgba(190,145,255,.18);
+.k-whoL__footLink{
+  color: rgba(255,255,255,.90);
+  text-decoration: none;
+  font-weight: 750;
+}
+.k-whoL__footLink:hover{ opacity: 1; }
+
+/* Mobile: modal takes more height and scrolls naturally */
+@media (max-width: 520px){
+  .k-whoL__overlay{ padding: 12px; place-items: end center; }
+  .k-whoL__modalWrap{ width: 100%; }
+  .k-whoL__modal{ border-radius: 22px; }
+  .k-whoL__modalBody{ padding: 16px; }
 }
 
+/* Reduced motion: keep it calm */
 @media (prefers-reduced-motion: reduce){
-  .k-whoLite__pill{
-    transition: none !important;
-  }
-  .k-whoLite__pill:hover{
-    transform: none;
-  }
+  .k-whoL__overlay{ backdrop-filter: none; }
 }

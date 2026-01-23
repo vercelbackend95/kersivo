@@ -133,48 +133,217 @@ import "./proof-pack.css";
       <div class="k-proofx__copy2">
         <h3 class="k-proofx__h3 k-proofx__h3--big">Ideate and specify<br/>what to build next</h3>
 
-        <div class="k-proofx__list" aria-hidden="true">
-          <div class="k-proofx__li k-proofx__li--on"><span class="k-proofx__liBar"></span><span>Collaborative documents</span></div>
-          <div class="k-proofx__li"><span class="k-proofx__liBar"></span><span>Inline comments</span></div>
-          <div class="k-proofx__li"><span class="k-proofx__liBar"></span><span>Text-to-issue commands</span></div>
+        <div class="k-proofx__list" data-proofx-tabs role="tablist" aria-label="Doc capabilities">
+          <button class="k-proofx__li k-proofx__liBtn is-active" type="button" role="tab" aria-selected="true" aria-controls="proofx-panel-doc" id="proofx-tab-doc" data-proofx-tab="doc">
+            <span class="k-proofx__liBar" aria-hidden="true"></span>
+            <span>Collaborative documents</span>
+          </button>
+
+          <button class="k-proofx__li k-proofx__liBtn" type="button" role="tab" aria-selected="false" aria-controls="proofx-panel-comments" id="proofx-tab-comments" data-proofx-tab="comments">
+            <span class="k-proofx__liBar" aria-hidden="true"></span>
+            <span>Inline comments</span>
+          </button>
+
+          <button class="k-proofx__li k-proofx__liBtn" type="button" role="tab" aria-selected="false" aria-controls="proofx-panel-commands" id="proofx-tab-commands" data-proofx-tab="commands">
+            <span class="k-proofx__liBar" aria-hidden="true"></span>
+            <span>Text-to-issue commands</span>
+          </button>
         </div>
       </div>
 
-      <div class="k-proofx__visual k-proofx__visual--doc" aria-hidden="true">
-        <div class="k-proofx__doc">
-          <div class="k-proofx__docTop">
-            <span class="k-proofx__crumbDot" aria-hidden="true"></span>
-            <span>Spice harvester</span>
-            <span class="k-proofx__sep" aria-hidden="true">›</span>
-            <span>Project specs</span>
-            <span class="k-proofx__dots" aria-hidden="true">···</span>
+      <div class="k-proofx__visual k-proofx__visual--doc" data-proofx-panels>
+        <!-- Panel 1: Documents -->
+        <div class="k-proofx__panel is-active" id="proofx-panel-doc" role="tabpanel" aria-labelledby="proofx-tab-doc" tabindex="0" aria-hidden="false" data-proofx-panel="doc">
+          <div class="k-proofx__doc" aria-hidden="true">
+            <div class="k-proofx__docTop">
+              <span class="k-proofx__crumbDot" aria-hidden="true"></span>
+              <span>Spice harvester</span>
+              <span class="k-proofx__sep" aria-hidden="true">›</span>
+              <span>Project specs</span>
+              <span class="k-proofx__dots" aria-hidden="true">···</span>
+            </div>
+
+            <div class="k-proofx__docBody">
+              <div class="k-proofx__docIcon" aria-hidden="true"></div>
+
+              <div class="k-proofx__hl">
+                <span class="k-proofx__tag k-proofx__tag--a">zoe</span>
+                <span class="k-proofx__hlText">Collaborate on ideas</span>
+              </div>
+
+              <div class="k-proofx__docP">
+                Write down product ideas and work together on feature specs in realtime, multiplayer project documents.
+                Add <span class="k-proofx__mono">**style**</span> and <span class="k-proofx__mono">##structure</span> with
+                rich-text formatting options.
+                <span class="k-proofx__tag k-proofx__tag--b">quinn</span>
+              </div>
+
+              <div class="k-proofx__lines">
+                <span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+              </div>
+            </div>
+
+            <div class="k-proofx__docGlow" aria-hidden="true"></div>
           </div>
+        </div>
 
-          <div class="k-proofx__docBody">
-            <div class="k-proofx__docIcon" aria-hidden="true"></div>
-
-            <div class="k-proofx__hl">
-              <span class="k-proofx__tag k-proofx__tag--zoe">zoe</span>
-              <span class="k-proofx__hlText">Collaborate on ideas</span>
+        <!-- Panel 2: Inline comments -->
+        <div class="k-proofx__panel" id="proofx-panel-comments" role="tabpanel" aria-labelledby="proofx-tab-comments" tabindex="-1" aria-hidden="true" data-proofx-panel="comments">
+          <div class="k-proofx__doc" aria-hidden="true">
+            <div class="k-proofx__docTop">
+              <span class="k-proofx__crumbDot" aria-hidden="true"></span>
+              <span>Launch notes</span>
+              <span class="k-proofx__sep" aria-hidden="true">›</span>
+              <span>Feedback</span>
+              <span class="k-proofx__dots" aria-hidden="true">···</span>
             </div>
 
-            <div class="k-proofx__docP">
-              Write down product ideas and work together on feature specs in realtime, multiplayer project documents.
-              Add <span class="k-proofx__mono">**style**</span> and <span class="k-proofx__mono">##structure</span> with
-              rich-text formatting options.
-              <span class="k-proofx__tag k-proofx__tag--quinn">quinn</span>
+            <div class="k-proofx__docBody">
+              <div class="k-proofx__docIcon k-proofx__docIcon--comments" aria-hidden="true"></div>
+
+              <div class="k-proofx__hl">
+                <span class="k-proofx__tag k-proofx__tag--a">ava</span>
+                <span class="k-proofx__hlText">Comment in context</span>
+              </div>
+
+              <div class="k-proofx__docP">
+                Keep feedback anchored to the exact sentence — no screenshots, no guessing.
+                Mention teammates with <span class="k-proofx__mono">@name</span>, resolve threads, and move on.
+              </div>
+
+              <div class="k-proofx__cRow" aria-hidden="true">
+                <div class="k-proofx__cLine is-hot"></div>
+                <div class="k-proofx__cLine"></div>
+                <div class="k-proofx__cLine"></div>
+              </div>
+
+              <div class="k-proofx__comment" aria-hidden="true">
+                <div class="k-proofx__commentTop">
+                  <span class="k-proofx__miniAv"></span>
+                  <span class="k-proofx__commentName">Ava</span>
+                  <span class="k-proofx__commentTime">just now</span>
+                </div>
+                <div class="k-proofx__commentBody">Let’s tighten this line — make the value pop in 7 words.</div>
+                <div class="k-proofx__commentMeta">
+                  <span class="k-proofx__chip">Resolve</span>
+                  <span class="k-proofx__chip">Reply</span>
+                </div>
+              </div>
             </div>
 
-            <div class="k-proofx__lines">
-              <span></span><span></span><span></span><span></span><span></span>
-              <span></span><span></span><span></span><span></span>
-            </div>
+            <div class="k-proofx__docGlow" aria-hidden="true"></div>
           </div>
+        </div>
 
-          <div class="k-proofx__docGlow" aria-hidden="true"></div>
+        <!-- Panel 3: Text → issue commands -->
+        <div class="k-proofx__panel" id="proofx-panel-commands" role="tabpanel" aria-labelledby="proofx-tab-commands" tabindex="-1" aria-hidden="true" data-proofx-panel="commands">
+          <div class="k-proofx__doc" aria-hidden="true">
+            <div class="k-proofx__docTop">
+              <span class="k-proofx__crumbDot" aria-hidden="true"></span>
+              <span>Spec draft</span>
+              <span class="k-proofx__sep" aria-hidden="true">›</span>
+              <span>Actionables</span>
+              <span class="k-proofx__dots" aria-hidden="true">···</span>
+            </div>
+
+            <div class="k-proofx__docBody">
+              <div class="k-proofx__docIcon k-proofx__docIcon--cmd" aria-hidden="true"></div>
+
+              <div class="k-proofx__hl">
+                <span class="k-proofx__tag k-proofx__tag--a">kai</span>
+                <span class="k-proofx__hlText">Turn text into tasks</span>
+              </div>
+
+              <div class="k-proofx__docP">
+                Highlight a sentence, type a command, and you’ve got an issue — linked back to the source.
+                No context lost, no copy-paste pain.
+              </div>
+
+              <div class="k-proofx__cmd" aria-hidden="true">
+                <div class="k-proofx__cmdLine"><span class="k-proofx__cmdK">Selected:</span> “Add FAQ accordion + schema”</div>
+                <div class="k-proofx__cmdLine"><span class="k-proofx__cmdK">Command:</span> <span class="k-proofx__mono">/issue</span> create</div>
+                <div class="k-proofx__cmdPalette">
+                  <span class="k-proofx__cmdPill">Create issue</span>
+                  <span class="k-proofx__cmdPill">Assign</span>
+                  <span class="k-proofx__cmdPill">Priority: High</span>
+                </div>
+              </div>
+
+              <div class="k-proofx__issue" aria-hidden="true">
+                <div class="k-proofx__issueTop">
+                  <span class="k-proofx__issueDot"></span>
+                  <span class="k-proofx__issueTitle">FAQ accordion + schema</span>
+                  <span class="k-proofx__issueTag">P1</span>
+                </div>
+                <div class="k-proofx__issueSub">Linked to spec draft · created from selection</div>
+              </div>
+            </div>
+
+            <div class="k-proofx__docGlow" aria-hidden="true"></div>
+          </div>
         </div>
       </div>
     </div>
 
   </div>
+
+  <script type="module">
+    // ProofPack — Row 3 tabs (no framework, fast, keyboard-friendly)
+    const root = document.querySelector('#proof');
+    const list = root?.querySelector('.k-proofx__list[data-proofx-tabs]');
+    const panelsRoot = root?.querySelector('[data-proofx-panels]');
+
+    if (list && panelsRoot) {
+      const tabs = Array.from(list.querySelectorAll('[data-proofx-tab]'));
+      const panels = Array.from(panelsRoot.querySelectorAll('[data-proofx-panel]'));
+
+      const setActive = (key) => {
+        tabs.forEach((t) => {
+          const on = t.getAttribute('data-proofx-tab') === key;
+          t.classList.toggle('is-active', on);
+          t.setAttribute('aria-selected', on ? 'true' : 'false');
+          t.setAttribute('tabindex', on ? '0' : '-1');
+        });
+
+        panels.forEach((p) => {
+          const on = p.getAttribute('data-proofx-panel') === key;
+          p.classList.toggle('is-active', on);
+          p.setAttribute('aria-hidden', on ? 'false' : 'true');
+          p.setAttribute('tabindex', on ? '0' : '-1');
+        });
+      };
+
+      tabs.forEach((t) =>
+        t.addEventListener('click', () => setActive(t.getAttribute('data-proofx-tab')))
+      );
+
+      list.addEventListener('keydown', (e) => {
+        const k = e.key;
+        if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End', 'Enter', ' '].includes(k)) return;
+
+        const current = document.activeElement;
+        const i = tabs.indexOf(current);
+        if (i < 0) return;
+
+        if (k === 'Enter' || k === ' ') {
+          e.preventDefault();
+          setActive(tabs[i].getAttribute('data-proofx-tab'));
+          return;
+        }
+
+        e.preventDefault();
+        const clamp = (idx) => tabs[Math.max(0, Math.min(tabs.length - 1, idx))];
+
+        if (k === 'Home') return clamp(0).focus();
+        if (k === 'End') return clamp(tabs.length - 1).focus();
+
+        const dir = k === 'ArrowDown' || k === 'ArrowRight' ? 1 : -1;
+        clamp(i + dir).focus();
+      });
+
+      const initial = tabs.find((t) => t.classList.contains('is-active'))?.getAttribute('data-proofx-tab') || 'doc';
+      setActive(initial);
+    }
+  </script>
 </section>

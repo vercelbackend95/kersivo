@@ -1,49 +1,28 @@
 ---
 import "./who-for.css";
-import CtaButton from "../../ui/CtaButton/CtaButton.astro";
-import WhoForVibes from "./WhoForVibes.tsx";
-
-const vibes = [
-  { key: "startup", label: "New business", line: "A clean launch site that looks established from day one.", tags: ["Credibility", "Clarity", "Momentum"] },
-  { key: "grow", label: "Growing fast", line: "Built to handle more pages, more leads, less chaos.", tags: ["Structure", "Scale", "Conversion"] },
-  { key: "premium", label: "Premium brand", line: "Minimal, calm, expensive-looking — without the bloat.", tags: ["Typography", "Polish", "UX"] },
-  { key: "rebuild", label: "Rebuild / refresh", line: "Same business — sharper message, faster site, better results.", tags: ["Before→After", "Performance", "Clean IA"] },
-  { key: "multi", label: "Multi-location", line: "Location pages that feel consistent and easy to navigate.", tags: ["SEO hygiene", "Maps-ready", "Consistency"] },
-  { key: "local", label: "Local services", line: "Made to turn nearby searches into booked calls.", tags: ["Trust", "Speed", "Clear CTA"] },
-];
+import WhoForMorph from "./WhoForMorph.tsx";
 ---
 
-<section class="k-who3 section" id="who-its-for" aria-label="Who it's for">
-  <div class="container k-who3__container">
-    <!-- Work-style header (centered) -->
-    <header class="k-who3__head k-sectionHead" aria-labelledby="whofor-title">
-      <div class="k-sectionHead__kicker">WHO IT’S FOR</div>
-
-      <h2 class="k-sectionHead__title" id="whofor-title">
-        Pick your vibe.
-        <span class="k-sectionHead__grad">We’ll build the site around it.</span>
+<section class="k-whoL section" id="who-its-for" aria-label="Who it's for">
+  <div class="container k-whoL__container">
+    <!-- Header: left title + right copy/link (like screenshot) -->
+    <header class="k-whoL__head" aria-labelledby="whoL-title">
+      <h2 class="k-whoL__title" id="whoL-title">
+        Made for modern<br />small businesses
       </h2>
 
-      <p class="k-sectionHead__lead">
-        Tap what feels closest — the promise updates in real-time.
-      </p>
+      <div class="k-whoL__side">
+        <p class="k-whoL__lead">
+          Kersivo is shaped by the practices that separate “nice-looking” from
+          <strong> revenue-ready</strong>: ruthless clarity, fast execution, and craft that holds up.
+        </p>
+
+        <a class="k-whoL__link" href="#contact">
+          Make the switch <span aria-hidden="true">→</span>
+        </a>
+      </div>
     </header>
 
-    <!-- HARD WRAPPER: stays inside container, never full-bleed, never drifts -->
-    <div class="k-who3__stage">
-      <WhoForVibes client:visible vibes={vibes} />
-    </div>
-
-    <div class="k-who3__cta">
-      <div class="k-who3__ctaCopy">
-        <h4>Ready when you are.</h4>
-        <p class="measure">One short form. Clear next step. No fluff theatre.</p>
-      </div>
-
-      <div class="k-who3__ctaBtns">
-        <CtaButton href="#contact" label="Get a quote" variant="primary" />
-        <CtaButton href="#work" label="View work" variant="ghost" />
-      </div>
-    </div>
+    <WhoForMorph client:visible />
   </div>
 </section>
