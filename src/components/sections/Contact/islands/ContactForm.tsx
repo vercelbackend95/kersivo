@@ -1,372 +1,304 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 
-type Step = "basics" | "project";
-type Channel = "email" | "whatsapp" | "call";
-
-type Toast = {
-  id: number;
-  title: string;
-  message: string;
+type Props = {
+  emailTo?: string;
 };
 
-const spring = {
-  type: "spring" as const,
-  stiffness: 420,
-  damping: 32,
-  mass: 0.7,
-};
+type Service = "Website" | "Brand + UI" | "E-commerce" | "Ongoing";
+type Budget = "Under £2k" | "£2k–£5k" | "£5k+";
 
-function cn(...x: Array<string | false | undefined | null>) {
-  return x.filter(Boolean).join(" ");
+const SERVICES: Service[] = ["Website", "Brand + UI", "E-commerce", "Ongoing"];
+const BUDGETS: Budget[] = ["Under £2k", "£2k–£5k", "£5k+"];
+
+function encodeMailto(str: string) {
+  // keep it compatible with mail clients (space -> %20 etc.)
+  return encodeURIComponent(str).replace(/%0A/g, "%0D%0A");
 }
 
-export default function ContactForm() {
-  const [step, setStep] = useState<Step>("basics");
-  const [channel, setChannel] = useState<Channel>("email");
+function nowTag() {
+  // tiny stamp for subject
+  const d = new Date();
+  const yy = String(d.getFullYear()).slice(-2);
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${dd}/${mm}/${yy}`;
+}
 
-  const [name, setName] = useState("");
+export default function ContactForm({ emailTo = "hello@kersivo.co.uk" }: Props) {
+  const [service, setService] = useState<Service>("Website");
+  const [budget, setBudget] = useState<Budget>("Under £2k");
+
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
-  const [business, setBusiness] = useState("");
-  const [website, setWebsite] = useState("");
+  const [details, setDetails] = useState("");
 
-  const [goal, setGoal] = useState("");
-  const [budget, setBudget] = useState<"" | "Under £1k" | "£1–2k" | "£2–4k" | "£4–8k" | "£8k+">("");
-  const [timeline, setTimeline] = useState<"" | "ASAP" | "2–4 weeks" | "1–2 months" | "Flexible">("");
+  const [fileName, setFileName] = useState<string>("");
+  const [isDrag, setIsDrag] = useState(false);
 
-  const [toast, setToast] = useState<Toast | null>(null);
+  const [toast, setToast] = useState<{ title: string; note?: string } | null>(null);
   const toastTimer = useRef<number | null>(null);
 
-  const nameRef = useRef<HTMLInputElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const reducedMotion = useMemo(() => {
+    if (typeof window === "undefined") return true;
+    return window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
+  }, []);
 
   useEffect(() => {
-    if (!toast) return;
-    if (toastTimer.current) window.clearTimeout(toastTimer.current);
-    toastTimer.current = window.setTimeout(() => setToast(null), 3000);
     return () => {
       if (toastTimer.current) window.clearTimeout(toastTimer.current);
     };
-  }, [toast?.id]);
+  }, []);
 
-  const brief = useMemo(() => {
+  const requiredOk = fullName.trim().length > 1 && email.trim().includes("@") && details.trim().length > 10;
+
+  function pingHighlightSweep() {
+    const frame = document.querySelector("[data-contact-frame]");
+    if (!frame) return;
+    frame.classList.remove("is-highlight");
+    // force reflow so animation can retrigger
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    (frame as HTMLElement).offsetHeight;
+    frame.classList.add("is-highlight");
+    window.setTimeout(() => frame.classList.remove("is-highlight"), 980);
+  }
+
+  function showToast(title: string, note?: string) {
+    setToast({ title, note });
+    if (toastTimer.current) window.clearTimeout(toastTimer.current);
+    toastTimer.current = window.setTimeout(() => setToast(null), 3200);
+  }
+
+  function buildBrief() {
     const lines = [
-      "KERSIVO — QUOTE BRIEF",
+      "New inquiry — Kersivo",
+      "---------------------",
+      `Service: ${service}`,
+      `Budget: ${budget}`,
       "",
-      `Name: ${name || "-"}`,
-      `Email: ${email || "-"}`,
-      `Business: ${business || "-"}`,
-      `Website: ${website || "-"}`,
-      `Preferred contact: ${channel}`,
+      `Full name: ${fullName.trim()}`,
+      `Email: ${email.trim()}`,
       "",
-      "PROJECT",
-      `Goal: ${goal || "-"}`,
-      `Budget: ${budget || "-"}`,
-      `Timeline: ${timeline || "-"}`,
+      "Project details:",
+      details.trim(),
+      "",
+      `Attachment (optional): ${fileName || "—"}`,
+      "",
+      "—",
+      "Sent from kersivo.co.uk contact form",
     ];
     return lines.join("\n");
-  }, [name, email, business, website, channel, goal, budget, timeline]);
+  }
 
-  const copyBrief = async () => {
+  async function copyToClipboard(text: string) {
     try {
-      await navigator.clipboard.writeText(brief);
-      setToast({
-        id: Date.now(),
-        title: "Copied",
-        message: "Brief is in your clipboard. Paste it into Email / WhatsApp.",
-      });
+      await navigator.clipboard.writeText(text);
+      return true;
     } catch {
-      setToast({
-        id: Date.now(),
-        title: "Copy failed",
-        message: "Your browser blocked clipboard. Select text manually.",
-      });
+      return false;
     }
-  };
+  }
 
-  const progress = step === "basics" ? 56 : 100;
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!requiredOk) {
+      showToast("Missing details", "Please complete the required fields.");
+      return;
+    }
+
+    const brief = buildBrief();
+    const subject = `Kersivo inquiry — ${service} — ${nowTag()}`;
+    const href = `mailto:${emailTo}?subject=${encodeMailto(subject)}&body=${encodeMailto(brief)}`;
+
+    // premium flourish (matches CSS sweep)
+    if (!reducedMotion) pingHighlightSweep();
+
+    // copy brief so the user can paste it even if their mail client is weird
+    const copied = await copyToClipboard(brief);
+
+    // open mail client
+    window.location.href = href;
+
+    showToast("Opening your email client…", copied ? "Brief copied to clipboard." : "Copy blocked — you can still send via email.");
+  }
+
+  function onFilePicked(files: FileList | null | undefined) {
+    const f = files?.[0];
+    if (!f) {
+      setFileName("");
+      return;
+    }
+    setFileName(f.name);
+  }
+
+  function onDrop(e: React.DragEvent) {
+    e.preventDefault();
+    setIsDrag(false);
+    const files = e.dataTransfer.files;
+    if (fileInputRef.current) {
+      fileInputRef.current.files = files;
+    }
+    onFilePicked(files);
+  }
 
   return (
-    <div className="k-contact2__grid">
-      {/* LEFT */}
-      <div className="k-contact2__left">
-        <div className="k-contact2__kickerRow">
-          <div className="k-contact2__kicker">CONTACT</div>
-          <div className="k-contact2__badge">REPLY WITHIN 24H</div>
+    <form className="k-cform" onSubmit={onSubmit} noValidate>
+      {/* Service */}
+      <div className="k-cform__group">
+        <div className="k-cform__label">Service</div>
+        <div className="k-cform__chips" role="radiogroup" aria-label="Service">
+          {SERVICES.map((s) => (
+            <button
+              key={s}
+              type="button"
+              className={`k-cchip ${service === s ? "is-on" : ""}`}
+              role="radio"
+              aria-checked={service === s}
+              onClick={() => setService(s)}
+            >
+              {s}
+            </button>
+          ))}
         </div>
-
-        <h2 className="k-contact2__title">
-          Get a quote—<span className="k-contact2__grad">fast</span>, clean.
-          <br />
-          No friction.
-        </h2>
-
-        <p className="k-contact2__lead">
-          Send a sharp brief in under a minute. Prefer a call? Tick it — we’ll ring you.
-        </p>
-
-        <div className="k-contact2__bullets">
-          <div className="k-contact2__bullet">
-            <div className="k-contact2__bulletIcon">✓</div>
-            <div>
-              <div className="k-contact2__bulletTitle">Quote-first</div>
-              <div className="k-contact2__bulletDesc">
-                We start with scope + budget range, then lock the plan.
-              </div>
-            </div>
-          </div>
-
-          <div className="k-contact2__bullet">
-            <div className="k-contact2__bulletIcon">⧉</div>
-            <div>
-              <div className="k-contact2__bulletTitle">Copy-ready brief</div>
-              <div className="k-contact2__bulletDesc">
-                One tap copies the brief — paste into Email / WhatsApp.
-              </div>
-            </div>
-          </div>
-
-          <div className="k-contact2__bullet">
-            <div className="k-contact2__bulletIcon">☎</div>
-            <div>
-              <div className="k-contact2__bulletTitle">Prefer a call</div>
-              <div className="k-contact2__bulletDesc">Add a number — we call you. Simple.</div>
-            </div>
-          </div>
-        </div>
-
-        <p className="k-contact2__micro">No pressure. Just clarity.</p>
       </div>
 
-      {/* RIGHT / CONSOLE */}
-      <div className="k-contact2__right">
-        <div className="k-contact2__console">
-          <div className="k-contact2__consoleTop">
-            <div className="k-contact2__consoleTitle">
-              <span className="k-contact2__consoleIcon" aria-hidden="true">✦</span>
-              Quote Intake
+      {/* Budget */}
+      <div className="k-cform__group">
+        <div className="k-cform__label">Budget</div>
+        <div className="k-cform__chips" role="radiogroup" aria-label="Budget">
+          {BUDGETS.map((b) => (
+            <button
+              key={b}
+              type="button"
+              className={`k-cchip ${budget === b ? "is-on" : ""}`}
+              role="radio"
+              aria-checked={budget === b}
+              onClick={() => setBudget(b)}
+            >
+              {b}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Name / Email */}
+      <div className="k-cform__row">
+        <label className="k-uline">
+          <span className="k-uline__hint">Full name *</span>
+          <input
+            type="text"
+            name="fullName"
+            autoComplete="name"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            placeholder=""
+            required
+          />
+        </label>
+
+        <label className="k-uline">
+          <span className="k-uline__hint">Email *</span>
+          <input
+            type="email"
+            name="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder=""
+            required
+          />
+        </label>
+      </div>
+
+      {/* Details */}
+      <label className="k-uline">
+        <span className="k-uline__hint">Project details *</span>
+        <textarea
+          name="details"
+          value={details}
+          onChange={(e) => setDetails(e.target.value)}
+          placeholder=""
+          required
+        />
+      </label>
+
+      {/* Upload */}
+      <div className="k-cform__group">
+        <div className="k-cform__label">Attach a file <span style={{ opacity: 0.7, fontWeight: 600, textTransform: "none", letterSpacing: 0 }}>(optional)</span></div>
+
+        <div
+          className={`k-upload ${isDrag ? "is-drag" : ""}`}
+          onDragEnter={(e) => {
+            e.preventDefault();
+            setIsDrag(true);
+          }}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setIsDrag(true);
+          }}
+          onDragLeave={() => setIsDrag(false)}
+          onDrop={onDrop}
+          aria-label="File upload"
+        >
+          <input
+            ref={fileInputRef}
+            type="file"
+            name="file"
+            onChange={(e) => onFilePicked(e.target.files)}
+            aria-label="Choose a file"
+          />
+          <div style={{ textAlign: "center", lineHeight: 1.25 }}>
+            <div style={{ fontWeight: 650, color: "rgba(255,255,255,.78)" }}>
+              {fileName ? fileName : "Choose a file or drag and drop here"}
             </div>
-
-            <div className="k-contact2__steps" role="tablist" aria-label="Contact steps">
-              <button
-                type="button"
-                className={cn("k-contact2__step", step === "basics" && "is-active")}
-                onClick={() => setStep("basics")}
-              >
-                1) Basics
-              </button>
-              <button
-                type="button"
-                className={cn("k-contact2__step", step === "project" && "is-active")}
-                onClick={() => setStep("project")}
-              >
-                2) Project
-              </button>
+            <div style={{ marginTop: 6, fontSize: 12, color: "rgba(255,255,255,.55)" }}>
+              {fileName ? "Note: files aren’t sent automatically — we’ll request it if needed." : "Tip: include a PDF brief, screenshots, or a sitemap."}
             </div>
-          </div>
-
-          <div className="k-progress">
-            <div className="k-progress__left">
-              <span className="k-dot" aria-hidden="true"></span>
-              Reply within 24h
-            </div>
-            <div className="k-meter" aria-label="Progress">
-              <div className="k-meter__bar" style={{ width: `${progress}%` }} />
-            </div>
-          </div>
-
-          {/* STEP SWITCH (Framer) */}
-          <AnimatePresence mode="wait" initial={false}>
-            {step === "basics" ? (
-              <motion.div
-                key="basics"
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={spring}
-                className="k-fields"
-              >
-                <div className="k-row">
-                  <label className="k-field">
-                    <span className="k-label">NAME</span>
-                    <input
-                      ref={(el) => {
-                        nameRef.current = el;
-                      }}
-                      data-first-field
-                      className="k-input"
-                      placeholder="Your name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                    />
-                  </label>
-
-                  <label className="k-field">
-                    <span className="k-label">EMAIL</span>
-                    <input
-                      className="k-input"
-                      placeholder="you@business.co.uk"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                  </label>
-                </div>
-
-                <label className="k-field">
-                  <span className="k-label">BUSINESS</span>
-                  <input
-                    className="k-input"
-                    placeholder="Business name"
-                    value={business}
-                    onChange={(e) => setBusiness(e.target.value)}
-                  />
-                </label>
-
-                <label className="k-field">
-                  <span className="k-label">WEBSITE (OPTIONAL)</span>
-                  <input
-                    className="k-input"
-                    placeholder="https://"
-                    value={website}
-                    onChange={(e) => setWebsite(e.target.value)}
-                  />
-                </label>
-
-                <div className="k-field">
-                  <span className="k-label">PREFERRED CONTACT</span>
-                  <div className="k-seg" role="group" aria-label="Preferred contact channel">
-                    <button
-                      type="button"
-                      className={cn(channel === "email" && "is-on")}
-                      onClick={() => setChannel("email")}
-                    >
-                      Email
-                    </button>
-                    <button
-                      type="button"
-                      className={cn(channel === "whatsapp" && "is-on")}
-                      onClick={() => setChannel("whatsapp")}
-                    >
-                      WhatsApp
-                    </button>
-                    <button
-                      type="button"
-                      className={cn(channel === "call" && "is-on")}
-                      onClick={() => setChannel("call")}
-                    >
-                      I prefer a call
-                    </button>
-                  </div>
-                </div>
-
-                <div className="k-actions">
-                  <button
-                    type="button"
-                    className="k-act k-act--primary"
-                    onClick={() => setStep("project")}
-                    data-primary
-                  >
-                    Continue <span aria-hidden="true">→</span>
-                  </button>
-
-                  <button type="button" className="k-act k-act--ghost" onClick={copyBrief}>
-                    Copy brief <span aria-hidden="true">→</span>
-                  </button>
-                </div>
-
-                <div className="k-note">No backend yet — copy brief + open channel.</div>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="project"
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={spring}
-                className="k-fields"
-              >
-                <label className="k-field">
-                  <span className="k-label">GOAL</span>
-                  <textarea
-                    className="k-textarea"
-                    placeholder="What do you want the site to achieve?"
-                    value={goal}
-                    onChange={(e) => setGoal(e.target.value)}
-                  />
-                </label>
-
-                <div className="k-field">
-                  <span className="k-label">BUDGET RANGE</span>
-                  <div className="k-chips">
-                    {(["Under £1k", "£1–2k", "£2–4k", "£4–8k", "£8k+"] as const).map((x) => (
-                      <button
-                        key={x}
-                        type="button"
-                        className={cn("k-chip", budget === x && "is-on")}
-                        onClick={() => setBudget(x)}
-                      >
-                        {x}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="k-field">
-                  <span className="k-label">TIMELINE</span>
-                  <div className="k-chips">
-                    {(["ASAP", "2–4 weeks", "1–2 months", "Flexible"] as const).map((x) => (
-                      <button
-                        key={x}
-                        type="button"
-                        className={cn("k-chip", timeline === x && "is-on")}
-                        onClick={() => setTimeline(x)}
-                      >
-                        {x}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="k-actions">
-                  <button type="button" className="k-act k-act--ghost" onClick={() => setStep("basics")}>
-                    Back <span aria-hidden="true">←</span>
-                  </button>
-
-                  <button type="button" className="k-act k-act--primary" onClick={copyBrief} data-primary>
-                    Copy brief <span aria-hidden="true">→</span>
-                  </button>
-                </div>
-
-                <div className="k-note">Copying creates a clean brief — paste into Email/WhatsApp.</div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* TOAST (Framer: bottom + blur, auto 3s) */}
-          <div className="k-toastWrap" aria-live="polite" aria-atomic="true">
-            <AnimatePresence>
-              {toast ? (
-                <motion.div
-                  key={toast.id}
-                  className="k-toast"
-                  initial={{ opacity: 0, y: 12, filter: "blur(10px)" }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, y: 8, filter: "blur(10px)" }}
-                  transition={spring}
-                >
-                  <div>
-                    <div className="k-toastTitle">{toast.title}</div>
-                    <div className="k-toastMsg">{toast.message}</div>
-                  </div>
-
-                  <button className="k-x" onClick={() => setToast(null)} aria-label="Close toast">
-                    ✕
-                  </button>
-                </motion.div>
-              ) : null}
-            </AnimatePresence>
           </div>
         </div>
       </div>
-    </div>
+
+      <button className="k-submit" type="submit" disabled={!requiredOk}>
+        Submit inquiry
+      </button>
+
+      <div className="k-cform__foot">
+        No spam. Just a clean reply. If you prefer: email us directly at{" "}
+        <a href={`mailto:${emailTo}`} style={{ color: "rgba(255,255,255,.82)", textDecoration: "underline", textUnderlineOffset: 3 }}>
+          {emailTo}
+        </a>
+        .
+      </div>
+
+      {/* tiny toast (inline styles so you don't need another CSS file) */}
+      {toast && (
+        <div
+          role="status"
+          aria-live="polite"
+          style={{
+            position: "absolute",
+            right: 10,
+            bottom: 10,
+            maxWidth: 360,
+            padding: "12px 12px",
+            borderRadius: 16,
+            border: "1px solid rgba(255,255,255,.12)",
+            background: "rgba(10, 12, 18, .72)",
+            backdropFilter: "blur(16px)",
+            boxShadow: "0 26px 120px rgba(0,0,0,.45)",
+          }}
+        >
+          <div style={{ fontWeight: 780, letterSpacing: "-0.01em", color: "rgba(255,255,255,.92)" }}>
+            {toast.title}
+          </div>
+          {toast.note && (
+            <div style={{ marginTop: 4, fontSize: 12.5, lineHeight: 1.35, color: "rgba(255,255,255,.64)" }}>
+              {toast.note}
+            </div>
+          )}
+        </div>
+      )}
+    </form>
   );
 }
