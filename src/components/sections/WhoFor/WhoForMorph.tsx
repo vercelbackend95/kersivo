@@ -19,6 +19,10 @@ export default function WhoForMorph() {
   const reduced = useReducedMotion();
   const [openId, setOpenId] = useState<Card["id"] | null>(null);
 
+  // mobile carousel state
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
   const cards: Card[] = useMemo(
     () => [
       {
@@ -105,13 +109,55 @@ export default function WhoForMorph() {
     };
   }, [openId]);
 
+  // Mobile carousel: update active dot on scroll
+  useEffect(() => {
+    const el = trackRef.current;
+    if (!el) return;
+
+    let raf = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const w = el.clientWidth || 1;
+        const idx = Math.round(el.scrollLeft / w);
+        setActiveIndex(Math.max(0, Math.min(cards.length - 1, idx)));
+      });
+    };
+
+    el.addEventListener("scroll", onScroll, { passive: true });
+
+    // initialize
+    onScroll();
+
+    return () => {
+      cancelAnimationFrame(raf);
+      el.removeEventListener("scroll", onScroll);
+    };
+  }, [cards.length]);
+
+  const scrollToIndex = (idx: number) => {
+    const el = trackRef.current;
+    if (!el) return;
+    const w = el.clientWidth || 0;
+    el.scrollTo({
+      left: idx * w,
+      behavior: reduced ? "auto" : "smooth",
+    });
+  };
+
   const trans = reduced
     ? { duration: 0 }
     : { type: "spring" as const, stiffness: 520, damping: 40, mass: 0.8 };
 
   return (
     <MotionConfig reducedMotion="user">
-      <div className="k-whoL__grid" aria-label="Capabilities">
+      {/* Track acts as grid on desktop, carousel on mobile (CSS) */}
+      <div
+        className="k-whoL__grid"
+        aria-label="Capabilities"
+        ref={trackRef}
+        data-carousel
+      >
         {cards.map((c) => (
           <motion.button
             key={c.id}
@@ -135,7 +181,11 @@ export default function WhoForMorph() {
                 <span className="k-whoL__visualLabel">{c.visualLabel}</span>
               </motion.div>
 
-              <motion.div className="k-whoL__cardBottom" layoutId={`bottom-${c.id}`} transition={trans}>
+              <motion.div
+                className="k-whoL__cardBottom"
+                layoutId={`bottom-${c.id}`}
+                transition={trans}
+              >
                 <div className="k-whoL__cardTitle">{c.title}</div>
 
                 <span className="k-whoL__plus" aria-hidden="true">
@@ -144,6 +194,20 @@ export default function WhoForMorph() {
               </motion.div>
             </div>
           </motion.button>
+        ))}
+      </div>
+
+      {/* Dots (Uber-style paging) — visible only on mobile via CSS */}
+      <div className="k-whoL__dots" aria-label="Carousel pagination">
+        {cards.map((c, i) => (
+          <button
+            key={c.id}
+            type="button"
+            className={cn("k-whoL__dot", i === activeIndex && "is-active")}
+            onClick={() => scrollToIndex(i)}
+            aria-label={`Go to card ${i + 1}`}
+            aria-current={i === activeIndex ? "true" : undefined}
+          />
         ))}
       </div>
 
@@ -157,7 +221,6 @@ export default function WhoForMorph() {
             exit={{ opacity: 0 }}
             transition={reduced ? { duration: 0 } : { duration: 0.18 }}
             onMouseDown={(e) => {
-              // click outside closes (only if backdrop)
               if (e.target === e.currentTarget) setOpenId(null);
             }}
             role="presentation"
