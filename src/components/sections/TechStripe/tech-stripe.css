@@ -11,22 +11,28 @@
   width: 100%;
   margin-top: -18px; /* hugs hero */
   z-index: 2;
+
+  /* +15% sizing tokens */
+  --kTechIcon: 21px;     /* was 18px */
+  --kTechDividerH: 21px; /* was 18px */
+  --kTechWord: 14.4px;   /* was 12.5px */
 }
 
 /* full-width frame */
 .k-techStripe__frame{
   position: relative;
   width: 100%;
-  height: 74px;
+  height: 78px; /* was 74px (gives breathing room for bigger type/icons) */
   overflow: hidden;
 
-  /* full-bleed vibe: no radius so it kisses the viewport edges */
   border-radius: 0;
 
   background:
     linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-  border-top: 1px solid rgba(255,255,255,.10);
-  border-bottom: 1px solid rgba(255,255,255,.07);
+
+  /* softer borders (less “heavy frame”) */
+  border-top: 1px solid rgba(255,255,255,.075);
+  border-bottom: 1px solid rgba(255,255,255,.055);
 
   box-shadow:
     0 40px 140px rgba(0,0,0,.32),
@@ -35,7 +41,7 @@
   backdrop-filter: blur(12px);
 }
 
-/* subtle “sheen” that slowly breathes (very light) */
+/* subtle “sheen” */
 .k-techStripe__frame::after{
   content:"";
   position:absolute;
@@ -56,7 +62,6 @@
   display:flex;
   align-items:center;
 
-  /* stronger fade at edges to sell the “hidden behind viewport” illusion */
   -webkit-mask-image: linear-gradient(
     90deg,
     transparent 0%,
@@ -77,7 +82,7 @@
   );
 }
 
-/* slight inner padding so logos don’t “kiss” the border */
+/* marquee track */
 .k-techStripe__track{
   width: 100%;
   display:flex;
@@ -105,11 +110,11 @@
   padding: 0 2px;
 }
 
-/* vertical hairline divider like your reference */
+/* vertical hairline divider */
 .k-techStripe__item::after{
   content:"";
   width: 1px;
-  height: 18px;
+  height: var(--kTechDividerH);
   margin-left: 18px;
   background: rgba(255,255,255,.14);
   opacity: .55;
@@ -120,30 +125,46 @@
   margin-left: 0;
 }
 
+/* Icons */
 .k-techStripe__icon{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  width: 18px;
-  height: 18px;
-  color: rgba(255,255,255,.84);
+  width: var(--kTechIcon);
+  height: var(--kTechIcon);
+
+  color: rgba(255,255,255,.92);
+
+  /* kill baseline/line-box weirdness */
+  line-height: 0;
+
   filter:
     drop-shadow(0 0 18px rgba(190,145,255,.12))
     drop-shadow(0 0 26px rgba(255,190,230,.06));
 }
 
-.k-techStripe__icon :global(svg){
-  width: 18px;
-  height: 18px;
-  display:block;
+/* Inline SVG sizing + monochrome lock */
+.k-techStripe__icon svg{
+  width: var(--kTechIcon);
+  height: var(--kTechIcon);
+  display: block;
+  transform: translateY(0px);
 }
 
+.k-techStripe__icon svg,
+.k-techStripe__icon svg *{
+  fill: currentColor;
+  stroke: currentColor;
+}
+
+/* Labels */
 .k-techStripe__word{
-  font-size: 12.5px;
+  font-size: var(--kTechWord);
   font-weight: 650;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(255,255,255,.78);
+
+  color: rgba(255,255,255,.86);
 
   text-shadow:
     0 0 18px rgba(190,145,255,.10),
@@ -153,10 +174,10 @@
 /* micro hover — controlled */
 @media (hover:hover) and (pointer:fine){
   .k-techStripe__frame:hover .k-techStripe__word{
-    color: rgba(255,255,255,.86);
+    color: rgba(255,255,255,.92);
   }
   .k-techStripe__frame:hover .k-techStripe__icon{
-    color: rgba(255,255,255,.92);
+    color: rgba(255,255,255,.96);
   }
 }
 
@@ -178,10 +199,18 @@
 
 /* responsive */
 @media (max-width: 520px){
-  .k-techStripe{ margin-top: -10px; }
-  .k-techStripe__frame{ height: 70px; }
+  .k-techStripe{
+    margin-top: -10px;
+
+    /* keep +15% vibe on mobile too, but slightly restrained */
+    --kTechIcon: 20px;
+    --kTechDividerH: 20px;
+    --kTechWord: 13.8px;
+  }
+
+  .k-techStripe__frame{ height: 74px; } /* was 70px */
   .k-techStripe__row{ gap: 24px; padding: 0 18px; }
-  .k-techStripe__word{ font-size: 12px; letter-spacing: 0.075em; }
+  .k-techStripe__word{ letter-spacing: 0.075em; }
   .k-techStripe__item::after{ margin-left: 14px; }
 }
 
@@ -199,4 +228,14 @@
     padding: 12px 16px;
   }
   .k-techStripe__item::after{ display:none; }
+}
+
+/* =========================================
+   Astro optical alignment fix
+   Requires: data-tech="astro" on .k-techStripe__item
+   ========================================= */
+.k-techStripe__item[data-tech="astro"] .k-techStripe__icon svg{
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: translateY(2px) scale(1.02);
 }
