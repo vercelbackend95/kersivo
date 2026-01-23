@@ -1,32 +1,174 @@
 ---
 import "./contact.css";
-import ContactForm from "./islands/ContactForm";
 ---
 
-<section id="contact" class="k-contact section">
-  <div class="container">
-    <div class="k-contact2">
-      <div class="k-contact2__frame" data-contact-frame>
-        <span class="k-contact2__glow" aria-hidden="true"></span>
-        <ContactForm client:load />
+<section id="contact" class="k-contact" aria-labelledby="contact-title">
+  <div class="k-contact__wrap">
+    <div class="k-contact__card">
+      <!-- LEFT -->
+      <div class="k-contact__left">
+        <h2 id="contact-title" class="k-contact__title">Tell us about your<br />project</h2>
+
+        <ul class="k-contact__bullets" role="list">
+          <li class="k-contact__bullet">
+            <span class="k-contact__check" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none">
+                <path d="M10 18.2c4.53 0 8.2-3.67 8.2-8.2S14.53 1.8 10 1.8 1.8 5.47 1.8 10s3.67 8.2 8.2 8.2Z" stroke="currentColor" stroke-width="1.6" opacity=".9"/>
+                <path d="M6.25 10.15l2.35 2.45 5.15-5.25" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span>We will respond to you within 12 hours</span>
+          </li>
+
+          <li class="k-contact__bullet">
+            <span class="k-contact__check" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none">
+                <path d="M10 18.2c4.53 0 8.2-3.67 8.2-8.2S14.53 1.8 10 1.8 1.8 5.47 1.8 10s3.67 8.2 8.2 8.2Z" stroke="currentColor" stroke-width="1.6" opacity=".9"/>
+                <path d="M6.25 10.15l2.35 2.45 5.15-5.25" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span>We’ll sign an NDA if requested</span>
+          </li>
+
+          <li class="k-contact__bullet">
+            <span class="k-contact__check" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none">
+                <path d="M10 18.2c4.53 0 8.2-3.67 8.2-8.2S14.53 1.8 10 1.8 1.8 5.47 1.8 10s3.67 8.2 8.2 8.2Z" stroke="currentColor" stroke-width="1.6" opacity=".9"/>
+                <path d="M6.25 10.15l2.35 2.45 5.15-5.25" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span>Access to dedicated consultant specialists</span>
+          </li>
+        </ul>
+
+        <div class="k-contact__leftFoot">
+          <a class="k-contact__email" href="mailto:hello@kersivo.co.uk">hello@kersivo.co.uk</a>
+
+          <p class="k-contact__note">
+            Always busy and want to book<br />an exact time to call?
+          </p>
+
+          <a class="k-contact__miniBtn" href="#book-call">Book a free call</a>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="k-contact__right">
+        <form class="k-contact__form" action="#" method="post">
+          <div class="k-contact__group">
+            <div class="k-contact__labelRow">
+              <span class="k-contact__label">Service</span>
+            </div>
+
+            <div class="k-contact__pills" role="radiogroup" aria-label="Service">
+              <input class="k-contact__pillInput" type="radio" name="service" id="svc-web" value="Website" checked />
+              <label class="k-contact__pill" for="svc-web">Website</label>
+
+              <input class="k-contact__pillInput" type="radio" name="service" id="svc-brand" value="Brand + UI" />
+              <label class="k-contact__pill" for="svc-brand">Brand + UI</label>
+
+              <input class="k-contact__pillInput" type="radio" name="service" id="svc-ecom" value="E-commerce" />
+              <label class="k-contact__pill" for="svc-ecom">E-commerce</label>
+
+              <input class="k-contact__pillInput" type="radio" name="service" id="svc-ongoing" value="Ongoing support" />
+              <label class="k-contact__pill" for="svc-ongoing">Ongoing</label>
+            </div>
+          </div>
+
+          <div class="k-contact__group">
+            <div class="k-contact__labelRow">
+              <span class="k-contact__label">Budget</span>
+            </div>
+
+            <div class="k-contact__pills" role="radiogroup" aria-label="Budget">
+              <input class="k-contact__pillInput" type="radio" name="budget" id="b1" value="Under £2k" checked />
+              <label class="k-contact__pill" for="b1">Under £2k</label>
+
+              <input class="k-contact__pillInput" type="radio" name="budget" id="b2" value="£2k–£5k" />
+              <label class="k-contact__pill" for="b2">£2k–£5k</label>
+
+              <input class="k-contact__pillInput" type="radio" name="budget" id="b3" value="£5k+" />
+              <label class="k-contact__pill" for="b3">£5k+</label>
+            </div>
+          </div>
+
+          <div class="k-contact__row2">
+            <label class="k-contact__field">
+              <span class="k-contact__fieldLabel">Full name<span class="k-contact__req">*</span></span>
+              <input class="k-contact__input" type="text" name="name" autocomplete="name" required />
+            </label>
+
+            <label class="k-contact__field">
+              <span class="k-contact__fieldLabel">Email<span class="k-contact__req">*</span></span>
+              <input class="k-contact__input" type="email" name="email" autocomplete="email" required />
+            </label>
+          </div>
+
+          <label class="k-contact__field">
+            <span class="k-contact__fieldLabel">Project details<span class="k-contact__req">*</span></span>
+            <textarea class="k-contact__textarea" name="details" rows="4" required></textarea>
+          </label>
+
+          <div class="k-contact__group k-contact__attach">
+            <div class="k-contact__labelRow">
+              <span class="k-contact__label">Attach a file <span class="k-contact__muted">(optional)</span></span>
+            </div>
+
+            <input
+              class="k-contact__fileInput"
+              type="file"
+              id="contact-file"
+              name="file"
+              aria-describedby="file-help"
+            />
+
+            <label class="k-contact__drop" for="contact-file" id="file-help">
+              <span class="k-contact__dropText">Choose a file or drag and drop here</span>
+              <span class="k-contact__fileName" data-file-name hidden></span>
+            </label>
+          </div>
+
+          <button class="k-contact__submit" type="submit">Submit inquiry</button>
+        </form>
       </div>
     </div>
   </div>
 
-  <script>
-    (() => {
-      const root = document.querySelector("#contact .k-contact2");
-      if (!root) return;
+  <!-- tiny JS: drag/drop polish + file name (no frameworks, no weight) -->
+  <script type="module" is:inline>
+    const input = document.querySelector('#contact-file');
+    const drop = document.querySelector('label[for="contact-file"]');
+    const nameEl = drop?.querySelector('[data-file-name]');
 
-      const onMove = (e) => {
-        const r = root.getBoundingClientRect();
-        const mx = ((e.clientX - r.left) / r.width) * 100;
-        const my = ((e.clientY - r.top) / r.height) * 100;
-        root.style.setProperty("--mx", mx.toFixed(2) + "%");
-        root.style.setProperty("--my", my.toFixed(2) + "%");
+    if (input && drop) {
+      const setName = () => {
+        const f = input.files && input.files[0];
+        if (!nameEl) return;
+        if (f) {
+          nameEl.textContent = f.name;
+          nameEl.hidden = false;
+          drop.classList.add('is-hasFile');
+        } else {
+          nameEl.textContent = '';
+          nameEl.hidden = true;
+          drop.classList.remove('is-hasFile');
+        }
       };
 
-      root.addEventListener("pointermove", onMove, { passive: true });
-    })();
+      input.addEventListener('change', setName);
+
+      drop.addEventListener('dragenter', (e) => { e.preventDefault(); drop.classList.add('is-drag'); });
+      drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('is-drag'); });
+      drop.addEventListener('dragleave', () => drop.classList.remove('is-drag'));
+      drop.addEventListener('drop', (e) => {
+        e.preventDefault();
+        drop.classList.remove('is-drag');
+        const files = e.dataTransfer?.files;
+        if (files && files.length) {
+          input.files = files;
+          setName();
+        }
+      });
+    }
   </script>
 </section>
