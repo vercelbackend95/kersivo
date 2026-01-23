@@ -1,9 +1,10 @@
 ---
 import "./services.css";
 import Pill from "../../ui/Pill/Pill.astro";
+import ServiceConsole from "./ServiceConsole.tsx";
 
 /** Astro-safe SVG strings (set:html). */
-const ICONS: Record<string, string> = {
+const ICONS = {
   build: `
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M4 17l6-6 4 4 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -115,7 +116,7 @@ const cards = [
 
 <section id="services" class="k-services k-services--appTiles" aria-labelledby="services-title" data-services>
   <div class="container k-services__inner">
-    <!-- Header: centered like PACKAGES -->
+    <!-- Header -->
     <header class="k-svcHead">
       <div class="k-svcHead__kicker">SERVICES</div>
 
@@ -129,6 +130,12 @@ const cards = [
       </p>
     </header>
 
+    <!-- Mobile: Service Console -->
+    <div class="k-svcConsoleWrap" aria-label="Services console">
+      <ServiceConsole client:visible cards={cards} />
+    </div>
+
+    <!-- Desktop / tablet: mosaic tiles -->
     <div class="k-tiles" role="list" aria-label="Kersivo services">
       {cards.map((c) => {
         const cls = [
@@ -188,6 +195,7 @@ const cards = [
     </div>
   </div>
 
+  <!-- reveal animation for desktop tiles only -->
   <script>
     (() => {
       const root = document.querySelector("[data-services]");
