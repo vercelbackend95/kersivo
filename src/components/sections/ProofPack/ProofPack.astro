@@ -1,11 +1,224 @@
 ---
-import ProofPack from "./islands/ProofPack.tsx";
 import "./proof-pack.css";
-
 ---
 
-<section class="k-proof section" id="proof" aria-label="Proof Pack">
-  <div class="container">
-    <ProofPack client:visible />
+<section class="k-proofx section" id="proof" aria-label="Proof">
+  <div class="container k-proofx__wrap">
+
+    <!-- ===== ROW 1 ===== -->
+    <div class="k-proofx__row k-proofx__row--hero">
+      <div class="k-proofx__copy">
+        <div class="k-proofx__kicker">
+          <span class="k-proofx__dot" aria-hidden="true"></span>
+          <span>Project and long-term planning</span>
+          <span class="k-proofx__arrow" aria-hidden="true">→</span>
+        </div>
+
+        <h2 class="k-proofx__h2">Set the product direction</h2>
+
+        <p class="k-proofx__p">
+          Align your team around a unified product timeline. Plan, manage, and track all product initiatives with
+          Linear’s visual planning tools.
+        </p>
+      </div>
+
+      <div class="k-proofx__visual k-proofx__visual--timeline" aria-hidden="true">
+        <div class="k-proofx__timeline">
+          <div class="k-proofx__ruler">
+            <div class="k-proofx__rulerTop">
+              <span class="k-proofx__rLabel k-proofx__rLabel--aug3">AUG 3</span>
+              <span class="k-proofx__rLabel k-proofx__rLabel--aug22">AUG 22</span>
+              <span class="k-proofx__rLabel k-proofx__rLabel--sep">SEP</span>
+            </div>
+            <div class="k-proofx__ticks"></div>
+            <div class="k-proofx__vline"></div>
+          </div>
+
+          <div class="k-proofx__bars">
+            <div class="k-proofx__bar k-proofx__bar--a">
+              <span class="k-proofx__barText">Realtime inference</span>
+              <span class="k-proofx__barChip k-proofx__chip--proto">Prototype</span>
+              <span class="k-proofx__barChip k-proofx__chip--beta">Beta</span>
+              <span class="k-proofx__diamond k-proofx__diamond--a"></span>
+            </div>
+
+            <div class="k-proofx__bar k-proofx__bar--b">
+              <span class="k-proofx__barText">RLHF fine-tuning</span>
+              <span class="k-proofx__diamond k-proofx__diamond--b"></span>
+              <span class="k-proofx__diamond k-proofx__diamond--c"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="k-proofx__hr" aria-hidden="true"></div>
+
+    <!-- ===== ROW 2 ===== -->
+    <div class="k-proofx__row k-proofx__row--split">
+      <div class="k-proofx__half">
+        <h3 class="k-proofx__h3">Manage projects end-to-end</h3>
+        <p class="k-proofx__p2">
+          Consolidate specs, milestones, tasks, and other documentation in one centralized location.
+        </p>
+
+        <div class="k-proofx__card k-proofx__card--overview" aria-hidden="true">
+          <div class="k-proofx__cardTitle">Project Overview</div>
+
+          <div class="k-proofx__kv">
+            <div class="k-proofx__kvRow">
+              <div class="k-proofx__kvKey">Properties</div>
+              <div class="k-proofx__kvVal">
+                <span class="k-proofx__pill">
+                  <span class="k-proofx__ring" aria-hidden="true"></span>
+                  In Progress
+                </span>
+                <span class="k-proofx__pill">
+                  <span class="k-proofx__square" aria-hidden="true"></span>
+                  ENG
+                </span>
+                <span class="k-proofx__avatars" aria-hidden="true">
+                  <span class="k-proofx__av"></span>
+                  <span class="k-proofx__av"></span>
+                  <span class="k-proofx__av"></span>
+                </span>
+              </div>
+            </div>
+
+            <div class="k-proofx__kvRow">
+              <div class="k-proofx__kvKey">Resources</div>
+              <div class="k-proofx__kvVal">
+                <span class="k-proofx__pill">
+                  <span class="k-proofx__tinyIcon k-proofx__tinyIcon--grid" aria-hidden="true"></span>
+                  Exploration
+                </span>
+                <span class="k-proofx__pill">
+                  <span class="k-proofx__tinyIcon k-proofx__tinyIcon--tri" aria-hidden="true"></span>
+                  User interviews
+                </span>
+              </div>
+            </div>
+
+            <div class="k-proofx__kvRow">
+              <div class="k-proofx__kvKey">Milestones</div>
+              <div class="k-proofx__kvVal k-proofx__kvVal--col">
+                <div class="k-proofx__mile">
+                  <span class="k-proofx__mDot k-proofx__mDot--blue" aria-hidden="true"></span>
+                  <span>Design Review</span>
+                  <span class="k-proofx__muted">100%</span>
+                </div>
+                <div class="k-proofx__mile">
+                  <span class="k-proofx__mDot k-proofx__mDot--blue" aria-hidden="true"></span>
+                  <span>Internal Alpha</span>
+                  <span class="k-proofx__muted">100% of 10</span>
+                </div>
+                <div class="k-proofx__mile">
+                  <span class="k-proofx__mDot k-proofx__mDot--amber" aria-hidden="true"></span>
+                  <span>GA</span>
+                  <span class="k-proofx__muted">25% of 53</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="k-proofx__cardGlow" aria-hidden="true"></div>
+        </div>
+      </div>
+
+      <div class="k-proofx__vdiv" aria-hidden="true"></div>
+
+      <div class="k-proofx__half">
+        <h3 class="k-proofx__h3">Project updates</h3>
+        <p class="k-proofx__p2">Communicate progress and project health with built-in project updates.</p>
+
+        <div class="k-proofx__stack" aria-hidden="true">
+          <div class="k-proofx__update k-proofx__update--back1">
+            <div class="k-proofx__uLine"></div>
+            <div class="k-proofx__uLine"></div>
+            <div class="k-proofx__uLine"></div>
+          </div>
+
+          <div class="k-proofx__update k-proofx__update--back2">
+            <div class="k-proofx__uLine"></div>
+            <div class="k-proofx__uLine"></div>
+            <div class="k-proofx__uLine"></div>
+          </div>
+
+          <div class="k-proofx__update k-proofx__update--front">
+            <div class="k-proofx__uTop">
+              <span class="k-proofx__uBadge">At risk</span>
+            </div>
+
+            <div class="k-proofx__uStatus">
+              <span class="k-proofx__check" aria-hidden="true">✓</span>
+              <span class="k-proofx__green">On track</span>
+            </div>
+
+            <div class="k-proofx__uTitle">We are ready to launch next Thursday</div>
+            <div class="k-proofx__uDate">Sep 8</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="k-proofx__hr" aria-hidden="true"></div>
+
+    <!-- ===== ROW 3 ===== -->
+    <div class="k-proofx__row k-proofx__row--doc">
+      <div class="k-proofx__copy2">
+        <h3 class="k-proofx__h3 k-proofx__h3--big">Ideate and specify<br />what to build next</h3>
+
+        <div class="k-proofx__list" aria-hidden="true">
+          <div class="k-proofx__li k-proofx__li--on">
+            <span class="k-proofx__liBar"></span>
+            <span>Collaborative documents</span>
+          </div>
+          <div class="k-proofx__li">
+            <span class="k-proofx__liBar"></span>
+            <span>Inline comments</span>
+          </div>
+          <div class="k-proofx__li">
+            <span class="k-proofx__liBar"></span>
+            <span>Text-to-issue commands</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="k-proofx__visual k-proofx__visual--doc" aria-hidden="true">
+        <div class="k-proofx__doc">
+          <div class="k-proofx__docTop">
+            <span class="k-proofx__crumbDot" aria-hidden="true"></span>
+            <span>Spice harvester</span>
+            <span class="k-proofx__sep" aria-hidden="true">›</span>
+            <span>Project specs</span>
+            <span class="k-proofx__dots" aria-hidden="true">···</span>
+          </div>
+
+          <div class="k-proofx__docBody">
+            <div class="k-proofx__docIcon" aria-hidden="true"></div>
+
+            <div class="k-proofx__hl">
+              <span class="k-proofx__tag k-proofx__tag--zoe">zoe</span>
+              <span class="k-proofx__hlText">Collaborate on ideas</span>
+            </div>
+
+            <div class="k-proofx__docP">
+              Write down product ideas and work together on feature specs in realtime, multiplayer project documents.
+              Add <span class="k-proofx__mono">**style**</span> and <span class="k-proofx__mono">##structure</span> with
+              rich-text formatting options.
+              <span class="k-proofx__tag k-proofx__tag--quinn">quinn</span>
+            </div>
+
+            <div class="k-proofx__lines">
+              <span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span>
+            </div>
+          </div>
+
+          <div class="k-proofx__docGlow" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </section>
