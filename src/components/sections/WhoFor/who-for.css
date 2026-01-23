@@ -642,3 +642,23 @@
 @media (min-width: 760px){
   .k-whoL__dots{ display: none; }
 }
+/* visuals inside cards */
+.k-whoL__lottie{
+  width: min(86%, 320px);
+  aspect-ratio: 1 / 1;
+}
+
+.k-whoL__svgIcon{
+  width: min(86%, 340px);
+  height: auto;
+  opacity: .92;
+  filter: drop-shadow(0 16px 36px rgba(0,0,0,.30));
+}
+
+/* reduced motion: keep things calm */
+@media (prefers-reduced-motion: reduce){
+  .k-whoL__lottie,
+  .k-whoL__svgIcon{
+    filter: none;
+  }
+}

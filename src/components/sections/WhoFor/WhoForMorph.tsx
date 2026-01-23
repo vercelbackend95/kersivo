@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, MotionConfig, motion, useReducedMotion } from "framer-motion";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 type Card = {
   id: "development" | "speed" | "craft";
@@ -9,10 +10,73 @@ type Card = {
   body: string[];
   quote: { text: string; by: string };
   stats: Array<{ big: string; small: string }>;
+  lottieSrc?: string;
 };
 
 function cn(...x: Array<string | false | undefined | null>) {
   return x.filter(Boolean).join(" ");
+}
+
+const ROCKET_LOTTIE =
+  "https://lottie.host/dede5b9d-8e0b-41b6-b51a-7671cb5935ae/xHXT5QqJrp.lottie";
+
+/** super proste, premium, czytelne svg — zamiast “smutnych mydeł” */
+function IconDocsChecklist({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 140 92" className={className} fill="none" aria-hidden="true">
+      <rect x="22" y="10" width="92" height="62" rx="14" stroke="rgba(255,255,255,.40)" />
+      <rect x="14" y="18" width="92" height="62" rx="14" stroke="rgba(255,255,255,.22)" />
+      <rect x="30" y="22" width="92" height="62" rx="14" stroke="rgba(255,255,255,.55)" />
+      <path d="M46 42l6 6 12-14" stroke="rgba(167,139,250,.95)" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M70 44h26" stroke="rgba(255,255,255,.46)" strokeWidth="2.2" strokeLinecap="round" />
+      <path d="M46 56l6 6 12-14" stroke="rgba(167,139,250,.75)" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M70 58h22" stroke="rgba(255,255,255,.36)" strokeWidth="2.2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function IconGridPlus({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 140 92" className={className} fill="none" aria-hidden="true">
+      <rect x="22" y="12" width="96" height="68" rx="18" stroke="rgba(255,255,255,.38)" />
+      <g opacity="0.65">
+        <path d="M54 24v44" stroke="rgba(255,255,255,.20)" />
+        <path d="M86 24v44" stroke="rgba(255,255,255,.20)" />
+        <path d="M34 46h72" stroke="rgba(255,255,255,.20)" />
+      </g>
+
+      {/* lifted tile */}
+      <rect x="78" y="30" width="32" height="32" rx="12" fill="rgba(255,255,255,.06)" stroke="rgba(125,211,252,.55)" />
+      <path d="M94 40v12M88 46h12" stroke="rgba(125,211,252,.95)" strokeWidth="2.4" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function LottieRocket({
+  reduced,
+  className = "",
+}: {
+  reduced: boolean;
+  className?: string;
+}) {
+  return (
+    <div className={className} aria-hidden="true">
+      <DotLottieReact
+        src={ROCKET_LOTTIE}
+        autoplay={!reduced}
+        loop={!reduced}
+        // speed: spokojnie, premium. Nie “3f” turbo-dzida.
+        speed={reduced ? 1 : 1.15}
+        style={{
+          width: "100%",
+          height: "100%",
+          opacity: 0.92,
+          // delikatnie “szkło” — nie neon-arcade
+          filter: "drop-shadow(0 18px 40px rgba(0,0,0,.35))",
+        }}
+      />
+    </div>
+  );
 }
 
 export default function WhoForMorph() {
@@ -49,7 +113,7 @@ export default function WhoForMorph() {
       {
         id: "speed",
         title: "Designed to move fast",
-        visualLabel: "Latency arcs + rails",
+        visualLabel: "Launch speed + smooth flow",
         modalTitle: "Designed to move fast",
         body: [
           "Speed isn’t a Lighthouse trophy — it’s fewer drop-offs and more form submits. We build with performance budgets, not vibes.",
@@ -64,6 +128,7 @@ export default function WhoForMorph() {
           { big: "2x", small: "Increase in form starts" },
           { big: "1.6x", small: "Faster issue resolution" },
         ],
+        lottieSrc: ROCKET_LOTTIE,
       },
       {
         id: "craft",
@@ -100,17 +165,14 @@ export default function WhoForMorph() {
     return () => window.removeEventListener("keydown", onKey);
   }, [openId]);
 
-  // Focus close button on open (nice + premium feel)
+  // Focus close button on open
   useEffect(() => {
     if (!openId) return;
     const t = window.setTimeout(() => closeBtnRef.current?.focus(), 40);
     return () => window.clearTimeout(t);
   }, [openId]);
 
-  // LOCK SCROLL (proper iOS-safe)
-  // - freezes body at current scroll position
-  // - prevents background scroll/bounce
-  // - restores position on close
+  // LOCK SCROLL (iOS-safe)
   useEffect(() => {
     if (!openId) return;
 
@@ -159,7 +221,7 @@ export default function WhoForMorph() {
     };
   }, [openId]);
 
-  // Mobile carousel: update active dot on scroll
+  // Mobile carousel active dot
   useEffect(() => {
     const el = trackRef.current;
     if (!el) return;
@@ -199,7 +261,6 @@ export default function WhoForMorph() {
 
   return (
     <MotionConfig reducedMotion="user">
-      {/* Track acts as grid on desktop, carousel on mobile (CSS) */}
       <div className="k-whoL__grid" aria-label="Capabilities" ref={trackRef} data-carousel>
         {cards.map((c) => (
           <motion.button
@@ -221,6 +282,27 @@ export default function WhoForMorph() {
                 transition={trans}
                 aria-hidden="true"
               >
+                {/* VISUAL CONTENT */}
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    padding: 10,
+                    display: "grid",
+                    placeItems: "center",
+                    pointerEvents: "none",
+                  }}
+                >
+                  {/* speed gets Lottie rocket, others get clean SVG */}
+                  {c.id === "speed" ? (
+                    <LottieRocket reduced={!!reduced} className="k-whoL__lottie" />
+                  ) : c.id === "development" ? (
+                    <IconDocsChecklist className="k-whoL__svgIcon" />
+                  ) : (
+                    <IconGridPlus className="k-whoL__svgIcon" />
+                  )}
+                </div>
+
                 <span className="k-whoL__visualLabel">{c.visualLabel}</span>
               </motion.div>
 
@@ -236,7 +318,6 @@ export default function WhoForMorph() {
         ))}
       </div>
 
-      {/* Dots — visible only on mobile via CSS */}
       <div className="k-whoL__dots" aria-label="Carousel pagination">
         {cards.map((c, i) => (
           <button
@@ -250,7 +331,6 @@ export default function WhoForMorph() {
         ))}
       </div>
 
-      {/* Overlay + Morph modal */}
       <AnimatePresence>
         {active ? (
           <motion.div
@@ -286,6 +366,26 @@ export default function WhoForMorph() {
                     transition={trans}
                     aria-hidden="true"
                   >
+                    {/* same visual in modal */}
+                    <div
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        padding: 12,
+                        display: "grid",
+                        placeItems: "center",
+                        pointerEvents: "none",
+                      }}
+                    >
+                      {active.id === "speed" ? (
+                        <LottieRocket reduced={!!reduced} className="k-whoL__lottie" />
+                      ) : active.id === "development" ? (
+                        <IconDocsChecklist className="k-whoL__svgIcon" />
+                      ) : (
+                        <IconGridPlus className="k-whoL__svgIcon" />
+                      )}
+                    </div>
+
                     <span className="k-whoL__visualLabel">{active.visualLabel}</span>
                   </motion.div>
 
