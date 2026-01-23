@@ -609,3 +609,23 @@
 @media (min-width: 760px){
   .k-whoL__dots{ display: none; }
 }
+/* =========================================
+   FIX: carousel track must NOT tint background
+   - show global background between cards
+   ========================================= */
+@media (max-width: 759px){
+  .k-whoL__grid[data-carousel]{
+    background: transparent !important;
+    background-color: transparent !important;
+
+    /* kill the fade mask (can look like dark overlay) */
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+  }
+
+  /* if any wrapper/section applies tint, force through */
+  .k-whoL,
+  .k-whoL__container{
+    background: transparent !important;
+  }
+}
