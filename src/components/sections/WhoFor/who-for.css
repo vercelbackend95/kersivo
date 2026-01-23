@@ -4,6 +4,7 @@
    - Controlled motion
    - Square tiles (like reference)
    - No divider line between visual + title
+   - Mobile carousel with peek (Uber-style)
    ========================================= */
 
 .k-whoL{
@@ -95,6 +96,19 @@
   min-width: 0;
 }
 
+/* Focus (keyboard) */
+.k-whoL__card:focus-visible{
+  outline: none;
+}
+.k-whoL__card:focus-visible .k-whoL__cardInner{
+  box-shadow:
+    0 34px 120px rgba(0,0,0,.55),
+    inset 0 1px 0 rgba(255,255,255,.06),
+    0 0 0 1px rgba(190,145,255,.22),
+    0 0 0 6px rgba(190,145,255,.10);
+  border-color: rgba(190,145,255,.22);
+}
+
 /* ===== Tile shell (square) ===== */
 .k-whoL__cardInner{
   position: relative;
@@ -115,6 +129,7 @@
     inset 0 1px 0 rgba(255,255,255,.05);
 
   isolation: isolate;
+  transform: translateZ(0);
 }
 
 /* subtle top sheen */
@@ -145,13 +160,13 @@
 .k-whoL__visual{
   position: relative;
   flex: 1 1 auto;
-  height: auto;                /* replaces old fixed height */
+  height: auto;
   background: rgba(0,0,0,.16);
   overflow: hidden;
-  border-bottom: 0 !important;  /* kills that separator line */
+  border-bottom: 0 !important;
 }
 
-/* Visual label (tiny, like "50ms") */
+/* Visual label (tiny) */
 .k-whoL__visualLabel{
   position: absolute;
   top: 14px;
@@ -167,11 +182,11 @@
 /* ===== Bottom content (title + floating plus) ===== */
 .k-whoL__cardBottom{
   position: relative;
-  display: block;              /* no “row” split */
+  display: block;
   padding: 18px 18px 18px;
 }
 
-/* Title sits bottom-left like reference */
+/* Title sits bottom-left */
 .k-whoL__cardTitle{
   white-space: pre-line;
   font-size: 19px;
@@ -198,7 +213,6 @@
   box-shadow:
     0 14px 40px rgba(0,0,0,.35),
     inset 0 1px 0 rgba(255,255,255,.06);
-  flex: 0 0 auto;
   opacity: 1;
 }
 
@@ -226,7 +240,7 @@
 }
 
 /* ===== Visuals (CSS-only “illustrations”) ===== */
-/* 1) development: stacked sheets + orb */
+/* 1) development */
 .k-whoL__visual--development{
   background:
     radial-gradient(520px 240px at 70% 30%, rgba(190,145,255,.14), transparent 60%),
@@ -264,7 +278,7 @@
   opacity: .28;
 }
 
-/* 2) speed: “50ms” arcs/rails */
+/* 2) speed */
 .k-whoL__visual--speed{
   background:
     radial-gradient(520px 260px at 75% 15%, rgba(255,255,255,.06), transparent 62%),
@@ -300,7 +314,7 @@
   opacity: .55;
 }
 
-/* 3) craft: grid + “create” chip */
+/* 3) craft */
 .k-whoL__visual--craft{
   background:
     linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,0)),
@@ -508,40 +522,60 @@
 @media (prefers-reduced-motion: reduce){
   .k-whoL__overlay{ backdrop-filter: none; }
 }
+
 /* =========================================
-   MOBILE CAROUSEL (Uber-style)
-   - keep card size (1 card per view)
-   - snap paging + dots
+   MOBILE CAROUSEL (Uber-style) + PEEK
+   - Keep card size vibe
+   - Peek next card by ~10–12%
+   - Snap like a premium app
    ========================================= */
 
 @media (max-width: 759px){
-  /* the grid becomes a horizontal track */
   .k-whoL__grid[data-carousel]{
+    /* tune these two and you control the “peek” */
+    --peek: 12%;
+    --gap: 12px;
+    --pad: 16px;
+
     display: flex;
-    gap: 12px;
+    gap: var(--gap);
+
     overflow-x: auto;
     overflow-y: hidden;
+
     scroll-snap-type: x mandatory;
+    scroll-padding-left: var(--pad);
+    scroll-padding-right: calc(var(--pad) + var(--peek));
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
 
-    /* keep same perceived size as before */
-    padding: 0 2px; /* minimal so card is essentially same width */
+    padding: 0 var(--pad);
     margin: 0;
-  }
 
-  /* hide scrollbar (clean, premium) */
-  .k-whoL__grid[data-carousel]{
+    /* clean */
     scrollbar-width: none;
   }
-  .k-whoL__grid[data-carousel]::-webkit-scrollbar{
-    display: none;
+
+  .k-whoL__grid[data-carousel]::-webkit-scrollbar{ display: none; }
+
+  /* Each card is slightly narrower than viewport → next card peeks in */
+  .k-whoL__grid[data-carousel] .k-whoL__card{
+    flex: 0 0 calc(100% - var(--peek));
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
   }
 
-  /* each card occupies exactly one "page" */
-  .k-whoL__grid[data-carousel] .k-whoL__card{
-    flex: 0 0 100%;
-    scroll-snap-align: start;
+  /* Soft edge fade so the peek looks expensive, not chopped */
+  @supports (mask-image: linear-gradient(#000, #000)){
+    .k-whoL__grid[data-carousel]{
+      mask-image: linear-gradient(
+        to right,
+        transparent 0px,
+        #000 18px,
+        #000 calc(100% - 18px),
+        transparent 100%
+      );
+    }
   }
 
   /* dots */
@@ -562,6 +596,7 @@
     cursor: pointer;
     background: rgba(255,255,255,.22);
     box-shadow: inset 0 1px 0 rgba(255,255,255,.12);
+    transition: width .18s ease, background .18s ease;
   }
 
   .k-whoL__dot.is-active{
