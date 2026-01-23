@@ -18,6 +18,7 @@
 .k-whoL__container{
   position: relative;
   min-width: 0;
+  background: transparent;
 }
 
 /* ===== Header (like screenshot) ===== */
@@ -124,12 +125,13 @@
 
   background: rgba(255,255,255,.02);
   border: 1px solid rgba(255,255,255,.07);
+
+  /* desktop depth (mobile gets “no-shadow” patch below) */
   box-shadow:
     0 28px 90px rgba(0,0,0,.45),
     inset 0 1px 0 rgba(255,255,255,.05);
 
   isolation: isolate;
-  transform: translateZ(0);
 }
 
 /* subtle top sheen */
@@ -254,8 +256,7 @@
   top: 26px;
   width: 180px;
   height: 120px;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0));
+  background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0));
   border: 1px solid rgba(255,255,255,.10);
   border-radius: 18px;
   box-shadow: 0 26px 90px rgba(0,0,0,.45);
@@ -308,8 +309,7 @@
   width: 260px;
   height: 260px;
   border-radius: 999px;
-  background:
-    conic-gradient(from 210deg, rgba(255,255,255,.0), rgba(255,255,255,.14), rgba(255,255,255,.0) 70%);
+  background: conic-gradient(from 210deg, rgba(255,255,255,.0), rgba(255,255,255,.14), rgba(255,255,255,.0) 70%);
   mask-image: radial-gradient(circle at 50% 50%, #000 48%, transparent 62%);
   opacity: .55;
 }
@@ -357,22 +357,29 @@
 .k-whoL__overlay{
   position: fixed;
   inset: 0;
-  z-index: 70;
+
+  /* IMPORTANT: must be above TopNav (TopNav is z=80) */
+  z-index: 999;
+
   display: grid;
   place-items: center;
+
   padding: 18px;
+  padding-top: calc(18px + env(safe-area-inset-top));
+  padding-bottom: calc(18px + env(safe-area-inset-bottom));
+
   background: rgba(0,0,0,.58);
   backdrop-filter: blur(10px);
 
-  /* iOS + mobile: prevent scroll “leaking” to the page */
+  /* prevent scroll “leaking” to the page */
   overscroll-behavior: contain;
 }
 
 .k-whoL__modalWrap{
   width: min(720px, 100%);
 
-  /* make the modal obey the viewport height so the BODY can scroll */
-  max-height: calc(100dvh - 36px);
+  /* obey viewport height so the BODY can scroll */
+  max-height: calc(100dvh - 36px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
 }
 
 .k-whoL__modal{
@@ -415,15 +422,19 @@
 .k-whoL__modalBody{
   padding: 18px 18px 18px;
 
-  /* the important bit: this area scrolls */
+  /* this area scrolls */
   flex: 1 1 auto;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
+
+  /* iOS: nicer end */
+  padding-bottom: calc(18px + env(safe-area-inset-bottom));
 }
 
 @media (min-width: 520px){
   .k-whoL__modalBody{ padding: 22px 22px 22px; }
+  .k-whoL__modalBody{ padding-bottom: calc(22px + env(safe-area-inset-bottom)); }
 }
 
 .k-whoL__modalTitle{
@@ -530,10 +541,10 @@
 
 /* Mobile: modal takes more height and scrolls naturally */
 @media (max-width: 520px){
-  .k-whoL__overlay{ padding: 12px; place-items: end center; }
+  .k-whoL__overlay{ padding-left: 12px; padding-right: 12px; place-items: end center; }
   .k-whoL__modalWrap{ width: 100%; }
   .k-whoL__modal{ border-radius: 22px; }
-  .k-whoL__modalBody{ padding: 16px; }
+  .k-whoL__modalBody{ padding: 16px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); }
 }
 
 /* Reduced motion: keep it calm */
@@ -546,11 +557,11 @@
    - Keep card size vibe
    - Peek next card by ~10–12%
    - Snap like a premium app
+   - NO track tint (show global background)
    ========================================= */
 
 @media (max-width: 759px){
   .k-whoL__grid[data-carousel]{
-    /* tune these two and you control the “peek” */
     --peek: 12%;
     --gap: 12px;
     --pad: 16px;
@@ -570,30 +581,33 @@
     padding: 0 var(--pad);
     margin: 0;
 
-    /* clean */
+    background: transparent !important;
+    background-color: transparent !important;
+
     scrollbar-width: none;
+
+    /* kill any edge fade that can read as “dark band” */
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
   }
 
   .k-whoL__grid[data-carousel]::-webkit-scrollbar{ display: none; }
 
-  /* Each card is slightly narrower than viewport → next card peeks in */
   .k-whoL__grid[data-carousel] .k-whoL__card{
     flex: 0 0 calc(100% - var(--peek));
     scroll-snap-align: start;
     scroll-snap-stop: always;
   }
 
-  /* Soft edge fade so the peek looks expensive, not chopped */
-  @supports (mask-image: linear-gradient(#000, #000)){
-    .k-whoL__grid[data-carousel]{
-      mask-image: linear-gradient(
-        to right,
-        transparent 0px,
-        #000 18px,
-        #000 calc(100% - 18px),
-        transparent 100%
-      );
-    }
+  /* ZERO “band-shadow” on mobile */
+  .k-whoL__cardInner{
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+    border-color: rgba(255,255,255,.09);
+  }
+
+  /* plus bubble can cast the “mystery shadow” on iOS */
+  .k-whoL__plus{
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
   }
 
   /* dots */
@@ -603,6 +617,7 @@
     gap: 8px;
     margin-top: 12px;
     padding-bottom: 2px;
+    background: transparent;
   }
 
   .k-whoL__dot{
@@ -626,34 +641,4 @@
 /* desktop: no dots */
 @media (min-width: 760px){
   .k-whoL__dots{ display: none; }
-}
-/* =========================================
-   FIX: carousel track must NOT tint background
-   - show global background between cards
-   ========================================= */
-@media (max-width: 759px){
-  .k-whoL__grid[data-carousel]{
-    background: transparent !important;
-    background-color: transparent !important;
-
-    /* kill the fade mask (can look like dark overlay) */
-    mask-image: none !important;
-    -webkit-mask-image: none !important;
-  }
-
-  /* if any wrapper/section applies tint, force through */
-  .k-whoL,
-  .k-whoL__container{
-    background: transparent !important;
-  }
-}
-@media (max-width: 759px){
-  .k-whoL__cardInner{
-    /* kill the “band” shadow on iOS carousel — keep it crisp like the reference */
-    box-shadow:
-      inset 0 1px 0 rgba(255,255,255,.06);
-
-    /* slightly stronger border replaces depth without darkening the background */
-    border-color: rgba(255,255,255,.09);
-  }
 }

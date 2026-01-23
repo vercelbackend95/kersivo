@@ -23,6 +23,8 @@ export default function WhoForMorph() {
   const trackRef = useRef<HTMLDivElement | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
+  const closeBtnRef = useRef<HTMLButtonElement | null>(null);
+
   const cards: Card[] = useMemo(
     () => [
       {
@@ -98,14 +100,62 @@ export default function WhoForMorph() {
     return () => window.removeEventListener("keydown", onKey);
   }, [openId]);
 
-  // Lock scroll while modal is open
+  // Focus close button on open (nice + premium feel)
   useEffect(() => {
     if (!openId) return;
+    const t = window.setTimeout(() => closeBtnRef.current?.focus(), 40);
+    return () => window.clearTimeout(t);
+  }, [openId]);
+
+  // LOCK SCROLL (proper iOS-safe)
+  // - freezes body at current scroll position
+  // - prevents background scroll/bounce
+  // - restores position on close
+  useEffect(() => {
+    if (!openId) return;
+
     const html = document.documentElement;
-    const prev = html.style.overflow;
+    const body = document.body;
+
+    const scrollY = window.scrollY || 0;
+    const prev = {
+      htmlOverflow: html.style.overflow,
+      htmlHeight: html.style.height,
+      bodyPos: body.style.position,
+      bodyTop: body.style.top,
+      bodyLeft: body.style.left,
+      bodyRight: body.style.right,
+      bodyWidth: body.style.width,
+      bodyOverflow: body.style.overflow,
+      bodyPaddingRight: body.style.paddingRight,
+    };
+
+    const scrollbarGap = window.innerWidth - html.clientWidth;
+    if (scrollbarGap > 0) body.style.paddingRight = `${scrollbarGap}px`;
+
     html.style.overflow = "hidden";
+    html.style.height = "100%";
+
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.width = "100%";
+    body.style.overflow = "hidden";
+
     return () => {
-      html.style.overflow = prev;
+      html.style.overflow = prev.htmlOverflow;
+      html.style.height = prev.htmlHeight;
+
+      body.style.position = prev.bodyPos;
+      body.style.top = prev.bodyTop;
+      body.style.left = prev.bodyLeft;
+      body.style.right = prev.bodyRight;
+      body.style.width = prev.bodyWidth;
+      body.style.overflow = prev.bodyOverflow;
+      body.style.paddingRight = prev.bodyPaddingRight;
+
+      window.scrollTo(0, scrollY);
     };
   }, [openId]);
 
@@ -125,8 +175,6 @@ export default function WhoForMorph() {
     };
 
     el.addEventListener("scroll", onScroll, { passive: true });
-
-    // initialize
     onScroll();
 
     return () => {
@@ -152,12 +200,7 @@ export default function WhoForMorph() {
   return (
     <MotionConfig reducedMotion="user">
       {/* Track acts as grid on desktop, carousel on mobile (CSS) */}
-      <div
-        className="k-whoL__grid"
-        aria-label="Capabilities"
-        ref={trackRef}
-        data-carousel
-      >
+      <div className="k-whoL__grid" aria-label="Capabilities" ref={trackRef} data-carousel>
         {cards.map((c) => (
           <motion.button
             key={c.id}
@@ -181,11 +224,7 @@ export default function WhoForMorph() {
                 <span className="k-whoL__visualLabel">{c.visualLabel}</span>
               </motion.div>
 
-              <motion.div
-                className="k-whoL__cardBottom"
-                layoutId={`bottom-${c.id}`}
-                transition={trans}
-              >
+              <motion.div className="k-whoL__cardBottom" layoutId={`bottom-${c.id}`} transition={trans}>
                 <div className="k-whoL__cardTitle">{c.title}</div>
 
                 <span className="k-whoL__plus" aria-hidden="true">
@@ -197,7 +236,7 @@ export default function WhoForMorph() {
         ))}
       </div>
 
-      {/* Dots (Uber-style paging) — visible only on mobile via CSS */}
+      {/* Dots — visible only on mobile via CSS */}
       <div className="k-whoL__dots" aria-label="Carousel pagination">
         {cards.map((c, i) => (
           <button
@@ -220,7 +259,7 @@ export default function WhoForMorph() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={reduced ? { duration: 0 } : { duration: 0.18 }}
-            onMouseDown={(e) => {
+            onPointerDown={(e) => {
               if (e.target === e.currentTarget) setOpenId(null);
             }}
             role="presentation"
@@ -250,7 +289,13 @@ export default function WhoForMorph() {
                     <span className="k-whoL__visualLabel">{active.visualLabel}</span>
                   </motion.div>
 
-                  <button className="k-whoL__close" type="button" onClick={() => setOpenId(null)} aria-label="Close">
+                  <button
+                    ref={closeBtnRef}
+                    className="k-whoL__close"
+                    type="button"
+                    onClick={() => setOpenId(null)}
+                    aria-label="Close"
+                  >
                     <span aria-hidden="true">×</span>
                   </button>
                 </div>
