@@ -1,7 +1,9 @@
 ---
 import "./services.css";
+import "../../ui/CtaButton/cta-button.css"; // jeśli masz inną ścieżkę, popraw na swoją
 import Pill from "../../ui/Pill/Pill.astro";
-import ServiceConsole from "./ServiceConsole.tsx";
+
+import ServiceMap from "./ServiceMap.tsx";
 
 /** Astro-safe SVG strings (set:html). */
 const ICONS = {
@@ -70,6 +72,7 @@ const cards = [
     title: "Landing pages that convert",
     desc: "Message clarity + flow. Designed to turn browsers into enquiries — without shouting.",
     meta: "Best for: ads & promos",
+    bullets: ["Clear offer hierarchy", "CTA flow tuned"],
   },
   {
     key: "wallet",
@@ -80,6 +83,7 @@ const cards = [
     title: "Copy & structure",
     desc: "We shape the words and hierarchy so your offer lands instantly.",
     meta: "Best for: fuzzy offers",
+    bullets: ["Tighter messaging", "Scan-friendly layout"],
   },
   {
     key: "inbox",
@@ -90,6 +94,7 @@ const cards = [
     title: "Local SEO foundations",
     desc: "Structure, schema, on-page hygiene. Built to rank for intent — not vanity.",
     meta: "Best for: UK locals",
+    bullets: ["Schema + internal links", "Technical hygiene"],
   },
   {
     key: "gifts",
@@ -100,6 +105,7 @@ const cards = [
     title: "Tracking & analytics",
     desc: "Events that matter. Know what converts — and what just looks pretty.",
     meta: "Best for: decisions",
+    bullets: ["Meaningful events", "Clean dashboards"],
   },
   {
     key: "reminders",
@@ -110,13 +116,13 @@ const cards = [
     title: "Care plan",
     desc: "Updates, fixes, small improvements. Keep it sharp after launch.",
     meta: "Best for: peace of mind",
+    bullets: ["Updates + fixes", "Small improvements"],
   },
 ];
 ---
 
 <section id="services" class="k-services k-services--appTiles" aria-labelledby="services-title" data-services>
   <div class="container k-services__inner">
-    <!-- Header -->
     <header class="k-svcHead">
       <div class="k-svcHead__kicker">SERVICES</div>
 
@@ -130,9 +136,9 @@ const cards = [
       </p>
     </header>
 
-    <!-- Mobile: Service Console -->
-    <div class="k-svcConsoleWrap" aria-label="Services console">
-      <ServiceConsole client:visible cards={cards} />
+    <!-- Mobile: Service Map (2×3 grid + bottom sheet) -->
+    <div class="k-svcMapWrap" aria-label="Services map">
+      <ServiceMap client:visible cards={cards} />
     </div>
 
     <!-- Desktop / tablet: mosaic tiles -->
