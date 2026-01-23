@@ -363,10 +363,16 @@
   padding: 18px;
   background: rgba(0,0,0,.58);
   backdrop-filter: blur(10px);
+
+  /* iOS + mobile: prevent scroll “leaking” to the page */
+  overscroll-behavior: contain;
 }
 
 .k-whoL__modalWrap{
   width: min(720px, 100%);
+
+  /* make the modal obey the viewport height so the BODY can scroll */
+  max-height: calc(100dvh - 36px);
 }
 
 .k-whoL__modal{
@@ -375,10 +381,16 @@
   background: rgba(10,10,14,.86);
   border: 1px solid rgba(255,255,255,.10);
   box-shadow: 0 60px 220px rgba(0,0,0,.70);
+
+  /* enable internal scrolling (body), not page */
+  display: flex;
+  flex-direction: column;
+  max-height: inherit;
 }
 
 .k-whoL__modalTop{
   position: relative;
+  flex: 0 0 auto;
 }
 
 .k-whoL__close{
@@ -402,6 +414,12 @@
 /* Body */
 .k-whoL__modalBody{
   padding: 18px 18px 18px;
+
+  /* the important bit: this area scrolls */
+  flex: 1 1 auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 
 @media (min-width: 520px){
@@ -631,8 +649,11 @@
 }
 @media (max-width: 759px){
   .k-whoL__cardInner{
+    /* kill the “band” shadow on iOS carousel — keep it crisp like the reference */
     box-shadow:
-      0 22px 70px rgba(0,0,0,.35),
-      inset 0 1px 0 rgba(255,255,255,.05);
+      inset 0 1px 0 rgba(255,255,255,.06);
+
+    /* slightly stronger border replaces depth without darkening the background */
+    border-color: rgba(255,255,255,.09);
   }
 }
