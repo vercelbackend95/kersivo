@@ -427,7 +427,7 @@ export default function WhoForMorph() {
                   <div className="k-whoL__modalFoot">
                     <span className="k-whoL__footDot" aria-hidden="true" />
                     <span>Want this energy on your site?</span>
-                    <a className="k-whoL__footLink" href="#contact" onClick={() => setOpenId(null)}>
+                    <a className="k-whoL__footLink" href="/contact/#contact" onClick={() => setOpenId(null)}>
                       Get a quote →
                     </a>
                   </div>

@@ -1,0 +1,17 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+import Process from "../../components/sections/Process/Process.astro";
+import Footer from "../../components/sections/Footer/Footer.astro";
+
+const title = "Process — Kersivo";
+const description =
+  "A calm build with a sharp result. Clear steps, premium polish, performance-first delivery — without chaos.";
+---
+
+<BaseLayout title={title} description={description}>
+  <main id="main">
+    <Process />
+    <Footer />
+  </main>
+</BaseLayout>

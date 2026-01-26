@@ -218,7 +218,7 @@ export default function ServiceMap({ cards }: { cards: Card[] }) {
                   ))}
                 </ul>
 
-                <a href="#contact" className="k-btn k-btn--primary k-svcSheet__cta" data-magnetic="false">
+                <a href="/contact/#contact" className="k-btn k-btn--primary k-svcSheet__cta" data-magnetic="false">
                   <span className="k-btn__label">Get a quote</span>
                   <span className="k-btn__shine" aria-hidden="true"></span>
                   <span className="k-btn__arrow" aria-hidden="true">→</span>

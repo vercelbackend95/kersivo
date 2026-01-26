@@ -1,0 +1,17 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+import Contact from "../../components/sections/Contact/Contact.astro";
+import Footer from "../../components/sections/Footer/Footer.astro";
+
+const title = "Contact — Kersivo";
+const description =
+  "Tell us what you need — we’ll reply fast. Premium web design & development for UK small businesses.";
+---
+
+<BaseLayout title={title} description={description}>
+  <main id="main">
+    <Contact />
+    <Footer />
+  </main>
+</BaseLayout>

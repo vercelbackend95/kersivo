@@ -1,9 +1,9 @@
 ---
+// src/components/shell/TopNav/TopNav.astro
 import "./topnav.css";
 import "./neon-nav.css";
 import CtaButton from "../../ui/CtaButton/CtaButton.astro";
 ---
-
 
 <header class="k-topnav" data-topnav>
   <a class="k-skip" href="#main">Skip to content</a>
@@ -32,17 +32,20 @@ import CtaButton from "../../ui/CtaButton/CtaButton.astro";
     <nav class="k-topnav__links" aria-label="Primary" data-nav-links>
       <span class="k-navNeon" aria-hidden="true" data-nav-neon></span>
 
-      <a class="k-topnav__link" href="#work" data-nav-link>Work</a>
-      <a class="k-topnav__link" href="#services" data-nav-link>Services</a>
-      <a class="k-topnav__link" href="#process" data-nav-link>Process</a>
-      <a class="k-topnav__link" href="#contact" data-nav-link>Contact</a>
+      <a class="k-topnav__link" href="/" data-nav-link>Home</a>
+      <a class="k-topnav__link" href="/work/" data-nav-link>Work</a>
+      <a class="k-topnav__link" href="/services/" data-nav-link>Services</a>
+      <a class="k-topnav__link" href="/process/" data-nav-link>Process</a>
+      <a class="k-topnav__link" href="/packages/" data-nav-link>Packages</a>
+      <!-- FAQ removed from TopNav on purpose -->
+      <a class="k-topnav__link" href="/contact/" data-nav-link>Contact</a>
     </nav>
 
     <div class="k-topnav__actions">
-      <a class="k-topnav__mini" href="#work">View work</a>
+      <a class="k-topnav__mini" href="/work/">View work</a>
 
       <CtaButton
-        href="#contact"
+        href="/contact/#contact"
         label="Get a quote"
         variant="primary"
         class="k-topnav__cta"
@@ -63,20 +66,23 @@ import CtaButton from "../../ui/CtaButton/CtaButton.astro";
 
   <div class="k-topnav__panel" id="kTopnavPanel" hidden>
     <div class="k-topnav__panelInner">
-      <a class="k-topnav__panelLink" href="#work">Work</a>
-      <a class="k-topnav__panelLink" href="#services">Services</a>
-      <a class="k-topnav__panelLink" href="#process">Process</a>
-      <a class="k-topnav__panelLink" href="#contact">Contact</a>
+      <a class="k-topnav__panelLink" href="/">Home</a>
+      <a class="k-topnav__panelLink" href="/work/">Work</a>
+      <a class="k-topnav__panelLink" href="/services/">Services</a>
+      <a class="k-topnav__panelLink" href="/process/">Process</a>
+      <a class="k-topnav__panelLink" href="/packages/">Packages</a>
+      <!-- FAQ removed from mobile panel too -->
+      <a class="k-topnav__panelLink" href="/contact/">Contact</a>
 
       <div class="k-topnav__panelCtas">
         <CtaButton
-          href="#contact"
+          href="/contact/#contact"
           label="Get a quote"
           variant="primary"
           class="k-topnav__panelPrimary"
         />
         <CtaButton
-          href="#work"
+          href="/work/"
           label="View work"
           variant="ghost"
           magnetic={false}
@@ -94,179 +100,81 @@ import CtaButton from "../../ui/CtaButton/CtaButton.astro";
       const reduced =
         window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-      // ===== shrink glass on scroll =====
-      const setScrolled = () => root.classList.toggle("is-scrolled", window.scrollY > 6);
-      setScrolled();
-      window.addEventListener("scroll", setScrolled, { passive: true });
-
-      // ===== mobile panel =====
-      const btn = root.querySelector(".k-topnav__burger");
+      const burger = root.querySelector(".k-topnav__burger");
       const panel = root.querySelector("#kTopnavPanel");
+      const linksWrap = root.querySelector("[data-nav-links]");
+      const neon = root.querySelector("[data-nav-neon]");
+      const navLinks = Array.from(root.querySelectorAll("[data-nav-link]"));
 
-      // ✅ HARD RESET on boot: ensure the overlay panel starts closed and non-interactive
-      if (panel) panel.hidden = true;
-      root.classList.remove("is-open");
-      if (btn) {
-        btn.setAttribute("aria-expanded", "false");
-        btn.setAttribute("aria-label", "Open menu");
-      }
-
-      const lockScroll = (locked) => {
-        document.documentElement.style.overflow = locked ? "hidden" : "";
+      // Scroll state
+      const onScroll = () => {
+        if (window.scrollY > 6) root.classList.add("is-scrolled");
+        else root.classList.remove("is-scrolled");
       };
+      onScroll();
+      window.addEventListener("scroll", onScroll, { passive: true });
 
+      // Mobile panel toggle
       const open = () => {
-        if (!panel || !btn) return;
+        if (!burger || !panel) return;
+        burger.setAttribute("aria-expanded", "true");
         panel.hidden = false;
-        root.classList.add("is-open");
-        btn.setAttribute("aria-expanded", "true");
-        btn.setAttribute("aria-label", "Close menu");
-        lockScroll(true);
+        panel.classList.add("is-open");
+        document.documentElement.classList.add("k-navOpen");
       };
 
       const close = () => {
-        if (!panel || !btn) return;
-        root.classList.remove("is-open");
-        btn.setAttribute("aria-expanded", "false");
-        btn.setAttribute("aria-label", "Open menu");
-        lockScroll(false);
-        if (reduced) return (panel.hidden = true);
-        setTimeout(() => (panel.hidden = true), 180);
+        if (!burger || !panel) return;
+        burger.setAttribute("aria-expanded", "false");
+        panel.classList.remove("is-open");
+        document.documentElement.classList.remove("k-navOpen");
+        setTimeout(() => (panel.hidden = true), 140);
       };
 
-      if (btn && panel) {
-        btn.addEventListener("click", () => {
-          root.classList.contains("is-open") ? close() : open();
-        });
-
-        window.addEventListener("keydown", (e) => {
-          if (e.key === "Escape" && root.classList.contains("is-open")) close();
-        });
-
-        // click on overlay closes
-        panel.addEventListener("click", (e) => {
-          if (e.target === panel) close();
-        });
-
-        // IMPORTANT: click on any panel link closes
-        panel.querySelectorAll("a[href^='#']").forEach((a) => {
-          a.addEventListener("click", () => {
-            if (root.classList.contains("is-open")) close();
-          });
-        });
-      }
-
-      // ===== neon indicator movement + scroll spy (desktop links) =====
-      const wrap = root.querySelector("[data-nav-links]");
-      const neon = root.querySelector("[data-nav-neon]");
-      const links = Array.from(root.querySelectorAll("[data-nav-link]"));
-      if (!wrap || !neon || !links.length) return;
-
-      const map = new Map();
-      links.forEach((a) => {
-        const hash = (a.getAttribute("href") || "").trim();
-        if (hash && hash.startsWith("#")) map.set(hash, a);
+      burger?.addEventListener("click", () => {
+        const isOpen = burger.getAttribute("aria-expanded") === "true";
+        isOpen ? close() : open();
       });
 
-      const moveNeonTo = (a) => {
-        const x = Math.round(a.offsetLeft);
-        const w = Math.round(a.offsetWidth);
-        wrap.style.setProperty("--nx", x + "px");
-        wrap.style.setProperty("--nw", w + "px");
-      };
-
-      const pulseNeon = () => {
-        if (reduced) return;
-        neon.classList.remove("is-pulsing");
-        void neon.offsetWidth;
-        neon.classList.add("is-pulsing");
-        setTimeout(() => neon.classList.remove("is-pulsing"), 160);
-      };
-
-      const setActive = (hash) => {
-        const a = map.get(hash);
-        if (!a) return;
-
-        links.forEach((x) => {
-          x.classList.remove("is-active");
-          x.removeAttribute("aria-current");
-        });
-
-        a.classList.add("is-active");
-        a.setAttribute("aria-current", "page");
-
-        moveNeonTo(a);
-        pulseNeon();
-      };
-
-      const initial =
-        map.has(location.hash) ? location.hash : (links[0].getAttribute("href") || "#work");
-      setActive(initial);
-
-      links.forEach((a) => {
-        a.addEventListener("click", () => {
-          const hash = (a.getAttribute("href") || "").trim();
-          if (hash.startsWith("#")) setActive(hash);
-          if (root.classList.contains("is-open")) close();
-        });
+      panel?.addEventListener("click", (e) => {
+        const a = e.target && e.target.closest ? e.target.closest("a") : null;
+        if (a) close();
       });
 
-      let raf = 0;
-      const reflow = () => {
-        cancelAnimationFrame(raf);
-        raf = requestAnimationFrame(() => {
-          const active = links.find((x) => x.classList.contains("is-active")) || links[0];
-          moveNeonTo(active);
-        });
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") close();
+      });
+
+      // Neon pill highlight (route-based)
+      const moveNeonTo = (el) => {
+        if (!neon || !linksWrap || !el) return;
+        const wrapRect = linksWrap.getBoundingClientRect();
+        const r = el.getBoundingClientRect();
+        const left = r.left - wrapRect.left;
+        neon.style.transform = `translate3d(${left}px,0,0)`;
+        neon.style.width = `${r.width}px`;
+        neon.style.opacity = "1";
       };
 
-      window.addEventListener("resize", reflow, { passive: true });
-      if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(reflow).catch(() => {});
-      }
+      const currentPath = (location.pathname || "/").replace(/\/+$/, "") || "/";
+      const best = navLinks.find((a) => {
+        const href = (a.getAttribute("href") || "").split("#")[0].replace(/\/+$/, "") || "/";
+        return href === currentPath;
+      });
 
-      const sections = Array.from(map.keys())
-        .map((hash) => document.querySelector(hash))
-        .filter(Boolean);
+      if (best) moveNeonTo(best);
 
-      if (!sections.length) return;
+      navLinks.forEach((a) => {
+        a.addEventListener("mouseenter", () => {
+          if (reduced) return;
+          moveNeonTo(a);
+        });
+        a.addEventListener("focus", () => moveNeonTo(a));
+      });
 
-      if (reduced) {
-        const onScroll = () => {
-          const y = window.scrollY + window.innerHeight * 0.35;
-          let best = sections[0];
-          for (const s of sections) if (s.offsetTop <= y) best = s;
-          setActive("#" + best.id);
-        };
-        onScroll();
-        window.addEventListener("scroll", onScroll, { passive: true });
-        return;
-      }
-
-      const ratios = new Map();
-      const io = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((e) => ratios.set(e.target, e.intersectionRatio));
-
-          let bestEl = null;
-          let bestRatio = 0;
-          ratios.forEach((ratio, el) => {
-            if (ratio > bestRatio) {
-              bestRatio = ratio;
-              bestEl = el;
-            }
-          });
-
-          if (bestEl && bestEl.id) setActive("#" + bestEl.id);
-        },
-        {
-          root: null,
-          rootMargin: "-35% 0px -55% 0px",
-          threshold: [0, 0.12, 0.24, 0.36, 0.5, 0.7, 0.9],
-        }
-      );
-
-      sections.forEach((s) => io.observe(s));
+      linksWrap?.addEventListener("mouseleave", () => {
+        if (best) moveNeonTo(best);
+      });
     })();
   </script>
 </header>

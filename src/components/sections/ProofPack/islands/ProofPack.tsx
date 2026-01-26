@@ -537,7 +537,7 @@ export default function ProofPack() {
           </div>
 
           <div className="k-proof2__ctaRow">
-            <a className="k-btn k-btn--primary" href="#contact" data-magnetic="true">
+            <a className="k-btn k-btn--primary" href="/contact/#contact" data-magnetic="true">
               <span className="k-btn__label">Get a quote</span>
               <span className="k-btn__shine" aria-hidden="true" />
               <span className="k-btn__arrow" aria-hidden="true">

@@ -271,7 +271,7 @@ export default function WorkShowcase() {
                     <div className="k-timeline__meta">Call-first UX • local SEO framing</div>
 
                     <CtaLink
-                      href="#contact"
+                      href="/contact/#contact"
                       label="Notify me"
                       variant="ghost"
                       className="k-timeline__btn"
@@ -350,7 +350,7 @@ export default function WorkShowcase() {
           <div className="k-stage__ctaRow k-stage__ctaRow--right">
             <div className="k-stage__ctaBtns">
               <CtaLink href={DEMO_HREF} label="View live demo" variant="primary" ariaLabel="View live demo" />
-              <CtaLink href="#contact" label="Get a quote" variant="ghost" />
+              <CtaLink href="/contact/#contact" label="Get a quote" variant="ghost" />
             </div>
           </div>
         </div>

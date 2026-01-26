@@ -140,12 +140,27 @@ const {
         const reduced =
           window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+        const normPath = (p) => (p && p.endsWith("/") ? p : (p || "") + "/");
+
         const isContactLink = (a) => {
+          const raw = (a.getAttribute("href") || a.href || "").trim();
+          if (!raw) return false;
+
+          // Pure in-page hash always counts.
+          if (raw === "#contact") return true;
+
+          // Only intercept if link points to THIS page.
           try {
-            const u = new URL(a.getAttribute("href") || a.href || "", location.href);
-            return u.hash === "#contact";
+            const u = new URL(raw, location.href);
+            if (u.hash !== "#contact") return false;
+
+            const here = new URL(location.href);
+            const sameOrigin = u.origin === here.origin;
+            const samePath = normPath(u.pathname) === normPath(here.pathname);
+
+            return sameOrigin && samePath;
           } catch {
-            return (a.getAttribute("href") || "") === "#contact";
+            return false;
           }
         };
 
@@ -177,7 +192,12 @@ const {
 
         const scrollToContact = () => {
           const target = document.querySelector("#contact");
-          if (!target) return;
+
+          // If this page doesn't have #contact, go to the contact page.
+          if (!target) {
+            window.location.href = "/contact/#contact";
+            return;
+          }
 
           window.scrollTo({ left: 0, top: window.scrollY, behavior: "auto" });
 

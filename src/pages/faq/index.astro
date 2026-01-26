@@ -1,0 +1,17 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+import FAQ from "../../components/sections/FAQ/FAQ.astro";
+import Footer from "../../components/sections/Footer/Footer.astro";
+
+const title = "FAQ — Kersivo";
+const description =
+  "Straight answers about timeline, process, hosting, SEO, and handover. If it’s not here, ask — we reply fast.";
+---
+
+<BaseLayout title={title} description={description}>
+  <main id="main">
+    <FAQ />
+    <Footer />
+  </main>
+</BaseLayout>

@@ -1,0 +1,17 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+import Packages from "../../components/sections/Packages/Packages.astro";
+import Footer from "../../components/sections/Footer/Footer.astro";
+
+const title = "Packages & Pricing — Kersivo";
+const description =
+  "Clear pricing for UK small businesses. Premium design, ruthless performance, SEO-ready builds. Pick a tier, get a quote.";
+---
+
+<BaseLayout title={title} description={description}>
+  <main id="main">
+    <Packages />
+    <Footer />
+  </main>
+</BaseLayout>

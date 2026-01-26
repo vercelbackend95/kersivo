@@ -1,0 +1,18 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+import Services from "../../components/sections/Services/Services.astro";
+
+import Footer from "../../components/sections/Footer/Footer.astro";
+
+const title = "Services — Kersivo";
+const description =
+  "Six modules, one clean system. Premium design + fast Astro builds for UK small businesses — built to convert.";
+---
+
+<BaseLayout title={title} description={description}>
+  <main id="main">
+    <Services />
+    <Footer />
+  </main>
+</BaseLayout>
