@@ -2,7 +2,7 @@
    Kersivo — TopNav (premium glass, mobile-proof)
    - Symmetric padding L/R on every device (header-level padding)
    - CTA + burger are a right-side cluster on mobile
-   - Burger: NO circle. Only 2 neon bars (CSS-Tricks-style layered glow)
+   - Burger: NO circle. 3 neon bars -> morph into "K"
    ========================================= */
 
 :root{
@@ -187,8 +187,9 @@ html{
 }
 
 /* =========================================
-   Burger — NO circle. Only 2 neon bars.
-   "CSS-Tricks-style": white core + layered glow (bigger blur outward)
+   Burger — NO circle. 3 neon bars -> morph into "K"
+   Uses your glow stack (core + layered glow)
+   Driven by aria-expanded on the button (no JS changes)
    ========================================= */
 
 .k-topnav__burger{
@@ -199,7 +200,6 @@ html{
 
   display:none; /* enabled on mobile */
   place-items:center;
-  gap: 9px;
 
   background: transparent;
   border: 0;
@@ -217,17 +217,19 @@ html{
   border-radius: 12px;
 }
 
-/* the neon tube */
+/* the neon tubes */
 .k-topnav__burgerLine{
   width: 22px;
   height: 2px;
   border-radius: 999px;
-  position: relative;
+  position: absolute;
+  left: 50%;
+  top: 50%;
 
   /* bright core */
   background: var(--neon-core);
 
-  /* layered glow stack (this is the whole trick) */
+  /* layered glow stack */
   box-shadow:
     0 0 2px  rgba(255,255,255,.85),
     0 0 6px  rgba(255,255,255,.55),
@@ -243,7 +245,9 @@ html{
   opacity: .98;
 
   transform-origin: center;
-  transition: transform 190ms cubic-bezier(.2,.9,.2,1), width 190ms cubic-bezier(.2,.9,.2,1);
+  transition:
+    transform 210ms cubic-bezier(.2,.9,.2,1),
+    width 210ms cubic-bezier(.2,.9,.2,1);
 }
 
 /* inner “glass highlight” to make it feel like a tube, not a flat line */
@@ -259,6 +263,11 @@ html{
   opacity: .35;
 }
 
+/* Closed state: 3 clean horizontal neons */
+.k-topnav__burgerLine--a{ transform: translate(-50%, calc(-50% - 7px)); }
+.k-topnav__burgerLine--b{ transform: translate(-50%, -50%); }
+.k-topnav__burgerLine--c{ transform: translate(-50%, calc(-50% + 7px)); }
+
 /* hover = brighter (desktop only, but harmless on touch) */
 .k-topnav__burger:hover .k-topnav__burgerLine{
   box-shadow:
@@ -269,14 +278,18 @@ html{
     0 0 44px rgba(255,190,245,.30);
 }
 
-/* Open state -> neon X */
-.k-topnav.is-open .k-topnav__burgerLine:first-child{
-  width: 24px;
-  transform: translateY(5px) rotate(45deg);
+/* Open state -> K (driven by aria-expanded on the button) */
+.k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--a{
+  width: 26px;
+  transform: translate(calc(-50% - 7px), -50%) rotate(90deg);
 }
-.k-topnav.is-open .k-topnav__burgerLine:last-child{
+.k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--b{
   width: 24px;
-  transform: translateY(-5px) rotate(-45deg);
+  transform: translate(calc(-50% + 5px), calc(-50% - 2px)) rotate(38deg);
+}
+.k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--c{
+  width: 24px;
+  transform: translate(calc(-50% + 5px), calc(-50% + 2px)) rotate(-38deg);
 }
 
 /* subtle "neon hum" */
@@ -284,9 +297,9 @@ html{
   .k-topnav__burgerLine{
     animation: kNeonPulse 5.2s ease-in-out infinite;
   }
-  .k-topnav__burgerLine:nth-child(2){
-    animation-delay: -1.7s;
-  }
+  .k-topnav__burgerLine--b{ animation-delay: -1.7s; }
+  .k-topnav__burgerLine--c{ animation-delay: -3.1s; }
+
   @keyframes kNeonPulse{
     0%, 100%{
       opacity: .92;
@@ -300,6 +313,14 @@ html{
         drop-shadow(0 0 7px rgba(190,145,255,.52))
         drop-shadow(0 0 16px rgba(255,190,245,.20));
     }
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .k-topnav__burgerLine{
+    transition: none !important;
+    animation: none !important;
   }
 }
 
@@ -440,11 +461,18 @@ html{
     width: 20px;
   }
 
-  .k-topnav.is-open .k-topnav__burgerLine:first-child{
-    transform: translateY(5px) rotate(45deg);
+  /* keep K proportions on tiny screens */
+  .k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--a{
+    width: 24px;
+    transform: translate(calc(-50% - 6px), -50%) rotate(90deg);
   }
-  .k-topnav.is-open .k-topnav__burgerLine:last-child{
-    transform: translateY(-5px) rotate(-45deg);
+  .k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--b{
+    width: 22px;
+    transform: translate(calc(-50% + 4px), calc(-50% - 2px)) rotate(40deg);
+  }
+  .k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--c{
+    width: 22px;
+    transform: translate(calc(-50% + 4px), calc(-50% + 2px)) rotate(-40deg);
   }
 }
 
@@ -462,61 +490,4 @@ html{
   .k-topnav__panel{
     transform: none !important;
   }
-}
-/* === Mobile menu icon: 3 neon bars -> morph into "K" === */
-.k-topnav__burger{
-  position: relative;
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
-  display: grid;
-  place-items: center;
-  border: 1px solid rgba(255,255,255,.10);
-  background: rgba(255,255,255,.04);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.k-topnav__burgerLine{
-  position: absolute;
-  width: 24px;
-  height: 2px;
-  border-radius: 999px;
-  background: currentColor;
-  opacity: .95;
-
-  /* "kozacki" neon: */
-  box-shadow:
-    0 0 10px rgba(168,120,255,.55),
-    0 0 22px rgba(120,180,255,.22);
-  filter: drop-shadow(0 0 10px rgba(168,120,255,.45));
-
-  transform-origin: 50% 50%;
-  transition: transform 260ms cubic-bezier(.2,.9,.2,1), opacity 200ms ease;
-}
-
-/* 3 poziome neony (stan zamknięty) */
-.k-topnav__burgerLine--a{ transform: translateY(-7px); }
-.k-topnav__burgerLine--b{ transform: translateY(0px); }
-.k-topnav__burgerLine--c{ transform: translateY(7px); }
-
-/* Stan otwarty -> "K" z 3 neonów */
-.k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--a{
-  /* pionowa nóżka K */
-  transform: translateX(-6px) rotate(90deg) scaleX(1.55);
-}
-.k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--b{
-  /* górna przekątna */
-  transform: translate(4px,-2px) rotate(36deg) scaleX(1.10);
-}
-.k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--c{
-  /* dolna przekątna */
-  transform: translate(4px,2px) rotate(-36deg) scaleX(1.10);
-}
-
-/* Reduced motion: bez "tańca" */
-@media (prefers-reduced-motion: reduce){
-  .k-topnav__burgerLine{ transition: none; }
 }
