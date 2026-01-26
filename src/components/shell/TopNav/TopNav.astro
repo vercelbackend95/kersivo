@@ -50,6 +50,7 @@ import CtaButton from "../../ui/CtaButton/CtaButton.astro";
         class="k-topnav__cta"
       />
 
+      <!-- 3 neon bars -> morph into "K" on open -->
       <button
         class="k-topnav__burger"
         type="button"
@@ -57,8 +58,9 @@ import CtaButton from "../../ui/CtaButton/CtaButton.astro";
         aria-expanded="false"
         aria-controls="kTopnavPanel"
       >
-        <span class="k-topnav__burgerLine" aria-hidden="true"></span>
-        <span class="k-topnav__burgerLine" aria-hidden="true"></span>
+        <span class="k-topnav__burgerLine k-topnav__burgerLine--a" aria-hidden="true"></span>
+        <span class="k-topnav__burgerLine k-topnav__burgerLine--b" aria-hidden="true"></span>
+        <span class="k-topnav__burgerLine k-topnav__burgerLine--c" aria-hidden="true"></span>
       </button>
     </div>
   </div>
