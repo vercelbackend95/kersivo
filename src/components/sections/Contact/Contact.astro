@@ -5,9 +5,14 @@ import CtaButton from "../../ui/CtaButton/CtaButton.astro";
 
 const EMAIL = "hello@kersivo.co.uk";
 const CALENDLY = "#"; // TODO: wstaw link do bookingu (Calendly) gdy gotowe
+
+// ✅ SEO: landing = h2, /contact = h1
+const { asPage = false } = Astro.props;
+const TitleTag = asPage ? "h1" : "h2";
+const titleId = asPage ? "contact-page-title" : "contact-title";
 ---
 
-<section id="contact" class="k-contact section" aria-labelledby="contact-title">
+<section id="contact" class="k-contact section" aria-labelledby={titleId}>
   <div class="container">
     <div class="k-contact2" data-contact-root>
       <div class="k-contact2__frame" data-contact-frame>
@@ -17,9 +22,9 @@ const CALENDLY = "#"; // TODO: wstaw link do bookingu (Calendly) gdy gotowe
         <div class="k-contact2__grid">
           <!-- LEFT -->
           <div class="k-contact2__left">
-            <h2 class="k-contact2__title" id="contact-title">
+            <TitleTag class="k-contact2__title" id={titleId}>
               Tell us about your<br />project
-            </h2>
+            </TitleTag>
 
             <ul class="k-contact2__bullets" aria-label="Contact benefits">
               <li class="k-contact2__bullet">

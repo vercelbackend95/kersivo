@@ -1,17 +1,23 @@
 ---
 import "./work.css";
 import WorkShowcase from "./islands/WorkShowcase";
+
+const { asPage = false } = Astro.props;
+
+// h2 na landing, h1 na /work
+const TitleTag = asPage ? "h1" : "h2";
+const titleId = asPage ? "work-page-title" : "work-title";
 ---
 
-<section id="work" class="k-work section" aria-labelledby="work-title">
+<section id="work" class="k-work section" aria-labelledby={titleId}>
   <div class="container">
     <header class="k-workHead">
       <div class="k-workHead__kicker">WORK</div>
 
-      <h2 class="k-workHead__title" id="work-title">
+      <TitleTag class="k-workHead__title" id={titleId}>
         One live demo.
         <span class="k-workHead__grad">Real build quality.</span>
-      </h2>
+      </TitleTag>
 
       <p class="k-workHead__lead">
         A live demo you can actually click. Clean system + tailored skin — shipped fast.

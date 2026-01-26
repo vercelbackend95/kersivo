@@ -5,6 +5,10 @@ import Pill from "../../ui/Pill/Pill.astro";
 
 import ServiceMap from "./ServiceMap.tsx";
 
+// ✅ SEO: ten sam header, tylko inny level na podstronie
+const { asPage = false } = Astro.props;
+const TitleTag = asPage ? "h1" : "h2";
+
 /** Astro-safe SVG strings (set:html). */
 const ICONS = {
   build: `
@@ -126,10 +130,10 @@ const cards = [
     <header class="k-svcHead">
       <div class="k-svcHead__kicker">SERVICES</div>
 
-      <h2 class="k-svcHead__title" id="services-title">
+      <TitleTag class="k-svcHead__title" id="services-title">
         Six modules. One clean system.
         <span class="k-svcHead__grad">Built to convert.</span>
-      </h2>
+      </TitleTag>
 
       <p class="k-svcHead__lead">
         Clear scope, clean build, and a site that’s ready to earn — without fluffy promises.
@@ -149,7 +153,9 @@ const cards = [
           `k-tile--tone-${c.tone}`,
           `k-tile--mosaic-${c.mosaic}`,
           c.href ? "k-tile--link" : "",
-        ].filter(Boolean).join(" ");
+        ]
+          .filter(Boolean)
+          .join(" ");
 
         const Inner = (
           <>
@@ -177,7 +183,9 @@ const cards = [
 
               {c.bullets?.length ? (
                 <ul class="k-tile__bullets" aria-label="Highlights">
-                  {c.bullets.map((b) => <li>{b}</li>)}
+                  {c.bullets.map((b) => (
+                    <li>{b}</li>
+                  ))}
                 </ul>
               ) : null}
             </div>

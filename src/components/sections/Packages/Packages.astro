@@ -1,18 +1,22 @@
 ---
 import "./packages.css";
 import PackagesTable from "./islands/PackagesTable";
+
+// ✅ SEO: na landing = h2, na /packages = h1
+const { asPage = false } = Astro.props;
+const TitleTag = asPage ? "h1" : "h2";
+const titleId = asPage ? "packages-page-title" : "packages-title";
 ---
 
-<section id="packages" class="k-pack section" aria-label="Packages">
-
+<section id="packages" class="section k-packages" aria-labelledby={titleId} data-packages>
   <div class="container">
     <header class="k-pack__head">
       <div class="k-pack__kicker">PACKAGES</div>
 
-      <h2 class="k-pack__title">
+      <TitleTag class="k-pack__title" id={titleId}>
         Best value pricing for UK small businesses.
         <span class="k-pack__grad">Built to convert.</span>
-      </h2>
+      </TitleTag>
 
       <p class="k-pack__lead">
         Clear scope, clean build, and a site that’s ready to earn — without fluffy promises.
@@ -20,29 +24,5 @@ import PackagesTable from "./islands/PackagesTable";
     </header>
 
     <PackagesTable client:visible />
-        <div class="k-packAddons" aria-label="Optional add-ons">
-      <div class="k-packAddons__inner">
-        <div class="k-packAddons__title">Optional add-ons</div>
-
-        <div class="k-packAddons__chips" role="list">
-          <span class="k-packAddons__chip" role="listitem">Instant quote</span>
-          <span class="k-packAddons__chip" role="listitem">E-commerce</span>
-          <span class="k-packAddons__chip" role="listitem">CRM-lite follow-ups</span>
-          <span class="k-packAddons__chip" role="listitem">CMS editing</span>
-          <span class="k-packAddons__chip" role="listitem">Multi-location pages</span>
-          <span class="k-packAddons__chip" role="listitem">Brand starter kit</span>
-        </div>
-
-        <div class="k-packAddons__note">
-          Booking is included in every package (simple integration in Base).
-        </div>
-      </div>
-    </div>
-
-    <div class="k-pack__below">
-      <a class="k-packGhost" href="/contact/#contact">
-        Get a tailored quote <span aria-hidden="true">→</span>
-      </a>
-    </div>
   </div>
 </section>

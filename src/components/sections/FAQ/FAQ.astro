@@ -26,9 +26,14 @@ const items = [
 ];
 
 const defaultOpen = 2;
+
+// ✅ SEO: landing = h2, /faq = h1
+const { asPage = false } = Astro.props;
+const TitleTag = asPage ? "h1" : "h2";
+const titleId = asPage ? "faq-page-title" : "faq-title";
 ---
 
-<section class="k-faq section" id="faq" aria-label="Frequently Asked Questions">
+<section class="k-faq section" id="faq" aria-labelledby={titleId}>
   <div class="container">
     <div class="k-faq__device" data-faq>
       <div class="k-faq__inner">
@@ -37,7 +42,9 @@ const defaultOpen = 2;
           <div class="k-faq__left">
             <span class="k-faq__pill">FAQ</span>
 
-            <h2 class="k-faq__title">Frequently Asked Questions</h2>
+            <TitleTag class="k-faq__title" id={titleId}>
+              Frequently Asked Questions
+            </TitleTag>
 
             <p class="k-faq__lead">
               Straight answers, no fog. If something’s not here — ping us and we’ll reply quickly.
@@ -119,14 +126,17 @@ const defaultOpen = 2;
           const reduced =
             window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-          // Submit -> scroll to contact (no backend yet, but feels intentional)
+          // Submit -> scroll to contact (or go to /contact if contact isn't on this page)
           const submit = root.querySelector("[data-faq-submit]");
           if (submit) {
             submit.addEventListener("click", () => {
               const target = document.querySelector("#contact");
-              if (!target) return;
-              target.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
-              if (location.hash !== "#contact") history.pushState(null, "", "#contact");
+              if (target) {
+                target.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+                if (location.hash !== "#contact") history.pushState(null, "", "#contact");
+              } else {
+                window.location.href = "/contact/#contact";
+              }
             });
           }
 
