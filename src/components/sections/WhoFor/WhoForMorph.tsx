@@ -1,6 +1,6 @@
+// src/components/sections/WhoFor/WhoForMorph.tsx
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, MotionConfig, motion, useReducedMotion } from "framer-motion";
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 type Card = {
   id: "development" | "speed" | "craft";
@@ -10,27 +10,48 @@ type Card = {
   body: string[];
   quote: { text: string; by: string };
   stats: Array<{ big: string; small: string }>;
-  lottieSrc?: string;
 };
 
 function cn(...x: Array<string | false | undefined | null>) {
   return x.filter(Boolean).join(" ");
 }
 
-const ROCKET_LOTTIE =
-  "https://lottie.host/dede5b9d-8e0b-41b6-b51a-7671cb5935ae/xHXT5QqJrp.lottie";
+/** WebP wrzuć tu: public/visuals/rocket-fast.webp */
+const ROCKET_SRC = "/visuals/rocket-fast.webp";
 
-/** super proste, premium, czytelne svg — zamiast “smutnych mydeł” */
+/** super proste, premium, czytelne svg — placeholdery dla innych kart (na razie) */
 function IconDocsChecklist({ className = "" }: { className?: string }) {
   return (
     <svg viewBox="0 0 140 92" className={className} fill="none" aria-hidden="true">
       <rect x="22" y="10" width="92" height="62" rx="14" stroke="rgba(255,255,255,.40)" />
       <rect x="14" y="18" width="92" height="62" rx="14" stroke="rgba(255,255,255,.22)" />
       <rect x="30" y="22" width="92" height="62" rx="14" stroke="rgba(255,255,255,.55)" />
-      <path d="M46 42l6 6 12-14" stroke="rgba(167,139,250,.95)" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M70 44h26" stroke="rgba(255,255,255,.46)" strokeWidth="2.2" strokeLinecap="round" />
-      <path d="M46 56l6 6 12-14" stroke="rgba(167,139,250,.75)" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M70 58h22" stroke="rgba(255,255,255,.36)" strokeWidth="2.2" strokeLinecap="round" />
+      <path
+        d="M46 42l6 6 12-14"
+        stroke="rgba(167,139,250,.95)"
+        strokeWidth="2.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M70 44h26"
+        stroke="rgba(255,255,255,.46)"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+      />
+      <path
+        d="M46 56l6 6 12-14"
+        stroke="rgba(167,139,250,.75)"
+        strokeWidth="2.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M70 58h22"
+        stroke="rgba(255,255,255,.36)"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
@@ -45,34 +66,47 @@ function IconGridPlus({ className = "" }: { className?: string }) {
         <path d="M34 46h72" stroke="rgba(255,255,255,.20)" />
       </g>
 
-      {/* lifted tile */}
-      <rect x="78" y="30" width="32" height="32" rx="12" fill="rgba(255,255,255,.06)" stroke="rgba(125,211,252,.55)" />
-      <path d="M94 40v12M88 46h12" stroke="rgba(125,211,252,.95)" strokeWidth="2.4" strokeLinecap="round" />
+      <rect
+        x="78"
+        y="30"
+        width="32"
+        height="32"
+        rx="12"
+        fill="rgba(255,255,255,.06)"
+        stroke="rgba(125,211,252,.55)"
+      />
+      <path
+        d="M94 40v12M88 46h12"
+        stroke="rgba(125,211,252,.95)"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
 
-function LottieRocket({
-  reduced,
-  className = "",
-}: {
-  reduced: boolean;
-  className?: string;
-}) {
+/**
+ * Rakieta jako obraz.
+ * Trik na “czarne tło” bez wycinania:
+ * - mix-blend-mode: screen (czarne znika na ciemnym tle),
+ * - plus delikatny drop-shadow i lekkie podbicie kontrastu.
+ */
+function RocketVisual({ className = "" }: { className?: string }) {
   return (
     <div className={className} aria-hidden="true">
-      <DotLottieReact
-        src={ROCKET_LOTTIE}
-        autoplay={!reduced}
-        loop={!reduced}
-        // speed: spokojnie, premium. Nie “3f” turbo-dzida.
-        speed={reduced ? 1 : 1.15}
+      <img
+        src={ROCKET_SRC}
+        alt=""
+        draggable={false}
+        loading="lazy"
         style={{
           width: "100%",
           height: "100%",
-          opacity: 0.92,
-          // delikatnie “szkło” — nie neon-arcade
-          filter: "drop-shadow(0 18px 40px rgba(0,0,0,.35))",
+          objectFit: "contain",
+          mixBlendMode: "screen",
+          opacity: 0.98,
+          filter:
+            "contrast(1.06) saturate(1.06) drop-shadow(0 18px 40px rgba(0,0,0,.45)) drop-shadow(0 0 22px rgba(167,139,250,.18))",
         }}
       />
     </div>
@@ -93,60 +127,59 @@ export default function WhoForMorph() {
     () => [
       {
         id: "development",
-        title: "Purpose-built for\nproduct development",
-        visualLabel: "Stacked docs + checklist",
-        modalTitle: "Purpose-built for product development",
+        title: "Fast by default",
+        visualLabel: "Launch speed + smooth flow",
+        modalTitle: "Fast by default",
         body: [
-          "Built for teams who want a site that behaves like a product: clean structure, predictable components, and a UI system that scales.",
-          "We design the content flow first (what people need, in what order), then build a fast, accessible front end that stays stable when you add pages.",
-          "The result: fewer ‘nice site’ compliments — more enquiries that actually fit your offer.",
+          "Speed isn’t a Lighthouse trophy — it’s fewer drop-offs and more enquiries. We build with performance budgets, not vibes.",
+          "Astro-first rendering, image hygiene (WebP/AVIF), clean typography, and minimal JS. Smooth, not heavy.",
+          "The result: your site feels instant on mobile — and people trust it more because it behaves like it should.",
         ],
         quote: {
-          text: "We finally have a site that looks premium and feels effortless to use — on every device.",
-          by: "Client feedback (anonymised)",
+          text: "It loads before you even think about leaving.",
+          by: "Performance principle",
         },
         stats: [
-          { big: "2x", small: "More qualified enquiries" },
-          { big: "1.6x", small: "Faster time-to-contact" },
+          { big: "90+", small: "Lighthouse focus" },
+          { big: "↓", small: "Lower bounce risk" },
         ],
       },
       {
         id: "speed",
-        title: "Designed to move fast",
-        visualLabel: "Launch speed + smooth flow",
-        modalTitle: "Designed to move fast",
+        title: "SEO that compounds",
+        visualLabel: "Search + structure",
+        modalTitle: "SEO that compounds",
         body: [
-          "Speed isn’t a Lighthouse trophy — it’s fewer drop-offs and more form submits. We build with performance budgets, not vibes.",
-          "Astro-first rendering, image hygiene (WebP/AVIF), clean typography, and zero bloat scripts. Smooth, not heavy.",
-          "When you iterate (new service, new offer), the system doesn’t crack — it adapts.",
+          "SEO starts with structure: clean headings, semantic sections, and pages that map to what people actually search for.",
+          "We keep everything indexable and future-proof: sitemap, robots, canonical URL, and metadata that makes sense.",
+          "Over time, small wins stack: better crawl, clearer relevance, and more qualified traffic.",
         ],
         quote: {
-          text: "Even as we grew, we moved faster — because the site stayed simple.",
-          by: "Ops note (anonymised)",
+          text: "SEO is boring — and that’s why it works.",
+          by: "Search reality",
         },
         stats: [
-          { big: "2x", small: "Increase in form starts" },
-          { big: "1.6x", small: "Faster issue resolution" },
+          { big: "3x", small: "More entry points" },
+          { big: "↑", small: "Qualified traffic" },
         ],
-        lottieSrc: ROCKET_LOTTIE,
       },
       {
         id: "craft",
-        title: "Crafted to perfection",
-        visualLabel: "Grid + create tile",
-        modalTitle: "Crafted to perfection",
+        title: "Built to bring enquiries",
+        visualLabel: "CTA path + frictionless",
+        modalTitle: "Built to bring enquiries",
         body: [
-          "This is the part you feel before you can explain it: spacing, rhythm, type weight, hover depth, and motion that’s controlled — not clowny.",
-          "We keep it minimal, Apple-ish, and honest. Premium by restraint. No neon confetti. No noisy gradients.",
-          "Everything is tuned for mobile-first reading and thumb-zone actions.",
+          "Pretty doesn’t pay — clarity does. We design the page flow to answer questions fast and guide people to the next step.",
+          "CTAs are placed where intent peaks, forms are friction-free, and every page has a clear conversion path.",
+          "You get fewer time-wasters and more messages from people who actually want to buy.",
         ],
         quote: {
-          text: "It looks expensive because it’s calm — not because it screams.",
-          by: "Design principle",
+          text: "A site should guide, not just glow.",
+          by: "Conversion principle",
         },
         stats: [
-          { big: "2x", small: "Higher perceived trust" },
-          { big: "1.6x", small: "Better scroll depth" },
+          { big: "↑", small: "Enquiry rate" },
+          { big: "↓", small: "Dead clicks" },
         ],
       },
     ],
@@ -282,7 +315,6 @@ export default function WhoForMorph() {
                 transition={trans}
                 aria-hidden="true"
               >
-                {/* VISUAL CONTENT */}
                 <div
                   style={{
                     position: "absolute",
@@ -293,10 +325,9 @@ export default function WhoForMorph() {
                     pointerEvents: "none",
                   }}
                 >
-                  {/* speed gets Lottie rocket, others get clean SVG */}
-                  {c.id === "speed" ? (
-                    <LottieRocket reduced={!!reduced} className="k-whoL__lottie" />
-                  ) : c.id === "development" ? (
+                  {c.id === "development" ? (
+                    <RocketVisual className="k-whoL__imgVisual" />
+                  ) : c.id === "speed" ? (
                     <IconDocsChecklist className="k-whoL__svgIcon" />
                   ) : (
                     <IconGridPlus className="k-whoL__svgIcon" />
@@ -366,7 +397,6 @@ export default function WhoForMorph() {
                     transition={trans}
                     aria-hidden="true"
                   >
-                    {/* same visual in modal */}
                     <div
                       style={{
                         position: "absolute",
@@ -377,9 +407,9 @@ export default function WhoForMorph() {
                         pointerEvents: "none",
                       }}
                     >
-                      {active.id === "speed" ? (
-                        <LottieRocket reduced={!!reduced} className="k-whoL__lottie" />
-                      ) : active.id === "development" ? (
+                      {active.id === "development" ? (
+                        <RocketVisual className="k-whoL__imgVisual" />
+                      ) : active.id === "speed" ? (
                         <IconDocsChecklist className="k-whoL__svgIcon" />
                       ) : (
                         <IconGridPlus className="k-whoL__svgIcon" />
