@@ -1,140 +1,468 @@
-/* src/components/shell/TopNav/topnav.css */
+/* =========================================
+   Kersivo — TopNav (premium glass, mobile-proof)
+   - Symmetric padding L/R on every device (header-level padding)
+   - CTA + burger are a right-side cluster on mobile
+   - Burger: NO circle. Only 2 neon bars (CSS-Tricks-style layered glow)
+   ========================================= */
 
 :root{
-  /* fallback values if global tokens aren’t present */
-  --k-nav-fg: rgba(255,255,255,.92);
-  --k-nav-muted: rgba(255,255,255,.70);
-  --k-nav-border: rgba(255,255,255,.10);
-  --k-nav-bg: rgba(10,10,14,.55);
-  --k-nav-bg-2: rgba(10,10,14,.78);
-  --k-nav-radius: 18px;
+  --nav-h: 62px;
+  --nav-pad: clamp(14px, 4vw, 20px);
+
+  /* neon palette (tuned for your purple/pink vibe) */
+  --neon-core: rgba(255,255,255,.95);
+  --neon-a: rgba(190,145,255,.95);
+  --neon-b: rgba(255,190,245,.85);
 }
 
-/* Skip link (accessibility) */
+html{
+  scroll-padding-top: calc(var(--nav-h) + env(safe-area-inset-top) + 14px);
+}
+
+.k-topnav,
+.k-topnav *{
+  box-sizing: border-box;
+}
+
 .k-skip{
-  position: absolute;
-  left: 12px;
-  top: -48px;
+  position:absolute;
+  left:-999px;
+  top:8px;
   padding: 10px 14px;
   border-radius: 12px;
   background: rgba(255,255,255,.08);
-  color: var(--k-nav-fg);
-  border: 1px solid var(--k-nav-border);
-  z-index: 1000;
-  transition: transform .2s ease;
+  border: 1px solid rgba(255,255,255,.16);
+  color: rgba(255,255,255,.92);
+  z-index: 999;
 }
-.k-skip:focus{
-  top: 12px;
-}
+.k-skip:focus{ left: 12px; }
 
-/* Nav shell */
+/* ===== HEADER ===== */
 .k-topnav{
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  color: var(--k-nav-fg);
-  padding: 12px 14px;
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 80;
+
+  padding-top: env(safe-area-inset-top);
+  padding-left:  calc(var(--nav-pad) + env(safe-area-inset-left));
+  padding-right: calc(var(--nav-pad) + env(safe-area-inset-right));
+
+  background: rgba(7,7,10,.10);
+  border-bottom: 1px solid rgba(255,255,255,0);
+  backdrop-filter: blur(0px);
+
+  overflow: visible;
+  transition: background 180ms ease, border-color 180ms ease, backdrop-filter 180ms ease;
 }
 
-.k-topnav__inner{
-  max-width: 1240px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 14px;
-  padding: 10px 12px;
-  border-radius: var(--k-nav-radius);
-  border: 1px solid var(--k-nav-border);
-  background: var(--k-nav-bg);
+.k-topnav.is-scrolled{
+  background: rgba(7,7,10,.62);
+  border-bottom-color: rgba(255,255,255,.08);
   backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  box-shadow:
-    0 10px 40px rgba(0,0,0,.22),
-    0 1px 0 rgba(255,255,255,.06) inset;
-  transition: background .18s ease, border-color .18s ease, transform .18s ease;
 }
 
-/* Slightly stronger when scrolling */
-.k-topnav.is-scrolled .k-topnav__inner{
-  background: var(--k-nav-bg-2);
-  border-color: rgba(255,255,255,.12);
+/* ===== INNER ===== */
+.k-topnav__inner{
+  width: min(1200px, 100%);
+  margin: 0 auto;
+
+  min-height: var(--nav-h);
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
 }
 
-/* Brand */
+/* ===== BRAND ===== */
 .k-topnav__brand{
-  display: inline-flex;
-  align-items: center;
+  display:inline-flex;
+  align-items:center;
   gap: 10px;
-  text-decoration: none;
-  color: var(--k-nav-fg);
+  color: rgba(255,255,255,.92);
+  text-decoration:none;
+  flex: 0 0 auto;
+  min-width: 0;
 }
+
 .k-topnav__mark{
-  width: 28px;
-  height: 28px;
-  display: grid;
-  place-items: center;
-  border-radius: 10px;
-  border: 1px solid rgba(255,255,255,.10);
-  background: rgba(255,255,255,.04);
+  width: 32px;
+  height: 32px;
+  border-radius: 11px;
+  display:grid;
+  place-items:center;
+  background: linear-gradient(135deg, rgba(115,105,255,.92), rgba(190,105,255,.82));
+  box-shadow: 0 18px 70px rgba(130,110,255,.22);
 }
+
 .k-topnav__name{
-  font-weight: 650;
-  letter-spacing: .02em;
-}
-
-/* Desktop links */
-.k-topnav__links{
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 40px;
-}
-.k-topnav__link{
-  position: relative;
-  text-decoration: none;
-  color: var(--k-nav-muted);
-  padding: 10px 12px;
-  border-radius: 999px;
-  font-size: 0.95rem;
-  line-height: 1;
-  transition: color .16s ease, background .16s ease;
-}
-.k-topnav__link:hover,
-.k-topnav__link:focus{
-  color: var(--k-nav-fg);
-  background: rgba(255,255,255,.04);
-  outline: none;
-}
-
-/* Actions */
-.k-topnav__actions{
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-}
-.k-topnav__mini{
-  color: var(--k-nav-muted);
-  text-decoration: none;
-  font-size: 0.92rem;
-  padding: 10px 10px;
-  border-radius: 999px;
-  border: 1px solid transparent;
-  transition: color .16s ease, background .16s ease, border-color .16s ease;
-}
-.k-topnav__mini:hover{
-  color: var(--k-nav-fg);
-  background: rgba(255,255,255,.04);
-  border-color: rgba(255,255,255,.08);
-}
-
-/* CTA inside nav (leave to CtaButton styles, just align) */
-.k-topnav__cta{
+  font-weight: var(--w-bold, 780);
+  letter-spacing: -0.02em;
+  font-size: 18px;
   white-space: nowrap;
 }
 
+/* ===== DESKTOP LINKS ===== */
+.k-topnav__links{
+  position: relative;
+  display:flex;
+  align-items:center;
+  gap: 16px;
+  padding: 8px 12px;
+
+  border-radius: 999px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.08);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 18px 70px rgba(0,0,0,.24);
+}
+
+.k-topnav__link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  padding: 8px 6px;
+  border-radius: 10px;
+
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: rgba(255,255,255,.78);
+  text-decoration:none;
+
+  transition: color 160ms ease, transform 160ms ease;
+}
+
+.k-topnav__link:hover{
+  color: rgba(255,255,255,.94);
+  transform: translateY(-1px);
+}
+
+.k-topnav__link:focus-visible{
+  outline: 2px solid rgba(190,145,255,.70);
+  outline-offset: 3px;
+}
+
+/* ===== ACTIONS ===== */
+.k-topnav__actions{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+/* optional small link (desktop) */
+.k-topnav__mini{
+  height: 38px;
+  padding: 0 12px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  border-radius: 999px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.10);
+  backdrop-filter: blur(10px);
+
+  font-size: 13px;
+  font-weight: var(--w-medium, 560);
+  color: rgba(255,255,255,.82);
+
+  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.k-topnav__mini:hover{
+  background: rgba(255,255,255,.06);
+  border-color: rgba(255,255,255,.16);
+  transform: translateY(-1px);
+}
+
+/* CTA in topnav = hero vibe, nav-sized */
+.k-topnav__cta{
+  --btn-h: 40px;
+  --btn-pad: 16px;
+  font-size: 13px;
+}
+
+/* =========================================
+   Burger — NO circle. Only 2 neon bars.
+   "CSS-Tricks-style": white core + layered glow (bigger blur outward)
+   ========================================= */
+
+.k-topnav__burger{
+  /* keep a proper tap target, but visually it's "nothing" */
+  width: 44px;
+  height: 44px;
+  padding: 0;
+
+  display:none; /* enabled on mobile */
+  place-items:center;
+  gap: 9px;
+
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+
+  cursor: pointer;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* a11y focus ring (since there's no circle) */
+.k-topnav__burger:focus-visible{
+  outline: 2px solid rgba(190,145,255,.75);
+  outline-offset: 6px;
+  border-radius: 12px;
+}
+
+/* the neon tube */
+.k-topnav__burgerLine{
+  width: 22px;
+  height: 2px;
+  border-radius: 999px;
+  position: relative;
+
+  /* bright core */
+  background: var(--neon-core);
+
+  /* layered glow stack (this is the whole trick) */
+  box-shadow:
+    0 0 2px  rgba(255,255,255,.85),
+    0 0 6px  rgba(255,255,255,.55),
+    0 0 12px var(--neon-a),
+    0 0 22px rgba(190,145,255,.55),
+    0 0 38px rgba(255,190,245,.25);
+
+  /* extra glow that looks great on iOS */
+  filter:
+    drop-shadow(0 0 6px rgba(190,145,255,.45))
+    drop-shadow(0 0 14px rgba(255,190,245,.18));
+
+  opacity: .98;
+
+  transform-origin: center;
+  transition: transform 190ms cubic-bezier(.2,.9,.2,1), width 190ms cubic-bezier(.2,.9,.2,1);
+}
+
+/* inner “glass highlight” to make it feel like a tube, not a flat line */
+.k-topnav__burgerLine::before{
+  content:"";
+  position:absolute;
+  left: 0;
+  right: 0;
+  top: -1px;
+  height: 1px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.9);
+  opacity: .35;
+}
+
+/* hover = brighter (desktop only, but harmless on touch) */
+.k-topnav__burger:hover .k-topnav__burgerLine{
+  box-shadow:
+    0 0 3px  rgba(255,255,255,.95),
+    0 0 8px  rgba(255,255,255,.65),
+    0 0 16px rgba(190,145,255,.95),
+    0 0 28px rgba(190,145,255,.60),
+    0 0 44px rgba(255,190,245,.30);
+}
+
+/* Open state -> neon X */
+.k-topnav.is-open .k-topnav__burgerLine:first-child{
+  width: 24px;
+  transform: translateY(5px) rotate(45deg);
+}
+.k-topnav.is-open .k-topnav__burgerLine:last-child{
+  width: 24px;
+  transform: translateY(-5px) rotate(-45deg);
+}
+
+/* subtle "neon hum" */
+@media (prefers-reduced-motion: no-preference){
+  .k-topnav__burgerLine{
+    animation: kNeonPulse 5.2s ease-in-out infinite;
+  }
+  .k-topnav__burgerLine:nth-child(2){
+    animation-delay: -1.7s;
+  }
+  @keyframes kNeonPulse{
+    0%, 100%{
+      opacity: .92;
+      filter:
+        drop-shadow(0 0 5px rgba(190,145,255,.38))
+        drop-shadow(0 0 12px rgba(255,190,245,.14));
+    }
+    50%{
+      opacity: 1;
+      filter:
+        drop-shadow(0 0 7px rgba(190,145,255,.52))
+        drop-shadow(0 0 16px rgba(255,190,245,.20));
+    }
+  }
+}
+
+/* =========================================
+   Mobile panel
+   ========================================= */
+
+.k-topnav__panel{
+  position: fixed;
+  inset: 0;
+  z-index: 79;
+
+  background: rgba(0,0,0,.42);
+  backdrop-filter: blur(6px);
+
+  display:grid;
+  align-items:start;
+  justify-items:stretch;
+
+  padding: calc(var(--nav-h) + env(safe-area-inset-top) + 18px) 16px 18px;
+
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 180ms ease, transform 180ms cubic-bezier(.2,.9,.2,1);
+
+  /* ✅ CRITICAL: panel cannot intercept clicks while closed */
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.k-topnav.is-open .k-topnav__panel{
+  opacity: 1;
+  transform: translateY(0);
+
+  /* ✅ now it's interactive */
+  pointer-events: auto;
+  visibility: visible;
+}
+
+/* ✅ absolute safety: when hidden attribute exists, force it off */
+.k-topnav__panel[hidden]{
+  display: none !important;
+}
+
+.k-topnav__panelInner{
+  width: min(520px, 100%);
+  margin: 0 auto;
+
+  border-radius: 22px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.12);
+  backdrop-filter: blur(14px);
+
+  box-shadow: 0 40px 140px rgba(0,0,0,.55);
+  padding: 14px;
+}
+
+.k-topnav__panelLink{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  height: 52px;
+  padding: 0 14px;
+  border-radius: 14px;
+
+  color: rgba(255,255,255,.88);
+  font-weight: var(--w-medium, 560);
+  letter-spacing: -0.01em;
+  text-decoration: none;
+
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.10);
+
+  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.k-topnav__panelLink + .k-topnav__panelLink{ margin-top: 10px; }
+
+.k-topnav__panelLink:hover{
+  background: rgba(255,255,255,.05);
+  border-color: rgba(255,255,255,.16);
+  transform: translateY(-1px);
+}
+
+.k-topnav__panelCtas{
+  margin-top: 14px;
+  display:grid;
+  gap: 10px;
+}
+
+.k-topnav__panelPrimary,
+.k-topnav__panelGhost{
+  width: 100%;
+  justify-content:center;
+}
+
+/* =========================================
+   Responsive
+   ========================================= */
+
+@media (max-width: 860px){
+  .k-topnav__links{ display:none; }
+  .k-topnav__mini{ display:none; }
+  .k-topnav__burger{ display:grid; }
+
+  .k-topnav__actions{
+    margin-left: auto;
+    flex: 0 0 auto;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  .k-topnav__cta{
+    --btn-h: 40px;
+    --btn-pad: 14px;
+    font-size: 12.5px;
+  }
+}
+
+@media (max-width: 420px){
+  .k-topnav__name{ font-size: 17px; }
+
+  .k-topnav__cta{
+    --btn-h: 38px;
+    --btn-pad: 12px;
+    font-size: 12px;
+  }
+
+  .k-topnav__cta .k-btn__arrow{ display:none; }
+
+  .k-topnav__burger{
+    width: 44px;
+    height: 44px;
+  }
+
+  .k-topnav__burgerLine{
+    width: 20px;
+  }
+
+  .k-topnav.is-open .k-topnav__burgerLine:first-child{
+    transform: translateY(5px) rotate(45deg);
+  }
+  .k-topnav.is-open .k-topnav__burgerLine:last-child{
+    transform: translateY(-5px) rotate(-45deg);
+  }
+}
+
+@media (max-width: 340px){
+  .k-topnav__cta{ display:none; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .k-topnav,
+  .k-topnav *{
+    transition: none !important;
+    animation: none !important;
+  }
+  .k-topnav__panel{
+    transform: none !important;
+  }
+}
 /* === Mobile menu icon: 3 neon bars -> morph into "K" === */
 .k-topnav__burger{
   position: relative;
@@ -159,7 +487,7 @@
   background: currentColor;
   opacity: .95;
 
-  /* neon */
+  /* "kozacki" neon: */
   box-shadow:
     0 0 10px rgba(168,120,255,.55),
     0 0 22px rgba(120,180,255,.22);
@@ -169,98 +497,26 @@
   transition: transform 260ms cubic-bezier(.2,.9,.2,1), opacity 200ms ease;
 }
 
-/* 3 poziome neony (zamknięte) */
+/* 3 poziome neony (stan zamknięty) */
 .k-topnav__burgerLine--a{ transform: translateY(-7px); }
 .k-topnav__burgerLine--b{ transform: translateY(0px); }
 .k-topnav__burgerLine--c{ transform: translateY(7px); }
 
-/* Otwarte -> litera "K" z 3 neonów */
+/* Stan otwarty -> "K" z 3 neonów */
 .k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--a{
+  /* pionowa nóżka K */
   transform: translateX(-6px) rotate(90deg) scaleX(1.55);
 }
 .k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--b{
+  /* górna przekątna */
   transform: translate(4px,-2px) rotate(36deg) scaleX(1.10);
 }
 .k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--c{
+  /* dolna przekątna */
   transform: translate(4px,2px) rotate(-36deg) scaleX(1.10);
 }
 
+/* Reduced motion: bez "tańca" */
 @media (prefers-reduced-motion: reduce){
   .k-topnav__burgerLine{ transition: none; }
-}
-
-/* Mobile panel */
-.k-topnav__panel{
-  max-width: 1240px;
-  margin: 10px auto 0;
-  padding: 0 14px;
-}
-.k-topnav__panelInner{
-  border-radius: 22px;
-  border: 1px solid rgba(255,255,255,.10);
-  background: rgba(10,10,14,.78);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  padding: 14px;
-  box-shadow:
-    0 24px 60px rgba(0,0,0,.32),
-    0 1px 0 rgba(255,255,255,.06) inset;
-  transform: translateY(-6px);
-  opacity: 0;
-  transition: transform 180ms ease, opacity 180ms ease;
-}
-.k-topnav__panel.is-open .k-topnav__panelInner{
-  transform: translateY(0);
-  opacity: 1;
-}
-
-.k-topnav__panelLink{
-  display: block;
-  text-decoration: none;
-  color: var(--k-nav-fg);
-  padding: 12px 12px;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,.06);
-  background: rgba(255,255,255,.03);
-  margin-bottom: 10px;
-  transition: background .16s ease, border-color .16s ease, transform .16s ease;
-}
-.k-topnav__panelLink:hover{
-  background: rgba(255,255,255,.05);
-  border-color: rgba(255,255,255,.10);
-  transform: translateY(-1px);
-}
-
-.k-topnav__panelCtas{
-  display: grid;
-  gap: 10px;
-  margin-top: 10px;
-}
-.k-topnav__panelPrimary,
-.k-topnav__panelGhost{
-  width: 100%;
-}
-
-/* Body lock when menu open */
-html.k-navOpen{
-  overflow: hidden;
-}
-
-/* Responsive rules */
-@media (max-width: 920px){
-  .k-topnav__links{
-    display: none;
-  }
-  .k-topnav__mini{
-    display: none;
-  }
-}
-
-@media (min-width: 921px){
-  .k-topnav__burger{
-    display: none;
-  }
-  .k-topnav__panel{
-    display: none;
-  }
 }
