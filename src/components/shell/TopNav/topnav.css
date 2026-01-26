@@ -2,7 +2,7 @@
    Kersivo — TopNav (premium glass, mobile-proof)
    - Symmetric padding L/R on every device (header-level padding)
    - CTA + burger are a right-side cluster on mobile
-   - Burger: NO circle. 3 neon bars -> morph into "K"
+   - Burger: NO circle. 3 crisp neon bars -> morph into "K"
    ========================================= */
 
 :root{
@@ -187,13 +187,12 @@ html{
 }
 
 /* =========================================
-   Burger — NO circle. 3 neon bars -> morph into "K"
-   Uses your glow stack (core + layered glow)
-   Driven by aria-expanded on the button (no JS changes)
+   Burger — NO circle. 3 crisp neon bars -> morph into "K"
+   Less fog, sharper tubes, better geometry
+   Driven by aria-expanded (no JS changes)
    ========================================= */
 
 .k-topnav__burger{
-  /* keep a proper tap target, but visually it's "nothing" */
   width: 44px;
   height: 44px;
   padding: 0;
@@ -210,47 +209,45 @@ html{
   -webkit-tap-highlight-color: transparent;
 }
 
-/* a11y focus ring (since there's no circle) */
 .k-topnav__burger:focus-visible{
   outline: 2px solid rgba(190,145,255,.75);
   outline-offset: 6px;
   border-radius: 12px;
 }
 
-/* the neon tubes */
 .k-topnav__burgerLine{
   width: 22px;
   height: 2px;
   border-radius: 999px;
+
   position: absolute;
   left: 50%;
   top: 50%;
 
-  /* bright core */
   background: var(--neon-core);
-
-  /* layered glow stack */
-  box-shadow:
-    0 0 2px  rgba(255,255,255,.85),
-    0 0 6px  rgba(255,255,255,.55),
-    0 0 12px var(--neon-a),
-    0 0 22px rgba(190,145,255,.55),
-    0 0 38px rgba(255,190,245,.25);
-
-  /* extra glow that looks great on iOS */
-  filter:
-    drop-shadow(0 0 6px rgba(190,145,255,.45))
-    drop-shadow(0 0 14px rgba(255,190,245,.18));
-
   opacity: .98;
 
-  transform-origin: center;
+  /* tighter glow stack (less haze) */
+  box-shadow:
+    0 0 1px rgba(255,255,255,.85),
+    0 0 4px rgba(255,255,255,.35),
+    0 0 8px rgba(190,145,255,.55),
+    0 0 14px rgba(255,190,245,.22);
+
+  /* toned-down drop shadows (fog culprit) */
+  filter:
+    drop-shadow(0 0 4px rgba(190,145,255,.28))
+    drop-shadow(0 0 8px rgba(255,190,245,.10));
+
+  transform-origin: 50% 50%;
   transition:
     transform 210ms cubic-bezier(.2,.9,.2,1),
     width 210ms cubic-bezier(.2,.9,.2,1);
+
+  will-change: transform;
+  transform: translateZ(0);
 }
 
-/* inner “glass highlight” to make it feel like a tube, not a flat line */
 .k-topnav__burgerLine::before{
   content:"";
   position:absolute;
@@ -260,63 +257,60 @@ html{
   height: 1px;
   border-radius: 999px;
   background: rgba(255,255,255,.9);
-  opacity: .35;
+  opacity: .22;
 }
 
-/* Closed state: 3 clean horizontal neons */
-.k-topnav__burgerLine--a{ transform: translate(-50%, calc(-50% - 7px)); }
+/* Closed: 3 horizontal neons */
+.k-topnav__burgerLine--a{ transform: translate(-50%, calc(-50% - 6px)); }
 .k-topnav__burgerLine--b{ transform: translate(-50%, -50%); }
-.k-topnav__burgerLine--c{ transform: translate(-50%, calc(-50% + 7px)); }
+.k-topnav__burgerLine--c{ transform: translate(-50%, calc(-50% + 6px)); }
 
-/* hover = brighter (desktop only, but harmless on touch) */
 .k-topnav__burger:hover .k-topnav__burgerLine{
   box-shadow:
-    0 0 3px  rgba(255,255,255,.95),
-    0 0 8px  rgba(255,255,255,.65),
-    0 0 16px rgba(190,145,255,.95),
-    0 0 28px rgba(190,145,255,.60),
-    0 0 44px rgba(255,190,245,.30);
+    0 0 1px rgba(255,255,255,.95),
+    0 0 5px rgba(255,255,255,.45),
+    0 0 10px rgba(190,145,255,.62),
+    0 0 16px rgba(255,190,245,.26);
 }
 
-/* Open state -> K (driven by aria-expanded on the button) */
+/* Open: "K" */
 .k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--a{
   width: 26px;
   transform: translate(calc(-50% - 7px), -50%) rotate(90deg);
 }
 .k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--b{
-  width: 24px;
-  transform: translate(calc(-50% + 5px), calc(-50% - 2px)) rotate(38deg);
+  width: 18px;
+  transform: translate(calc(-50% + 6px), calc(-50% - 3px)) rotate(52deg);
 }
 .k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--c{
-  width: 24px;
-  transform: translate(calc(-50% + 5px), calc(-50% + 2px)) rotate(-38deg);
+  width: 18px;
+  transform: translate(calc(-50% + 6px), calc(-50% + 3px)) rotate(-52deg);
 }
 
-/* subtle "neon hum" */
+/* subtle "neon hum" (less blur) */
 @media (prefers-reduced-motion: no-preference){
   .k-topnav__burgerLine{
-    animation: kNeonPulse 5.2s ease-in-out infinite;
+    animation: kNeonPulse 6.2s ease-in-out infinite;
   }
-  .k-topnav__burgerLine--b{ animation-delay: -1.7s; }
-  .k-topnav__burgerLine--c{ animation-delay: -3.1s; }
+  .k-topnav__burgerLine--b{ animation-delay: -1.9s; }
+  .k-topnav__burgerLine--c{ animation-delay: -3.2s; }
 
   @keyframes kNeonPulse{
     0%, 100%{
       opacity: .92;
       filter:
-        drop-shadow(0 0 5px rgba(190,145,255,.38))
-        drop-shadow(0 0 12px rgba(255,190,245,.14));
+        drop-shadow(0 0 3px rgba(190,145,255,.22))
+        drop-shadow(0 0 6px rgba(255,190,245,.08));
     }
     50%{
       opacity: 1;
       filter:
-        drop-shadow(0 0 7px rgba(190,145,255,.52))
-        drop-shadow(0 0 16px rgba(255,190,245,.20));
+        drop-shadow(0 0 4px rgba(190,145,255,.30))
+        drop-shadow(0 0 8px rgba(255,190,245,.10));
     }
   }
 }
 
-/* Reduced motion */
 @media (prefers-reduced-motion: reduce){
   .k-topnav__burgerLine{
     transition: none !important;
@@ -346,7 +340,6 @@ html{
   transform: translateY(-8px);
   transition: opacity 180ms ease, transform 180ms cubic-bezier(.2,.9,.2,1);
 
-  /* ✅ CRITICAL: panel cannot intercept clicks while closed */
   pointer-events: none;
   visibility: hidden;
 }
@@ -355,12 +348,10 @@ html{
   opacity: 1;
   transform: translateY(0);
 
-  /* ✅ now it's interactive */
   pointer-events: auto;
   visibility: visible;
 }
 
-/* ✅ absolute safety: when hidden attribute exists, force it off */
 .k-topnav__panel[hidden]{
   display: none !important;
 }
@@ -467,12 +458,12 @@ html{
     transform: translate(calc(-50% - 6px), -50%) rotate(90deg);
   }
   .k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--b{
-    width: 22px;
-    transform: translate(calc(-50% + 4px), calc(-50% - 2px)) rotate(40deg);
+    width: 17px;
+    transform: translate(calc(-50% + 5px), calc(-50% - 3px)) rotate(56deg);
   }
   .k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--c{
-    width: 22px;
-    transform: translate(calc(-50% + 4px), calc(-50% + 2px)) rotate(-40deg);
+    width: 17px;
+    transform: translate(calc(-50% + 5px), calc(-50% + 3px)) rotate(-56deg);
   }
 }
 
