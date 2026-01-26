@@ -239,13 +239,21 @@ html{
     drop-shadow(0 0 4px rgba(190,145,255,.28))
     drop-shadow(0 0 8px rgba(255,190,245,.10));
 
+  /* default pivot */
   transform-origin: 50% 50%;
+
   transition:
     transform 210ms cubic-bezier(.2,.9,.2,1),
     width 210ms cubic-bezier(.2,.9,.2,1);
 
   will-change: transform;
   transform: translateZ(0);
+}
+
+/* ✅ Arms of "K" must pivot from the LEFT end so they attach to the stem */
+.k-topnav__burgerLine--b,
+.k-topnav__burgerLine--c{
+  transform-origin: 0% 50%;
 }
 
 .k-topnav__burgerLine::before{
@@ -273,18 +281,22 @@ html{
     0 0 16px rgba(255,190,245,.26);
 }
 
-/* Open: "K" */
+/* Open: "K" (stem + two arms that START on the stem) */
 .k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--a{
   width: 26px;
-  transform: translate(calc(-50% - 7px), -50%) rotate(90deg);
+  /* stem moved left to create space */
+  transform: translate(calc(-50% - 8px), -50%) rotate(90deg);
 }
+
 .k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--b{
-  width: 18px;
-  transform: translate(calc(-50% + 6px), calc(-50% - 3px)) rotate(52deg);
+  width: 20px;
+  /* arm's LEFT end sits on the stem */
+  transform: translate(calc(-50% - 2px), calc(-50% - 3px)) rotate(48deg);
 }
+
 .k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--c{
-  width: 18px;
-  transform: translate(calc(-50% + 6px), calc(-50% + 3px)) rotate(-52deg);
+  width: 20px;
+  transform: translate(calc(-50% - 2px), calc(-50% + 3px)) rotate(-48deg);
 }
 
 /* subtle "neon hum" (less blur) */
@@ -455,15 +467,15 @@ html{
   /* keep K proportions on tiny screens */
   .k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--a{
     width: 24px;
-    transform: translate(calc(-50% - 6px), -50%) rotate(90deg);
+    transform: translate(calc(-50% - 7px), -50%) rotate(90deg);
   }
   .k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--b{
-    width: 17px;
-    transform: translate(calc(-50% + 5px), calc(-50% - 3px)) rotate(56deg);
+    width: 18px;
+    transform: translate(calc(-50% - 2px), calc(-50% - 3px)) rotate(52deg);
   }
   .k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--c{
-    width: 17px;
-    transform: translate(calc(-50% + 5px), calc(-50% + 3px)) rotate(-56deg);
+    width: 18px;
+    transform: translate(calc(-50% - 2px), calc(-50% + 3px)) rotate(-52deg);
   }
 }
 
