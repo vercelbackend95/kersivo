@@ -236,12 +236,10 @@ html{
 
   /* toned-down drop shadows (fog culprit) */
   filter:
-    drop-shadow(0 0 4px rgba(190,145,255,.28))
-    drop-shadow(0 0 8px rgba(255,190,245,.10));
+    drop-shadow(0 0 3px rgba(190,145,255,.22))
+    drop-shadow(0 0 6px rgba(255,190,245,.08));
 
-  /* default pivot */
   transform-origin: 50% 50%;
-
   transition:
     transform 210ms cubic-bezier(.2,.9,.2,1),
     width 210ms cubic-bezier(.2,.9,.2,1);
@@ -250,7 +248,7 @@ html{
   transform: translateZ(0);
 }
 
-/* ✅ Arms of "K" must pivot from the LEFT end so they attach to the stem */
+/* arms must pivot from the left end so they attach to the stem */
 .k-topnav__burgerLine--b,
 .k-topnav__burgerLine--c{
   transform-origin: 0% 50%;
@@ -265,7 +263,7 @@ html{
   height: 1px;
   border-radius: 999px;
   background: rgba(255,255,255,.9);
-  opacity: .22;
+  opacity: .18;
 }
 
 /* Closed: 3 horizontal neons */
@@ -281,28 +279,26 @@ html{
     0 0 16px rgba(255,190,245,.26);
 }
 
-/* Open: "K" (stem + two arms that START on the stem) */
+/* Open: "K" — bigger, cleaner, properly attached arms */
 .k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--a{
-  width: 26px;
-  /* stem moved left to create space */
-  transform: translate(calc(-50% - 8px), -50%) rotate(90deg);
+  width: 30px;
+  transform: translate(calc(-50% - 10px), -50%) rotate(90deg);
 }
 
 .k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--b{
-  width: 20px;
-  /* arm's LEFT end sits on the stem */
-  transform: translate(calc(-50% - 2px), calc(-50% - 3px)) rotate(48deg);
+  width: 24px;
+  transform: translate(calc(-50% - 2px), calc(-50% - 5px)) rotate(41deg);
 }
 
 .k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--c{
-  width: 20px;
-  transform: translate(calc(-50% - 2px), calc(-50% + 3px)) rotate(-48deg);
+  width: 24px;
+  transform: translate(calc(-50% - 2px), calc(-50% + 5px)) rotate(-41deg);
 }
 
 /* subtle "neon hum" (less blur) */
 @media (prefers-reduced-motion: no-preference){
   .k-topnav__burgerLine{
-    animation: kNeonPulse 6.2s ease-in-out infinite;
+    animation: kNeonPulse 6.4s ease-in-out infinite;
   }
   .k-topnav__burgerLine--b{ animation-delay: -1.9s; }
   .k-topnav__burgerLine--c{ animation-delay: -3.2s; }
@@ -311,13 +307,13 @@ html{
     0%, 100%{
       opacity: .92;
       filter:
-        drop-shadow(0 0 3px rgba(190,145,255,.22))
-        drop-shadow(0 0 6px rgba(255,190,245,.08));
+        drop-shadow(0 0 3px rgba(190,145,255,.20))
+        drop-shadow(0 0 6px rgba(255,190,245,.07));
     }
     50%{
       opacity: 1;
       filter:
-        drop-shadow(0 0 4px rgba(190,145,255,.30))
+        drop-shadow(0 0 4px rgba(190,145,255,.26))
         drop-shadow(0 0 8px rgba(255,190,245,.10));
     }
   }
@@ -466,16 +462,16 @@ html{
 
   /* keep K proportions on tiny screens */
   .k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--a{
-    width: 24px;
-    transform: translate(calc(-50% - 7px), -50%) rotate(90deg);
+    width: 28px;
+    transform: translate(calc(-50% - 10px), -50%) rotate(90deg);
   }
   .k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--b{
-    width: 18px;
-    transform: translate(calc(-50% - 2px), calc(-50% - 3px)) rotate(52deg);
+    width: 22px;
+    transform: translate(calc(-50% - 2px), calc(-50% - 5px)) rotate(44deg);
   }
   .k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--c{
-    width: 18px;
-    transform: translate(calc(-50% - 2px), calc(-50% + 3px)) rotate(-52deg);
+    width: 22px;
+    transform: translate(calc(-50% - 2px), calc(-50% + 5px)) rotate(-44deg);
   }
 }
 
