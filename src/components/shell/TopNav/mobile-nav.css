@@ -1,14 +1,14 @@
-/* src/components/shell/TopNav/mobile-nav.css
-   MobileNav — FULLSCREEN SHEET (100vw x 100vh)
-   Rows + dividers + active rail
-   CTA uses global .k-btn system (hero)
-   Sweep subtle + reliable layering
+/* Fullscreen MobileNav (ported to body for true fixed fullscreen)
+   - Big type
+   - Status + CTA below list
+   - Handle at bottom
+   - Sweep subtle
 */
 
 .k-mobileNav{
   position: fixed;
   inset: 0;
-  z-index: 120;
+  z-index: 200; /* above topnav + everything */
   pointer-events: auto;
 }
 
@@ -20,8 +20,6 @@
   height: 100%;
   border: 0;
   background: rgba(6, 6, 10, 0.86);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
 }
 
 /* Fullscreen sheet */
@@ -76,13 +74,13 @@
   background: linear-gradient(
     90deg,
     rgba(255,255,255,0),
-    rgba(255,255,255,0.025),
-    rgba(255,255,255,0.06),
-    rgba(255,255,255,0.025),
+    rgba(255,255,255,0.02),
+    rgba(255,255,255,0.05),
+    rgba(255,255,255,0.02),
     rgba(255,255,255,0)
   );
 
-  filter: blur(7px);
+  filter: blur(8px);
   mix-blend-mode: screen;
   transform: skewX(-18deg) translateX(0);
   opacity: 0;
@@ -94,8 +92,8 @@
 
 @keyframes kSpecSweep{
   0%   { opacity: 0; transform: skewX(-18deg) translateX(0); }
-  18%  { opacity: .28; }
-  60%  { opacity: .12; }
+  18%  { opacity: .22; }
+  60%  { opacity: .10; }
   100% { opacity: 0; transform: skewX(-18deg) translateX(340%); }
 }
 
@@ -106,7 +104,7 @@
   z-index: 3;
 }
 
-/* Close button top-right */
+/* Close top-right */
 .k-mobileNav__close{
   position: absolute;
   top: calc(env(safe-area-inset-top) + 12px);
@@ -149,7 +147,7 @@
   gap: 16px;
 }
 
-/* Nav region scrolls if needed */
+/* Nav scrolls if needed */
 .k-mobileNav__nav{
   flex: 1 1 auto;
   min-height: 0;
@@ -168,23 +166,26 @@
   padding: 0;
 }
 
+.k-mobileNav__item{ position: relative; }
+
 .k-mobileNav__item + .k-mobileNav__item{
   border-top: 1px solid rgba(255,255,255,0.08);
 }
 
 /* Bigger type */
 .k-mobileNav__row{
+  position: relative;
   display: flex;
   align-items: center;
   width: 100%;
 
-  padding: 20px 16px 20px 18px;
+  padding: 22px 16px 22px 18px;
 
   text-decoration: none;
   color: rgba(255,255,255,0.94);
 
-  font-size: 22px;
-  font-weight: 700;
+  font-size: 23px;
+  font-weight: 720;
   letter-spacing: -0.02em;
 
   background: transparent;
@@ -217,7 +218,7 @@
   outline-offset: 4px;
 }
 
-/* Status under list */
+/* Status */
 .k-mobileNav__status{
   display: flex;
   justify-content: center;
@@ -249,21 +250,21 @@
     0 0 12px rgba(190,145,255,0.18);
 }
 
-/* CTA */
+/* CTA uses hero .k-btn */
 .k-mobileNav__ctaWrap{
   display: flex;
   justify-content: center;
 }
 
 .k-mobileNav__ctaBtn{
-  --btn-h: 48px;
+  --btn-h: 50px;
   --btn-pad: 18px;
   font-size: 14px;
   width: min(520px, 100%);
   justify-content: center;
 }
 
-/* Drag handle button at bottom (only drag surface) */
+/* Drag handle ONLY */
 .k-mobileNav__handle{
   border: 0;
   background: transparent;
@@ -273,10 +274,7 @@
   cursor: grab;
   -webkit-tap-highlight-color: transparent;
 }
-
-.k-mobileNav__handle:active{
-  cursor: grabbing;
-}
+.k-mobileNav__handle:active{ cursor: grabbing; }
 
 .k-mobileNav__handleBar{
   width: 44px;
@@ -286,7 +284,7 @@
   box-shadow: 0 0 0 1px rgba(0,0,0,0.20) inset;
 }
 
-/* only show on mobile */
+/* hide on desktop */
 @media (min-width: 861px){
   .k-mobileNav{ display: none; }
 }

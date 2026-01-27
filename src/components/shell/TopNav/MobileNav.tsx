@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   AnimatePresence,
   motion,
@@ -48,12 +49,12 @@ export default function MobileNav() {
   const [mounted, setMounted] = useState(false);
   const [activeHref, setActiveHref] = useState<string>("/");
   const [sweepOn, setSweepOn] = useState(false);
-  const [vh, setVh] = useState(900); // fallback; updated on mount
+  const [vh, setVh] = useState(900);
 
   const sheetRef = useRef<HTMLDivElement | null>(null);
   const lastActiveElRef = useRef<HTMLElement | null>(null);
 
-  // Burger button in TopNav.astro
+  // Burger button lives in TopNav.astro
   const burgerId = "kNavToggle";
 
   const setBurgerA11y = (isOpen: boolean) => {
@@ -192,7 +193,7 @@ export default function MobileNav() {
 
   if (!mounted) return null;
 
-  return (
+  const ui = (
     <AnimatePresence mode="sync">
       {open && (
         <motion.div
@@ -202,7 +203,7 @@ export default function MobileNav() {
           exit={{ opacity: 0 }}
           transition={backdropTransition}
         >
-          {/* Backdrop (still closes on tap) */}
+          {/* Backdrop */}
           <motion.button
             className="k-mobileNav__backdrop"
             type="button"
@@ -214,7 +215,7 @@ export default function MobileNav() {
             onClick={doClose}
           />
 
-          {/* Fullscreen Sheet */}
+          {/* Fullscreen sheet */}
           <motion.div
             className="k-mobileNav__sheet"
             data-sweep={sweepOn ? "1" : "0"}
@@ -229,7 +230,7 @@ export default function MobileNav() {
             transition={sheetTransition}
             drag={reduced ? false : "y"}
             dragControls={dragControls}
-            dragListener={false} /* key: drag only via handle */
+            dragListener={false}
             dragConstraints={{ top: -Math.max(220, vh * 0.35), bottom: 0 }}
             dragElastic={0.08}
             onDragEnd={(_, info) => {
@@ -237,7 +238,7 @@ export default function MobileNav() {
               if (shouldClose) doClose();
             }}
           >
-            {/* Close icon top-right */}
+            {/* Close icon (menu-close style) */}
             <button
               className="k-mobileNav__close"
               type="button"
@@ -246,8 +247,8 @@ export default function MobileNav() {
               onPointerDown={(e) => e.stopPropagation()}
             >
               <svg
-                width="26"
-                height="26"
+                width="24"
+                height="24"
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -329,7 +330,7 @@ export default function MobileNav() {
                 </a>
               </div>
 
-              {/* Drag handle ONLY (prevents click-eating) */}
+              {/* Drag handle ONLY */}
               <button
                 className="k-mobileNav__handle"
                 type="button"
@@ -344,4 +345,7 @@ export default function MobileNav() {
       )}
     </AnimatePresence>
   );
+
+  // 🚀 Critical fix: render in BODY so fixed truly means fullscreen
+  return createPortal(ui, document.body);
 }
