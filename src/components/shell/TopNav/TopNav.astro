@@ -3,6 +3,7 @@
 import "./topnav.css";
 import "./neon-nav.css";
 import CtaButton from "../../ui/CtaButton/CtaButton.astro";
+import MobileNav from "./MobileNav";
 ---
 
 <header class="k-topnav" data-topnav>
@@ -50,14 +51,15 @@ import CtaButton from "../../ui/CtaButton/CtaButton.astro";
         class="k-topnav__cta"
       />
 
+      <!-- React island MobileNav przejmuje klik i a11y przez id="kNavToggle" -->
       <button
+        id="kNavToggle"
         class="k-topnav__burger"
         type="button"
         aria-label="Open menu"
         aria-expanded="false"
-        aria-controls="kTopnavPanel"
       >
-        <!-- MENU ICON (bigger via CSS) -->
+        <!-- MENU ICON -->
         <span class="k-topnav__burgerIcon k-topnav__burgerIcon--menu" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
@@ -70,7 +72,7 @@ import CtaButton from "../../ui/CtaButton/CtaButton.astro";
           </svg>
         </span>
 
-        <!-- CLOSE ICON (your new SVG, adapted to currentColor) -->
+        <!-- CLOSE ICON (menu-close.svg inline, currentColor) -->
         <span class="k-topnav__burgerIcon k-topnav__burgerIcon--close" aria-hidden="true">
           <svg
             width="24"
@@ -89,33 +91,8 @@ import CtaButton from "../../ui/CtaButton/CtaButton.astro";
     </div>
   </div>
 
-  <!-- MOBILE PANEL (unstyled base — we’ll redesign next) -->
-  <div class="k-topnav__panel" id="kTopnavPanel" hidden>
-    <div class="k-topnav__panelInner">
-      <a class="k-topnav__panelLink" href="/">Home</a>
-      <a class="k-topnav__panelLink" href="/work/">Work</a>
-      <a class="k-topnav__panelLink" href="/services/">Services</a>
-      <a class="k-topnav__panelLink" href="/process/">Process</a>
-      <a class="k-topnav__panelLink" href="/packages/">Packages</a>
-      <a class="k-topnav__panelLink" href="/contact/">Contact</a>
-
-      <div class="k-topnav__panelCtas">
-        <CtaButton
-          href="/contact/#contact"
-          label="Get a quote"
-          variant="primary"
-          class="k-topnav__panelPrimary"
-        />
-        <CtaButton
-          href="/work/"
-          label="View work"
-          variant="ghost"
-          magnetic={false}
-          class="k-topnav__panelGhost"
-        />
-      </div>
-    </div>
-  </div>
+  <!-- New Mobile Menu (Framer Motion) -->
+  <MobileNav client:load />
 
   <script>
     (() => {
@@ -125,18 +102,7 @@ import CtaButton from "../../ui/CtaButton/CtaButton.astro";
       const reduced =
         window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-      const burger = root.querySelector(".k-topnav__burger");
-      const panel = root.querySelector("#kTopnavPanel");
-      const linksWrap = root.querySelector("[data-nav-links]");
-      const neon = root.querySelector("[data-nav-neon]");
-      const navLinks = Array.from(root.querySelectorAll("[data-nav-link]"));
-
-      const setBurgerLabel = (isOpen) => {
-        if (!burger) return;
-        burger.setAttribute("aria-label", isOpen ? "Close menu" : "Open menu");
-      };
-      setBurgerLabel(false);
-
+      // Scroll state
       const onScroll = () => {
         if (window.scrollY > 6) root.classList.add("is-scrolled");
         else root.classList.remove("is-scrolled");
@@ -144,41 +110,11 @@ import CtaButton from "../../ui/CtaButton/CtaButton.astro";
       onScroll();
       window.addEventListener("scroll", onScroll, { passive: true });
 
-      const open = () => {
-        if (!burger || !panel) return;
-        setBurgerLabel(true);
-        burger.setAttribute("aria-expanded", "true");
-        panel.hidden = false;
-        root.classList.add("is-open");
-        panel.classList.add("is-open");
-        document.documentElement.classList.add("k-navOpen");
-      };
+      // Neon pill highlight (desktop)
+      const linksWrap = root.querySelector("[data-nav-links]");
+      const neon = root.querySelector("[data-nav-neon]");
+      const navLinks = Array.from(root.querySelectorAll("[data-nav-link]"));
 
-      const close = () => {
-        if (!burger || !panel) return;
-        setBurgerLabel(false);
-        burger.setAttribute("aria-expanded", "false");
-        panel.classList.remove("is-open");
-        root.classList.remove("is-open");
-        document.documentElement.classList.remove("k-navOpen");
-        setTimeout(() => (panel.hidden = true), 140);
-      };
-
-      burger?.addEventListener("click", () => {
-        const isOpen = burger.getAttribute("aria-expanded") === "true";
-        isOpen ? close() : open();
-      });
-
-      panel?.addEventListener("click", (e) => {
-        const a = e.target && e.target.closest ? e.target.closest("a") : null;
-        if (a) close();
-      });
-
-      window.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") close();
-      });
-
-      // Neon pill highlight (route-based)
       const moveNeonTo = (el) => {
         if (!neon || !linksWrap || !el) return;
         const wrapRect = linksWrap.getBoundingClientRect();

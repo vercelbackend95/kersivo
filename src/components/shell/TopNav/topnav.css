@@ -16,6 +16,7 @@
 html{
   scroll-padding-top: calc(var(--nav-h) + env(safe-area-inset-top) + 14px);
 }
+html.k-navOpen { overflow: hidden; }
 
 .k-topnav,
 .k-topnav *{
