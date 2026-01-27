@@ -54,7 +54,7 @@ export default function MobileNav() {
   const sheetRef = useRef<HTMLDivElement | null>(null);
   const lastActiveElRef = useRef<HTMLElement | null>(null);
 
-  // Burger button lives in TopNav.astro
+  // Burger in TopNav.astro
   const burgerId = "kNavToggle";
 
   const setBurgerA11y = (isOpen: boolean) => {
@@ -87,7 +87,6 @@ export default function MobileNav() {
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  // Active state guidance
   useEffect(() => {
     if (!mounted) return;
     try {
@@ -104,7 +103,6 @@ export default function MobileNav() {
   // Wire burger click
   useEffect(() => {
     if (!mounted) return;
-
     const btn = document.getElementById(burgerId) as HTMLButtonElement | null;
     if (!btn) return;
 
@@ -114,7 +112,7 @@ export default function MobileNav() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mounted, open]);
 
-  // A11y + scroll lock + focus + sweep trigger
+  // A11y + scroll lock + focus + sweep
   useEffect(() => {
     if (!mounted) return;
 
@@ -131,7 +129,6 @@ export default function MobileNav() {
       (btn ?? lastActiveElRef.current)?.focus?.();
     }
 
-    // Sweep after sheet lands
     if (open && !reduced) {
       setSweepOn(false);
       const t1 = window.setTimeout(() => setSweepOn(true), 340);
@@ -203,7 +200,6 @@ export default function MobileNav() {
           exit={{ opacity: 0 }}
           transition={backdropTransition}
         >
-          {/* Backdrop */}
           <motion.button
             className="k-mobileNav__backdrop"
             type="button"
@@ -213,9 +209,9 @@ export default function MobileNav() {
             exit={{ opacity: 0 }}
             transition={backdropTransition}
             onClick={doClose}
+            onTouchEnd={doClose}
           />
 
-          {/* Fullscreen sheet */}
           <motion.div
             className="k-mobileNav__sheet"
             data-sweep={sweepOn ? "1" : "0"}
@@ -231,21 +227,23 @@ export default function MobileNav() {
             drag={reduced ? false : "y"}
             dragControls={dragControls}
             dragListener={false}
-            dragConstraints={{ top: -Math.max(220, vh * 0.35), bottom: 0 }}
+            dragConstraints={{ top: -Math.max(240, vh * 0.35), bottom: 0 }}
             dragElastic={0.08}
             onDragEnd={(_, info) => {
               const shouldClose = info.offset.y < -70 || info.velocity.y < -700;
               if (shouldClose) doClose();
             }}
           >
-            {/* Close icon (menu-close style) */}
+            {/* Close (pure icon, no border, no ring) */}
             <button
               className="k-mobileNav__close"
               type="button"
               aria-label="Close menu"
               onClick={doClose}
+              onTouchEnd={doClose}
               onPointerDown={(e) => e.stopPropagation()}
             >
+              {/* menu-close.svg (inline) */}
               <svg
                 width="24"
                 height="24"
@@ -261,6 +259,7 @@ export default function MobileNav() {
               </svg>
             </button>
 
+            {/* Layout: nav scrolls, bottom bar always visible */}
             <div className="k-mobileNav__content">
               <nav className="k-mobileNav__nav" aria-label="Mobile">
                 <motion.ul
@@ -310,35 +309,36 @@ export default function MobileNav() {
                 </motion.ul>
               </nav>
 
-              <div className="k-mobileNav__status">
-                <div className="k-mobileNav__chip" aria-label="Status">
-                  <span className="k-mobileNav__dot" aria-hidden="true" />
-                  Now booking: <strong>2 project slots</strong>
+              <div className="k-mobileNav__bottom">
+                <div className="k-mobileNav__status">
+                  <div className="k-mobileNav__chip" aria-label="Status">
+                    <span className="k-mobileNav__dot" aria-hidden="true" />
+                    Now booking: <strong>2 project slots</strong>
+                  </div>
                 </div>
-              </div>
 
-              <div className="k-mobileNav__ctaWrap">
-                <a
-                  className="k-btn k-btn--primary k-mobileNav__ctaBtn"
-                  href="/contact/#contact"
-                  data-magnetic="false"
-                  onClick={doClose}
+                <div className="k-mobileNav__ctaWrap">
+                  <a
+                    className="k-btn k-btn--primary k-mobileNav__ctaBtn"
+                    href="/contact/#contact"
+                    data-magnetic="false"
+                    onClick={doClose}
+                  >
+                    <span className="k-btn__label">Get a quote</span>
+                    <span className="k-btn__shine" aria-hidden="true"></span>
+                    <span className="k-btn__arrow" aria-hidden="true">→</span>
+                  </a>
+                </div>
+
+                <button
+                  className="k-mobileNav__handle"
+                  type="button"
+                  aria-label="Drag to close"
+                  onPointerDown={(e) => dragControls.start(e)}
                 >
-                  <span className="k-btn__label">Get a quote</span>
-                  <span className="k-btn__shine" aria-hidden="true"></span>
-                  <span className="k-btn__arrow" aria-hidden="true">→</span>
-                </a>
+                  <span className="k-mobileNav__handleBar" />
+                </button>
               </div>
-
-              {/* Drag handle ONLY */}
-              <button
-                className="k-mobileNav__handle"
-                type="button"
-                aria-label="Drag to close"
-                onPointerDown={(e) => dragControls.start(e)}
-              >
-                <span className="k-mobileNav__handleBar" />
-              </button>
             </div>
           </motion.div>
         </motion.div>
@@ -346,6 +346,6 @@ export default function MobileNav() {
     </AnimatePresence>
   );
 
-  // 🚀 Critical fix: render in BODY so fixed truly means fullscreen
+  // Critical: portal to body so fullscreen is real fullscreen (iOS-safe)
   return createPortal(ui, document.body);
 }
