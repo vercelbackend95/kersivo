@@ -1,8 +1,8 @@
 /* src/components/shell/TopNav/mobile-nav.css
-   MobileNav — ONE SHEET + ROWS + DIVIDERS
-   Opaque smoke glass (no see-through)
-   Specular sweep (once, visible)
-   Grab handle at bottom
+   MobileNav — FULLSCREEN SHEET (100vw x 100vh)
+   Rows + dividers + active rail
+   CTA uses global .k-btn system (hero)
+   Specular sweep: subtle
 */
 
 .k-mobileNav{
@@ -12,47 +12,44 @@
   pointer-events: auto;
 }
 
-/* Calm-but-strong backdrop */
+/* Backdrop stays calm but blocks distractions */
 .k-mobileNav__backdrop{
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   border: 0;
-  background: rgba(6, 6, 10, 0.90);
+  background: rgba(6, 6, 10, 0.86);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
 
-/* Sheet pinned to top */
+/* FULLSCREEN sheet */
 .k-mobileNav__sheet{
   position: absolute;
-  top: env(safe-area-inset-top);
-  left: 0;
-  right: 0;
+  inset: 0;
 
   width: 100%;
+  height: 100%;
   transform-origin: top;
 
-  padding: 12px 14px 12px;
-  overflow: hidden;
+  /* safe areas */
+  padding-top: env(safe-area-inset-top);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
 
-  /* isolate layers so ::after can't disappear */
+  overflow: hidden;
   isolation: isolate;
 
-  /* Opaque smoke */
+  /* opaque smoke (no see-through) */
   background: linear-gradient(
     180deg,
-    rgba(14,14,20,0.985),
-    rgba(10,10,16,0.985)
+    rgba(14,14,20,0.99),
+    rgba(10,10,16,0.99)
   );
 
-  border-bottom: 1px solid rgba(255,255,255,0.14);
-  border-top: 1px solid rgba(255,255,255,0.06);
-
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-
+  border: 0;
   box-shadow: none;
 }
 
@@ -65,12 +62,12 @@
   z-index: 1;
 
   background:
-    radial-gradient(900px 220px at 20% 0%, rgba(190,145,255,0.16), transparent 60%),
-    radial-gradient(700px 220px at 80% 0%, rgba(255,190,245,0.10), transparent 55%);
+    radial-gradient(900px 320px at 20% 0%, rgba(190,145,255,0.13), transparent 62%),
+    radial-gradient(800px 320px at 80% 0%, rgba(255,190,245,0.08), transparent 60%);
   opacity: .85;
 }
 
-/* Specular sweep (visible on dark) */
+/* Specular sweep — MORE SUBTLE */
 .k-mobileNav__sheet::after{
   content:"";
   position:absolute;
@@ -84,13 +81,13 @@
   background: linear-gradient(
     90deg,
     rgba(255,255,255,0),
-    rgba(255,255,255,0.05),
-    rgba(255,255,255,0.16),
-    rgba(255,255,255,0.05),
+    rgba(255,255,255,0.03),
+    rgba(255,255,255,0.08),
+    rgba(255,255,255,0.03),
     rgba(255,255,255,0)
   );
 
-  filter: blur(4px);
+  filter: blur(6px);
   mix-blend-mode: screen;
   transform: skewX(-18deg) translateX(0);
   opacity: 0;
@@ -102,72 +99,82 @@
 
 @keyframes kSpecSweep{
   0%   { opacity: 0; transform: skewX(-18deg) translateX(0); }
-  18%  { opacity: .75; }
-  60%  { opacity: .25; }
+  18%  { opacity: .38; }
+  60%  { opacity: .16; }
   100% { opacity: 0; transform: skewX(-18deg) translateX(340%); }
 }
 
-/* Ensure content is above glow/sweep layers */
-.k-mobileNav__top,
-.k-mobileNav__nav,
-.k-mobileNav__footer{
+/* ensure content above layers */
+.k-mobileNav__close,
+.k-mobileNav__content{
   position: relative;
   z-index: 3;
 }
 
-/* Top area: status + CTA */
-.k-mobileNav__top{
-  display:flex;
-  align-items:center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 6px 2px 12px;
+/* Close button top-right */
+.k-mobileNav__close{
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + 12px);
+  right: calc(env(safe-area-inset-right) + 12px);
+
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+
+  color: rgba(255,255,255,0.92);
+
+  filter:
+    drop-shadow(0 0 3px rgba(190,145,255,0.16))
+    drop-shadow(0 0 8px rgba(255,190,245,0.08));
+
+  -webkit-tap-highlight-color: transparent;
 }
 
-.k-mobileNav__chip{
-  display:inline-flex;
-  align-items:center;
-  gap: 10px;
-
-  padding: 9px 12px;
-  border-radius: 999px;
-
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.12);
-
-  color: rgba(255,255,255,0.86);
-  font-size: 12.5px;
-  letter-spacing: -0.01em;
+.k-mobileNav__close:active{
+  transform: translateY(1px);
 }
 
-.k-mobileNav__dot{
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  background: rgba(190,145,255,0.95);
-  box-shadow:
-    0 0 0 3px rgba(190,145,255,0.14),
-    0 0 12px rgba(190,145,255,0.22);
+.k-mobileNav__close:focus-visible{
+  outline: 2px solid rgba(190,145,255,.70);
+  outline-offset: 6px;
+  border-radius: 12px;
 }
 
-/* CTA button (uses global .k-btn system) */
-.k-mobileNav__ctaBtn{
-  --btn-h: 40px;
-  --btn-pad: 14px;
-  font-size: 12.8px;
-  white-space: nowrap;
+/* Content layout */
+.k-mobileNav__content{
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  /* space for the close button */
+  padding: 72px 18px 18px;
+  gap: 16px;
+}
+
+/* NAV should take the available height and scroll if needed */
+.k-mobileNav__nav{
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+
+  border-top: 1px solid rgba(255,255,255,0.10);
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+
+  border-radius: 16px;
+  background: rgba(255,255,255,0.02);
 }
 
 /* Rows list */
-.k-mobileNav__nav{
-  padding: 2px 0 6px;
-}
-
 .k-mobileNav__list{
   list-style: none;
   margin: 0;
   padding: 0;
-  border-top: 1px solid rgba(255,255,255,0.10);
 }
 
 .k-mobileNav__item{
@@ -178,47 +185,46 @@
   border-top: 1px solid rgba(255,255,255,0.08);
 }
 
+/* BIGGER TYPE */
 .k-mobileNav__row{
   position: relative;
   display: flex;
   align-items: center;
 
   width: 100%;
-  padding: 16px 14px 16px 16px;
+  padding: 20px 16px 20px 18px;
 
   text-decoration: none;
-  color: rgba(255,255,255,0.92);
+  color: rgba(255,255,255,0.94);
 
-  font-size: 18px;
-  font-weight: 650;
+  font-size: 22px;          /* ↑ bigger */
+  font-weight: 700;
   letter-spacing: -0.02em;
 
   background: transparent;
-  border-radius: 14px;
 
   transition: background 160ms ease, transform 160ms ease;
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Active rail */
+/* active rail */
 .k-mobileNav__item[data-active="1"] .k-mobileNav__row::before{
   content:"";
   position:absolute;
-  left: 6px;
-  top: 10px;
-  bottom: 10px;
+  left: 10px;
+  top: 14px;
+  bottom: 14px;
   width: 2px;
   border-radius: 999px;
 
-  background: rgba(190,145,255,0.95);
+  background: rgba(190,145,255,0.90);
   box-shadow:
     0 0 0 1px rgba(255,255,255,0.10),
-    0 0 14px rgba(190,145,255,0.20);
+    0 0 14px rgba(190,145,255,0.18);
 }
 
-/* tap highlight */
 .k-mobileNav__row:active{
-  background: rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.05);
 }
 
 .k-mobileNav__row:focus-visible{
@@ -226,31 +232,64 @@
   outline-offset: 4px;
 }
 
-/* Footer + handle at bottom */
-.k-mobileNav__footer{
-  padding: 8px 2px 8px;
-  display: grid;
-  gap: 10px;
+/* Status below list */
+.k-mobileNav__status{
+  display: flex;
+  justify-content: center;
 }
 
-.k-mobileNav__philo{
-  margin: 0;
-  color: rgba(255,255,255,0.62);
-  font-size: 12.5px;
+.k-mobileNav__chip{
+  display:inline-flex;
+  align-items:center;
+  gap: 10px;
+
+  padding: 10px 14px;
+  border-radius: 999px;
+
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+
+  color: rgba(255,255,255,0.86);
+  font-size: 13px;
   letter-spacing: -0.01em;
 }
 
+.k-mobileNav__dot{
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(190,145,255,0.95);
+  box-shadow:
+    0 0 0 3px rgba(190,145,255,0.14),
+    0 0 12px rgba(190,145,255,0.20);
+}
+
+/* CTA below status (hero button system) */
+.k-mobileNav__ctaWrap{
+  display: flex;
+  justify-content: center;
+}
+
+.k-mobileNav__ctaBtn{
+  --btn-h: 48px;
+  --btn-pad: 18px;
+  font-size: 14px;
+  width: min(520px, 100%);
+  justify-content: center;
+}
+
+/* Grab handle at bottom */
 .k-mobileNav__handle{
   display: grid;
   place-items: center;
-  padding: 6px 0 2px;
+  padding-top: 8px;
 }
 
 .k-mobileNav__handleBar{
-  width: 36px;
+  width: 44px;
   height: 4px;
   border-radius: 999px;
-  background: rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.14);
   box-shadow: 0 0 0 1px rgba(0,0,0,0.20) inset;
 }
 

@@ -118,13 +118,11 @@ export default function MobileNav() {
       (btn ?? lastActiveElRef.current)?.focus?.();
     }
 
-    // Specular sweep should happen after the sheet lands (otherwise it's offscreen)
+    // Specular sweep after the sheet lands
     if (open && !reduced) {
       setSweepOn(false);
-
       const t1 = window.setTimeout(() => setSweepOn(true), 320);
-      const t2 = window.setTimeout(() => setSweepOn(false), 1100);
-
+      const t2 = window.setTimeout(() => setSweepOn(false), 1050);
       return () => {
         window.clearTimeout(t1);
         window.clearTimeout(t2);
@@ -205,7 +203,7 @@ export default function MobileNav() {
             onClick={doClose}
           />
 
-          {/* Sheet */}
+          {/* Fullscreen Sheet */}
           <motion.div
             className="k-mobileNav__sheet"
             data-sweep={sweepOn ? "1" : "0"}
@@ -219,85 +217,108 @@ export default function MobileNav() {
             exit={{ y: "-100%", opacity: 0.98, scaleY: reduced ? 1 : 0.985 }}
             transition={sheetTransition}
             drag={reduced ? false : "y"}
-            dragConstraints={{ top: -160, bottom: 0 }}
+            dragConstraints={{ top: -200, bottom: 0 }}
             dragElastic={0.08}
             onDragEnd={(_, info) => {
-              // swipe up to close
               const shouldClose = info.offset.y < -70 || info.velocity.y < -700;
               if (shouldClose) doClose();
             }}
           >
-            <div className="k-mobileNav__top">
-              <div className="k-mobileNav__chip" aria-label="Status">
-                <span className="k-mobileNav__dot" aria-hidden="true" />
-                Now booking: <strong>2 project slots</strong>
+            {/* Close icon top-right */}
+            <button
+              className="k-mobileNav__close"
+              type="button"
+              aria-label="Close menu"
+              onClick={doClose}
+            >
+              <svg
+                width="26"
+                height="26"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <path
+                  d="M6.2253 4.81108C5.83477 4.42056 5.20161 4.42056 4.81108 4.81108C4.42056 5.20161 4.42056 5.83477 4.81108 6.2253L10.5858 12L4.81114 17.7747C4.42062 18.1652 4.42062 18.7984 4.81114 19.1889C5.20167 19.5794 5.83483 19.5794 6.22535 19.1889L12 13.4142L17.7747 19.1889C18.1652 19.5794 18.7984 19.5794 19.1889 19.1889C19.5794 18.7984 19.5794 18.1652 19.1889 17.7747L13.4142 12L19.189 6.2253C19.5795 5.83477 19.5795 5.20161 19.189 4.81108C18.7985 4.42056 18.1653 4.42056 17.7748 4.81108L12 10.5858L6.2253 4.81108Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </button>
+
+            {/* Content */}
+            <div className="k-mobileNav__content">
+              <nav className="k-mobileNav__nav" aria-label="Mobile">
+                <motion.ul
+                  className="k-mobileNav__list"
+                  initial="hidden"
+                  animate="show"
+                  exit="hidden"
+                  variants={{
+                    hidden: {},
+                    show: {
+                      transition: {
+                        staggerChildren: reduced ? 0 : 0.05,
+                        delayChildren: reduced ? 0 : 0.05,
+                      },
+                    },
+                  }}
+                >
+                  {LINKS.map((l) => {
+                    const isActive = normPath(l.href) === normPath(activeHref);
+                    return (
+                      <motion.li
+                        key={l.href}
+                        className="k-mobileNav__item"
+                        data-active={isActive ? "1" : "0"}
+                        variants={{
+                          hidden: { opacity: 0, y: -6 },
+                          show: { opacity: 1, y: 0 },
+                        }}
+                        transition={
+                          reduced
+                            ? { duration: 0.01 }
+                            : { duration: 0.22, ease: [0.22, 0.9, 0.22, 1] }
+                        }
+                      >
+                        <motion.a
+                          className="k-mobileNav__row"
+                          href={l.href}
+                          onClick={doClose}
+                          aria-current={isActive ? "page" : undefined}
+                          whileTap={reduced ? undefined : { scale: 0.985 }}
+                        >
+                          <span className="k-mobileNav__label">{l.label}</span>
+                        </motion.a>
+                      </motion.li>
+                    );
+                  })}
+                </motion.ul>
+              </nav>
+
+              {/* Status below list */}
+              <div className="k-mobileNav__status">
+                <div className="k-mobileNav__chip" aria-label="Status">
+                  <span className="k-mobileNav__dot" aria-hidden="true" />
+                  Now booking: <strong>2 project slots</strong>
+                </div>
               </div>
 
-              {/* CTA: your global hero button system */}
-              <a
-                className="k-btn k-btn--primary k-mobileNav__ctaBtn"
-                href="/contact/#contact"
-                data-magnetic="false"
-                onClick={doClose}
-              >
-                <span className="k-btn__label">Get a quote</span>
-                <span className="k-btn__shine" aria-hidden="true"></span>
-                <span className="k-btn__arrow" aria-hidden="true">→</span>
-              </a>
-            </div>
+              {/* CTA below status */}
+              <div className="k-mobileNav__ctaWrap">
+                <a
+                  className="k-btn k-btn--primary k-mobileNav__ctaBtn"
+                  href="/contact/#contact"
+                  data-magnetic="false"
+                  onClick={doClose}
+                >
+                  <span className="k-btn__label">Get a quote</span>
+                  <span className="k-btn__shine" aria-hidden="true"></span>
+                  <span className="k-btn__arrow" aria-hidden="true">→</span>
+                </a>
+              </div>
 
-            <nav className="k-mobileNav__nav" aria-label="Mobile">
-              <motion.ul
-                className="k-mobileNav__list"
-                initial="hidden"
-                animate="show"
-                exit="hidden"
-                variants={{
-                  hidden: {},
-                  show: {
-                    transition: {
-                      staggerChildren: reduced ? 0 : 0.045,
-                      delayChildren: reduced ? 0 : 0.03,
-                    },
-                  },
-                }}
-              >
-                {LINKS.map((l) => {
-                  const isActive = normPath(l.href) === normPath(activeHref);
-                  return (
-                    <motion.li
-                      key={l.href}
-                      className="k-mobileNav__item"
-                      data-active={isActive ? "1" : "0"}
-                      variants={{
-                        hidden: { opacity: 0, y: -6 },
-                        show: { opacity: 1, y: 0 },
-                      }}
-                      transition={
-                        reduced
-                          ? { duration: 0.01 }
-                          : { duration: 0.22, ease: [0.22, 0.9, 0.22, 1] }
-                      }
-                    >
-                      <motion.a
-                        className="k-mobileNav__row"
-                        href={l.href}
-                        onClick={doClose}
-                        aria-current={isActive ? "page" : undefined}
-                        whileTap={reduced ? undefined : { scale: 0.985 }}
-                      >
-                        <span className="k-mobileNav__label">{l.label}</span>
-                      </motion.a>
-                    </motion.li>
-                  );
-                })}
-              </motion.ul>
-            </nav>
-
-            <div className="k-mobileNav__footer">
-              <p className="k-mobileNav__philo">Order. Tempo. Certainty.</p>
-
-              {/* Grab handle at bottom */}
+              {/* Grab handle bottom */}
               <div className="k-mobileNav__handle" aria-hidden="true">
                 <span className="k-mobileNav__handleBar" />
               </div>
