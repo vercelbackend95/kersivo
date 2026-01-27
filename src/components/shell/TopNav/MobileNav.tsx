@@ -71,18 +71,14 @@ export default function MobileNav() {
     setOpen(false);
   };
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => setMounted(true), []);
 
-  // detect current path for active rail
+  // active link (page guidance)
   useEffect(() => {
     if (!mounted) return;
     try {
       const here = normPath(window.location.pathname || "/");
-      const best =
-        LINKS.find((l) => normPath(l.href) === here)?.href ||
-        (here === "/" ? "/" : "/");
+      const best = LINKS.find((l) => normPath(l.href) === here)?.href || (here === "/" ? "/" : "/");
       setActiveHref(best);
     } catch {
       setActiveHref("/");
@@ -102,7 +98,7 @@ export default function MobileNav() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mounted, open]);
 
-  // a11y + scroll lock + focus on open/close
+  // a11y + scroll lock + focus + sweep trigger
   useEffect(() => {
     if (!mounted) return;
 
@@ -110,15 +106,16 @@ export default function MobileNav() {
     lockScroll(open);
 
     if (open) {
-      // specular sweep: once, subtle, short
+      // Specular sweep: once, short
       if (!reduced) {
         setSweepOn(false);
         requestAnimationFrame(() => setSweepOn(true));
         const t = window.setTimeout(() => setSweepOn(false), 720);
+        // cleanup timer
         return () => window.clearTimeout(t);
       }
 
-      // focus first focusable inside sheet
+      // focus inside
       requestAnimationFrame(() => {
         const focusables = getFocusable(sheetRef.current);
         (focusables[0] ?? sheetRef.current)?.focus?.();
@@ -169,7 +166,7 @@ export default function MobileNav() {
 
   const sheetTransition = useMemo(() => {
     if (reduced) return { duration: 0.18 };
-    // soft drop, hard stop (bez galarety)
+    // soft drop, hard stop
     return { type: "spring", stiffness: 560, damping: 48, mass: 0.9 };
   }, [reduced]);
 
@@ -211,44 +208,34 @@ export default function MobileNav() {
             aria-modal="true"
             aria-label="Navigation"
             tabIndex={-1}
-            initial={{
-              y: "-100%",
-              opacity: 0.98,
-              scaleY: reduced ? 1 : 0.985,
-            }}
-            animate={{
-              y: 0,
-              opacity: 1,
-              scaleY: 1,
-            }}
-            exit={{
-              y: "-100%",
-              opacity: 0.98,
-              scaleY: reduced ? 1 : 0.985,
-            }}
+            initial={{ y: "-100%", opacity: 0.98, scaleY: reduced ? 1 : 0.985 }}
+            animate={{ y: 0, opacity: 1, scaleY: 1 }}
+            exit={{ y: "-100%", opacity: 0.98, scaleY: reduced ? 1 : 0.985 }}
             transition={sheetTransition}
             drag={reduced ? false : "y"}
             dragConstraints={{ top: -160, bottom: 0 }}
             dragElastic={0.08}
             onDragEnd={(_, info) => {
-              // swipe up to close
               const shouldClose = info.offset.y < -70 || info.velocity.y < -700;
               if (shouldClose) doClose();
             }}
           >
-            {/* Grab handle */}
-            <div className="k-mobileNav__handle" aria-hidden="true">
-              <span className="k-mobileNav__handleBar" />
-            </div>
-
             <div className="k-mobileNav__top">
               <div className="k-mobileNav__chip" aria-label="Status">
                 <span className="k-mobileNav__dot" aria-hidden="true" />
                 Now booking: <strong>2 project slots</strong>
               </div>
 
-              <a className="k-mobileNav__cta" href="/contact/#contact" onClick={doClose}>
-                Get a quote <span aria-hidden="true">→</span>
+              {/* CTA: EXACT hero button system (classes + shine + arrow) */}
+              <a
+                className="k-btn k-btn--primary k-mobileNav__ctaBtn"
+                href="/contact/#contact"
+                data-magnetic="false"
+                onClick={doClose}
+              >
+                <span className="k-btn__label">Get a quote</span>
+                <span className="k-btn__shine" aria-hidden="true"></span>
+                <span className="k-btn__arrow" aria-hidden="true">→</span>
               </a>
             </div>
 
@@ -290,11 +277,7 @@ export default function MobileNav() {
                         href={l.href}
                         onClick={doClose}
                         aria-current={isActive ? "page" : undefined}
-                        whileTap={
-                          reduced
-                            ? undefined
-                            : { scale: 0.985 }
-                        }
+                        whileTap={reduced ? undefined : { scale: 0.985 }}
                       >
                         <span className="k-mobileNav__label">{l.label}</span>
                       </motion.a>
@@ -306,6 +289,11 @@ export default function MobileNav() {
 
             <div className="k-mobileNav__footer">
               <p className="k-mobileNav__philo">Order. Tempo. Certainty.</p>
+
+              {/* Grab handle AT BOTTOM */}
+              <div className="k-mobileNav__handle" aria-hidden="true">
+                <span className="k-mobileNav__handleBar" />
+              </div>
             </div>
           </motion.div>
         </motion.div>
