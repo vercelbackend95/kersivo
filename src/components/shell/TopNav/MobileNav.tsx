@@ -23,11 +23,11 @@ function normPath(p: string) {
 function getFocusable(container: HTMLElement | null): HTMLElement[] {
   if (!container) return [];
   const selectors = [
-    'a[href]',
-    'button:not([disabled])',
-    'input:not([disabled])',
-    'select:not([disabled])',
-    'textarea:not([disabled])',
+    "a[href]",
+    "button:not([disabled])",
+    "input:not([disabled])",
+    "select:not([disabled])",
+    "textarea:not([disabled])",
     '[tabindex]:not([tabindex="-1"])',
   ].join(",");
   return Array.from(container.querySelectorAll<HTMLElement>(selectors)).filter(
@@ -46,7 +46,7 @@ export default function MobileNav() {
   const sheetRef = useRef<HTMLDivElement | null>(null);
   const lastActiveElRef = useRef<HTMLElement | null>(null);
 
-  // tie into existing burger button in TopNav.astro
+  // Burger button lives in TopNav.astro
   const burgerId = "kNavToggle";
 
   const setBurgerA11y = (isOpen: boolean) => {
@@ -73,19 +73,21 @@ export default function MobileNav() {
 
   useEffect(() => setMounted(true), []);
 
-  // active link (page guidance)
+  // Active state guidance
   useEffect(() => {
     if (!mounted) return;
     try {
       const here = normPath(window.location.pathname || "/");
-      const best = LINKS.find((l) => normPath(l.href) === here)?.href || (here === "/" ? "/" : "/");
+      const best =
+        LINKS.find((l) => normPath(l.href) === here)?.href ||
+        (here === "/" ? "/" : "/");
       setActiveHref(best);
     } catch {
       setActiveHref("/");
     }
   }, [mounted]);
 
-  // burger click wiring
+  // Wire burger click
   useEffect(() => {
     if (!mounted) return;
 
@@ -98,24 +100,15 @@ export default function MobileNav() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mounted, open]);
 
-  // a11y + scroll lock + focus + sweep trigger
+  // A11y + scroll lock + focus + sweep trigger (delayed so it's visible)
   useEffect(() => {
     if (!mounted) return;
 
     setBurgerA11y(open);
     lockScroll(open);
 
+    // Focus handling
     if (open) {
-      // Specular sweep: once, short
-      if (!reduced) {
-        setSweepOn(false);
-        requestAnimationFrame(() => setSweepOn(true));
-        const t = window.setTimeout(() => setSweepOn(false), 720);
-        // cleanup timer
-        return () => window.clearTimeout(t);
-      }
-
-      // focus inside
       requestAnimationFrame(() => {
         const focusables = getFocusable(sheetRef.current);
         (focusables[0] ?? sheetRef.current)?.focus?.();
@@ -123,6 +116,19 @@ export default function MobileNav() {
     } else {
       const btn = document.getElementById(burgerId) as HTMLButtonElement | null;
       (btn ?? lastActiveElRef.current)?.focus?.();
+    }
+
+    // Specular sweep should happen after the sheet lands (otherwise it's offscreen)
+    if (open && !reduced) {
+      setSweepOn(false);
+
+      const t1 = window.setTimeout(() => setSweepOn(true), 320);
+      const t2 = window.setTimeout(() => setSweepOn(false), 1100);
+
+      return () => {
+        window.clearTimeout(t1);
+        window.clearTimeout(t2);
+      };
     }
 
     return () => {
@@ -166,7 +172,7 @@ export default function MobileNav() {
 
   const sheetTransition = useMemo(() => {
     if (reduced) return { duration: 0.18 };
-    // soft drop, hard stop
+    // soft drop, hard stop (no jelly)
     return { type: "spring", stiffness: 560, damping: 48, mass: 0.9 };
   }, [reduced]);
 
@@ -216,6 +222,7 @@ export default function MobileNav() {
             dragConstraints={{ top: -160, bottom: 0 }}
             dragElastic={0.08}
             onDragEnd={(_, info) => {
+              // swipe up to close
               const shouldClose = info.offset.y < -70 || info.velocity.y < -700;
               if (shouldClose) doClose();
             }}
@@ -226,7 +233,7 @@ export default function MobileNav() {
                 Now booking: <strong>2 project slots</strong>
               </div>
 
-              {/* CTA: EXACT hero button system (classes + shine + arrow) */}
+              {/* CTA: your global hero button system */}
               <a
                 className="k-btn k-btn--primary k-mobileNav__ctaBtn"
                 href="/contact/#contact"
@@ -290,7 +297,7 @@ export default function MobileNav() {
             <div className="k-mobileNav__footer">
               <p className="k-mobileNav__philo">Order. Tempo. Certainty.</p>
 
-              {/* Grab handle AT BOTTOM */}
+              {/* Grab handle at bottom */}
               <div className="k-mobileNav__handle" aria-hidden="true">
                 <span className="k-mobileNav__handleBar" />
               </div>

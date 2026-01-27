@@ -1,8 +1,8 @@
 /* src/components/shell/TopNav/mobile-nav.css
    MobileNav — ONE SHEET + ROWS + DIVIDERS
-   + Specular sweep on open (once)
-   + Grab handle at bottom
-   + CTA uses global .k-btn system (from hero) :contentReference[oaicite:2]{index=2}
+   Opaque smoke glass (no see-through)
+   Specular sweep (once, visible)
+   Grab handle at bottom
 */
 
 .k-mobileNav{
@@ -37,6 +37,9 @@
   padding: 12px 14px 12px;
   overflow: hidden;
 
+  /* isolate layers so ::after can't disappear */
+  isolation: isolate;
+
   /* Opaque smoke */
   background: linear-gradient(
     180deg,
@@ -59,50 +62,61 @@
   position:absolute;
   inset: 0;
   pointer-events:none;
+  z-index: 1;
+
   background:
     radial-gradient(900px 220px at 20% 0%, rgba(190,145,255,0.16), transparent 60%),
     radial-gradient(700px 220px at 80% 0%, rgba(255,190,245,0.10), transparent 55%);
   opacity: .85;
 }
 
-/* Specular sweep (visible + soft + once) */
+/* Specular sweep (visible on dark) */
 .k-mobileNav__sheet::after{
   content:"";
   position:absolute;
   top: -35%;
   left: -70%;
-  width: 60%;
+  width: 65%;
   height: 170%;
   pointer-events:none;
+  z-index: 2;
 
   background: linear-gradient(
     90deg,
     rgba(255,255,255,0),
-    rgba(255,255,255,0.06),
-    rgba(255,255,255,0.14),
-    rgba(255,255,255,0.06),
+    rgba(255,255,255,0.05),
+    rgba(255,255,255,0.16),
+    rgba(255,255,255,0.05),
     rgba(255,255,255,0)
   );
 
-  filter: blur(6px);
+  filter: blur(4px);
+  mix-blend-mode: screen;
   transform: skewX(-18deg) translateX(0);
   opacity: 0;
 }
 
 .k-mobileNav__sheet[data-sweep="1"]::after{
-  animation: kSpecSweep 680ms cubic-bezier(.2,.9,.2,1) 1;
+  animation: kSpecSweep 720ms cubic-bezier(.2,.9,.2,1) 1;
 }
 
 @keyframes kSpecSweep{
   0%   { opacity: 0; transform: skewX(-18deg) translateX(0); }
-  18%  { opacity: .55; }
-  60%  { opacity: .24; }
-  100% { opacity: 0; transform: skewX(-18deg) translateX(330%); }
+  18%  { opacity: .75; }
+  60%  { opacity: .25; }
+  100% { opacity: 0; transform: skewX(-18deg) translateX(340%); }
+}
+
+/* Ensure content is above glow/sweep layers */
+.k-mobileNav__top,
+.k-mobileNav__nav,
+.k-mobileNav__footer{
+  position: relative;
+  z-index: 3;
 }
 
 /* Top area: status + CTA */
 .k-mobileNav__top{
-  position: relative;
   display:flex;
   align-items:center;
   justify-content: space-between;
@@ -136,7 +150,7 @@
     0 0 12px rgba(190,145,255,0.22);
 }
 
-/* CTA button (uses .k-btn styles) */
+/* CTA button (uses global .k-btn system) */
 .k-mobileNav__ctaBtn{
   --btn-h: 40px;
   --btn-pad: 14px;
@@ -146,7 +160,6 @@
 
 /* Rows list */
 .k-mobileNav__nav{
-  position: relative;
   padding: 2px 0 6px;
 }
 
@@ -203,6 +216,7 @@
     0 0 14px rgba(190,145,255,0.20);
 }
 
+/* tap highlight */
 .k-mobileNav__row:active{
   background: rgba(255,255,255,0.06);
 }
@@ -214,7 +228,6 @@
 
 /* Footer + handle at bottom */
 .k-mobileNav__footer{
-  position: relative;
   padding: 8px 2px 8px;
   display: grid;
   gap: 10px;
