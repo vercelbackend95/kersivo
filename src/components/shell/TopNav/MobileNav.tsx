@@ -1,5 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useReducedMotion,
+  useDragControls,
+} from "framer-motion";
 import "./mobile-nav.css";
 
 type LinkItem = { href: string; label: string };
@@ -37,16 +42,18 @@ function getFocusable(container: HTMLElement | null): HTMLElement[] {
 
 export default function MobileNav() {
   const reduced = useReducedMotion();
+  const dragControls = useDragControls();
 
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [activeHref, setActiveHref] = useState<string>("/");
   const [sweepOn, setSweepOn] = useState(false);
+  const [vh, setVh] = useState(900); // fallback; updated on mount
 
   const sheetRef = useRef<HTMLDivElement | null>(null);
   const lastActiveElRef = useRef<HTMLElement | null>(null);
 
-  // Burger button lives in TopNav.astro
+  // Burger button in TopNav.astro
   const burgerId = "kNavToggle";
 
   const setBurgerA11y = (isOpen: boolean) => {
@@ -71,7 +78,13 @@ export default function MobileNav() {
     setOpen(false);
   };
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    setMounted(true);
+    const update = () => setVh(Math.max(520, window.innerHeight || 900));
+    update();
+    window.addEventListener("resize", update, { passive: true });
+    return () => window.removeEventListener("resize", update);
+  }, []);
 
   // Active state guidance
   useEffect(() => {
@@ -100,14 +113,13 @@ export default function MobileNav() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mounted, open]);
 
-  // A11y + scroll lock + focus + sweep trigger (delayed so it's visible)
+  // A11y + scroll lock + focus + sweep trigger
   useEffect(() => {
     if (!mounted) return;
 
     setBurgerA11y(open);
     lockScroll(open);
 
-    // Focus handling
     if (open) {
       requestAnimationFrame(() => {
         const focusables = getFocusable(sheetRef.current);
@@ -118,11 +130,11 @@ export default function MobileNav() {
       (btn ?? lastActiveElRef.current)?.focus?.();
     }
 
-    // Specular sweep after the sheet lands
+    // Sweep after sheet lands
     if (open && !reduced) {
       setSweepOn(false);
-      const t1 = window.setTimeout(() => setSweepOn(true), 320);
-      const t2 = window.setTimeout(() => setSweepOn(false), 1050);
+      const t1 = window.setTimeout(() => setSweepOn(true), 340);
+      const t2 = window.setTimeout(() => setSweepOn(false), 980);
       return () => {
         window.clearTimeout(t1);
         window.clearTimeout(t2);
@@ -170,7 +182,6 @@ export default function MobileNav() {
 
   const sheetTransition = useMemo(() => {
     if (reduced) return { duration: 0.18 };
-    // soft drop, hard stop (no jelly)
     return { type: "spring", stiffness: 560, damping: 48, mass: 0.9 };
   }, [reduced]);
 
@@ -191,7 +202,7 @@ export default function MobileNav() {
           exit={{ opacity: 0 }}
           transition={backdropTransition}
         >
-          {/* Backdrop */}
+          {/* Backdrop (still closes on tap) */}
           <motion.button
             className="k-mobileNav__backdrop"
             type="button"
@@ -212,12 +223,14 @@ export default function MobileNav() {
             aria-modal="true"
             aria-label="Navigation"
             tabIndex={-1}
-            initial={{ y: "-100%", opacity: 0.98, scaleY: reduced ? 1 : 0.985 }}
+            initial={{ y: -vh, opacity: 0.98, scaleY: reduced ? 1 : 0.985 }}
             animate={{ y: 0, opacity: 1, scaleY: 1 }}
-            exit={{ y: "-100%", opacity: 0.98, scaleY: reduced ? 1 : 0.985 }}
+            exit={{ y: -vh, opacity: 0.98, scaleY: reduced ? 1 : 0.985 }}
             transition={sheetTransition}
             drag={reduced ? false : "y"}
-            dragConstraints={{ top: -200, bottom: 0 }}
+            dragControls={dragControls}
+            dragListener={false} /* key: drag only via handle */
+            dragConstraints={{ top: -Math.max(220, vh * 0.35), bottom: 0 }}
             dragElastic={0.08}
             onDragEnd={(_, info) => {
               const shouldClose = info.offset.y < -70 || info.velocity.y < -700;
@@ -230,6 +243,7 @@ export default function MobileNav() {
               type="button"
               aria-label="Close menu"
               onClick={doClose}
+              onPointerDown={(e) => e.stopPropagation()}
             >
               <svg
                 width="26"
@@ -246,7 +260,6 @@ export default function MobileNav() {
               </svg>
             </button>
 
-            {/* Content */}
             <div className="k-mobileNav__content">
               <nav className="k-mobileNav__nav" aria-label="Mobile">
                 <motion.ul
@@ -296,7 +309,6 @@ export default function MobileNav() {
                 </motion.ul>
               </nav>
 
-              {/* Status below list */}
               <div className="k-mobileNav__status">
                 <div className="k-mobileNav__chip" aria-label="Status">
                   <span className="k-mobileNav__dot" aria-hidden="true" />
@@ -304,7 +316,6 @@ export default function MobileNav() {
                 </div>
               </div>
 
-              {/* CTA below status */}
               <div className="k-mobileNav__ctaWrap">
                 <a
                   className="k-btn k-btn--primary k-mobileNav__ctaBtn"
@@ -318,10 +329,15 @@ export default function MobileNav() {
                 </a>
               </div>
 
-              {/* Grab handle bottom */}
-              <div className="k-mobileNav__handle" aria-hidden="true">
+              {/* Drag handle ONLY (prevents click-eating) */}
+              <button
+                className="k-mobileNav__handle"
+                type="button"
+                aria-label="Drag to close"
+                onPointerDown={(e) => dragControls.start(e)}
+              >
                 <span className="k-mobileNav__handleBar" />
-              </div>
+              </button>
             </div>
           </motion.div>
         </motion.div>

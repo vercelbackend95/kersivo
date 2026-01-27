@@ -2,7 +2,7 @@
    MobileNav — FULLSCREEN SHEET (100vw x 100vh)
    Rows + dividers + active rail
    CTA uses global .k-btn system (hero)
-   Specular sweep: subtle
+   Sweep subtle + reliable layering
 */
 
 .k-mobileNav{
@@ -12,7 +12,7 @@
   pointer-events: auto;
 }
 
-/* Backdrop stays calm but blocks distractions */
+/* Backdrop (tap closes) */
 .k-mobileNav__backdrop{
   position: absolute;
   inset: 0;
@@ -24,7 +24,7 @@
   -webkit-backdrop-filter: none;
 }
 
-/* FULLSCREEN sheet */
+/* Fullscreen sheet */
 .k-mobileNav__sheet{
   position: absolute;
   inset: 0;
@@ -33,7 +33,6 @@
   height: 100%;
   transform-origin: top;
 
-  /* safe areas */
   padding-top: env(safe-area-inset-top);
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
@@ -42,18 +41,14 @@
   overflow: hidden;
   isolation: isolate;
 
-  /* opaque smoke (no see-through) */
   background: linear-gradient(
     180deg,
     rgba(14,14,20,0.99),
     rgba(10,10,16,0.99)
   );
-
-  border: 0;
-  box-shadow: none;
 }
 
-/* soft internal glow */
+/* internal glow */
 .k-mobileNav__sheet::before{
   content:"";
   position:absolute;
@@ -67,7 +62,7 @@
   opacity: .85;
 }
 
-/* Specular sweep — MORE SUBTLE */
+/* subtle specular sweep */
 .k-mobileNav__sheet::after{
   content:"";
   position:absolute;
@@ -81,30 +76,30 @@
   background: linear-gradient(
     90deg,
     rgba(255,255,255,0),
-    rgba(255,255,255,0.03),
-    rgba(255,255,255,0.08),
-    rgba(255,255,255,0.03),
+    rgba(255,255,255,0.025),
+    rgba(255,255,255,0.06),
+    rgba(255,255,255,0.025),
     rgba(255,255,255,0)
   );
 
-  filter: blur(6px);
+  filter: blur(7px);
   mix-blend-mode: screen;
   transform: skewX(-18deg) translateX(0);
   opacity: 0;
 }
 
 .k-mobileNav__sheet[data-sweep="1"]::after{
-  animation: kSpecSweep 720ms cubic-bezier(.2,.9,.2,1) 1;
+  animation: kSpecSweep 700ms cubic-bezier(.2,.9,.2,1) 1;
 }
 
 @keyframes kSpecSweep{
   0%   { opacity: 0; transform: skewX(-18deg) translateX(0); }
-  18%  { opacity: .38; }
-  60%  { opacity: .16; }
+  18%  { opacity: .28; }
+  60%  { opacity: .12; }
   100% { opacity: 0; transform: skewX(-18deg) translateX(340%); }
 }
 
-/* ensure content above layers */
+/* content above layers */
 .k-mobileNav__close,
 .k-mobileNav__content{
   position: relative;
@@ -125,20 +120,18 @@
   background: transparent;
   border: 0;
   padding: 0;
-  cursor: pointer;
 
+  cursor: pointer;
   color: rgba(255,255,255,0.92);
 
   filter:
-    drop-shadow(0 0 3px rgba(190,145,255,0.16))
-    drop-shadow(0 0 8px rgba(255,190,245,0.08));
+    drop-shadow(0 0 3px rgba(190,145,255,0.14))
+    drop-shadow(0 0 10px rgba(255,190,245,0.06));
 
   -webkit-tap-highlight-color: transparent;
 }
 
-.k-mobileNav__close:active{
-  transform: translateY(1px);
-}
+.k-mobileNav__close:active{ transform: translateY(1px); }
 
 .k-mobileNav__close:focus-visible{
   outline: 2px solid rgba(190,145,255,.70);
@@ -146,18 +139,17 @@
   border-radius: 12px;
 }
 
-/* Content layout */
+/* Layout */
 .k-mobileNav__content{
   height: 100%;
   display: flex;
   flex-direction: column;
 
-  /* space for the close button */
   padding: 72px 18px 18px;
   gap: 16px;
 }
 
-/* NAV should take the available height and scroll if needed */
+/* Nav region scrolls if needed */
 .k-mobileNav__nav{
   flex: 1 1 auto;
   min-height: 0;
@@ -165,43 +157,38 @@
 
   border-top: 1px solid rgba(255,255,255,0.10);
   border-bottom: 1px solid rgba(255,255,255,0.10);
-
   border-radius: 16px;
+
   background: rgba(255,255,255,0.02);
 }
 
-/* Rows list */
 .k-mobileNav__list{
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.k-mobileNav__item{
-  position: relative;
-}
-
 .k-mobileNav__item + .k-mobileNav__item{
   border-top: 1px solid rgba(255,255,255,0.08);
 }
 
-/* BIGGER TYPE */
+/* Bigger type */
 .k-mobileNav__row{
-  position: relative;
   display: flex;
   align-items: center;
-
   width: 100%;
+
   padding: 20px 16px 20px 18px;
 
   text-decoration: none;
   color: rgba(255,255,255,0.94);
 
-  font-size: 22px;          /* ↑ bigger */
+  font-size: 22px;
   font-weight: 700;
   letter-spacing: -0.02em;
 
   background: transparent;
+  border-radius: 14px;
 
   transition: background 160ms ease, transform 160ms ease;
   -webkit-tap-highlight-color: transparent;
@@ -217,22 +204,20 @@
   width: 2px;
   border-radius: 999px;
 
-  background: rgba(190,145,255,0.90);
+  background: rgba(190,145,255,0.85);
   box-shadow:
     0 0 0 1px rgba(255,255,255,0.10),
-    0 0 14px rgba(190,145,255,0.18);
+    0 0 14px rgba(190,145,255,0.16);
 }
 
-.k-mobileNav__row:active{
-  background: rgba(255,255,255,0.05);
-}
+.k-mobileNav__row:active{ background: rgba(255,255,255,0.05); }
 
 .k-mobileNav__row:focus-visible{
   outline: 2px solid rgba(190,145,255,.70);
   outline-offset: 4px;
 }
 
-/* Status below list */
+/* Status under list */
 .k-mobileNav__status{
   display: flex;
   justify-content: center;
@@ -261,10 +246,10 @@
   background: rgba(190,145,255,0.95);
   box-shadow:
     0 0 0 3px rgba(190,145,255,0.14),
-    0 0 12px rgba(190,145,255,0.20);
+    0 0 12px rgba(190,145,255,0.18);
 }
 
-/* CTA below status (hero button system) */
+/* CTA */
 .k-mobileNav__ctaWrap{
   display: flex;
   justify-content: center;
@@ -278,11 +263,19 @@
   justify-content: center;
 }
 
-/* Grab handle at bottom */
+/* Drag handle button at bottom (only drag surface) */
 .k-mobileNav__handle{
+  border: 0;
+  background: transparent;
+  padding: 10px 0 2px;
   display: grid;
   place-items: center;
-  padding-top: 8px;
+  cursor: grab;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.k-mobileNav__handle:active{
+  cursor: grabbing;
 }
 
 .k-mobileNav__handleBar{
