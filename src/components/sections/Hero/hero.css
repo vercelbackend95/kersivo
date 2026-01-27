@@ -32,8 +32,8 @@
   text-align: center;
   max-width: 1040px;
   padding: 0 18px;
-  display:grid;
-  justify-items:center;
+  display: grid;
+  justify-items: center;
 }
 
 .k3-badges{ margin-bottom: 18px; }
@@ -69,8 +69,15 @@
   cursor: default;
 }
 
-.k3-br{ display:none; }
-@media (min-width: 720px){ .k3-br{ display:block; } }
+/* Force 3-line headline */
+.k3-line{
+  display: block;
+}
+
+.k3-line--swap{
+  display: block;
+  margin-top: .06em;
+}
 
 .k3-grad{
   background: linear-gradient(90deg, rgba(160,190,255,1), rgba(200,140,255,1));
@@ -110,134 +117,133 @@
 }
 
 /* =========================
-   Rotating word — centered, stable
-   FIX descenders ("g", "y", "p")
-   + LEFT->RIGHT reveal (typing feel)
-   + Optional brush edge sheen
+   Rotating word — FIXED (no clip, no drift)
+   - width reserved in px via JS (wrap.style.width)
+   - reveal from left like “typing” using mask-size
+   - subtle brush sheen on reveal edge
    ========================= */
 
 .k3-wordSwap{
-  /* JS sets --swap-ch to the length of the longest word */
-  --swap-ch: 9;
+  display: inline-block;
+  vertical-align: baseline;
 
-  display: inline-grid;
-  place-items: center;
-  min-width: calc(var(--swap-ch) * 1ch);
+  /* we are on a dedicated 3rd line -> no inline spacing needed */
+  margin-left: 0;
 
   text-align: center;
-  margin-left: 0.20em;
 
-  /* ✅ space for descenders */
-  padding-bottom: .10em;
+  /* room for descenders + underline */
+  padding-bottom: .12em;
+
+  /* small side breathing room so glyphs never kiss edges */
+  padding-inline: .14em;
+
+  /* never clip the word */
   overflow: visible;
 }
 
-/* Mask wrapper (required for the reveal to feel “curtained”) */
-.k3-wordMask{
+.k3-wordSwap [data-word-inner]{
   position: relative;
   display: inline-block;
-  overflow: hidden;       /* the actual mask */
-  padding-bottom: .08em;  /* extra room for descenders */
-}
-
-/* Word inner */
-.k3-wordSwap [data-word-inner]{
-  display: inline-block;
-  width: 100%;
-  text-align: center;
   white-space: nowrap;
+  text-align: center;
 
-  /* ✅ independent line-height just for the swapping word */
+  /* independent line box for g/y/p */
   line-height: 1.12;
-  padding-bottom: .02em;
+  padding-bottom: .03em;
 
-  will-change: clip-path, transform, filter, opacity;
+  /* tiny right pad prevents edge scrape on some fonts */
+  padding-right: .06em;
+
+  /* reveal mask (L -> R) */
+  -webkit-mask-image: linear-gradient(#000, #000);
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  -webkit-mask-position: 0 0;
+
+  mask-image: linear-gradient(#000, #000);
+  mask-repeat: no-repeat;
+  mask-size: 100% 100%;
+  mask-position: 0 0;
+
+  will-change: -webkit-mask-size, mask-size, opacity, filter, transform;
 }
 
-/* LEFT->RIGHT “typing” reveal */
+/* TYPE REVEAL */
 @media (prefers-reduced-motion: no-preference){
   .k3-wordSwap [data-word-inner].is-swapIn{
-    animation: kTypeReveal 520ms cubic-bezier(.2,.9,.2,1) both;
+    animation: kTypeMask 560ms cubic-bezier(.2,.9,.2,1) both;
   }
 
-  @keyframes kTypeReveal{
+  @keyframes kTypeMask{
     0%{
-      opacity: .25;
-      clip-path: inset(0 100% 0 0);  /* reveal from left */
-      transform: translateX(-.02em);
-      filter: blur(1.2px);
+      opacity: .22;
+      -webkit-mask-size: 0% 100%;
+      mask-size: 0% 100%;
+      filter: blur(1.1px);
+      transform: translateY(1px);
     }
-    65%{
+    70%{
       opacity: 1;
-      clip-path: inset(0 0 0 0);
-      transform: translateX(0);
+      -webkit-mask-size: 104% 100%;
+      mask-size: 104% 100%;
       filter: blur(.15px);
+      transform: translateY(0);
     }
     100%{
       opacity: 1;
-      clip-path: inset(0 0 0 0);
-      transform: translateX(0);
+      -webkit-mask-size: 104% 100%;
+      mask-size: 104% 100%;
       filter: blur(0);
+      transform: translateY(0);
     }
   }
-}
 
-@media (prefers-reduced-motion: reduce){
-  .k3-wordSwap [data-word-inner].is-swapIn{
-    animation: none;
-    clip-path: inset(0 0 0 0);
-    opacity: 1;
-    transform: none;
-    filter: none;
-  }
-}
-
-/* =========================
-   Optional “brush” edge sheen
-   (subtle sweep along the reveal edge)
-   ========================= */
-
-@media (prefers-reduced-motion: no-preference){
-  .k3-wordMask::after{
+  /* brush sheen riding the reveal edge */
+  .k3-wordSwap [data-word-inner]::after{
     content:"";
     position:absolute;
-    inset: 0;
+    top: -0.08em;
+    bottom: -0.08em;
+    left: 0;
+    width: 36%;
     pointer-events:none;
+    opacity: 0;
 
-    /* a soft highlight stripe */
     background: linear-gradient(
       90deg,
       rgba(255,255,255,0) 0%,
-      rgba(255,255,255,.18) 46%,
+      rgba(255,255,255,.18) 42%,
       rgba(255,255,255,.28) 52%,
       rgba(255,255,255,0) 100%
     );
 
-    transform: translateX(-130%);
-    opacity: 0;
-    filter: blur(.2px);
+    filter: blur(.25px);
+    transform: translateX(-160%);
   }
 
-  /* Trigger sheen while the word is swapping in
-     (modern browsers: :has) */
-  .k3-wordMask:has([data-word-inner].is-swapIn)::after{
+  .k3-wordSwap [data-word-inner].is-swapIn::after{
     opacity: .85;
-    animation: kBrushSheen 520ms cubic-bezier(.2,.9,.2,1) both;
+    animation: kBrushSheen 560ms cubic-bezier(.2,.9,.2,1) both;
   }
 
   @keyframes kBrushSheen{
-    0%{
-      transform: translateX(-130%);
-      opacity: 0;
-    }
-    22%{
-      opacity: .85;
-    }
-    100%{
-      transform: translateX(130%);
-      opacity: 0;
-    }
+    0%{ transform: translateX(-160%); opacity: 0; }
+    25%{ opacity: .85; }
+    100%{ transform: translateX(260%); opacity: 0; }
   }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .k3-wordSwap [data-word-inner].is-swapIn{ animation: none; }
+  .k3-wordSwap [data-word-inner]{
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+  .k3-wordSwap [data-word-inner]::after{ display:none; }
 }
 
 /* =========================

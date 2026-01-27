@@ -17,14 +17,19 @@ import Pill from "../../ui/Pill/Pill.astro";
       </div>
 
       <h1 class="k3-h1" data-reveal>
-        We craft <span class="k3-grad">high-end</span><br class="k3-br" />
-        websites that
-        <span class="k3-underline k3-wordSwap" data-rotating-word>
-          <span class="k3-wordMask" aria-hidden="true">
+        <span class="k3-line">
+          We craft <span class="k3-grad">high-end</span>
+        </span>
+
+        <span class="k3-line">
+          websites that
+        </span>
+
+        <span class="k3-line k3-line--swap">
+          <span class="k3-underline k3-wordSwap" data-rotating-word>
             <span class="k3-grad2" data-word-inner>convert</span>
           </span>
         </span>
-
       </h1>
 
       <p class="k3-sub" data-reveal>
@@ -85,9 +90,51 @@ import Pill from "../../ui/Pill/Pill.astro";
 
       const words = ["convert", "sell", "rank", "book", "grow", "close", "perform"];
 
-      // ZAMIANA: szerokość po długości (ch), zero pomiarów px (stabilne)
-      const maxLen = words.reduce((m, w) => Math.max(m, w.length), 0);
-      wrap.style.setProperty("--swap-ch", String(maxLen + 1)); // +1 dla oddechu
+      // --- reserve width in *px* (no ch guessing, no clipping, no drifting)
+      const reservePxWidth = () => {
+        const meas = document.createElement("span");
+        const cs = getComputedStyle(inner);
+
+        meas.style.cssText = [
+          "position:absolute",
+          "visibility:hidden",
+          "white-space:nowrap",
+          "pointer-events:none",
+          "inset:auto",
+          "left:-9999px",
+          "top:-9999px"
+        ].join(";");
+
+        // match text metrics 1:1
+        meas.style.fontFamily = cs.fontFamily;
+        meas.style.fontSize = cs.fontSize;
+        meas.style.fontWeight = cs.fontWeight;
+        meas.style.letterSpacing = cs.letterSpacing;
+        meas.style.textTransform = cs.textTransform;
+        meas.style.fontStyle = cs.fontStyle;
+        meas.style.fontStretch = cs.fontStretch;
+        meas.style.fontVariant = cs.fontVariant;
+
+        hero.appendChild(meas);
+
+        let maxW = 0;
+        for (const w of words) {
+          meas.textContent = w;
+          maxW = Math.max(maxW, meas.getBoundingClientRect().width);
+        }
+
+        meas.remove();
+
+        // +14px safety for mask/reveal edge + underline padding
+        wrap.style.width = Math.ceil(maxW + 14) + "px";
+      };
+
+      // initial + responsive (font loading / resize)
+      reservePxWidth();
+      window.addEventListener("resize", () => reservePxWidth(), { passive: true });
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(() => reservePxWidth()).catch(() => {});
+      }
 
       // laser "hit" moment within cycle
       const HIT = 0.54;
@@ -111,9 +158,8 @@ import Pill from "../../ui/Pill/Pill.astro";
       };
 
       const swapTo = (next) => {
-        // czysty swap, bez caret/typing
         inner.classList.remove("is-swapIn");
-        void inner.offsetWidth; // restart animacji
+        void inner.offsetWidth; // restart animation
         inner.textContent = next;
         inner.classList.add("is-swapIn");
       };
