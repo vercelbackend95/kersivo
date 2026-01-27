@@ -13,6 +13,13 @@ const LINKS: LinkItem[] = [
   { href: "/contact/", label: "Contact" },
 ];
 
+function normPath(p: string) {
+  const s = (p || "/").trim();
+  const base = s.split("#")[0];
+  const noTrail = base.replace(/\/+$/, "");
+  return noTrail === "" ? "/" : noTrail;
+}
+
 function getFocusable(container: HTMLElement | null): HTMLElement[] {
   if (!container) return [];
   const selectors = [
@@ -33,8 +40,9 @@ export default function MobileNav() {
 
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [activeHref, setActiveHref] = useState<string>("/");
+  const [sweepOn, setSweepOn] = useState(false);
 
-  const panelRef = useRef<HTMLDivElement | null>(null);
   const sheetRef = useRef<HTMLDivElement | null>(null);
   const lastActiveElRef = useRef<HTMLElement | null>(null);
 
@@ -63,10 +71,23 @@ export default function MobileNav() {
     setOpen(false);
   };
 
-  // mount flag to avoid SSR mismatch vibes
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // detect current path for active rail
+  useEffect(() => {
+    if (!mounted) return;
+    try {
+      const here = normPath(window.location.pathname || "/");
+      const best =
+        LINKS.find((l) => normPath(l.href) === here)?.href ||
+        (here === "/" ? "/" : "/");
+      setActiveHref(best);
+    } catch {
+      setActiveHref("/");
+    }
+  }, [mounted]);
 
   // burger click wiring
   useEffect(() => {
@@ -75,10 +96,7 @@ export default function MobileNav() {
     const btn = document.getElementById(burgerId) as HTMLButtonElement | null;
     if (!btn) return;
 
-    const onClick = () => {
-      open ? doClose() : doOpen();
-    };
-
+    const onClick = () => (open ? doClose() : doOpen());
     btn.addEventListener("click", onClick);
     return () => btn.removeEventListener("click", onClick);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -92,22 +110,28 @@ export default function MobileNav() {
     lockScroll(open);
 
     if (open) {
+      // specular sweep: once, subtle, short
+      if (!reduced) {
+        setSweepOn(false);
+        requestAnimationFrame(() => setSweepOn(true));
+        const t = window.setTimeout(() => setSweepOn(false), 720);
+        return () => window.clearTimeout(t);
+      }
+
       // focus first focusable inside sheet
       requestAnimationFrame(() => {
         const focusables = getFocusable(sheetRef.current);
         (focusables[0] ?? sheetRef.current)?.focus?.();
       });
     } else {
-      // restore focus to burger
       const btn = document.getElementById(burgerId) as HTMLButtonElement | null;
       (btn ?? lastActiveElRef.current)?.focus?.();
     }
 
     return () => {
-      // safety unlock
       if (!open) lockScroll(false);
     };
-  }, [open, mounted]);
+  }, [open, mounted, reduced]);
 
   // ESC + focus trap
   useEffect(() => {
@@ -145,8 +169,8 @@ export default function MobileNav() {
 
   const sheetTransition = useMemo(() => {
     if (reduced) return { duration: 0.18 };
-    // “soft drop, hard stop” → szybki sprężynowy zjazd, bez galarety
-    return { type: "spring", stiffness: 520, damping: 46, mass: 0.9 };
+    // soft drop, hard stop (bez galarety)
+    return { type: "spring", stiffness: 560, damping: 48, mass: 0.9 };
   }, [reduced]);
 
   const backdropTransition = useMemo(() => {
@@ -161,7 +185,6 @@ export default function MobileNav() {
       {open && (
         <motion.div
           className="k-mobileNav"
-          ref={panelRef}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -182,6 +205,7 @@ export default function MobileNav() {
           {/* Sheet */}
           <motion.div
             className="k-mobileNav__sheet"
+            data-sweep={sweepOn ? "1" : "0"}
             ref={sheetRef}
             role="dialog"
             aria-modal="true"
@@ -204,14 +228,19 @@ export default function MobileNav() {
             }}
             transition={sheetTransition}
             drag={reduced ? false : "y"}
-            dragConstraints={{ top: -140, bottom: 0 }}
+            dragConstraints={{ top: -160, bottom: 0 }}
             dragElastic={0.08}
             onDragEnd={(_, info) => {
-              // swipe up to close (kulturalnie)
+              // swipe up to close
               const shouldClose = info.offset.y < -70 || info.velocity.y < -700;
               if (shouldClose) doClose();
             }}
           >
+            {/* Grab handle */}
+            <div className="k-mobileNav__handle" aria-hidden="true">
+              <span className="k-mobileNav__handleBar" />
+            </div>
+
             <div className="k-mobileNav__top">
               <div className="k-mobileNav__chip" aria-label="Status">
                 <span className="k-mobileNav__dot" aria-hidden="true" />
@@ -239,32 +268,44 @@ export default function MobileNav() {
                   },
                 }}
               >
-                {LINKS.map((l) => (
-                  <motion.li
-                    key={l.href}
-                    className="k-mobileNav__item"
-                    variants={{
-                      hidden: { opacity: 0, y: -6 },
-                      show: { opacity: 1, y: 0 },
-                    }}
-                    transition={
-                      reduced
-                        ? { duration: 0.01 }
-                        : { duration: 0.22, ease: [0.22, 0.9, 0.22, 1] }
-                    }
-                  >
-                    <a className="k-mobileNav__link" href={l.href} onClick={doClose}>
-                      {l.label}
-                    </a>
-                  </motion.li>
-                ))}
+                {LINKS.map((l) => {
+                  const isActive = normPath(l.href) === normPath(activeHref);
+                  return (
+                    <motion.li
+                      key={l.href}
+                      className="k-mobileNav__item"
+                      data-active={isActive ? "1" : "0"}
+                      variants={{
+                        hidden: { opacity: 0, y: -6 },
+                        show: { opacity: 1, y: 0 },
+                      }}
+                      transition={
+                        reduced
+                          ? { duration: 0.01 }
+                          : { duration: 0.22, ease: [0.22, 0.9, 0.22, 1] }
+                      }
+                    >
+                      <motion.a
+                        className="k-mobileNav__row"
+                        href={l.href}
+                        onClick={doClose}
+                        aria-current={isActive ? "page" : undefined}
+                        whileTap={
+                          reduced
+                            ? undefined
+                            : { scale: 0.985 }
+                        }
+                      >
+                        <span className="k-mobileNav__label">{l.label}</span>
+                      </motion.a>
+                    </motion.li>
+                  );
+                })}
               </motion.ul>
             </nav>
 
             <div className="k-mobileNav__footer">
-              <p className="k-mobileNav__philo">
-                Order. Tempo. Certainty.
-              </p>
+              <p className="k-mobileNav__philo">Order. Tempo. Certainty.</p>
             </div>
           </motion.div>
         </motion.div>
