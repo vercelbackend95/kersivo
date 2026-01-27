@@ -4,7 +4,6 @@ import "./proof-pack.css";
 
 <section class="k-proofx section" id="proof" aria-label="Proof">
   <div class="container k-proofx__wrap">
-
     <!-- ===== ROW 1 (TOP) — NO TIMELINE ===== -->
     <div class="k-proofx__row k-proofx__row--hero">
       <div class="k-proofx__heroCopy">
@@ -14,11 +13,10 @@ import "./proof-pack.css";
           <span class="k-proofx__chev" aria-hidden="true">›</span>
         </div>
 
-        <h2 class="k-proofx__h2">Set the product direction</h2>
+        <h2 class="k-proofx__h2">From idea to launch — one line of sight.</h2>
 
         <p class="k-proofx__p">
-          <strong>Align your team around a unified product timeline.</strong>
-          Plan, manage, and track all product initiatives with Linear’s visual planning tools.
+          A single source of truth for the build. We plan, manage, and refine each step — so decisions stay light, scope stays sharp, and delivery stays steady.
         </p>
       </div>
     </div>
@@ -28,9 +26,10 @@ import "./proof-pack.css";
     <!-- ===== ROW 2 ===== -->
     <div class="k-proofx__row k-proofx__row--split">
       <div class="k-proofx__half">
-        <h3 class="k-proofx__h3">Manage projects end-to-end</h3>
+        <!-- ✅ UPDATED COPY (left column) -->
+        <h3 class="k-proofx__h3">Progress updates — without the chaos</h3>
         <p class="k-proofx__p2">
-          Consolidate specs, milestones, tasks, and other documentation in one centralized location.
+          Short walkthrough videos paired with one shared doc for decisions and feedback. Clear next steps, calm delivery, zero scattered threads.
         </p>
 
         <div class="k-proofx__card k-proofx__card--overview" aria-hidden="true">
@@ -131,29 +130,64 @@ import "./proof-pack.css";
     <!-- ===== ROW 3 ===== -->
     <div class="k-proofx__row k-proofx__row--doc">
       <div class="k-proofx__copy2">
-        <h3 class="k-proofx__h3 k-proofx__h3--big">Ideate and specify<br/>what to build next</h3>
+        <h3 class="k-proofx__h3 k-proofx__h3--big">Collaboration, kept simple</h3>
+        <p class="k-proofx__p2">
+          One doc for scope, one place for feedback, one action list for changes — so nothing gets missed and delivery stays steady.
+        </p>
 
-        <div class="k-proofx__list" data-proofx-tabs role="tablist" aria-label="Doc capabilities">
-          <button class="k-proofx__li k-proofx__liBtn is-active" type="button" role="tab" aria-selected="true" aria-controls="proofx-panel-doc" id="proofx-tab-doc" data-proofx-tab="doc">
+        <div class="k-proofx__list" data-proofx-tabs role="tablist" aria-label="Collaboration artefacts">
+          <button
+            class="k-proofx__li k-proofx__liBtn is-active"
+            type="button"
+            role="tab"
+            aria-selected="true"
+            aria-controls="proofx-panel-doc"
+            id="proofx-tab-doc"
+            data-proofx-tab="doc"
+          >
             <span class="k-proofx__liBar" aria-hidden="true"></span>
-            <span>Collaborative documents</span>
+            <span>Scope &amp; milestones</span>
           </button>
 
-          <button class="k-proofx__li k-proofx__liBtn" type="button" role="tab" aria-selected="false" aria-controls="proofx-panel-comments" id="proofx-tab-comments" data-proofx-tab="comments">
+          <button
+            class="k-proofx__li k-proofx__liBtn"
+            type="button"
+            role="tab"
+            aria-selected="false"
+            aria-controls="proofx-panel-comments"
+            id="proofx-tab-comments"
+            data-proofx-tab="comments"
+          >
             <span class="k-proofx__liBar" aria-hidden="true"></span>
-            <span>Inline comments</span>
+            <span>Feedback threads</span>
           </button>
 
-          <button class="k-proofx__li k-proofx__liBtn" type="button" role="tab" aria-selected="false" aria-controls="proofx-panel-commands" id="proofx-tab-commands" data-proofx-tab="commands">
+          <button
+            class="k-proofx__li k-proofx__liBtn"
+            type="button"
+            role="tab"
+            aria-selected="false"
+            aria-controls="proofx-panel-commands"
+            id="proofx-tab-commands"
+            data-proofx-tab="commands"
+          >
             <span class="k-proofx__liBar" aria-hidden="true"></span>
-            <span>Text-to-issue commands</span>
+            <span>Decisions → changes</span>
           </button>
         </div>
       </div>
 
       <div class="k-proofx__visual k-proofx__visual--doc" data-proofx-panels>
         <!-- Panel 1: Documents -->
-        <div class="k-proofx__panel is-active" id="proofx-panel-doc" role="tabpanel" aria-labelledby="proofx-tab-doc" tabindex="0" aria-hidden="false" data-proofx-panel="doc">
+        <div
+          class="k-proofx__panel is-active"
+          id="proofx-panel-doc"
+          role="tabpanel"
+          aria-labelledby="proofx-tab-doc"
+          tabindex="0"
+          aria-hidden="false"
+          data-proofx-panel="doc"
+        >
           <div class="k-proofx__doc" aria-hidden="true">
             <div class="k-proofx__docTop">
               <span class="k-proofx__crumbDot" aria-hidden="true"></span>
@@ -189,7 +223,15 @@ import "./proof-pack.css";
         </div>
 
         <!-- Panel 2: Inline comments -->
-        <div class="k-proofx__panel" id="proofx-panel-comments" role="tabpanel" aria-labelledby="proofx-tab-comments" tabindex="-1" aria-hidden="true" data-proofx-panel="comments">
+        <div
+          class="k-proofx__panel"
+          id="proofx-panel-comments"
+          role="tabpanel"
+          aria-labelledby="proofx-tab-comments"
+          tabindex="-1"
+          aria-hidden="true"
+          data-proofx-panel="comments"
+        >
           <div class="k-proofx__doc" aria-hidden="true">
             <div class="k-proofx__docTop">
               <span class="k-proofx__crumbDot" aria-hidden="true"></span>
@@ -237,7 +279,15 @@ import "./proof-pack.css";
         </div>
 
         <!-- Panel 3: Text → issue commands -->
-        <div class="k-proofx__panel" id="proofx-panel-commands" role="tabpanel" aria-labelledby="proofx-tab-commands" tabindex="-1" aria-hidden="true" data-proofx-panel="commands">
+        <div
+          class="k-proofx__panel"
+          id="proofx-panel-commands"
+          role="tabpanel"
+          aria-labelledby="proofx-tab-commands"
+          tabindex="-1"
+          aria-hidden="true"
+          data-proofx-panel="commands"
+        >
           <div class="k-proofx__doc" aria-hidden="true">
             <div class="k-proofx__docTop">
               <span class="k-proofx__crumbDot" aria-hidden="true"></span>
@@ -285,7 +335,6 @@ import "./proof-pack.css";
         </div>
       </div>
     </div>
-
   </div>
 
   <script type="module">
@@ -342,7 +391,8 @@ import "./proof-pack.css";
         clamp(i + dir).focus();
       });
 
-      const initial = tabs.find((t) => t.classList.contains('is-active'))?.getAttribute('data-proofx-tab') || 'doc';
+      const initial =
+        tabs.find((t) => t.classList.contains('is-active'))?.getAttribute('data-proofx-tab') || 'doc';
       setActive(initial);
     }
   </script>
