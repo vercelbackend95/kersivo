@@ -323,14 +323,14 @@ li + li{ margin-top: 8px; }
   line-height: 1.55;
 }
 
-/* Reduced motion */
+/* Reduced motion
+   IMPORTANT:
+   Nie wyłączamy globalnie animacji/transitions, bo to zabija też nasze “micro-luxury”
+   (specular sweep, reveal, itp.). Każdy komponent ma swoje własne zasady reduce-motion. */
 @media (prefers-reduced-motion: reduce){
   html{ scroll-behavior: auto; }
-  *{
-    animation: none !important;
-    transition: none !important;
-  }
 }
+
 /* Kill vertical page snapping (mobile momentum was snapping into Proof Console) */
 html, body, main{
   scroll-snap-type: none !important;
