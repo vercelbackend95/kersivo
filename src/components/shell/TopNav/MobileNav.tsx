@@ -243,7 +243,6 @@ export default function MobileNav() {
               onTouchEnd={doClose}
               onPointerDown={(e) => e.stopPropagation()}
             >
-              {/* menu-close.svg (inline) */}
               <svg
                 width="24"
                 height="24"
@@ -259,7 +258,7 @@ export default function MobileNav() {
               </svg>
             </button>
 
-            {/* Layout: nav scrolls, bottom bar always visible */}
+            {/* One fullscreen sheet, no scroll. Links always fit (6 equal rows). */}
             <div className="k-mobileNav__content">
               <nav className="k-mobileNav__nav" aria-label="Mobile">
                 <motion.ul
@@ -308,44 +307,22 @@ export default function MobileNav() {
                   })}
                 </motion.ul>
               </nav>
-
-              <div className="k-mobileNav__bottom">
-                <div className="k-mobileNav__status">
-                  <div className="k-mobileNav__chip" aria-label="Status">
-                    <span className="k-mobileNav__dot" aria-hidden="true" />
-                    Now booking: <strong>2 project slots</strong>
-                  </div>
-                </div>
-
-                <div className="k-mobileNav__ctaWrap">
-                  <a
-                    className="k-btn k-btn--primary k-mobileNav__ctaBtn"
-                    href="/contact/#contact"
-                    data-magnetic="false"
-                    onClick={doClose}
-                  >
-                    <span className="k-btn__label">Get a quote</span>
-                    <span className="k-btn__shine" aria-hidden="true"></span>
-                    <span className="k-btn__arrow" aria-hidden="true">→</span>
-                  </a>
-                </div>
-
-                <button
-                  className="k-mobileNav__handle"
-                  type="button"
-                  aria-label="Drag to close"
-                  onPointerDown={(e) => dragControls.start(e)}
-                >
-                  <span className="k-mobileNav__handleBar" />
-                </button>
-              </div>
             </div>
+
+            {/* Bottom grab handle (doesn't affect layout height) */}
+            <button
+              className="k-mobileNav__handle"
+              type="button"
+              aria-label="Drag up to close"
+              onPointerDown={(e) => dragControls.start(e)}
+            >
+              <span className="k-mobileNav__handleBar" />
+            </button>
           </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
   );
 
-  // Critical: portal to body so fullscreen is real fullscreen (iOS-safe)
   return createPortal(ui, document.body);
 }

@@ -1,16 +1,14 @@
-/* FULLSCREEN MobileNav — fixed, no horizontal scroll, CTA always visible */
+/* FULLSCREEN MobileNav — fixed, NO vertical scroll, links always fit */
 
 .k-mobileNav{
   position: fixed;
   inset: 0;
-  z-index: 220; /* above topnav */
+  z-index: 220;
   pointer-events: auto;
-  overflow: hidden; /* hard clamp */
+  overflow: hidden;
 }
 
-.k-mobileNav *{
-  box-sizing: border-box;
-}
+.k-mobileNav *{ box-sizing: border-box; }
 
 /* Backdrop */
 .k-mobileNav__backdrop{
@@ -37,8 +35,10 @@
   padding-right: env(safe-area-inset-right);
   padding-bottom: env(safe-area-inset-bottom);
 
-  overflow: hidden;           /* clamp */
+  overflow: hidden !important;
   overflow-x: hidden !important;
+  overflow-y: hidden !important;
+
   isolation: isolate;
 
   background: linear-gradient(
@@ -63,7 +63,7 @@
   opacity: .85;
 }
 
-/* Subtle specular sweep */
+/* Specular sweep (subtle) */
 .k-mobileNav__sheet::after{
   content:"";
   position:absolute;
@@ -77,30 +77,30 @@
   background: linear-gradient(
     90deg,
     rgba(255,255,255,0),
-    rgba(255,255,255,0.02),
-    rgba(255,255,255,0.05),
-    rgba(255,255,255,0.02),
+    rgba(255,255,255,0.016),
+    rgba(255,255,255,0.040),
+    rgba(255,255,255,0.016),
     rgba(255,255,255,0)
   );
 
-  filter: blur(8px);
+  filter: blur(10px);
   mix-blend-mode: screen;
   transform: skewX(-18deg) translateX(0);
   opacity: 0;
 }
 
 .k-mobileNav__sheet[data-sweep="1"]::after{
-  animation: kSpecSweep 680ms cubic-bezier(.2,.9,.2,1) 1;
+  animation: kSpecSweep 640ms cubic-bezier(.2,.9,.2,1) 1;
 }
 
 @keyframes kSpecSweep{
   0%   { opacity: 0; transform: skewX(-18deg) translateX(0); }
-  18%  { opacity: .18; }
-  60%  { opacity: .08; }
+  20%  { opacity: .14; }
+  60%  { opacity: .06; }
   100% { opacity: 0; transform: skewX(-18deg) translateX(340%); }
 }
 
-/* Close button — NO purple ring, NO border */
+/* Close (no border/ring) */
 .k-mobileNav__close{
   position: absolute;
   top: calc(env(safe-area-inset-top) + 10px);
@@ -130,14 +130,12 @@
 .k-mobileNav__close:focus,
 .k-mobileNav__close:focus-visible{
   outline: none !important;
-  box-shadow: none !important; /* remove ring */
+  box-shadow: none !important;
 }
 
-.k-mobileNav__close:active{
-  transform: translateY(1px);
-}
+.k-mobileNav__close:active{ transform: translateY(1px); }
 
-/* Content is a 2-row grid: nav scroll + bottom bar always visible */
+/* Content: NO scrolling, layout must fit */
 .k-mobileNav__content{
   position: relative;
   z-index: 3;
@@ -146,37 +144,43 @@
   width: 100%;
   max-width: 100%;
 
-  padding: 70px 16px 14px; /* leaves space for close */
-  display: grid;
-  grid-template-rows: 1fr auto;
-  gap: 14px;
+  /* space for close button + bottom handle */
+  padding: 74px 16px calc(22px + env(safe-area-inset-bottom));
 
-  overflow: hidden;
-  overflow-x: hidden;
+  overflow: hidden !important;
 }
 
-/* NAV area (scrollable) */
+/* Nav: no inner “card”, just rows + dividers */
 .k-mobileNav__nav{
-  min-height: 0;  /* critical for grid scrolling */
-  overflow: auto;
-  overflow-x: hidden !important;
-
-  border-radius: 18px;
-  background: rgba(255,255,255,0.02);
-  border: 1px solid rgba(255,255,255,0.10);
+  height: 100%;
+  width: 100%;
+  overflow: hidden !important;
 }
 
+/* List: 6 equal rows = always fits, no vertical scroll */
 .k-mobileNav__list{
   list-style: none;
   margin: 0;
   padding: 0;
+
+  height: 100%;
+  display: grid;
+  grid-template-rows: repeat(6, 1fr);
+
+  /* subtle top/bottom edge lines */
+  border-top: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.k-mobileNav__item{
+  min-height: 0;
 }
 
 .k-mobileNav__item + .k-mobileNav__item{
   border-top: 1px solid rgba(255,255,255,0.08);
 }
 
-/* Row — clamp width, prevent horizontal scroll */
+/* Row: responsive padding/font so it fits even on short screens */
 .k-mobileNav__row{
   position: relative;
   display: flex;
@@ -184,22 +188,23 @@
 
   width: 100%;
   max-width: 100%;
-  overflow: hidden;
+  height: 100%;
 
-  padding: 22px 16px 22px 18px;
+  padding: clamp(14px, 2.0vh, 20px) 16px clamp(14px, 2.0vh, 20px) 18px;
 
   text-decoration: none;
   color: rgba(255,255,255,0.94);
 
-  font-size: 23px;
-  font-weight: 720;
+  font-size: clamp(20px, 2.7vh, 28px);
+  font-weight: 740;
   letter-spacing: -0.02em;
 
   background: transparent;
   -webkit-tap-highlight-color: transparent;
 
-  white-space: normal;      /* no forced single line */
-  overflow-wrap: anywhere;  /* just in case */
+  overflow: hidden;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .k-mobileNav__row:active{
@@ -211,8 +216,8 @@
   content:"";
   position:absolute;
   left: 10px;
-  top: 14px;
-  bottom: 14px;
+  top: 18%;
+  bottom: 18%;
   width: 2px;
   border-radius: 999px;
 
@@ -222,81 +227,24 @@
     0 0 14px rgba(190,145,255,0.14);
 }
 
-/* Bottom bar (sticky-ish, always on screen) */
-.k-mobileNav__bottom{
-  display: grid;
-  gap: 10px;
-
-  padding: 12px 10px 10px;
-  border-radius: 18px;
-
-  background: rgba(255,255,255,0.02);
-  border: 1px solid rgba(255,255,255,0.10);
-
-  overflow: hidden;
-  overflow-x: hidden;
-
-  /* keep above Safari bottom UI */
-  padding-bottom: calc(10px + env(safe-area-inset-bottom));
-}
-
-/* Status */
-.k-mobileNav__status{
-  display: flex;
-  justify-content: center;
-}
-
-.k-mobileNav__chip{
-  display:inline-flex;
-  align-items:center;
-  gap: 10px;
-
-  padding: 10px 14px;
-  border-radius: 999px;
-
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.12);
-
-  color: rgba(255,255,255,0.86);
-  font-size: 13px;
-  letter-spacing: -0.01em;
-
-  max-width: 100%;
-}
-
-.k-mobileNav__dot{
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  background: rgba(190,145,255,0.95);
-  box-shadow:
-    0 0 0 3px rgba(190,145,255,0.14),
-    0 0 12px rgba(190,145,255,0.16);
-}
-
-/* CTA — uses your hero .k-btn system */
-.k-mobileNav__ctaWrap{
-  display: flex;
-  justify-content: center;
-}
-
-.k-mobileNav__ctaBtn{
-  --btn-h: 50px;
-  --btn-pad: 18px;
-  font-size: 14px;
-  width: min(520px, 100%);
-  justify-content: center;
-}
-
-/* Handle */
+/* Bottom handle: absolute overlay (no layout cost) */
 .k-mobileNav__handle{
+  position: absolute;
+  left: 50%;
+  bottom: calc(10px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+
   border: 0;
   background: transparent;
-  padding: 8px 0 2px;
+  padding: 10px 14px;
+
   display: grid;
   place-items: center;
+
   cursor: grab;
   -webkit-tap-highlight-color: transparent;
+
+  z-index: 5;
 }
 .k-mobileNav__handle:active{ cursor: grabbing; }
 
