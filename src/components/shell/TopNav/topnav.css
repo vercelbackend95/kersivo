@@ -1,15 +1,13 @@
 /* =========================================
-   Kersivo — TopNav (premium glass, mobile-proof)
-   - Symmetric padding L/R on every device (header-level padding)
-   - CTA + burger are a right-side cluster on mobile
-   - Burger: SVG swap (menu <-> close), no circle
+   Kersivo — TopNav (clean + mobile menu base)
+   NOTE: mobile menu styling is intentionally minimal now.
+   We'll design the "real" panel next.
    ========================================= */
 
 :root{
   --nav-h: 62px;
   --nav-pad: clamp(14px, 4vw, 20px);
 
-  /* neon palette (tuned for your purple/pink vibe) */
   --neon-core: rgba(255,255,255,.95);
   --neon-a: rgba(190,145,255,.95);
   --neon-b: rgba(255,190,245,.85);
@@ -153,7 +151,6 @@ html{
   min-width: 0;
 }
 
-/* optional small link (desktop) */
 .k-topnav__mini{
   height: 38px;
   padding: 0 12px;
@@ -179,7 +176,6 @@ html{
   transform: translateY(-1px);
 }
 
-/* CTA in topnav = hero vibe, nav-sized */
 .k-topnav__cta{
   --btn-h: 40px;
   --btn-pad: 16px;
@@ -188,9 +184,7 @@ html{
 
 /* =========================================
    Burger — SVG swap (menu <-> close)
-   - No circle
-   - Uses currentColor so it matches your nav palette
-   - Driven by aria-expanded (no JS changes needed)
+   Menu icon is ~20% larger than close.
    ========================================= */
 
 .k-topnav__burger{
@@ -228,7 +222,6 @@ html{
     opacity 180ms ease,
     transform 220ms cubic-bezier(.2,.9,.2,1);
 
-  /* controlled neon */
   filter:
     drop-shadow(0 0 3px rgba(190,145,255,.22))
     drop-shadow(0 0 7px rgba(255,190,245,.10));
@@ -238,6 +231,12 @@ html{
   width: 24px;
   height: 24px;
   display: block;
+}
+
+/* +20% menu icon */
+.k-topnav__burgerIcon--menu svg{
+  width: 29px;  /* 24 * 1.2 ≈ 28.8 */
+  height: 29px;
 }
 
 /* default: menu visible */
@@ -259,7 +258,8 @@ html{
 }
 
 /* =========================================
-   Mobile panel
+   Mobile panel (MINIMAL BASE)
+   Old fancy styling removed on purpose.
    ========================================= */
 
 .k-topnav__panel{
@@ -267,18 +267,14 @@ html{
   inset: 0;
   z-index: 79;
 
-  background: rgba(0,0,0,.42);
-  backdrop-filter: blur(6px);
+  /* simple dim — we’ll redo later */
+  background: rgba(0,0,0,.55);
 
-  display:grid;
-  align-items:start;
-  justify-items:stretch;
-
-  padding: calc(var(--nav-h) + env(safe-area-inset-top) + 18px) 16px 18px;
+  padding: calc(var(--nav-h) + env(safe-area-inset-top) + 16px) 16px 16px;
 
   opacity: 0;
-  transform: translateY(-8px);
-  transition: opacity 180ms ease, transform 180ms cubic-bezier(.2,.9,.2,1);
+  transform: translateY(-6px);
+  transition: opacity 160ms ease, transform 160ms ease;
 
   pointer-events: none;
   visibility: hidden;
@@ -288,7 +284,6 @@ html{
 .k-topnav__panel.is-open{
   opacity: 1;
   transform: translateY(0);
-
   pointer-events: auto;
   visibility: visible;
 }
@@ -301,45 +296,27 @@ html{
   width: min(520px, 100%);
   margin: 0 auto;
 
-  border-radius: 22px;
-  background: rgba(255,255,255,.05);
-  border: 1px solid rgba(255,255,255,.12);
-  backdrop-filter: blur(14px);
-
-  box-shadow: 0 40px 140px rgba(0,0,0,.55);
-  padding: 14px;
+  /* no more glass card — blank base */
+  padding: 8px;
 }
 
+/* basic tappable links (still readable) */
 .k-topnav__panelLink{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-
-  height: 52px;
-  padding: 0 14px;
-  border-radius: 14px;
-
-  color: rgba(255,255,255,.88);
-  font-weight: var(--w-medium, 560);
-  letter-spacing: -0.01em;
+  display:block;
+  padding: 14px 12px;
+  border-radius: 12px;
+  color: rgba(255,255,255,.92);
   text-decoration: none;
-
-  background: rgba(255,255,255,.03);
-  border: 1px solid rgba(255,255,255,.10);
-
-  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
-.k-topnav__panelLink + .k-topnav__panelLink{ margin-top: 10px; }
-
-.k-topnav__panelLink:hover{
-  background: rgba(255,255,255,.05);
-  border-color: rgba(255,255,255,.16);
-  transform: translateY(-1px);
+.k-topnav__panelLink + .k-topnav__panelLink{
+  margin-top: 8px;
 }
 
 .k-topnav__panelCtas{
-  margin-top: 14px;
+  margin-top: 12px;
   display:grid;
   gap: 10px;
 }
@@ -392,6 +369,12 @@ html{
   .k-topnav__burgerIcon svg{
     width: 22px;
     height: 22px;
+  }
+
+  /* keep menu +20% even on tiny */
+  .k-topnav__burgerIcon--menu svg{
+    width: 26px; /* 22 * 1.2 ≈ 26.4 */
+    height: 26px;
   }
 }
 
