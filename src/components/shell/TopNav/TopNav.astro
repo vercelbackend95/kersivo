@@ -50,7 +50,6 @@ import CtaButton from "../../ui/CtaButton/CtaButton.astro";
         class="k-topnav__cta"
       />
 
-      <!-- 3 neon bars -> morph into "K" on open -->
       <button
         class="k-topnav__burger"
         type="button"
@@ -58,9 +57,28 @@ import CtaButton from "../../ui/CtaButton/CtaButton.astro";
         aria-expanded="false"
         aria-controls="kTopnavPanel"
       >
-        <span class="k-topnav__burgerLine k-topnav__burgerLine--a" aria-hidden="true"></span>
-        <span class="k-topnav__burgerLine k-topnav__burgerLine--b" aria-hidden="true"></span>
-        <span class="k-topnav__burgerLine k-topnav__burgerLine--c" aria-hidden="true"></span>
+        <span class="k-topnav__burgerIcon k-topnav__burgerIcon--menu" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M5 17H13M5 12H19M11 7H19"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </span>
+
+        <span class="k-topnav__burgerIcon k-topnav__burgerIcon--close" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M6.5 6.5L17.5 17.5M17.5 6.5L6.5 17.5"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </svg>
+        </span>
       </button>
     </div>
   </div>
@@ -106,6 +124,12 @@ import CtaButton from "../../ui/CtaButton/CtaButton.astro";
       const neon = root.querySelector("[data-nav-neon]");
       const navLinks = Array.from(root.querySelectorAll("[data-nav-link]"));
 
+      const setBurgerLabel = (isOpen) => {
+        if (!burger) return;
+        burger.setAttribute("aria-label", isOpen ? "Close menu" : "Open menu");
+      };
+      setBurgerLabel(false);
+
       // Scroll state
       const onScroll = () => {
         if (window.scrollY > 6) root.classList.add("is-scrolled");
@@ -117,16 +141,20 @@ import CtaButton from "../../ui/CtaButton/CtaButton.astro";
       // Mobile panel toggle
       const open = () => {
         if (!burger || !panel) return;
+        setBurgerLabel(true);
         burger.setAttribute("aria-expanded", "true");
         panel.hidden = false;
+        root.classList.add("is-open");
         panel.classList.add("is-open");
         document.documentElement.classList.add("k-navOpen");
       };
 
       const close = () => {
         if (!burger || !panel) return;
+        setBurgerLabel(false);
         burger.setAttribute("aria-expanded", "false");
         panel.classList.remove("is-open");
+        root.classList.remove("is-open");
         document.documentElement.classList.remove("k-navOpen");
         setTimeout(() => (panel.hidden = true), 140);
       };

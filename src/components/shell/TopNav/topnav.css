@@ -2,7 +2,7 @@
    Kersivo — TopNav (premium glass, mobile-proof)
    - Symmetric padding L/R on every device (header-level padding)
    - CTA + burger are a right-side cluster on mobile
-   - Burger: NO circle. 3 crisp neon bars -> morph into "K"
+   - Burger: SVG swap (menu <-> close), no circle
    ========================================= */
 
 :root{
@@ -187,9 +187,10 @@ html{
 }
 
 /* =========================================
-   Burger — NO circle. 3 crisp neon bars -> morph into "K"
-   Less fog, sharper tubes, better geometry
-   Driven by aria-expanded (no JS changes)
+   Burger — SVG swap (menu <-> close)
+   - No circle
+   - Uses currentColor so it matches your nav palette
+   - Driven by aria-expanded (no JS changes needed)
    ========================================= */
 
 .k-topnav__burger{
@@ -215,115 +216,46 @@ html{
   border-radius: 12px;
 }
 
-.k-topnav__burgerLine{
-  width: 22px;
-  height: 2px;
-  border-radius: 999px;
-
+.k-topnav__burgerIcon{
   position: absolute;
-  left: 50%;
-  top: 50%;
+  inset: 0;
+  display: grid;
+  place-items: center;
 
-  background: var(--neon-core);
-  opacity: .98;
+  color: rgba(255,255,255,.95);
 
-  /* tighter glow stack (less haze) */
-  box-shadow:
-    0 0 1px rgba(255,255,255,.85),
-    0 0 4px rgba(255,255,255,.35),
-    0 0 8px rgba(190,145,255,.55),
-    0 0 14px rgba(255,190,245,.22);
+  transition:
+    opacity 180ms ease,
+    transform 220ms cubic-bezier(.2,.9,.2,1);
 
-  /* toned-down drop shadows (fog culprit) */
+  /* controlled neon */
   filter:
     drop-shadow(0 0 3px rgba(190,145,255,.22))
-    drop-shadow(0 0 6px rgba(255,190,245,.08));
-
-  transform-origin: 50% 50%;
-  transition:
-    transform 210ms cubic-bezier(.2,.9,.2,1),
-    width 210ms cubic-bezier(.2,.9,.2,1);
-
-  will-change: transform;
-  transform: translateZ(0);
+    drop-shadow(0 0 7px rgba(255,190,245,.10));
 }
 
-/* arms must pivot from the left end so they attach to the stem */
-.k-topnav__burgerLine--b,
-.k-topnav__burgerLine--c{
-  transform-origin: 0% 50%;
-}
-
-.k-topnav__burgerLine::before{
-  content:"";
-  position:absolute;
-  left: 0;
-  right: 0;
-  top: -1px;
-  height: 1px;
-  border-radius: 999px;
-  background: rgba(255,255,255,.9);
-  opacity: .18;
-}
-
-/* Closed: 3 horizontal neons */
-.k-topnav__burgerLine--a{ transform: translate(-50%, calc(-50% - 6px)); }
-.k-topnav__burgerLine--b{ transform: translate(-50%, -50%); }
-.k-topnav__burgerLine--c{ transform: translate(-50%, calc(-50% + 6px)); }
-
-.k-topnav__burger:hover .k-topnav__burgerLine{
-  box-shadow:
-    0 0 1px rgba(255,255,255,.95),
-    0 0 5px rgba(255,255,255,.45),
-    0 0 10px rgba(190,145,255,.62),
-    0 0 16px rgba(255,190,245,.26);
-}
-
-/* Open: "K" — bigger, cleaner, properly attached arms */
-.k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--a{
-  width: 30px;
-  transform: translate(calc(-50% - 10px), -50%) rotate(90deg);
-}
-
-.k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--b{
+.k-topnav__burgerIcon svg{
   width: 24px;
-  transform: translate(calc(-50% - 2px), calc(-50% - 5px)) rotate(41deg);
+  height: 24px;
+  display: block;
 }
 
-.k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--c{
-  width: 24px;
-  transform: translate(calc(-50% - 2px), calc(-50% + 5px)) rotate(-41deg);
+/* default: menu visible */
+.k-topnav__burgerIcon--menu{ opacity: 1; transform: scale(1) rotate(0deg); }
+.k-topnav__burgerIcon--close{ opacity: 0; transform: scale(.92) rotate(-8deg); }
+
+/* open: close visible */
+.k-topnav__burger[aria-expanded="true"] .k-topnav__burgerIcon--menu{
+  opacity: 0;
+  transform: scale(.92) rotate(8deg);
 }
-
-/* subtle "neon hum" (less blur) */
-@media (prefers-reduced-motion: no-preference){
-  .k-topnav__burgerLine{
-    animation: kNeonPulse 6.4s ease-in-out infinite;
-  }
-  .k-topnav__burgerLine--b{ animation-delay: -1.9s; }
-  .k-topnav__burgerLine--c{ animation-delay: -3.2s; }
-
-  @keyframes kNeonPulse{
-    0%, 100%{
-      opacity: .92;
-      filter:
-        drop-shadow(0 0 3px rgba(190,145,255,.20))
-        drop-shadow(0 0 6px rgba(255,190,245,.07));
-    }
-    50%{
-      opacity: 1;
-      filter:
-        drop-shadow(0 0 4px rgba(190,145,255,.26))
-        drop-shadow(0 0 8px rgba(255,190,245,.10));
-    }
-  }
+.k-topnav__burger[aria-expanded="true"] .k-topnav__burgerIcon--close{
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
 }
 
 @media (prefers-reduced-motion: reduce){
-  .k-topnav__burgerLine{
-    transition: none !important;
-    animation: none !important;
-  }
+  .k-topnav__burgerIcon{ transition: none !important; }
 }
 
 /* =========================================
@@ -352,7 +284,8 @@ html{
   visibility: hidden;
 }
 
-.k-topnav.is-open .k-topnav__panel{
+.k-topnav.is-open .k-topnav__panel,
+.k-topnav__panel.is-open{
   opacity: 1;
   transform: translateY(0);
 
@@ -456,22 +389,9 @@ html{
     height: 44px;
   }
 
-  .k-topnav__burgerLine{
-    width: 20px;
-  }
-
-  /* keep K proportions on tiny screens */
-  .k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--a{
-    width: 28px;
-    transform: translate(calc(-50% - 10px), -50%) rotate(90deg);
-  }
-  .k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--b{
+  .k-topnav__burgerIcon svg{
     width: 22px;
-    transform: translate(calc(-50% - 2px), calc(-50% - 5px)) rotate(44deg);
-  }
-  .k-topnav__burger[aria-expanded="true"] .k-topnav__burgerLine--c{
-    width: 22px;
-    transform: translate(calc(-50% - 2px), calc(-50% + 5px)) rotate(-44deg);
+    height: 22px;
   }
 }
 
