@@ -394,3 +394,26 @@ html.k-navOpen { overflow: hidden; }
     transform: none !important;
   }
 }
+/* kill the purple ring / border around burger on mobile */
+@media (max-width: 860px){
+  .k-topnav__burger{
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+
+  /* jeśli coś rysuje ring pseudo-elementem */
+  .k-topnav__burger::before,
+  .k-topnav__burger::after{
+    content: none !important;
+    display: none !important;
+  }
+}
+
+/* zostawiamy fokus dla klawiatury (luksus niewidzialny) */
+.k-topnav__burger:focus-visible{
+  outline: 2px solid rgba(190,145,255,.70);
+  outline-offset: 6px;
+  border-radius: 12px;
+}
