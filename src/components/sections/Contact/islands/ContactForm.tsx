@@ -1,288 +1,155 @@
 import React, { useMemo, useRef, useState } from "react";
 
-type Props = {
-  emailTo?: string; // kompatybilność z Contact.astro
-};
+type ApiResp = { ok: boolean; id?: string; error?: string };
 
-const SERVICES = ["Website", "Brand + UI", "E-commerce", "Ongoing"] as const;
-const BUDGETS = ["Under £2k", "£2k–£5k", "£5k+"] as const;
+function fileToBase64(file: File): Promise<{ base64: string; name: string; type: string; size: number }> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("Failed to read file."));
+    reader.onload = () => {
+      const result = String(reader.result || "");
+      const parts = result.split(",");
+      const base64 = parts.length > 1 ? parts[1] : "";
+      resolve({ base64, name: file.name, type: file.type || "application/octet-stream", size: file.size });
+    };
+    reader.readAsDataURL(file);
+  });
+}
 
-const MAX_FILE_MB = 5;
-const ALLOWED_MIME = new Set([
-  "application/pdf",
-  "image/png",
-  "image/jpeg",
-  "image/webp",
-]);
-
-export default function ContactForm(_props: Props) {
-  const startedAtRef = useRef<number>(Date.now());
-
-  const [service, setService] = useState<(typeof SERVICES)[number]>("Website");
-  const [budget, setBudget] = useState<(typeof BUDGETS)[number]>("Under £2k");
-
+export default function ContactForm() {
+  const [service, setService] = useState("Website");
+  const [budget, setBudget] = useState("Under £2k");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [details, setDetails] = useState("");
+  const [message, setMessage] = useState("");
 
-  const [file, setFile] = useState<File | null>(null);
-  const [fileName, setFileName] = useState<string>("");
-
-  // Bot trap
-  const [hp, setHp] = useState("");
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [status, setStatus] = useState<"idle" | "ok" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState<string>("");
 
-  const canSubmit = useMemo(() => {
-    const okName = name.trim().length >= 2;
-    const okEmail = email.trim().includes("@");
-    const okDetails = details.trim().length >= 10;
-    return okName && okEmail && okDetails && !isSubmitting;
-  }, [name, email, details, isSubmitting]);
+  const fileRef = useRef<HTMLInputElement | null>(null);
 
-  function validateFile(f: File | null) {
-    if (!f) return { ok: true, msg: "" };
-
-    const sizeMb = f.size / (1024 * 1024);
-    if (sizeMb > MAX_FILE_MB) {
-      return { ok: false, msg: `File too big. Max ${MAX_FILE_MB}MB.` };
-    }
-    if (f.type && !ALLOWED_MIME.has(f.type)) {
-      return { ok: false, msg: "Unsupported file type. Use PDF / PNG / JPG / WebP." };
-    }
-    return { ok: true, msg: "" };
-  }
+  // Anti-bot: store "start" moment
+  const startedAt = useMemo(() => Date.now(), []);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (isSubmitting) return;
-
-    setStatus("idle");
     setErrorMsg("");
 
-    // Timing bait — boty klikają “instant”
-    const elapsed = Date.now() - startedAtRef.current;
-    if (elapsed < 900) {
-      setStatus("ok");
-      return;
-    }
+    if (status === "sending") return;
 
-    const vf = validateFile(file);
-    if (!vf.ok) {
-      setStatus("error");
-      setErrorMsg(vf.msg);
-      return;
-    }
+    // quick client validation (server validates again)
+    if (name.trim().length < 2) return setStatus("error"), setErrorMsg("Please enter your full name.");
+    if (!/^\S+@\S+\.\S+$/.test(email.trim())) return setStatus("error"), setErrorMsg("Please enter a valid email.");
+    if (message.trim().length < 10) return setStatus("error"), setErrorMsg("Project details must be at least 10 characters.");
 
-    setIsSubmitting(true);
+    setStatus("sending");
 
     try {
-      const fd = new FormData();
-      fd.set("name", name.trim());
-      fd.set("email", email.trim());
-      fd.set("service", service);
-      fd.set("budget", budget);
-      fd.set("details", details.trim());
-      fd.set("hp", hp); // musi być puste
-      fd.set("startedAt", String(startedAtRef.current)); // backend zrobi sanity-check
-      if (file) fd.set("attachment", file, file.name);
+      // attachment (optional)
+      let attachment: any = null;
+      const file = fileRef.current?.files?.[0];
+
+      if (file) {
+        const maxBytes = 4 * 1024 * 1024;
+        if (file.size > maxBytes) {
+          setStatus("error");
+          setErrorMsg("File is too large (max 4MB).");
+          return;
+        }
+
+        const allowed = new Set(["image/png", "image/jpeg", "image/webp", "application/pdf"]);
+        if (file.type && !allowed.has(file.type)) {
+          setStatus("error");
+          setErrorMsg("Unsupported file type. Use PNG/JPG/WebP/PDF.");
+          return;
+        }
+
+        attachment = await fileToBase64(file);
+      }
+
+      const payload = {
+        service,
+        budget,
+        name: name.trim(),
+        email: email.trim(),
+        message: message.trim(),
+        startedAt,
+        hp: "", // honeypot (must exist in payload, kept empty)
+        attachment,
+      };
 
       const res = await fetch("/api/contact", {
         method: "POST",
-        body: fd, // UWAGA: nie ustawiamy Content-Type ręcznie
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload),
       });
 
-      const data = await res.json().catch(() => ({}));
-
-      if (!res.ok || data?.ok === false) {
-        throw new Error(data?.error || "Something went wrong. Please try again.");
+      // safer parsing: if server returns HTML/empty, we still show a real error
+      const text = await res.text();
+      let data: ApiResp | null = null;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = { ok: false, error: "Server returned a non-JSON response." };
       }
 
-      setStatus("ok");
+      if (!res.ok || !data?.ok) {
+        setStatus("error");
+        setErrorMsg(data?.error || "Something went wrong. Please try again.");
+        return;
+      }
+
+      setStatus("sent");
+      // optional: clear fields (leave service/budget)
       setName("");
       setEmail("");
-      setDetails("");
-      setFile(null);
-      setFileName("");
-      setHp("");
-      startedAtRef.current = Date.now();
+      setMessage("");
+      if (fileRef.current) fileRef.current.value = "";
     } catch (err: any) {
       setStatus("error");
       setErrorMsg(err?.message || "Something went wrong. Please try again.");
-    } finally {
-      setIsSubmitting(false);
     }
   }
 
   return (
-    <form className="k-cform" onSubmit={onSubmit} noValidate>
-      {/* Honeypot */}
-      <div style={{ position: "absolute", left: "-9999px", width: 1, height: 1, overflow: "hidden" }}>
-        <label>
-          Do not fill this field
-          <input
-            type="text"
-            name="hp"
-            autoComplete="off"
-            tabIndex={-1}
-            value={hp}
-            onChange={(e) => setHp(e.target.value)}
-          />
-        </label>
-      </div>
+    <form onSubmit={onSubmit}>
+      {/* Keep your existing markup / classes here.
+          I’m only showing logical bindings — plug them into your current UI. */}
 
-      {/* SERVICE */}
-      <div className="k-cform__group">
-        <div className="k-cform__label">SERVICE</div>
-        <div className="k-cform__chips" role="tablist" aria-label="Service">
-          {SERVICES.map((s) => (
-            <button
-              key={s}
-              type="button"
-              className={`k-cchip ${service === s ? "is-active" : ""}`}
-              onClick={() => setService(s)}
-              aria-pressed={service === s}
-            >
-              {s}
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* Example hooks — replace with your existing UI elements */}
+      <input type="hidden" name="hp" value="" />
 
-      {/* BUDGET */}
-      <div className="k-cform__group">
-        <div className="k-cform__label">BUDGET</div>
-        <div className="k-cform__chips" role="tablist" aria-label="Budget">
-          {BUDGETS.map((b) => (
-            <button
-              key={b}
-              type="button"
-              className={`k-cchip ${budget === b ? "is-active" : ""}`}
-              onClick={() => setBudget(b)}
-              aria-pressed={budget === b}
-            >
-              {b}
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* service pills -> call setService(...) */}
+      {/* budget pills -> call setBudget(...) */}
 
-      {/* ROW */}
-      <div className="k-cform__row">
-        <div className="k-uline">
-          <label className="k-uline__label" htmlFor="fullName">
-            FULL NAME <span aria-hidden="true">*</span>
-          </label>
-          <input
-            id="fullName"
-            className="k-uline__input"
-            type="text"
-            placeholder=""
-            autoComplete="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            minLength={2}
-          />
-        </div>
+      <input
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        placeholder="Full name"
+        autoComplete="name"
+      />
 
-        <div className="k-uline">
-          <label className="k-uline__label" htmlFor="email">
-            EMAIL <span aria-hidden="true">*</span>
-          </label>
-          <input
-            id="email"
-            className="k-uline__input"
-            type="email"
-            placeholder=""
-            autoComplete="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-      </div>
+      <input
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email"
+        autoComplete="email"
+      />
 
-      {/* DETAILS */}
-      <div className="k-cform__group">
-        <div className="k-uline">
-          <label className="k-uline__label" htmlFor="details">
-            PROJECT DETAILS <span aria-hidden="true">*</span>
-          </label>
-          <textarea
-            id="details"
-            className="k-uline__textarea"
-            placeholder=""
-            value={details}
-            onChange={(e) => setDetails(e.target.value)}
-            required
-            minLength={10}
-          />
-        </div>
-      </div>
+      <textarea
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        placeholder="Project details"
+      />
 
-      {/* UPLOAD */}
-      <div className="k-cform__group">
-        <div className="k-cform__label">
-          ATTACH A FILE <span style={{ opacity: 0.7 }}>(optional)</span>
-        </div>
+      <input ref={fileRef} type="file" />
 
-        <label className="k-upload">
-          <input
-            type="file"
-            style={{ display: "none" }}
-            accept=".pdf,.png,.jpg,.jpeg,.webp"
-            onChange={(e) => {
-              const f = e.target.files?.[0] || null;
-              setFile(f);
-              setFileName(f?.name || "");
-            }}
-          />
-          <div className="k-upload__box">
-            <div className="k-upload__title">
-              {fileName ? `Selected: ${fileName}` : "Choose a file or drag and drop here"}
-            </div>
-            <div className="k-upload__hint">
-              Tip: include a PDF brief, screenshots, or a sitemap. (Max {MAX_FILE_MB}MB)
-            </div>
-          </div>
-        </label>
-      </div>
-
-      {/* SUBMIT */}
-      <button className="k-submit" type="submit" disabled={!canSubmit} aria-busy={isSubmitting}>
-        <span className="k-submit__text">{isSubmitting ? "Sending…" : "Submit inquiry"}</span>
-        <span className="k-submit__icon" aria-hidden="true">
-          <svg viewBox="0 0 20 20" fill="none">
-            <path d="M4.5 10h9.2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-            <path
-              d="M11.2 6.8 14.5 10l-3.3 3.2"
-              stroke="currentColor"
-              strokeWidth="1.6"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </span>
+      <button type="submit" disabled={status === "sending"}>
+        {status === "sending" ? "Sending…" : "Submit inquiry"}
       </button>
 
-      {/* FOOT */}
-      <div className="k-cform__foot">
-        {status === "ok" ? (
-          <span>Sent. Clean and simple — we’ll reply soon.</span>
-        ) : status === "error" ? (
-          <span style={{ color: "rgba(255,120,120,.95)" }}>
-            {errorMsg || "Couldn’t send. Try again."}
-          </span>
-        ) : (
-          <span>
-            No spam. Just a clean reply. If you prefer: email us directly at{" "}
-            <a href="mailto:hello@kersivo.co.uk">hello@kersivo.co.uk</a>.
-          </span>
-        )}
-      </div>
+      {status === "sent" && <div>Sent. Clean and simple — we’ll reply soon.</div>}
+      {status === "error" && <div style={{ color: "tomato" }}>{errorMsg}</div>}
     </form>
   );
 }

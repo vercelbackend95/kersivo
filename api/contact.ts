@@ -1,227 +1,264 @@
 import { Resend } from "resend";
 
-type Json = Record<string, any>;
+type AttachmentPayload = {
+  name: string;
+  type: string;
+  size: number;
+  base64: string; // raw base64 (no "data:...base64," prefix)
+};
 
-function json(status: number, body: Json) {
-  return new Response(JSON.stringify(body), {
+type BodyPayload = {
+  service?: string;
+  budget?: string;
+  name?: string;
+  email?: string;
+  message?: string;
+
+  // Anti-bot
+  hp?: string; // honeypot
+  startedAt?: number; // timestamp when user started interacting
+
+  // Optional
+  website?: string;
+  company?: string;
+  company_size?: string;
+
+  attachment?: AttachmentPayload | null;
+};
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+// --- tiny in-memory rate limiter (best-effort; serverless-safe enough as a first shield)
+const buckets = new Map<string, { count: number; resetAt: number }>();
+
+function rateLimit(ip: string, limit = 8, windowMs = 10 * 60 * 1000) {
+  const now = Date.now();
+  const current = buckets.get(ip);
+
+  if (!current || now > current.resetAt) {
+    buckets.set(ip, { count: 1, resetAt: now + windowMs });
+    return { ok: true as const };
+  }
+
+  if (current.count >= limit) {
+    const retryInSec = Math.ceil((current.resetAt - now) / 1000);
+    return { ok: false as const, retryInSec };
+  }
+
+  current.count += 1;
+  buckets.set(ip, current);
+  return { ok: true as const };
+}
+
+function json(status: number, data: any) {
+  return new Response(JSON.stringify(data), {
     status,
     headers: { "content-type": "application/json; charset=utf-8" },
   });
 }
 
-function getIp(req: Request) {
+function getClientIp(req: Request) {
   const xf = req.headers.get("x-forwarded-for");
   if (xf) return xf.split(",")[0].trim();
-  return "unknown";
+  return (
+    req.headers.get("x-real-ip") ||
+    req.headers.get("cf-connecting-ip") ||
+    "unknown"
+  );
 }
 
-function isEmail(s: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
-}
-
-const MAX_FILE_BYTES = 5 * 1024 * 1024; // 5MB
-const ALLOWED_MIME = new Set([
-  "application/pdf",
-  "image/png",
-  "image/jpeg",
-  "image/webp",
-]);
-
-// ultra-prosty rate limit (best-effort, serverless = nie gwarantuje 100% trwałości)
-const bucket = new Map<string, { c: number; reset: number }>();
-function rateLimit(ip: string, limit = 10, windowMs = 10 * 60 * 1000) {
-  const now = Date.now();
-  const cur = bucket.get(ip);
-  if (!cur || now > cur.reset) {
-    bucket.set(ip, { c: 1, reset: now + windowMs });
-    return { ok: true };
-  }
-  if (cur.c >= limit) return { ok: false };
-  cur.c += 1;
-  bucket.set(ip, cur);
-  return { ok: true };
-}
-
-function base64FromArrayBuffer(buf: ArrayBuffer) {
-  const bytes = new Uint8Array(buf);
-  let binary = "";
-  const chunk = 0x8000;
-  for (let i = 0; i < bytes.length; i += chunk) {
-    binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
-  }
-  // btoa jest dostępne w runtime (Vercel)
-  return btoa(binary);
-}
-
-export default async function handler(req: Request): Promise<Response> {
-  if (req.method !== "POST") return json(405, { ok: false, error: "Method not allowed" });
-
-  const ip = getIp(req);
-
-  // rate limit
-  const rl = rateLimit(ip);
-  if (!rl.ok) return json(429, { ok: false, error: "Too many requests. Try again later." });
-
-  // origin sanity-check (nie jest kuloodporne, ale tnie śmieci)
+function isAllowedOrigin(req: Request) {
   const origin = req.headers.get("origin") || "";
-  if (origin && !origin.includes("kersivo.co.uk") && !origin.includes("vercel.app")) {
-    return json(403, { ok: false, error: "Forbidden origin" });
-  }
+  const referer = req.headers.get("referer") || "";
+  // allow your domains + local dev
+  const allowed = [
+    "https://kersivo.co.uk",
+    "https://www.kersivo.co.uk",
+    "http://localhost:4321",
+    "http://localhost:3000",
+  ];
+  return allowed.some((a) => origin.startsWith(a) || referer.startsWith(a));
+}
 
-  const ct = (req.headers.get("content-type") || "").toLowerCase();
-
-  let name = "";
-  let email = "";
-  let service = "";
-  let budget = "";
-  let details = "";
-  let hp = "";
-  let startedAt = "";
-
-  let attachment: { filename: string; content: string; content_type?: string } | null = null;
-
+export default async function handler(req: Request) {
   try {
-    if (ct.includes("multipart/form-data")) {
-      const fd = await req.formData();
+    if (req.method !== "POST") {
+      return json(405, { ok: false, error: "Method not allowed" });
+    }
 
-      name = String(fd.get("name") || "");
-      email = String(fd.get("email") || "");
-      service = String(fd.get("service") || "");
-      budget = String(fd.get("budget") || "");
-      details = String(fd.get("details") || "");
-      hp = String(fd.get("hp") || "");
-      startedAt = String(fd.get("startedAt") || "");
+    if (!process.env.RESEND_API_KEY) {
+      return json(500, { ok: false, error: "Missing RESEND_API_KEY" });
+    }
 
-      const f = fd.get("attachment");
-      if (f && typeof f !== "string") {
-        const file = f as File;
+    // basic origin guard (not perfect, but cuts random bot spam)
+    if (!isAllowedOrigin(req)) {
+      return json(403, { ok: false, error: "Forbidden origin" });
+    }
 
-        if (file.size > MAX_FILE_BYTES) {
-          return json(400, { ok: false, error: "Attachment too large (max 5MB)." });
-        }
-        if (file.type && !ALLOWED_MIME.has(file.type)) {
-          return json(400, { ok: false, error: "Unsupported attachment type." });
-        }
+    const ip = getClientIp(req);
 
-        const buf = await file.arrayBuffer();
-        const b64 = base64FromArrayBuffer(buf);
-        attachment = {
-          filename: file.name || "attachment",
-          content: b64,
-          content_type: file.type || undefined,
-        };
+    const rl = rateLimit(ip);
+    if (!rl.ok) {
+      return json(429, {
+        ok: false,
+        error: `Too many requests. Try again in ${rl.retryInSec}s.`,
+      });
+    }
+
+    const body = (await req.json()) as BodyPayload;
+
+    // honeypot: if filled -> bot
+    if (body.hp && body.hp.trim().length > 0) {
+      return json(200, { ok: true }); // pretend success
+    }
+
+    // time-to-submit trap: submissions under ~900ms are usually bots
+    if (typeof body.startedAt === "number") {
+      const delta = Date.now() - body.startedAt;
+      if (delta < 900) return json(200, { ok: true }); // pretend success
+    }
+
+    const service = (body.service || "").trim();
+    const budget = (body.budget || "").trim();
+    const name = (body.name || "").trim();
+    const email = (body.email || "").trim();
+    const message = (body.message || "").trim();
+
+    if (!name || name.length < 2) {
+      return json(400, { ok: false, error: "Name is required." });
+    }
+    if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+      return json(400, { ok: false, error: "Valid email is required." });
+    }
+    if (!message || message.length < 10) {
+      return json(400, {
+        ok: false,
+        error: "Project details must be at least 10 characters.",
+      });
+    }
+    if (message.length > 5000) {
+      return json(400, { ok: false, error: "Message is too long." });
+    }
+
+    // Attachment validation (max 4MB raw file; base64 will be larger)
+    let attachments:
+      | Array<{ filename: string; content: string }>
+      | undefined = undefined;
+
+    if (body.attachment && body.attachment.base64) {
+      const a = body.attachment;
+
+      const maxBytes = 4 * 1024 * 1024;
+      if (typeof a.size !== "number" || a.size <= 0) {
+        return json(400, { ok: false, error: "Invalid attachment size." });
       }
-    } else {
-      // fallback JSON (jakbyś testował curl/json)
-      const body = (await req.json().catch(() => ({}))) as Json;
+      if (a.size > maxBytes) {
+        return json(400, {
+          ok: false,
+          error: "Attachment too large (max 4MB).",
+        });
+      }
 
-      name = String(body.name || "");
-      email = String(body.email || "");
-      service = String(body.service || "");
-      budget = String(body.budget || "");
-      details = String(body.details || body.message || "");
-      hp = String(body.hp || "");
-      startedAt = String(body.startedAt || "");
+      const allowedTypes = new Set([
+        "image/png",
+        "image/jpeg",
+        "image/webp",
+        "application/pdf",
+      ]);
+
+      const type = (a.type || "").toLowerCase();
+      if (type && !allowedTypes.has(type)) {
+        return json(400, {
+          ok: false,
+          error: "Unsupported attachment type. Use PNG/JPG/WebP/PDF.",
+        });
+      }
+
+      // basic sanity: base64 length must match something meaningful
+      if (a.base64.length < 200) {
+        return json(400, { ok: false, error: "Attachment data is invalid." });
+      }
+
+      attachments = [
+        {
+          filename: a.name || "attachment",
+          content: a.base64, // Resend accepts Base64 string content for attachments
+        },
+      ];
     }
-  } catch {
-    return json(400, { ok: false, error: "Invalid request body." });
-  }
 
-  // honeypot
-  if (hp && hp.trim().length > 0) {
-    // udajemy sukces — bot idzie dalej spać
-    return json(200, { ok: true, id: "ok" });
-  }
+    const subject = `New lead — ${name}`;
+    const to = ["hello@kersivo.co.uk"];
 
-  // timing sanity-check
-  if (startedAt) {
-    const t = Number(startedAt);
-    if (Number.isFinite(t)) {
-      const elapsed = Date.now() - t;
-      if (elapsed < 900) return json(200, { ok: true, id: "ok" });
-    }
-  }
+    const html = `
+      <div style="font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; line-height:1.5;">
+        <h2 style="margin:0 0 12px;">New contact form lead</h2>
+        <p><b>Name:</b> ${escapeHtml(name)}<br/>
+        <b>Email:</b> ${escapeHtml(email)}<br/>
+        ${service ? `<b>Service:</b> ${escapeHtml(service)}<br/>` : ""}
+        ${budget ? `<b>Budget:</b> ${escapeHtml(budget)}<br/>` : ""}</p>
 
-  name = name.trim();
-  email = email.trim();
-  details = details.trim();
+        <p><b>Message:</b><br/>${escapeHtml(message).replace(/\n/g, "<br/>")}</p>
 
-  if (name.length < 2) return json(400, { ok: false, error: "Name is required." });
-  if (!isEmail(email)) return json(400, { ok: false, error: "Valid email is required." });
-  if (details.length < 10) return json(400, { ok: false, error: "Message is too short." });
+        ${
+          attachments
+            ? `<p><b>Attachment:</b> included (${escapeHtml(
+                body.attachment?.name || "file"
+              )})</p>`
+            : ""
+        }
 
-  const resendKey = process.env.RESEND_API_KEY;
-  if (!resendKey) return json(500, { ok: false, error: "Missing RESEND_API_KEY." });
-
-  const to = process.env.CONTACT_TO || "hello@kersivo.co.uk";
-  const from = process.env.CONTACT_FROM || "Kersivo <hello@kersivo.co.uk>";
-
-  const subject = `New lead — ${name}`;
-
-  const lines = [
-    `Name: ${name}`,
-    `Email: ${email}`,
-    service ? `Service: ${service}` : "",
-    budget ? `Budget: ${budget}` : "",
-    "",
-    "Message:",
-    details,
-    "",
-    `IP: ${ip}`,
-  ].filter(Boolean);
-
-  const text = lines.join("\n");
-
-  const html = `
-    <div style="font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; line-height:1.5;">
-      <h2 style="margin:0 0 14px;">New contact form lead</h2>
-      <p style="margin:0 0 6px;"><b>Name:</b> ${escapeHtml(name)}</p>
-      <p style="margin:0 0 6px;"><b>Email:</b> <a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></p>
-      ${budget ? `<p style="margin:0 0 6px;"><b>Budget:</b> ${escapeHtml(budget)}</p>` : ""}
-      <div style="margin-top:14px;">
-        <b>Message:</b>
-        <pre style="white-space:pre-wrap; background:rgba(0,0,0,.04); padding:12px; border-radius:10px;">${escapeHtml(
-          service ? `Service: ${service}\nBudget: ${budget || "-"}\n\n${details}` : details
-        )}</pre>
+        <hr style="border:none;border-top:1px solid rgba(0,0,0,.08);margin:16px 0;" />
+        <p style="color:rgba(0,0,0,.6);font-size:12px;margin:0;">IP: ${escapeHtml(
+          ip
+        )}</p>
       </div>
-      <p style="margin:10px 0 0; opacity:.7; font-size:12px;">IP: ${escapeHtml(ip)}</p>
-    </div>
-  `;
+    `.trim();
 
-  const resend = new Resend(resendKey);
+    const text = [
+      "New contact form lead",
+      `Name: ${name}`,
+      `Email: ${email}`,
+      service ? `Service: ${service}` : "",
+      budget ? `Budget: ${budget}` : "",
+      "",
+      "Message:",
+      message,
+      "",
+      attachments ? `Attachment: included (${body.attachment?.name})` : "",
+      `IP: ${ip}`,
+    ]
+      .filter(Boolean)
+      .join("\n");
 
-  try {
-    const result = await resend.emails.send({
-      from,
+    const { data, error } = await resend.emails.send({
+      from: "Kersivo <hello@kersivo.co.uk>",
       to,
       subject,
-      reply_to: email,
-      text,
+      replyTo: email,
       html,
-      ...(attachment
-        ? {
-            attachments: [
-              {
-                filename: attachment.filename,
-                content: attachment.content, // base64
-                content_type: attachment.content_type,
-              },
-            ],
-          }
-        : {}),
+      text,
+      attachments,
     });
 
-    return json(200, { ok: true, id: (result as any)?.data?.id || (result as any)?.id || "ok" });
-  } catch (e: any) {
-    return json(500, { ok: false, error: e?.message || "Email send failed." });
+    if (error) {
+      return json(500, { ok: false, error: error.message });
+    }
+
+    return json(200, { ok: true, id: data?.id });
+  } catch (err: any) {
+    return json(500, {
+      ok: false,
+      error: err?.message || "Unknown server error",
+    });
   }
 }
 
-function escapeHtml(s: string) {
-  return s
+function escapeHtml(str: string) {
+  return String(str)
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
+    .replaceAll("'", "&#039;");
 }
