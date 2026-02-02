@@ -1,27 +1,30 @@
 import React, { useMemo, useState } from "react";
 
 type FormState = {
+  company_size: string; // real field (optional)
   name: string;
   email: string;
   company: string;
   website: string;
   budget: string;
   message: string;
-  // Honeypot (anty-spam) — ma zostać puste
-  company_size: string;
+
+  // Honeypot (anti-spam) — MUST stay empty
+  hp: string;
 };
 
 type SubmitState = "idle" | "sending" | "success" | "error";
 
 export default function ContactForm() {
   const [form, setForm] = useState<FormState>({
+    company_size: "",
     name: "",
     email: "",
     company: "",
     website: "",
     budget: "",
     message: "",
-    company_size: "",
+    hp: "",
   });
 
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
@@ -36,7 +39,7 @@ export default function ContactForm() {
     const messageOk = form.message.trim().length >= 10;
 
     // honeypot must be empty
-    const honeypotOk = form.company_size.trim().length === 0;
+    const honeypotOk = form.hp.trim().length === 0;
 
     return nameOk && emailOk && messageOk && honeypotOk && !isSending;
   }, [form, isSending]);
@@ -52,7 +55,7 @@ export default function ContactForm() {
 
     if (!canSubmit) {
       setSubmitState("error");
-      setErrorMsg("Uzupełnij poprawnie: imię, e-mail i wiadomość (min. 10 znaków).");
+      setErrorMsg("Please fill in your name, email, and a message (min. 10 characters).");
       return;
     }
 
@@ -61,18 +64,19 @@ export default function ContactForm() {
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        // send only what we need
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: form.name.trim(),
           email: form.email.trim(),
           company: form.company.trim(),
           website: form.website.trim(),
           budget: form.budget.trim(),
+          company_size: form.company_size.trim(),
           message: form.message.trim(),
-          company_size: form.company_size.trim(), // honeypot
+
+          // honeypot
+          hp: form.hp.trim(),
+
           source: "kersivo.co.uk/contact",
         }),
       });
@@ -83,27 +87,26 @@ export default function ContactForm() {
       };
 
       if (!res.ok || !data.ok) {
-        throw new Error(data?.error || "Coś poszło nie tak. Spróbuj ponownie.");
+        throw new Error(data?.error || "Something went wrong. Please try again.");
       }
 
       setSubmitState("success");
-      setSuccessMsg("✅ Wysłane. Odezwę się najszybciej jak się da.");
+      setSuccessMsg("✅ Sent. I’ll get back to you soon.");
 
-      // reset form (keep honeypot empty)
       setForm({
+        company_size: "",
         name: "",
         email: "",
         company: "",
         website: "",
         budget: "",
         message: "",
-        company_size: "",
+        hp: "",
       });
     } catch (err: any) {
       setSubmitState("error");
-      setErrorMsg(err?.message || "Błąd wysyłki. Spróbuj ponownie za chwilę.");
+      setErrorMsg(err?.message || "Send failed. Please try again in a moment.");
     } finally {
-      // allow another send after short beat (prevents double-click spam)
       setTimeout(() => {
         setSubmitState((s) => (s === "sending" ? "idle" : s));
       }, 400);
@@ -119,19 +122,31 @@ export default function ContactForm() {
         {/* Header */}
         <div className="mb-6">
           <h3 className="text-[20px] md:text-[22px] font-semibold tracking-tight text-white">
-            Wyślij zapytanie
+            Send an inquiry
           </h3>
           <p className="mt-2 text-[14px] md:text-[15px] leading-relaxed text-white/70">
-            Napisz co budujemy, a ja wrócę z planem, terminem i wyceną.
+            Tell me what you’re building — I’ll reply with a plan, timeline, and quote.
           </p>
         </div>
 
-        {/* Honeypot (hidden) */}
-        <div className="hidden">
-          <label className="text-white">Company size</label>
+        {/* Honeypot (visually hidden but still in DOM) */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            left: "-9999px",
+            top: "-9999px",
+            width: 1,
+            height: 1,
+            overflow: "hidden",
+            opacity: 0,
+            pointerEvents: "none",
+          }}
+        >
+          <label>Leave this field empty</label>
           <input
-            value={form.company_size}
-            onChange={(e) => update("company_size", e.target.value)}
+            value={form.hp}
+            onChange={(e) => update("hp", e.target.value)}
             autoComplete="off"
             tabIndex={-1}
           />
@@ -140,7 +155,15 @@ export default function ContactForm() {
         {/* Fields grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Field
-            label="Imię"
+            label="Company size (optional)"
+            value={form.company_size}
+            onChange={(v) => update("company_size", v)}
+            placeholder="e.g. 1–10"
+            autoComplete="organization"
+          />
+
+          <Field
+            label="Name"
             value={form.name}
             onChange={(v) => update("name", v)}
             placeholder="Bartek"
@@ -149,7 +172,7 @@ export default function ContactForm() {
           />
 
           <Field
-            label="E-mail"
+            label="Email"
             value={form.email}
             onChange={(v) => update("email", v)}
             placeholder="you@company.com"
@@ -159,58 +182,59 @@ export default function ContactForm() {
           />
 
           <Field
-            label="Firma"
+            label="Company (optional)"
             value={form.company}
             onChange={(v) => update("company", v)}
-            placeholder="Kersivo / Twoja firma"
+            placeholder="Kersivo / Your company"
             autoComplete="organization"
           />
 
           <Field
-            label="Website"
+            label="Website (optional)"
             value={form.website}
             onChange={(v) => update("website", v)}
             placeholder="https://..."
             autoComplete="url"
           />
+
+          {/* keep grid symmetry */}
+          <div className="hidden md:block" />
         </div>
 
         {/* Budget */}
         <div className="mt-4">
           <label className="mb-2 block text-[13px] font-medium text-white/80">
-            Budżet
+            Budget (optional)
           </label>
-          <div className="relative">
-            <select
-              value={form.budget}
-              onChange={(e) => update("budget", e.target.value)}
-              className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-[14px] text-white/90 outline-none transition focus:border-white/25 focus:bg-black/40"
-            >
-              <option value="">Wybierz (opcjonalnie)</option>
-              <option value="under-1k">Poniżej £1k</option>
-              <option value="1k-3k">£1k – £3k</option>
-              <option value="3k-7k">£3k – £7k</option>
-              <option value="7k-15k">£7k – £15k</option>
-              <option value="15k+">£15k+</option>
-            </select>
-          </div>
+          <select
+            value={form.budget}
+            onChange={(e) => update("budget", e.target.value)}
+            className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-[14px] text-white/90 outline-none transition focus:border-white/25 focus:bg-black/40"
+          >
+            <option value="">Select</option>
+            <option value="under-1k">Under £1k</option>
+            <option value="1k-3k">£1k – £3k</option>
+            <option value="3k-7k">£3k – £7k</option>
+            <option value="7k-15k">£7k – £15k</option>
+            <option value="15k+">£15k+</option>
+          </select>
         </div>
 
         {/* Message */}
         <div className="mt-4">
           <label className="mb-2 block text-[13px] font-medium text-white/80">
-            Wiadomość
+            Message
           </label>
           <textarea
             value={form.message}
             onChange={(e) => update("message", e.target.value)}
-            placeholder="Co potrzebujesz? Jakie cele? Deadline? Linki / inspiracje?"
+            placeholder="What do you need? Goals? Deadline? Links / inspiration?"
             rows={6}
             required
             className="w-full resize-none rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-[14px] text-white/90 outline-none transition focus:border-white/25 focus:bg-black/40"
           />
           <div className="mt-2 text-[12px] text-white/50">
-            Min. 10 znaków. Im konkretniej, tym szybciej odpiszę.
+            Min. 10 characters. The clearer you are, the faster I reply.
           </div>
         </div>
 
@@ -231,7 +255,7 @@ export default function ContactForm() {
         {/* CTA */}
         <div className="mt-6 flex items-center justify-between gap-4">
           <div className="text-[12px] text-white/50">
-            Wysyłka idzie prosto na <span className="text-white/70">hello@kersivo.co.uk</span>
+            Sent directly to <span className="text-white/70">hello@kersivo.co.uk</span>
           </div>
 
           <button
@@ -245,12 +269,8 @@ export default function ContactForm() {
               "shadow-[0_12px_40px_rgba(0,0,0,0.45)]",
             ].join(" ")}
           >
-            <span className="mr-2">
-              {isSending ? "Wysyłam…" : "Wyślij"}
-            </span>
+            <span className="mr-2">{isSending ? "Sending…" : "Send"}</span>
             <span className="opacity-70 group-hover:opacity-100 transition">→</span>
-
-            {/* subtle glow */}
             <span className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition bg-[radial-gradient(circle_at_30%_20%,rgba(168,85,247,0.22),transparent_55%)]" />
           </button>
         </div>
