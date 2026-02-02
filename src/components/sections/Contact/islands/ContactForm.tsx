@@ -1,11 +1,19 @@
 import React, { useMemo, useRef, useState } from "react";
 
 type Props = {
-  emailTo?: string; // zostawiam dla kompatybilności z Contact.astro, nie musisz używać
+  emailTo?: string; // kompatybilność z Contact.astro
 };
 
 const SERVICES = ["Website", "Brand + UI", "E-commerce", "Ongoing"] as const;
 const BUDGETS = ["Under £2k", "£2k–£5k", "£5k+"] as const;
+
+const MAX_FILE_MB = 5;
+const ALLOWED_MIME = new Set([
+  "application/pdf",
+  "image/png",
+  "image/jpeg",
+  "image/webp",
+]);
 
 export default function ContactForm(_props: Props) {
   const startedAtRef = useRef<number>(Date.now());
@@ -17,7 +25,7 @@ export default function ContactForm(_props: Props) {
   const [email, setEmail] = useState("");
   const [details, setDetails] = useState("");
 
-  // Upload (UI-only — backend nie obsługuje plików w tym endpointcie)
+  const [file, setFile] = useState<File | null>(null);
   const [fileName, setFileName] = useState<string>("");
 
   // Bot trap
@@ -34,6 +42,19 @@ export default function ContactForm(_props: Props) {
     return okName && okEmail && okDetails && !isSubmitting;
   }, [name, email, details, isSubmitting]);
 
+  function validateFile(f: File | null) {
+    if (!f) return { ok: true, msg: "" };
+
+    const sizeMb = f.size / (1024 * 1024);
+    if (sizeMb > MAX_FILE_MB) {
+      return { ok: false, msg: `File too big. Max ${MAX_FILE_MB}MB.` };
+    }
+    if (f.type && !ALLOWED_MIME.has(f.type)) {
+      return { ok: false, msg: "Unsupported file type. Use PDF / PNG / JPG / WebP." };
+    }
+    return { ok: true, msg: "" };
+  }
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (isSubmitting) return;
@@ -41,39 +62,36 @@ export default function ContactForm(_props: Props) {
     setStatus("idle");
     setErrorMsg("");
 
-    // Ultra-prosty timing check (opcjonalny): boty często “klikają” natychmiast.
+    // Timing bait — boty klikają “instant”
     const elapsed = Date.now() - startedAtRef.current;
     if (elapsed < 900) {
-      // Udajemy, że się udało, żeby bot nie próbował dalej
       setStatus("ok");
+      return;
+    }
+
+    const vf = validateFile(file);
+    if (!vf.ok) {
+      setStatus("error");
+      setErrorMsg(vf.msg);
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      const message = [
-        `Service: ${service}`,
-        `Budget: ${budget}`,
-        fileName ? `Attachment (selected): ${fileName}` : "",
-        "",
-        details.trim(),
-      ]
-        .filter(Boolean)
-        .join("\n");
+      const fd = new FormData();
+      fd.set("name", name.trim());
+      fd.set("email", email.trim());
+      fd.set("service", service);
+      fd.set("budget", budget);
+      fd.set("details", details.trim());
+      fd.set("hp", hp); // musi być puste
+      fd.set("startedAt", String(startedAtRef.current)); // backend zrobi sanity-check
+      if (file) fd.set("attachment", file, file.name);
 
       const res = await fetch("/api/contact", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: name.trim(),
-          email: email.trim(),
-          message,
-          company: "",  // nie pokazujemy w UI — ale backend przyjmie pusty string
-          website: "",  // jw.
-          budget,       // idzie osobno (ładnie w mailu)
-          hp,           // honeypot — musi być pusty
-        }),
+        body: fd, // UWAGA: nie ustawiamy Content-Type ręcznie
       });
 
       const data = await res.json().catch(() => ({}));
@@ -86,6 +104,7 @@ export default function ContactForm(_props: Props) {
       setName("");
       setEmail("");
       setDetails("");
+      setFile(null);
       setFileName("");
       setHp("");
       startedAtRef.current = Date.now();
@@ -99,7 +118,7 @@ export default function ContactForm(_props: Props) {
 
   return (
     <form className="k-cform" onSubmit={onSubmit} noValidate>
-      {/* Honeypot (ukryte pole na boty) */}
+      {/* Honeypot */}
       <div style={{ position: "absolute", left: "-9999px", width: 1, height: 1, overflow: "hidden" }}>
         <label>
           Do not fill this field
@@ -150,7 +169,7 @@ export default function ContactForm(_props: Props) {
         </div>
       </div>
 
-      {/* ROW: FULL NAME + EMAIL */}
+      {/* ROW */}
       <div className="k-cform__row">
         <div className="k-uline">
           <label className="k-uline__label" htmlFor="fullName">
@@ -186,7 +205,7 @@ export default function ContactForm(_props: Props) {
         </div>
       </div>
 
-      {/* PROJECT DETAILS */}
+      {/* DETAILS */}
       <div className="k-cform__group">
         <div className="k-uline">
           <label className="k-uline__label" htmlFor="details">
@@ -204,16 +223,20 @@ export default function ContactForm(_props: Props) {
         </div>
       </div>
 
-      {/* UPLOAD (UI-only) */}
+      {/* UPLOAD */}
       <div className="k-cform__group">
-        <div className="k-cform__label">ATTACH A FILE <span style={{ opacity: 0.7 }}>(optional)</span></div>
+        <div className="k-cform__label">
+          ATTACH A FILE <span style={{ opacity: 0.7 }}>(optional)</span>
+        </div>
 
         <label className="k-upload">
           <input
             type="file"
             style={{ display: "none" }}
+            accept=".pdf,.png,.jpg,.jpeg,.webp"
             onChange={(e) => {
-              const f = e.target.files?.[0];
+              const f = e.target.files?.[0] || null;
+              setFile(f);
               setFileName(f?.name || "");
             }}
           />
@@ -222,7 +245,7 @@ export default function ContactForm(_props: Props) {
               {fileName ? `Selected: ${fileName}` : "Choose a file or drag and drop here"}
             </div>
             <div className="k-upload__hint">
-              Tip: include a PDF brief, screenshots, or a sitemap.
+              Tip: include a PDF brief, screenshots, or a sitemap. (Max {MAX_FILE_MB}MB)
             </div>
           </div>
         </label>
@@ -233,12 +256,7 @@ export default function ContactForm(_props: Props) {
         <span className="k-submit__text">{isSubmitting ? "Sending…" : "Submit inquiry"}</span>
         <span className="k-submit__icon" aria-hidden="true">
           <svg viewBox="0 0 20 20" fill="none">
-            <path
-              d="M4.5 10h9.2"
-              stroke="currentColor"
-              strokeWidth="1.6"
-              strokeLinecap="round"
-            />
+            <path d="M4.5 10h9.2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
             <path
               d="M11.2 6.8 14.5 10l-3.3 3.2"
               stroke="currentColor"
@@ -250,7 +268,7 @@ export default function ContactForm(_props: Props) {
         </span>
       </button>
 
-      {/* FOOT NOTE */}
+      {/* FOOT */}
       <div className="k-cform__foot">
         {status === "ok" ? (
           <span>Sent. Clean and simple — we’ll reply soon.</span>
@@ -259,7 +277,10 @@ export default function ContactForm(_props: Props) {
             {errorMsg || "Couldn’t send. Try again."}
           </span>
         ) : (
-          <span>No spam. Just a clean reply. If you prefer: email us directly at <a href="mailto:hello@kersivo.co.uk">hello@kersivo.co.uk</a>.</span>
+          <span>
+            No spam. Just a clean reply. If you prefer: email us directly at{" "}
+            <a href="mailto:hello@kersivo.co.uk">hello@kersivo.co.uk</a>.
+          </span>
         )}
       </div>
     </form>

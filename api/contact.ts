@@ -1,219 +1,227 @@
-import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+type Json = Record<string, any>;
 
-/**
- * --- Anti-bot / anti-spam knobs ---
- */
-const ALLOWED_ORIGINS = new Set([
-  "https://kersivo.co.uk",
-  "https://www.kersivo.co.uk",
-  // opcjonalnie zostaw, jeśli testujesz na vercel preview:
-  "https://kersivo.vercel.app",
+function json(status: number, body: Json) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json; charset=utf-8" },
+  });
+}
+
+function getIp(req: Request) {
+  const xf = req.headers.get("x-forwarded-for");
+  if (xf) return xf.split(",")[0].trim();
+  return "unknown";
+}
+
+function isEmail(s: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
+}
+
+const MAX_FILE_BYTES = 5 * 1024 * 1024; // 5MB
+const ALLOWED_MIME = new Set([
+  "application/pdf",
+  "image/png",
+  "image/jpeg",
+  "image/webp",
 ]);
 
-const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000; // 10 min
-const RATE_LIMIT_MAX_IN_WINDOW = 6; // max 6 requestów / 10 min / IP
+// ultra-prosty rate limit (best-effort, serverless = nie gwarantuje 100% trwałości)
+const bucket = new Map<string, { c: number; reset: number }>();
+function rateLimit(ip: string, limit = 10, windowMs = 10 * 60 * 1000) {
+  const now = Date.now();
+  const cur = bucket.get(ip);
+  if (!cur || now > cur.reset) {
+    bucket.set(ip, { c: 1, reset: now + windowMs });
+    return { ok: true };
+  }
+  if (cur.c >= limit) return { ok: false };
+  cur.c += 1;
+  bucket.set(ip, cur);
+  return { ok: true };
+}
 
-// prościutki in-memory limiter (działa per instancja serverless)
-const ipHits = new Map<string, number[]>();
+function base64FromArrayBuffer(buf: ArrayBuffer) {
+  const bytes = new Uint8Array(buf);
+  let binary = "";
+  const chunk = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunk) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+  }
+  // btoa jest dostępne w runtime (Vercel)
+  return btoa(binary);
+}
 
-function escapeHtml(input: string) {
-  return input
+export default async function handler(req: Request): Promise<Response> {
+  if (req.method !== "POST") return json(405, { ok: false, error: "Method not allowed" });
+
+  const ip = getIp(req);
+
+  // rate limit
+  const rl = rateLimit(ip);
+  if (!rl.ok) return json(429, { ok: false, error: "Too many requests. Try again later." });
+
+  // origin sanity-check (nie jest kuloodporne, ale tnie śmieci)
+  const origin = req.headers.get("origin") || "";
+  if (origin && !origin.includes("kersivo.co.uk") && !origin.includes("vercel.app")) {
+    return json(403, { ok: false, error: "Forbidden origin" });
+  }
+
+  const ct = (req.headers.get("content-type") || "").toLowerCase();
+
+  let name = "";
+  let email = "";
+  let service = "";
+  let budget = "";
+  let details = "";
+  let hp = "";
+  let startedAt = "";
+
+  let attachment: { filename: string; content: string; content_type?: string } | null = null;
+
+  try {
+    if (ct.includes("multipart/form-data")) {
+      const fd = await req.formData();
+
+      name = String(fd.get("name") || "");
+      email = String(fd.get("email") || "");
+      service = String(fd.get("service") || "");
+      budget = String(fd.get("budget") || "");
+      details = String(fd.get("details") || "");
+      hp = String(fd.get("hp") || "");
+      startedAt = String(fd.get("startedAt") || "");
+
+      const f = fd.get("attachment");
+      if (f && typeof f !== "string") {
+        const file = f as File;
+
+        if (file.size > MAX_FILE_BYTES) {
+          return json(400, { ok: false, error: "Attachment too large (max 5MB)." });
+        }
+        if (file.type && !ALLOWED_MIME.has(file.type)) {
+          return json(400, { ok: false, error: "Unsupported attachment type." });
+        }
+
+        const buf = await file.arrayBuffer();
+        const b64 = base64FromArrayBuffer(buf);
+        attachment = {
+          filename: file.name || "attachment",
+          content: b64,
+          content_type: file.type || undefined,
+        };
+      }
+    } else {
+      // fallback JSON (jakbyś testował curl/json)
+      const body = (await req.json().catch(() => ({}))) as Json;
+
+      name = String(body.name || "");
+      email = String(body.email || "");
+      service = String(body.service || "");
+      budget = String(body.budget || "");
+      details = String(body.details || body.message || "");
+      hp = String(body.hp || "");
+      startedAt = String(body.startedAt || "");
+    }
+  } catch {
+    return json(400, { ok: false, error: "Invalid request body." });
+  }
+
+  // honeypot
+  if (hp && hp.trim().length > 0) {
+    // udajemy sukces — bot idzie dalej spać
+    return json(200, { ok: true, id: "ok" });
+  }
+
+  // timing sanity-check
+  if (startedAt) {
+    const t = Number(startedAt);
+    if (Number.isFinite(t)) {
+      const elapsed = Date.now() - t;
+      if (elapsed < 900) return json(200, { ok: true, id: "ok" });
+    }
+  }
+
+  name = name.trim();
+  email = email.trim();
+  details = details.trim();
+
+  if (name.length < 2) return json(400, { ok: false, error: "Name is required." });
+  if (!isEmail(email)) return json(400, { ok: false, error: "Valid email is required." });
+  if (details.length < 10) return json(400, { ok: false, error: "Message is too short." });
+
+  const resendKey = process.env.RESEND_API_KEY;
+  if (!resendKey) return json(500, { ok: false, error: "Missing RESEND_API_KEY." });
+
+  const to = process.env.CONTACT_TO || "hello@kersivo.co.uk";
+  const from = process.env.CONTACT_FROM || "Kersivo <hello@kersivo.co.uk>";
+
+  const subject = `New lead — ${name}`;
+
+  const lines = [
+    `Name: ${name}`,
+    `Email: ${email}`,
+    service ? `Service: ${service}` : "",
+    budget ? `Budget: ${budget}` : "",
+    "",
+    "Message:",
+    details,
+    "",
+    `IP: ${ip}`,
+  ].filter(Boolean);
+
+  const text = lines.join("\n");
+
+  const html = `
+    <div style="font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; line-height:1.5;">
+      <h2 style="margin:0 0 14px;">New contact form lead</h2>
+      <p style="margin:0 0 6px;"><b>Name:</b> ${escapeHtml(name)}</p>
+      <p style="margin:0 0 6px;"><b>Email:</b> <a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></p>
+      ${budget ? `<p style="margin:0 0 6px;"><b>Budget:</b> ${escapeHtml(budget)}</p>` : ""}
+      <div style="margin-top:14px;">
+        <b>Message:</b>
+        <pre style="white-space:pre-wrap; background:rgba(0,0,0,.04); padding:12px; border-radius:10px;">${escapeHtml(
+          service ? `Service: ${service}\nBudget: ${budget || "-"}\n\n${details}` : details
+        )}</pre>
+      </div>
+      <p style="margin:10px 0 0; opacity:.7; font-size:12px;">IP: ${escapeHtml(ip)}</p>
+    </div>
+  `;
+
+  const resend = new Resend(resendKey);
+
+  try {
+    const result = await resend.emails.send({
+      from,
+      to,
+      subject,
+      reply_to: email,
+      text,
+      html,
+      ...(attachment
+        ? {
+            attachments: [
+              {
+                filename: attachment.filename,
+                content: attachment.content, // base64
+                content_type: attachment.content_type,
+              },
+            ],
+          }
+        : {}),
+    });
+
+    return json(200, { ok: true, id: (result as any)?.data?.id || (result as any)?.id || "ok" });
+  } catch (e: any) {
+    return json(500, { ok: false, error: e?.message || "Email send failed." });
+  }
+}
+
+function escapeHtml(s: string) {
+  return s
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-function getIp(req: VercelRequest) {
-  const xf = (req.headers["x-forwarded-for"] as string | undefined) ?? "";
-  const first = xf.split(",")[0]?.trim();
-  return first || req.socket?.remoteAddress || "unknown";
-}
-
-function isAllowedOrigin(req: VercelRequest) {
-  const origin = (req.headers.origin as string | undefined) ?? "";
-  if (origin && ALLOWED_ORIGINS.has(origin)) return true;
-
-  // fallback: czasem brak Origin, więc sprawdzamy Referer
-  const referer = (req.headers.referer as string | undefined) ?? "";
-  if (!referer) return false;
-
-  try {
-    const refOrigin = new URL(referer).origin;
-    return ALLOWED_ORIGINS.has(refOrigin);
-  } catch {
-    return false;
-  }
-}
-
-function rateLimitOk(ip: string) {
-  const now = Date.now();
-  const arr = ipHits.get(ip) ?? [];
-  const fresh = arr.filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
-  fresh.push(now);
-  ipHits.set(ip, fresh);
-
-  // sprzątanie mapy (żeby nie puchła)
-  if (ipHits.size > 5000) {
-    for (const [k, v] of ipHits.entries()) {
-      if (v.every((t) => now - t >= RATE_LIMIT_WINDOW_MS)) ipHits.delete(k);
-    }
-  }
-
-  return fresh.length <= RATE_LIMIT_MAX_IN_WINDOW;
-}
-
-function looksSpammy(message: string) {
-  const msg = message.toLowerCase();
-
-  // za dużo linków = często spam
-  const urlCount = (msg.match(/https?:\/\/|www\./g) || []).length;
-  if (urlCount >= 2) return true;
-
-  // klasyczne spam-frazy
-  const bad = [
-    "seo",
-    "backlinks",
-    "guest post",
-    "casino",
-    "crypto",
-    "forex",
-    "viagra",
-    "loan",
-    "we can rank your website",
-    "traffic to your site",
-    "whatsapp",
-    "telegram",
-  ];
-  if (bad.some((k) => msg.includes(k))) return true;
-
-  return false;
-}
-
-function isValidEmail(email: string) {
-  // prosty, praktyczny regex (nie “RFC full”, ale działa)
-  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i.test(email);
-}
-
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // CORS / preflight
-  if (req.method === "OPTIONS") {
-    res.setHeader("Access-Control-Allow-Origin", "https://kersivo.co.uk");
-    res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-    return res.status(204).end();
-  }
-
-  if (req.method !== "POST") {
-    return res.status(405).json({ ok: false, error: "Method not allowed" });
-  }
-
-  // blokada requestów spoza strony
-  if (!isAllowedOrigin(req)) {
-    return res.status(403).json({ ok: false, error: "Forbidden" });
-  }
-
-  // content-type check (boty często walą byle czym)
-  const ct = (req.headers["content-type"] as string | undefined) ?? "";
-  if (!ct.includes("application/json")) {
-    return res.status(415).json({ ok: false, error: "Unsupported content type" });
-  }
-
-  const ip = getIp(req);
-  if (!rateLimitOk(ip)) {
-    return res.status(429).json({ ok: false, error: "Too many requests" });
-  }
-
-  try {
-    const { name, email, message, company, website, budget, company_size, hp } = (req.body ?? {}) as Record<
-      string,
-      any
-    >;
-
-    // Honeypot: jeśli uzupełnione → bot. Udaj sukces.
-    if (typeof hp === "string" && hp.trim().length > 0) {
-      return res.status(200).json({ ok: true });
-    }
-
-    // Walidacja twarda
-    if (typeof name !== "string" || name.trim().length < 2 || name.trim().length > 80) {
-      return res.status(400).json({ ok: false, error: "Name is invalid" });
-    }
-
-    if (typeof email !== "string" || !isValidEmail(email.trim()) || email.trim().length > 120) {
-      return res.status(400).json({ ok: false, error: "Email is invalid" });
-    }
-
-    if (typeof message !== "string") {
-      return res.status(400).json({ ok: false, error: "Message is required" });
-    }
-
-    const msg = message.trim();
-    if (msg.length < 10 || msg.length > 2000) {
-      return res.status(400).json({ ok: false, error: "Message length is invalid" });
-    }
-
-    if (looksSpammy(msg)) {
-      // nie zdradzaj botom, że zostały złapane
-      return res.status(200).json({ ok: true });
-    }
-
-    // Sanitizacja
-    const safe = {
-      name: escapeHtml(name.trim()),
-      email: escapeHtml(email.trim()),
-      message: escapeHtml(msg),
-      company: typeof company === "string" ? escapeHtml(company.trim()).slice(0, 120) : "",
-      website: typeof website === "string" ? escapeHtml(website.trim()).slice(0, 200) : "",
-      budget: typeof budget === "string" ? escapeHtml(budget.trim()).slice(0, 80) : "",
-      company_size: typeof company_size === "string" ? escapeHtml(company_size.trim()).slice(0, 80) : "",
-      ip: escapeHtml(String(ip)),
-    };
-
-    // Resend config
-    const to = process.env.CONTACT_TO || "hello@kersivo.co.uk";
-    const from = process.env.CONTACT_FROM || "Kersivo <hello@kersivo.co.uk>";
-
-    const subject = `New lead — ${safe.name}${safe.company ? ` (${safe.company})` : ""}`;
-
-    const html = `
-      <div style="font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;line-height:1.55">
-        <h2 style="margin:0 0 12px 0;">New contact form lead</h2>
-
-        <p style="margin:0 0 8px 0;"><strong>Name:</strong> ${safe.name}</p>
-        <p style="margin:0 0 8px 0;"><strong>Email:</strong> ${safe.email}</p>
-        ${safe.company ? `<p style="margin:0 0 8px 0;"><strong>Company:</strong> ${safe.company}</p>` : ""}
-        ${safe.website ? `<p style="margin:0 0 8px 0;"><strong>Website:</strong> ${safe.website}</p>` : ""}
-        ${safe.budget ? `<p style="margin:0 0 8px 0;"><strong>Budget:</strong> ${safe.budget}</p>` : ""}
-        ${safe.company_size ? `<p style="margin:0 0 8px 0;"><strong>Company size:</strong> ${safe.company_size}</p>` : ""}
-
-        <hr style="border:none;border-top:1px solid #e7e7e7;margin:16px 0;" />
-
-        <p style="white-space:pre-wrap;margin:0;"><strong>Message:</strong><br/>${safe.message}</p>
-
-        <hr style="border:none;border-top:1px dashed #eee;margin:16px 0;" />
-        <p style="margin:0;color:#777;font-size:12px;">IP: ${safe.ip}</p>
-      </div>
-    `;
-
-    const { data, error } = await resend.emails.send({
-      from,
-      to,
-      subject,
-      html,
-      replyTo: safe.email, // odpisujesz bezpośrednio do leada
-    });
-
-    if (error) {
-      return res.status(500).json({ ok: false, error: error.message });
-    }
-
-    return res.status(200).json({ ok: true, id: data?.id });
-  } catch {
-    return res.status(500).json({ ok: false, error: "Server error" });
-  }
+    .replaceAll("'", "&#39;");
 }
