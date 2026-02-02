@@ -1,307 +1,267 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 
-type FormState = {
-  company_size: string; // real field (optional)
-  name: string;
-  email: string;
-  company: string;
-  website: string;
-  budget: string;
-  message: string;
-
-  // Honeypot (anti-spam) — MUST stay empty
-  hp: string;
+type Props = {
+  emailTo?: string; // zostawiam dla kompatybilności z Contact.astro, nie musisz używać
 };
 
-type SubmitState = "idle" | "sending" | "success" | "error";
+const SERVICES = ["Website", "Brand + UI", "E-commerce", "Ongoing"] as const;
+const BUDGETS = ["Under £2k", "£2k–£5k", "£5k+"] as const;
 
-export default function ContactForm() {
-  const [form, setForm] = useState<FormState>({
-    company_size: "",
-    name: "",
-    email: "",
-    company: "",
-    website: "",
-    budget: "",
-    message: "",
-    hp: "",
-  });
+export default function ContactForm(_props: Props) {
+  const startedAtRef = useRef<number>(Date.now());
 
-  const [submitState, setSubmitState] = useState<SubmitState>("idle");
+  const [service, setService] = useState<(typeof SERVICES)[number]>("Website");
+  const [budget, setBudget] = useState<(typeof BUDGETS)[number]>("Under £2k");
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [details, setDetails] = useState("");
+
+  // Upload (UI-only — backend nie obsługuje plików w tym endpointcie)
+  const [fileName, setFileName] = useState<string>("");
+
+  // Bot trap
+  const [hp, setHp] = useState("");
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [status, setStatus] = useState<"idle" | "ok" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState<string>("");
-  const [successMsg, setSuccessMsg] = useState<string>("");
-
-  const isSending = submitState === "sending";
 
   const canSubmit = useMemo(() => {
-    const nameOk = form.name.trim().length >= 2;
-    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim());
-    const messageOk = form.message.trim().length >= 10;
-
-    // honeypot must be empty
-    const honeypotOk = form.hp.trim().length === 0;
-
-    return nameOk && emailOk && messageOk && honeypotOk && !isSending;
-  }, [form, isSending]);
-
-  function update<K extends keyof FormState>(key: K, value: FormState[K]) {
-    setForm((prev) => ({ ...prev, [key]: value }));
-  }
+    const okName = name.trim().length >= 2;
+    const okEmail = email.trim().includes("@");
+    const okDetails = details.trim().length >= 10;
+    return okName && okEmail && okDetails && !isSubmitting;
+  }, [name, email, details, isSubmitting]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setErrorMsg("");
-    setSuccessMsg("");
+    if (isSubmitting) return;
 
-    if (!canSubmit) {
-      setSubmitState("error");
-      setErrorMsg("Please fill in your name, email, and a message (min. 10 characters).");
+    setStatus("idle");
+    setErrorMsg("");
+
+    // Ultra-prosty timing check (opcjonalny): boty często “klikają” natychmiast.
+    const elapsed = Date.now() - startedAtRef.current;
+    if (elapsed < 900) {
+      // Udajemy, że się udało, żeby bot nie próbował dalej
+      setStatus("ok");
       return;
     }
 
-    setSubmitState("sending");
+    setIsSubmitting(true);
 
     try {
+      const message = [
+        `Service: ${service}`,
+        `Budget: ${budget}`,
+        fileName ? `Attachment (selected): ${fileName}` : "",
+        "",
+        details.trim(),
+      ]
+        .filter(Boolean)
+        .join("\n");
+
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: form.name.trim(),
-          email: form.email.trim(),
-          company: form.company.trim(),
-          website: form.website.trim(),
-          budget: form.budget.trim(),
-          company_size: form.company_size.trim(),
-          message: form.message.trim(),
-
-          // honeypot
-          hp: form.hp.trim(),
-
-          source: "kersivo.co.uk/contact",
+          name: name.trim(),
+          email: email.trim(),
+          message,
+          company: "",  // nie pokazujemy w UI — ale backend przyjmie pusty string
+          website: "",  // jw.
+          budget,       // idzie osobno (ładnie w mailu)
+          hp,           // honeypot — musi być pusty
         }),
       });
 
-      const data = (await res.json().catch(() => ({}))) as {
-        ok?: boolean;
-        error?: string;
-      };
+      const data = await res.json().catch(() => ({}));
 
-      if (!res.ok || !data.ok) {
+      if (!res.ok || data?.ok === false) {
         throw new Error(data?.error || "Something went wrong. Please try again.");
       }
 
-      setSubmitState("success");
-      setSuccessMsg("✅ Sent. I’ll get back to you soon.");
-
-      setForm({
-        company_size: "",
-        name: "",
-        email: "",
-        company: "",
-        website: "",
-        budget: "",
-        message: "",
-        hp: "",
-      });
+      setStatus("ok");
+      setName("");
+      setEmail("");
+      setDetails("");
+      setFileName("");
+      setHp("");
+      startedAtRef.current = Date.now();
     } catch (err: any) {
-      setSubmitState("error");
-      setErrorMsg(err?.message || "Send failed. Please try again in a moment.");
+      setStatus("error");
+      setErrorMsg(err?.message || "Something went wrong. Please try again.");
     } finally {
-      setTimeout(() => {
-        setSubmitState((s) => (s === "sending" ? "idle" : s));
-      }, 400);
+      setIsSubmitting(false);
     }
   }
 
   return (
-    <div className="w-full">
-      <form
-        onSubmit={onSubmit}
-        className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 md:p-8 shadow-[0_0_0_1px_rgba(255,255,255,0.02),0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl"
-      >
-        {/* Header */}
-        <div className="mb-6">
-          <h3 className="text-[20px] md:text-[22px] font-semibold tracking-tight text-white">
-            Send an inquiry
-          </h3>
-          <p className="mt-2 text-[14px] md:text-[15px] leading-relaxed text-white/70">
-            Tell me what you’re building — I’ll reply with a plan, timeline, and quote.
-          </p>
-        </div>
-
-        {/* Honeypot (visually hidden but still in DOM) */}
-        <div
-          aria-hidden="true"
-          style={{
-            position: "absolute",
-            left: "-9999px",
-            top: "-9999px",
-            width: 1,
-            height: 1,
-            overflow: "hidden",
-            opacity: 0,
-            pointerEvents: "none",
-          }}
-        >
-          <label>Leave this field empty</label>
+    <form className="k-cform" onSubmit={onSubmit} noValidate>
+      {/* Honeypot (ukryte pole na boty) */}
+      <div style={{ position: "absolute", left: "-9999px", width: 1, height: 1, overflow: "hidden" }}>
+        <label>
+          Do not fill this field
           <input
-            value={form.hp}
-            onChange={(e) => update("hp", e.target.value)}
+            type="text"
+            name="hp"
             autoComplete="off"
             tabIndex={-1}
+            value={hp}
+            onChange={(e) => setHp(e.target.value)}
           />
+        </label>
+      </div>
+
+      {/* SERVICE */}
+      <div className="k-cform__group">
+        <div className="k-cform__label">SERVICE</div>
+        <div className="k-cform__chips" role="tablist" aria-label="Service">
+          {SERVICES.map((s) => (
+            <button
+              key={s}
+              type="button"
+              className={`k-cchip ${service === s ? "is-active" : ""}`}
+              onClick={() => setService(s)}
+              aria-pressed={service === s}
+            >
+              {s}
+            </button>
+          ))}
         </div>
+      </div>
 
-        {/* Fields grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Field
-            label="Company size (optional)"
-            value={form.company_size}
-            onChange={(v) => update("company_size", v)}
-            placeholder="e.g. 1–10"
-            autoComplete="organization"
-          />
-
-          <Field
-            label="Name"
-            value={form.name}
-            onChange={(v) => update("name", v)}
-            placeholder="Bartek"
-            autoComplete="name"
-            required
-          />
-
-          <Field
-            label="Email"
-            value={form.email}
-            onChange={(v) => update("email", v)}
-            placeholder="you@company.com"
-            autoComplete="email"
-            type="email"
-            required
-          />
-
-          <Field
-            label="Company (optional)"
-            value={form.company}
-            onChange={(v) => update("company", v)}
-            placeholder="Kersivo / Your company"
-            autoComplete="organization"
-          />
-
-          <Field
-            label="Website (optional)"
-            value={form.website}
-            onChange={(v) => update("website", v)}
-            placeholder="https://..."
-            autoComplete="url"
-          />
-
-          {/* keep grid symmetry */}
-          <div className="hidden md:block" />
+      {/* BUDGET */}
+      <div className="k-cform__group">
+        <div className="k-cform__label">BUDGET</div>
+        <div className="k-cform__chips" role="tablist" aria-label="Budget">
+          {BUDGETS.map((b) => (
+            <button
+              key={b}
+              type="button"
+              className={`k-cchip ${budget === b ? "is-active" : ""}`}
+              onClick={() => setBudget(b)}
+              aria-pressed={budget === b}
+            >
+              {b}
+            </button>
+          ))}
         </div>
+      </div>
 
-        {/* Budget */}
-        <div className="mt-4">
-          <label className="mb-2 block text-[13px] font-medium text-white/80">
-            Budget (optional)
+      {/* ROW: FULL NAME + EMAIL */}
+      <div className="k-cform__row">
+        <div className="k-uline">
+          <label className="k-uline__label" htmlFor="fullName">
+            FULL NAME <span aria-hidden="true">*</span>
           </label>
-          <select
-            value={form.budget}
-            onChange={(e) => update("budget", e.target.value)}
-            className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-[14px] text-white/90 outline-none transition focus:border-white/25 focus:bg-black/40"
-          >
-            <option value="">Select</option>
-            <option value="under-1k">Under £1k</option>
-            <option value="1k-3k">£1k – £3k</option>
-            <option value="3k-7k">£3k – £7k</option>
-            <option value="7k-15k">£7k – £15k</option>
-            <option value="15k+">£15k+</option>
-          </select>
+          <input
+            id="fullName"
+            className="k-uline__input"
+            type="text"
+            placeholder=""
+            autoComplete="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            minLength={2}
+          />
         </div>
 
-        {/* Message */}
-        <div className="mt-4">
-          <label className="mb-2 block text-[13px] font-medium text-white/80">
-            Message
+        <div className="k-uline">
+          <label className="k-uline__label" htmlFor="email">
+            EMAIL <span aria-hidden="true">*</span>
+          </label>
+          <input
+            id="email"
+            className="k-uline__input"
+            type="email"
+            placeholder=""
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+      </div>
+
+      {/* PROJECT DETAILS */}
+      <div className="k-cform__group">
+        <div className="k-uline">
+          <label className="k-uline__label" htmlFor="details">
+            PROJECT DETAILS <span aria-hidden="true">*</span>
           </label>
           <textarea
-            value={form.message}
-            onChange={(e) => update("message", e.target.value)}
-            placeholder="What do you need? Goals? Deadline? Links / inspiration?"
-            rows={6}
+            id="details"
+            className="k-uline__textarea"
+            placeholder=""
+            value={details}
+            onChange={(e) => setDetails(e.target.value)}
             required
-            className="w-full resize-none rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-[14px] text-white/90 outline-none transition focus:border-white/25 focus:bg-black/40"
+            minLength={10}
           />
-          <div className="mt-2 text-[12px] text-white/50">
-            Min. 10 characters. The clearer you are, the faster I reply.
-          </div>
         </div>
+      </div>
 
-        {/* Status */}
-        {(submitState === "error" || submitState === "success") && (
-          <div
-            className={[
-              "mt-4 rounded-2xl border px-4 py-3 text-[13px]",
-              submitState === "success"
-                ? "border-emerald-500/25 bg-emerald-500/10 text-emerald-200"
-                : "border-rose-500/25 bg-rose-500/10 text-rose-200",
-            ].join(" ")}
-          >
-            {submitState === "success" ? successMsg : errorMsg}
+      {/* UPLOAD (UI-only) */}
+      <div className="k-cform__group">
+        <div className="k-cform__label">ATTACH A FILE <span style={{ opacity: 0.7 }}>(optional)</span></div>
+
+        <label className="k-upload">
+          <input
+            type="file"
+            style={{ display: "none" }}
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              setFileName(f?.name || "");
+            }}
+          />
+          <div className="k-upload__box">
+            <div className="k-upload__title">
+              {fileName ? `Selected: ${fileName}` : "Choose a file or drag and drop here"}
+            </div>
+            <div className="k-upload__hint">
+              Tip: include a PDF brief, screenshots, or a sitemap.
+            </div>
           </div>
+        </label>
+      </div>
+
+      {/* SUBMIT */}
+      <button className="k-submit" type="submit" disabled={!canSubmit} aria-busy={isSubmitting}>
+        <span className="k-submit__text">{isSubmitting ? "Sending…" : "Submit inquiry"}</span>
+        <span className="k-submit__icon" aria-hidden="true">
+          <svg viewBox="0 0 20 20" fill="none">
+            <path
+              d="M4.5 10h9.2"
+              stroke="currentColor"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+            />
+            <path
+              d="M11.2 6.8 14.5 10l-3.3 3.2"
+              stroke="currentColor"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </span>
+      </button>
+
+      {/* FOOT NOTE */}
+      <div className="k-cform__foot">
+        {status === "ok" ? (
+          <span>Sent. Clean and simple — we’ll reply soon.</span>
+        ) : status === "error" ? (
+          <span style={{ color: "rgba(255,120,120,.95)" }}>
+            {errorMsg || "Couldn’t send. Try again."}
+          </span>
+        ) : (
+          <span>No spam. Just a clean reply. If you prefer: email us directly at <a href="mailto:hello@kersivo.co.uk">hello@kersivo.co.uk</a>.</span>
         )}
-
-        {/* CTA */}
-        <div className="mt-6 flex items-center justify-between gap-4">
-          <div className="text-[12px] text-white/50">
-            Sent directly to <span className="text-white/70">hello@kersivo.co.uk</span>
-          </div>
-
-          <button
-            type="submit"
-            disabled={!canSubmit}
-            className={[
-              "group relative inline-flex items-center justify-center rounded-2xl px-5 py-3 text-[14px] font-semibold transition",
-              "border border-white/10 bg-white/10 text-white",
-              "hover:bg-white/14 hover:border-white/20",
-              "disabled:opacity-40 disabled:cursor-not-allowed",
-              "shadow-[0_12px_40px_rgba(0,0,0,0.45)]",
-            ].join(" ")}
-          >
-            <span className="mr-2">{isSending ? "Sending…" : "Send"}</span>
-            <span className="opacity-70 group-hover:opacity-100 transition">→</span>
-            <span className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition bg-[radial-gradient(circle_at_30%_20%,rgba(168,85,247,0.22),transparent_55%)]" />
-          </button>
-        </div>
-      </form>
-    </div>
-  );
-}
-
-function Field(props: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  placeholder?: string;
-  autoComplete?: string;
-  type?: string;
-  required?: boolean;
-}) {
-  return (
-    <div>
-      <label className="mb-2 block text-[13px] font-medium text-white/80">
-        {props.label}
-      </label>
-      <input
-        type={props.type || "text"}
-        value={props.value}
-        onChange={(e) => props.onChange(e.target.value)}
-        placeholder={props.placeholder}
-        autoComplete={props.autoComplete}
-        required={props.required}
-        className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-[14px] text-white/90 outline-none transition focus:border-white/25 focus:bg-black/40"
-      />
-    </div>
+      </div>
+    </form>
   );
 }
