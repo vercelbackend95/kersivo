@@ -1,304 +1,287 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useMemo, useState } from "react";
 
-type Props = {
-  emailTo?: string;
+type FormState = {
+  name: string;
+  email: string;
+  company: string;
+  website: string;
+  budget: string;
+  message: string;
+  // Honeypot (anty-spam) — ma zostać puste
+  company_size: string;
 };
 
-type Service = "Website" | "Brand + UI" | "E-commerce" | "Ongoing";
-type Budget = "Under £2k" | "£2k–£5k" | "£5k+";
+type SubmitState = "idle" | "sending" | "success" | "error";
 
-const SERVICES: Service[] = ["Website", "Brand + UI", "E-commerce", "Ongoing"];
-const BUDGETS: Budget[] = ["Under £2k", "£2k–£5k", "£5k+"];
+export default function ContactForm() {
+  const [form, setForm] = useState<FormState>({
+    name: "",
+    email: "",
+    company: "",
+    website: "",
+    budget: "",
+    message: "",
+    company_size: "",
+  });
 
-function encodeMailto(str: string) {
-  // keep it compatible with mail clients (space -> %20 etc.)
-  return encodeURIComponent(str).replace(/%0A/g, "%0D%0A");
-}
+  const [submitState, setSubmitState] = useState<SubmitState>("idle");
+  const [errorMsg, setErrorMsg] = useState<string>("");
+  const [successMsg, setSuccessMsg] = useState<string>("");
 
-function nowTag() {
-  // tiny stamp for subject
-  const d = new Date();
-  const yy = String(d.getFullYear()).slice(-2);
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
-  return `${dd}/${mm}/${yy}`;
-}
+  const isSending = submitState === "sending";
 
-export default function ContactForm({ emailTo = "hello@kersivo.co.uk" }: Props) {
-  const [service, setService] = useState<Service>("Website");
-  const [budget, setBudget] = useState<Budget>("Under £2k");
+  const canSubmit = useMemo(() => {
+    const nameOk = form.name.trim().length >= 2;
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim());
+    const messageOk = form.message.trim().length >= 10;
 
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [details, setDetails] = useState("");
+    // honeypot must be empty
+    const honeypotOk = form.company_size.trim().length === 0;
 
-  const [fileName, setFileName] = useState<string>("");
-  const [isDrag, setIsDrag] = useState(false);
+    return nameOk && emailOk && messageOk && honeypotOk && !isSending;
+  }, [form, isSending]);
 
-  const [toast, setToast] = useState<{ title: string; note?: string } | null>(null);
-  const toastTimer = useRef<number | null>(null);
-
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  const reducedMotion = useMemo(() => {
-    if (typeof window === "undefined") return true;
-    return window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      if (toastTimer.current) window.clearTimeout(toastTimer.current);
-    };
-  }, []);
-
-  const requiredOk = fullName.trim().length > 1 && email.trim().includes("@") && details.trim().length > 10;
-
-  function pingHighlightSweep() {
-    const frame = document.querySelector("[data-contact-frame]");
-    if (!frame) return;
-    frame.classList.remove("is-highlight");
-    // force reflow so animation can retrigger
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    (frame as HTMLElement).offsetHeight;
-    frame.classList.add("is-highlight");
-    window.setTimeout(() => frame.classList.remove("is-highlight"), 980);
-  }
-
-  function showToast(title: string, note?: string) {
-    setToast({ title, note });
-    if (toastTimer.current) window.clearTimeout(toastTimer.current);
-    toastTimer.current = window.setTimeout(() => setToast(null), 3200);
-  }
-
-  function buildBrief() {
-    const lines = [
-      "New inquiry — Kersivo",
-      "---------------------",
-      `Service: ${service}`,
-      `Budget: ${budget}`,
-      "",
-      `Full name: ${fullName.trim()}`,
-      `Email: ${email.trim()}`,
-      "",
-      "Project details:",
-      details.trim(),
-      "",
-      `Attachment (optional): ${fileName || "—"}`,
-      "",
-      "—",
-      "Sent from kersivo.co.uk contact form",
-    ];
-    return lines.join("\n");
-  }
-
-  async function copyToClipboard(text: string) {
-    try {
-      await navigator.clipboard.writeText(text);
-      return true;
-    } catch {
-      return false;
-    }
+  function update<K extends keyof FormState>(key: K, value: FormState[K]) {
+    setForm((prev) => ({ ...prev, [key]: value }));
   }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!requiredOk) {
-      showToast("Missing details", "Please complete the required fields.");
+    setErrorMsg("");
+    setSuccessMsg("");
+
+    if (!canSubmit) {
+      setSubmitState("error");
+      setErrorMsg("Uzupełnij poprawnie: imię, e-mail i wiadomość (min. 10 znaków).");
       return;
     }
 
-    const brief = buildBrief();
-    const subject = `Kersivo inquiry — ${service} — ${nowTag()}`;
-    const href = `mailto:${emailTo}?subject=${encodeMailto(subject)}&body=${encodeMailto(brief)}`;
+    setSubmitState("sending");
 
-    // premium flourish (matches CSS sweep)
-    if (!reducedMotion) pingHighlightSweep();
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        // send only what we need
+        body: JSON.stringify({
+          name: form.name.trim(),
+          email: form.email.trim(),
+          company: form.company.trim(),
+          website: form.website.trim(),
+          budget: form.budget.trim(),
+          message: form.message.trim(),
+          company_size: form.company_size.trim(), // honeypot
+          source: "kersivo.co.uk/contact",
+        }),
+      });
 
-    // copy brief so the user can paste it even if their mail client is weird
-    const copied = await copyToClipboard(brief);
+      const data = (await res.json().catch(() => ({}))) as {
+        ok?: boolean;
+        error?: string;
+      };
 
-    // open mail client
-    window.location.href = href;
+      if (!res.ok || !data.ok) {
+        throw new Error(data?.error || "Coś poszło nie tak. Spróbuj ponownie.");
+      }
 
-    showToast("Opening your email client…", copied ? "Brief copied to clipboard." : "Copy blocked — you can still send via email.");
-  }
+      setSubmitState("success");
+      setSuccessMsg("✅ Wysłane. Odezwę się najszybciej jak się da.");
 
-  function onFilePicked(files: FileList | null | undefined) {
-    const f = files?.[0];
-    if (!f) {
-      setFileName("");
-      return;
+      // reset form (keep honeypot empty)
+      setForm({
+        name: "",
+        email: "",
+        company: "",
+        website: "",
+        budget: "",
+        message: "",
+        company_size: "",
+      });
+    } catch (err: any) {
+      setSubmitState("error");
+      setErrorMsg(err?.message || "Błąd wysyłki. Spróbuj ponownie za chwilę.");
+    } finally {
+      // allow another send after short beat (prevents double-click spam)
+      setTimeout(() => {
+        setSubmitState((s) => (s === "sending" ? "idle" : s));
+      }, 400);
     }
-    setFileName(f.name);
-  }
-
-  function onDrop(e: React.DragEvent) {
-    e.preventDefault();
-    setIsDrag(false);
-    const files = e.dataTransfer.files;
-    if (fileInputRef.current) {
-      fileInputRef.current.files = files;
-    }
-    onFilePicked(files);
   }
 
   return (
-    <form className="k-cform" onSubmit={onSubmit} noValidate>
-      {/* Service */}
-      <div className="k-cform__group">
-        <div className="k-cform__label">Service</div>
-        <div className="k-cform__chips" role="radiogroup" aria-label="Service">
-          {SERVICES.map((s) => (
-            <button
-              key={s}
-              type="button"
-              className={`k-cchip ${service === s ? "is-on" : ""}`}
-              role="radio"
-              aria-checked={service === s}
-              onClick={() => setService(s)}
-            >
-              {s}
-            </button>
-          ))}
+    <div className="w-full">
+      <form
+        onSubmit={onSubmit}
+        className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 md:p-8 shadow-[0_0_0_1px_rgba(255,255,255,0.02),0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl"
+      >
+        {/* Header */}
+        <div className="mb-6">
+          <h3 className="text-[20px] md:text-[22px] font-semibold tracking-tight text-white">
+            Wyślij zapytanie
+          </h3>
+          <p className="mt-2 text-[14px] md:text-[15px] leading-relaxed text-white/70">
+            Napisz co budujemy, a ja wrócę z planem, terminem i wyceną.
+          </p>
         </div>
-      </div>
 
-      {/* Budget */}
-      <div className="k-cform__group">
-        <div className="k-cform__label">Budget</div>
-        <div className="k-cform__chips" role="radiogroup" aria-label="Budget">
-          {BUDGETS.map((b) => (
-            <button
-              key={b}
-              type="button"
-              className={`k-cchip ${budget === b ? "is-on" : ""}`}
-              role="radio"
-              aria-checked={budget === b}
-              onClick={() => setBudget(b)}
-            >
-              {b}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Name / Email */}
-      <div className="k-cform__row">
-        <label className="k-uline">
-          <span className="k-uline__hint">Full name *</span>
+        {/* Honeypot (hidden) */}
+        <div className="hidden">
+          <label className="text-white">Company size</label>
           <input
-            type="text"
-            name="fullName"
+            value={form.company_size}
+            onChange={(e) => update("company_size", e.target.value)}
+            autoComplete="off"
+            tabIndex={-1}
+          />
+        </div>
+
+        {/* Fields grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Field
+            label="Imię"
+            value={form.name}
+            onChange={(v) => update("name", v)}
+            placeholder="Bartek"
             autoComplete="name"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            placeholder=""
             required
           />
-        </label>
 
-        <label className="k-uline">
-          <span className="k-uline__hint">Email *</span>
-          <input
-            type="email"
-            name="email"
+          <Field
+            label="E-mail"
+            value={form.email}
+            onChange={(v) => update("email", v)}
+            placeholder="you@company.com"
             autoComplete="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder=""
+            type="email"
             required
           />
-        </label>
-      </div>
 
-      {/* Details */}
-      <label className="k-uline">
-        <span className="k-uline__hint">Project details *</span>
-        <textarea
-          name="details"
-          value={details}
-          onChange={(e) => setDetails(e.target.value)}
-          placeholder=""
-          required
-        />
-      </label>
-
-      {/* Upload */}
-      <div className="k-cform__group">
-        <div className="k-cform__label">Attach a file <span style={{ opacity: 0.7, fontWeight: 600, textTransform: "none", letterSpacing: 0 }}>(optional)</span></div>
-
-        <div
-          className={`k-upload ${isDrag ? "is-drag" : ""}`}
-          onDragEnter={(e) => {
-            e.preventDefault();
-            setIsDrag(true);
-          }}
-          onDragOver={(e) => {
-            e.preventDefault();
-            setIsDrag(true);
-          }}
-          onDragLeave={() => setIsDrag(false)}
-          onDrop={onDrop}
-          aria-label="File upload"
-        >
-          <input
-            ref={fileInputRef}
-            type="file"
-            name="file"
-            onChange={(e) => onFilePicked(e.target.files)}
-            aria-label="Choose a file"
+          <Field
+            label="Firma"
+            value={form.company}
+            onChange={(v) => update("company", v)}
+            placeholder="Kersivo / Twoja firma"
+            autoComplete="organization"
           />
-          <div style={{ textAlign: "center", lineHeight: 1.25 }}>
-            <div style={{ fontWeight: 650, color: "rgba(255,255,255,.78)" }}>
-              {fileName ? fileName : "Choose a file or drag and drop here"}
-            </div>
-            <div style={{ marginTop: 6, fontSize: 12, color: "rgba(255,255,255,.55)" }}>
-              {fileName ? "Note: files aren’t sent automatically — we’ll request it if needed." : "Tip: include a PDF brief, screenshots, or a sitemap."}
-            </div>
+
+          <Field
+            label="Website"
+            value={form.website}
+            onChange={(v) => update("website", v)}
+            placeholder="https://..."
+            autoComplete="url"
+          />
+        </div>
+
+        {/* Budget */}
+        <div className="mt-4">
+          <label className="mb-2 block text-[13px] font-medium text-white/80">
+            Budżet
+          </label>
+          <div className="relative">
+            <select
+              value={form.budget}
+              onChange={(e) => update("budget", e.target.value)}
+              className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-[14px] text-white/90 outline-none transition focus:border-white/25 focus:bg-black/40"
+            >
+              <option value="">Wybierz (opcjonalnie)</option>
+              <option value="under-1k">Poniżej £1k</option>
+              <option value="1k-3k">£1k – £3k</option>
+              <option value="3k-7k">£3k – £7k</option>
+              <option value="7k-15k">£7k – £15k</option>
+              <option value="15k+">£15k+</option>
+            </select>
           </div>
         </div>
-      </div>
 
-      <button className="k-submit" type="submit" disabled={!requiredOk}>
-        Submit inquiry
-      </button>
-
-      <div className="k-cform__foot">
-        No spam. Just a clean reply. If you prefer: email us directly at{" "}
-        <a href={`mailto:${emailTo}`} style={{ color: "rgba(255,255,255,.82)", textDecoration: "underline", textUnderlineOffset: 3 }}>
-          {emailTo}
-        </a>
-        .
-      </div>
-
-      {/* tiny toast (inline styles so you don't need another CSS file) */}
-      {toast && (
-        <div
-          role="status"
-          aria-live="polite"
-          style={{
-            position: "absolute",
-            right: 10,
-            bottom: 10,
-            maxWidth: 360,
-            padding: "12px 12px",
-            borderRadius: 16,
-            border: "1px solid rgba(255,255,255,.12)",
-            background: "rgba(10, 12, 18, .72)",
-            backdropFilter: "blur(16px)",
-            boxShadow: "0 26px 120px rgba(0,0,0,.45)",
-          }}
-        >
-          <div style={{ fontWeight: 780, letterSpacing: "-0.01em", color: "rgba(255,255,255,.92)" }}>
-            {toast.title}
+        {/* Message */}
+        <div className="mt-4">
+          <label className="mb-2 block text-[13px] font-medium text-white/80">
+            Wiadomość
+          </label>
+          <textarea
+            value={form.message}
+            onChange={(e) => update("message", e.target.value)}
+            placeholder="Co potrzebujesz? Jakie cele? Deadline? Linki / inspiracje?"
+            rows={6}
+            required
+            className="w-full resize-none rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-[14px] text-white/90 outline-none transition focus:border-white/25 focus:bg-black/40"
+          />
+          <div className="mt-2 text-[12px] text-white/50">
+            Min. 10 znaków. Im konkretniej, tym szybciej odpiszę.
           </div>
-          {toast.note && (
-            <div style={{ marginTop: 4, fontSize: 12.5, lineHeight: 1.35, color: "rgba(255,255,255,.64)" }}>
-              {toast.note}
-            </div>
-          )}
         </div>
-      )}
-    </form>
+
+        {/* Status */}
+        {(submitState === "error" || submitState === "success") && (
+          <div
+            className={[
+              "mt-4 rounded-2xl border px-4 py-3 text-[13px]",
+              submitState === "success"
+                ? "border-emerald-500/25 bg-emerald-500/10 text-emerald-200"
+                : "border-rose-500/25 bg-rose-500/10 text-rose-200",
+            ].join(" ")}
+          >
+            {submitState === "success" ? successMsg : errorMsg}
+          </div>
+        )}
+
+        {/* CTA */}
+        <div className="mt-6 flex items-center justify-between gap-4">
+          <div className="text-[12px] text-white/50">
+            Wysyłka idzie prosto na <span className="text-white/70">hello@kersivo.co.uk</span>
+          </div>
+
+          <button
+            type="submit"
+            disabled={!canSubmit}
+            className={[
+              "group relative inline-flex items-center justify-center rounded-2xl px-5 py-3 text-[14px] font-semibold transition",
+              "border border-white/10 bg-white/10 text-white",
+              "hover:bg-white/14 hover:border-white/20",
+              "disabled:opacity-40 disabled:cursor-not-allowed",
+              "shadow-[0_12px_40px_rgba(0,0,0,0.45)]",
+            ].join(" ")}
+          >
+            <span className="mr-2">
+              {isSending ? "Wysyłam…" : "Wyślij"}
+            </span>
+            <span className="opacity-70 group-hover:opacity-100 transition">→</span>
+
+            {/* subtle glow */}
+            <span className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition bg-[radial-gradient(circle_at_30%_20%,rgba(168,85,247,0.22),transparent_55%)]" />
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
+
+function Field(props: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  autoComplete?: string;
+  type?: string;
+  required?: boolean;
+}) {
+  return (
+    <div>
+      <label className="mb-2 block text-[13px] font-medium text-white/80">
+        {props.label}
+      </label>
+      <input
+        type={props.type || "text"}
+        value={props.value}
+        onChange={(e) => props.onChange(e.target.value)}
+        placeholder={props.placeholder}
+        autoComplete={props.autoComplete}
+        required={props.required}
+        className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-[14px] text-white/90 outline-none transition focus:border-white/25 focus:bg-black/40"
+      />
+    </div>
   );
 }
