@@ -5,23 +5,24 @@ import WhoForMorph from "./WhoForMorph.tsx";
 
 <section class="k-whoL section" id="who-its-for" aria-label="Who it's for">
   <div class="container k-whoL__container">
-    <!-- Header: left title + right copy/link (like screenshot) -->
+    <!-- Header: centered title -->
     <header class="k-whoL__head" aria-labelledby="whoL-title">
       <h2 class="k-whoL__title" id="whoL-title">
         Built for speed<br />built for growth
       </h2>
-
-      <div class="k-whoL__side">
-        <p class="k-whoL__lead">
-          Kersivo is built around what actually moves the needle: fast load times, SEO foundations, and a conversion path that turns visits into enquiries — without bloat or fluff.
-        </p>
-
-        <a class="k-whoL__link" href="/contact/#contact">
-          Make the switch <span aria-hidden="true">→</span>
-        </a>
-      </div>
     </header>
 
     <WhoForMorph client:visible />
+
+    <!-- Side copy moved under the section content -->
+    <div class="k-whoL__side">
+      <p class="k-whoL__lead">
+        Kersivo is built around what actually moves the needle: fast load times, SEO foundations, and a conversion path that turns visits into enquiries — without bloat or fluff.
+      </p>
+
+      <a class="k-whoL__link" href="/contact/#contact">
+        Make the switch <span aria-hidden="true">→</span>
+      </a>
+    </div>
   </div>
 </section>
