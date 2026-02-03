@@ -69,7 +69,8 @@ export default function ContactForm() {
     setLoading(true);
 
     const timeoutMs = calcTimeoutMs(file);
-    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+    const timeout = setTimeout(() => controller.abort(), 25000);
+
 
     try {
       const hasFile = Boolean(file);
