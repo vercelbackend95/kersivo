@@ -518,3 +518,25 @@
   .k-submit::after{ display:none; }
   .k-contact2__frame.is-highlight::after{ display:none; animation:none !important; }
 }
+/* status notes */
+.k-cform__notice{
+  border-radius: 14px;
+  padding: 12px 12px;
+  font-size: 13px;
+  line-height: 1.45;
+  letter-spacing: var(--track-normal, -0.01em);
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  color: rgba(255,255,255,.84);
+}
+
+.k-cform__notice--ok{
+  border-color: rgba(190,145,255,.22);
+  background: rgba(190,145,255,.08);
+}
+
+.k-cform__notice--err{
+  border-color: rgba(255,120,170,.28);
+  background: rgba(255,120,170,.08);
+  color: rgba(255,255,255,.90);
+}

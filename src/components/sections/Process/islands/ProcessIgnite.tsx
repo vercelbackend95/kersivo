@@ -1,6 +1,4 @@
 import React, { useLayoutEffect, useMemo, useRef } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 type Block = {
   kicker: string;
@@ -85,10 +83,9 @@ const blocks: Block[] = [
   },
 ];
 
-function reducedMotion(): boolean {
-  return typeof window !== "undefined"
-    ? window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches
-    : false;
+function prefersReducedMotion(): boolean {
+  if (typeof window === "undefined") return false;
+  return !!window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
 }
 
 export default function ProcessIgnite() {
@@ -96,90 +93,122 @@ export default function ProcessIgnite() {
   const data = useMemo(() => blocks, []);
 
   useLayoutEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
+    // ✅ PRO: zero SSR-crash — GSAP is loaded only in the browser
+    if (typeof window === "undefined") return;
 
-    ScrollTrigger.config({
-      ignoreMobileResize: true,
-      limitCallbacks: true,
-    });
+    let isMounted = true;
+    let triggers: any[] = [];
+    let gsap: any;
+    let ScrollTrigger: any;
 
+    const html = document.documentElement;
     const wraps = wrapRefs.current.filter(Boolean);
     if (!wraps.length) return;
 
-    const reduced = reducedMotion();
-    const html = document.documentElement;
+    const reduced = prefersReducedMotion();
 
-    // kill old triggers (HMR safe)
-    ScrollTrigger.getAll().forEach((t) => {
-      const id = (t.vars as any)?.id;
-      if (typeof id === "string" && id.startsWith("procEvt-")) t.kill();
-    });
-
-    // init
+    // init base
     wraps.forEach((w) => w.style.setProperty("--heat", "0"));
 
-    const setHeat = (el: HTMLElement, v: number) => {
-      if (reduced) {
-        el.style.setProperty("--heat", String(v));
-        return;
-      }
-      gsap.to(el, {
-        ["--heat" as any]: v,
-        duration: v > 0 ? 0.55 : 0.38,
-        ease: v > 0 ? "power2.out" : "power2.in",
-        overwrite: true,
-      });
-    };
-
-    let active = -1;
     const setActive = (idx: number) => {
-      if (idx === active) return;
-      active = idx;
       wraps.forEach((w, i) => w.classList.toggle("is-active", i === idx));
     };
 
-    const triggers: ScrollTrigger[] = [];
+    const run = async () => {
+      try {
+        const gsapMod: any = await import("gsap");
+        const stMod: any = await import("gsap/ScrollTrigger");
 
-    wraps.forEach((el, i) => {
-      const st = ScrollTrigger.create({
-        id: `procEvt-${i}`,
-        trigger: el,
-        start: "top 78%",
-        end: "bottom 22%",
-        invalidateOnRefresh: true,
+        gsap = gsapMod.gsap ?? gsapMod.default ?? gsapMod;
+        ScrollTrigger = stMod.ScrollTrigger ?? stMod.default ?? stMod;
 
-        onEnter: (self) => {
-          html.dataset.scrollDir = self.direction < 0 ? "up" : "down";
-          setActive(i);
-          setHeat(el, 1);
-        },
-        onLeave: (self) => {
-          html.dataset.scrollDir = self.direction < 0 ? "up" : "down";
-          setHeat(el, 0);
-        },
-        onEnterBack: (self) => {
-          html.dataset.scrollDir = self.direction < 0 ? "up" : "down";
-          setActive(i);
-          setHeat(el, 1);
-        },
-        onLeaveBack: (self) => {
-          html.dataset.scrollDir = self.direction < 0 ? "up" : "down";
-          setHeat(el, 0);
-        },
-      });
+        if (!isMounted) return;
 
-      triggers.push(st);
-    });
+        gsap.registerPlugin(ScrollTrigger);
 
-    // initial
-    setActive(0);
-    setHeat(wraps[0], reduced ? 0.55 : 0.55);
+        ScrollTrigger.config({
+          ignoreMobileResize: true,
+          limitCallbacks: true,
+        });
 
-    ScrollTrigger.refresh();
+        // kill old triggers (HMR / client navigations safe)
+        ScrollTrigger.getAll().forEach((t: any) => {
+          const id = t?.vars?.id;
+          if (typeof id === "string" && id.startsWith("procEvt-")) t.kill();
+        });
+
+        const setHeat = (el: HTMLElement, v: number) => {
+          if (reduced) {
+            el.style.setProperty("--heat", String(v));
+            return;
+          }
+          gsap.to(el, {
+            ["--heat" as any]: v,
+            duration: v > 0 ? 0.55 : 0.38,
+            ease: v > 0 ? "power2.out" : "power2.in",
+            overwrite: true,
+          });
+        };
+
+        wraps.forEach((el, i) => {
+          const st = ScrollTrigger.create({
+            id: `procEvt-${i}`,
+            trigger: el,
+            start: "top 78%",
+            end: "bottom 22%",
+            invalidateOnRefresh: true,
+
+            onEnter: (self: any) => {
+              html.dataset.scrollDir = self.direction < 0 ? "up" : "down";
+              setActive(i);
+              setHeat(el, 1);
+            },
+            onLeave: (self: any) => {
+              html.dataset.scrollDir = self.direction < 0 ? "up" : "down";
+              setHeat(el, 0);
+            },
+            onEnterBack: (self: any) => {
+              html.dataset.scrollDir = self.direction < 0 ? "up" : "down";
+              setActive(i);
+              setHeat(el, 1);
+            },
+            onLeaveBack: (self: any) => {
+              html.dataset.scrollDir = self.direction < 0 ? "up" : "down";
+              setHeat(el, 0);
+            },
+          });
+
+          triggers.push(st);
+        });
+
+        // initial state
+        setActive(0);
+        wraps[0]?.style.setProperty("--heat", reduced ? "0.55" : "0.55");
+
+        ScrollTrigger.refresh();
+      } catch (err) {
+        // If GSAP fails to load for any reason, we still keep the UI.
+        // No hard crash, no 500, just no animation.
+        // eslint-disable-next-line no-console
+        console.error("[ProcessIgnite] GSAP init failed:", err);
+      }
+    };
+
+    run();
 
     return () => {
-      triggers.forEach((t) => t.kill());
-      gsap.killTweensOf(wraps);
+      isMounted = false;
+
+      try {
+        triggers.forEach((t) => t?.kill?.());
+        triggers = [];
+
+        if (gsap && wraps.length) {
+          gsap.killTweensOf(wraps);
+        }
+      } catch {
+        // silent cleanup
+      }
     };
   }, []);
 
