@@ -8,8 +8,9 @@ const BUDGET_OPTIONS = ["Under £2k", "£2k–£5k", "£5k+"] as const;
 
 const API_ENDPOINT = "/api/lead"; // ✅ bez slasha
 
-// max 3MB (base64 rośnie, ale jesteśmy bezpieczni)
-const MAX_FILE_BYTES = 3 * 1024 * 1024;
+const MAX_FILES = 5;
+const MAX_FILE_BYTES = 3 * 1024 * 1024; // 3MB per image
+const MAX_TOTAL_BYTES = 8 * 1024 * 1024; // ~8MB total (base64 i tak urośnie)
 
 function cx(...parts: Array<string | false | null | undefined>) {
   return parts.filter(Boolean).join(" ");
@@ -20,6 +21,7 @@ function isEmail(email: string) {
 }
 
 async function fileToBase64(file: File): Promise<string> {
+  // base64 bez "data:mime;base64,"
   const buf = await file.arrayBuffer();
   let binary = "";
   const bytes = new Uint8Array(buf);
@@ -28,6 +30,10 @@ async function fileToBase64(file: File): Promise<string> {
     binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
   }
   return btoa(binary);
+}
+
+function filesKey(f: File) {
+  return `${f.name}|${f.size}|${f.lastModified}`;
 }
 
 export default function ContactForm() {
@@ -45,7 +51,7 @@ export default function ContactForm() {
   // honeypot
   const [hpWebsite, setHpWebsite] = useState("");
 
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const [isDrag, setIsDrag] = useState(false);
 
   const [loading, setLoading] = useState(false);
@@ -61,40 +67,69 @@ export default function ContactForm() {
   }, [loading, name, email, message]);
 
   useEffect(() => {
-    if (sent && (name || email || message || file)) setSent(false);
+    if (sent && (name || email || message || files.length)) setSent(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [name, email, message, file]);
+  }, [name, email, message, files]);
 
-  function calcTimeoutMs(f: File | null) {
+  function validateFiles(next: File[]) {
+    if (next.length > MAX_FILES) {
+      throw new Error(`Max ${MAX_FILES} images.`);
+    }
+
+    let total = 0;
+
+    for (const f of next) {
+      if (!f.type.startsWith("image/")) {
+        throw new Error("Only image files are allowed (PNG/JPG/WebP).");
+      }
+      if (f.size > MAX_FILE_BYTES) {
+        throw new Error("One of the images is too large. Keep each under 3MB.");
+      }
+      total += f.size;
+    }
+
+    if (total > MAX_TOTAL_BYTES) {
+      throw new Error("Total attachments size is too large. Try fewer/smaller images.");
+    }
+  }
+
+  function addFiles(incoming: File[]) {
+    setError("");
+
+    const merged = [...files];
+    const seen = new Set(merged.map(filesKey));
+
+    for (const f of incoming) {
+      const k = filesKey(f);
+      if (seen.has(k)) continue;
+      merged.push(f);
+      seen.add(k);
+    }
+
+    const sliced = merged.slice(0, MAX_FILES);
+
+    try {
+      validateFiles(sliced);
+      setFiles(sliced);
+    } catch (e: any) {
+      setError(e?.message || "Invalid files.");
+    }
+  }
+
+  function removeFile(idx: number) {
+    setFiles((prev) => prev.filter((_, i) => i !== idx));
+  }
+
+  function clearAllFiles() {
+    setFiles([]);
+  }
+
+  function calcTimeoutMs(totalBytes: number) {
+    // base 20s, +1.5s per MB, cap 45s
     const base = 20000;
-    if (!f) return base;
-    const mb = f.size / (1024 * 1024);
+    const mb = totalBytes / (1024 * 1024);
     const extra = Math.ceil(mb * 1500);
     return Math.min(45000, base + extra);
-  }
-
-  function validateFile(f: File) {
-    if (!f.type.startsWith("image/")) {
-      throw new Error("Only image files are allowed (PNG/JPG/WebP).");
-    }
-    if (f.size > MAX_FILE_BYTES) {
-      throw new Error("Image is too large. Please keep it under 3MB.");
-    }
-  }
-
-  function onPickFile(f: File | null) {
-    setError("");
-    if (!f) {
-      setFile(null);
-      return;
-    }
-    try {
-      validateFile(f);
-      setFile(f);
-    } catch (e: any) {
-      setFile(null);
-      setError(e?.message || "Invalid file.");
-    }
   }
 
   async function onSubmit(e: React.FormEvent) {
@@ -120,11 +155,11 @@ export default function ContactForm() {
       return;
     }
 
-    if (file) {
+    if (files.length) {
       try {
-        validateFile(file);
+        validateFiles(files);
       } catch (e: any) {
-        setError(e?.message || "Invalid file.");
+        setError(e?.message || "Invalid files.");
         inFlightRef.current = false;
         return;
       }
@@ -135,18 +170,22 @@ export default function ContactForm() {
     abortRef.current = controller;
 
     setLoading(true);
-    const timeoutMs = calcTimeoutMs(file);
+
+    const totalBytes = files.reduce((sum, f) => sum + f.size, 0);
+    const timeoutMs = calcTimeoutMs(totalBytes);
     const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
-      const attachment =
-        file
-          ? {
-              filename: file.name,
-              contentType: file.type,
-              size: file.size,
-              base64: await fileToBase64(file),
-            }
+      const attachments =
+        files.length
+          ? await Promise.all(
+              files.map(async (f) => ({
+                filename: f.name,
+                contentType: f.type,
+                size: f.size,
+                base64: await fileToBase64(f),
+              }))
+            )
           : null;
 
       const res = await fetch(API_ENDPOINT, {
@@ -161,21 +200,19 @@ export default function ContactForm() {
           message: msg,
           website: hpWebsite,
           startedAt: startedAtRef.current,
-          attachment,
+          attachments, // <-- ARRAY
         }),
       });
 
       const data = (await res.json().catch(() => null)) as ApiOk | ApiErr | null;
 
       if (!res.ok || !data || (data as ApiErr).ok === false) {
-        const msg2 =
-          (data as ApiErr | null)?.error ||
-          `Request failed (${res.status}). Please try again.`;
+        const msg2 = (data as ApiErr | null)?.error || `Request failed (${res.status}). Please try again.`;
         throw new Error(msg2);
       }
 
       setSent(true);
-      setFile(null);
+      clearAllFiles();
       setMessage("");
     } catch (err: any) {
       const msg2 =
@@ -278,7 +315,7 @@ export default function ContactForm() {
 
       {/* UPLOAD */}
       <div className="k-cform__group">
-        <div className="k-cform__label">Attach a file (optional)</div>
+        <div className="k-cform__label">Attach files (optional)</div>
 
         <label
           className={cx("k-upload", isDrag && "is-drag")}
@@ -301,8 +338,7 @@ export default function ContactForm() {
             e.preventDefault();
             e.stopPropagation();
             setIsDrag(false);
-            const f = e.dataTransfer.files?.[0] ?? null;
-            onPickFile(f);
+            addFiles(Array.from(e.dataTransfer.files ?? []));
           }}
         >
           <input
@@ -310,35 +346,86 @@ export default function ContactForm() {
             name="file"
             type="file"
             accept="image/*"
-            onChange={(e) => onPickFile(e.target.files?.[0] ?? null)}
+            multiple
+            onChange={(e) => addFiles(Array.from(e.target.files ?? []))}
           />
 
           <div style={{ textAlign: "center", display: "grid", gap: 6 }}>
             <div style={{ color: "rgba(255,255,255,.88)", fontWeight: 650 }}>
-              {file ? file.name : "Choose a file or drag and drop here"}
+              {files.length ? `${files.length} file(s) selected` : "Choose up to 5 images or drag and drop here"}
             </div>
             <div style={{ color: "rgba(255,255,255,.58)" }}>
-              Tip: include a screenshot or reference image. (max 3MB)
+              Tip: include screenshots or reference images. (max 3MB each)
             </div>
 
-            {file && (
-              <button
-                type="button"
-                onClick={(ev) => {
-                  ev.preventDefault();
-                  onPickFile(null);
-                }}
-                style={{
-                  marginTop: 2,
-                  background: "transparent",
-                  border: "none",
-                  color: "rgba(190,145,255,.92)",
-                  fontWeight: 650,
-                  cursor: "pointer",
-                }}
-              >
-                Remove file
-              </button>
+            {files.length > 0 && (
+              <div style={{ marginTop: 10, display: "grid", gap: 6, textAlign: "left" }}>
+                {files.map((f, idx) => (
+                  <div
+                    key={filesKey(f)}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      gap: 10,
+                      padding: "8px 10px",
+                      borderRadius: 12,
+                      border: "1px solid rgba(255,255,255,.10)",
+                      background: "rgba(255,255,255,.03)",
+                    }}
+                  >
+                    <div
+                      style={{
+                        color: "rgba(255,255,255,.84)",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                      title={f.name}
+                    >
+                      {f.name}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={(ev) => {
+                        ev.preventDefault();
+                        removeFile(idx);
+                      }}
+                      style={{
+                        background: "transparent",
+                        border: "none",
+                        color: "rgba(190,145,255,.92)",
+                        fontWeight: 650,
+                        cursor: "pointer",
+                        flex: "0 0 auto",
+                      }}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+
+                <button
+                  type="button"
+                  onClick={(ev) => {
+                    ev.preventDefault();
+                    clearAllFiles();
+                  }}
+                  style={{
+                    marginTop: 4,
+                    background: "transparent",
+                    border: "none",
+                    color: "rgba(190,145,255,.92)",
+                    fontWeight: 650,
+                    cursor: "pointer",
+                    textAlign: "left",
+                    padding: 0,
+                  }}
+                >
+                  Remove all
+                </button>
+              </div>
             )}
           </div>
         </label>
@@ -368,9 +455,16 @@ export default function ContactForm() {
 
       <div className="k-cform__foot">
         No spam. Just a clean reply. If you prefer: email us directly at{" "}
-        <a href="mailto:hello@kersivo.co.uk" style={{ color: "rgba(255,255,255,.86)", borderBottom: "1px solid rgba(255,255,255,.22)" }}>
+        <a
+          href="mailto:hello@kersivo.co.uk"
+          style={{
+            color: "rgba(255,255,255,.86)",
+            borderBottom: "1px solid rgba(255,255,255,.22)",
+          }}
+        >
           hello@kersivo.co.uk
-        </a>.
+        </a>
+        .
       </div>
     </form>
   );

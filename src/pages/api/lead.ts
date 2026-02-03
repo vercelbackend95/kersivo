@@ -16,12 +16,17 @@ function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+const MAX_FILES = 5;
+const MAX_FILE_BYTES = 3 * 1024 * 1024; // 3MB each
+const MAX_TOTAL_BYTES = 8 * 1024 * 1024; // ~8MB total (safe)
+
 export const GET: APIRoute = async () => {
-  // pozwala testować w przeglądarce /api/lead oraz /api/lead/
+  // handy ping in browser
   return json(200, { ok: true, route: "lead", ts: Date.now() });
 };
 
 export const POST: APIRoute = async ({ request }) => {
+  // 1) Parse JSON
   let body: any;
   try {
     body = await request.json();
@@ -29,17 +34,15 @@ export const POST: APIRoute = async ({ request }) => {
     return json(400, { ok: false, error: "Invalid JSON" });
   }
 
-  // honeypot + too-fast (anti-bot)
+  // 2) Anti-bot (honeypot + too-fast)
   const hp = String(body?.website ?? "").trim();
   if (hp) return json(200, { ok: true });
 
   const startedAt = Number(body?.startedAt ?? 0);
   if (startedAt && Date.now() - startedAt < 1200) return json(200, { ok: true });
 
-  // ENV: obsługujemy stare i nowe nazwy (żebyś nie musiał teraz latać po Vercel)
-  const key =
-    import.meta.env.RESEND_API_KEY ||
-    process.env.RESEND_API_KEY;
+  // 3) Env (support old + new names)
+  const key = import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY;
 
   const to =
     import.meta.env.CONTACT_TO_EMAIL ||
@@ -57,6 +60,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   if (!key) return json(500, { ok: false, error: "Missing RESEND_API_KEY" });
 
+  // 4) Validate fields
   const service = String(body?.service ?? "");
   const budget = String(body?.budget ?? "");
   const name = String(body?.name ?? "").trim();
@@ -70,25 +74,47 @@ export const POST: APIRoute = async ({ request }) => {
     return json(400, { ok: false, error: "Invalid email" });
   }
 
-  // optional image attachment (base64)
-  const att = body?.attachment ?? null;
+  // 5) Attachments (array) — images only
+  const atts = Array.isArray(body?.attachments) ? body.attachments : [];
   let attachments: Array<{ filename: string; content: string }> | undefined;
 
-  if (att?.base64 && att?.filename) {
-    const filename = String(att.filename);
-    const contentType = String(att.contentType || "");
-    const size = Number(att.size || 0);
-
-    if (!contentType.startsWith("image/")) {
-      return json(400, { ok: false, error: "Only image attachments are allowed" });
-    }
-    if (!size || size > 3 * 1024 * 1024) {
-      return json(400, { ok: false, error: "Attachment too large (max 3MB)" });
+  if (atts.length) {
+    if (atts.length > MAX_FILES) {
+      return json(400, { ok: false, error: `Max ${MAX_FILES} attachments.` });
     }
 
-    attachments = [{ filename, content: String(att.base64) }];
+    const mapped: Array<{ filename: string; content: string }> = [];
+    let total = 0;
+
+    for (const a of atts) {
+      const filename = String(a?.filename || "");
+      const contentType = String(a?.contentType || "");
+      const size = Number(a?.size || 0);
+      const base64 = String(a?.base64 || "");
+
+      if (!filename || !base64) {
+        return json(400, { ok: false, error: "Invalid attachment." });
+      }
+      if (!contentType.startsWith("image/")) {
+        return json(400, { ok: false, error: "Only image attachments are allowed." });
+      }
+      if (!size || size > MAX_FILE_BYTES) {
+        return json(400, { ok: false, error: "One of the attachments is too large (max 3MB)." });
+      }
+
+      total += size;
+      if (total > MAX_TOTAL_BYTES) {
+        return json(400, { ok: false, error: "Total attachments size too large." });
+      }
+
+      // Resend expects base64 without data-url prefix
+      mapped.push({ filename, content: base64 });
+    }
+
+    attachments = mapped;
   }
 
+  // 6) Send via Resend REST API
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), 12000);
 
