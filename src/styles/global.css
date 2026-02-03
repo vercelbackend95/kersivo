@@ -342,3 +342,28 @@ section, [data-section]{
   scroll-snap-stop: normal !important;
 }
 #contact{ scroll-margin-top: 110px; }
+/* =========================
+   Mobile anchor offset fix
+   (sections were landing under the topnav)
+   ========================= */
+
+@media (max-width: 768px){
+  :root{
+    /* jeśli topnav na mobile jest wyższy / ma większy padding */
+    --nav-h: 76px;
+  }
+
+  /* Każda sekcja przy scroll/jump dostaje bezpieczny margines */
+  section[id],
+  [data-section][id],
+  main [id]{
+    scroll-margin-top: calc(var(--nav-h) + 14px);
+  }
+}
+
+/* (opcjonalnie) jeśli pierwsza sekcja na podstronach nadal “przykleja się” do góry */
+@media (max-width: 768px){
+  main{
+    padding-top: 10px;
+  }
+}
