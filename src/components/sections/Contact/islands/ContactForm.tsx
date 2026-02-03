@@ -6,8 +6,9 @@ type ApiErr = { ok: false; error?: string };
 const SERVICE_OPTIONS = ["Website", "Brand + UI", "E-commerce", "Ongoing"] as const;
 const BUDGET_OPTIONS = ["Under £2k", "£2k–£5k", "£5k+"] as const;
 
-const API_ENDPOINT = "/api/lead"; // ✅ bez slasha 
-// max 3MB na obrazek (bezpiecznie dla body limitów + base64 rośnie)
+const API_ENDPOINT = "/api/lead"; // ✅ bez slasha
+
+// max 3MB (base64 rośnie, ale jesteśmy bezpieczni)
 const MAX_FILE_BYTES = 3 * 1024 * 1024;
 
 function cx(...parts: Array<string | false | null | undefined>) {
@@ -19,7 +20,6 @@ function isEmail(email: string) {
 }
 
 async function fileToBase64(file: File): Promise<string> {
-  // returns base64 (bez "data:mime;base64,")
   const buf = await file.arrayBuffer();
   let binary = "";
   const bytes = new Uint8Array(buf);
@@ -33,6 +33,7 @@ async function fileToBase64(file: File): Promise<string> {
 export default function ContactForm() {
   const startedAtRef = useRef<number>(Date.now());
   const abortRef = useRef<AbortController | null>(null);
+  const inFlightRef = useRef(false);
 
   const [service, setService] = useState<(typeof SERVICE_OPTIONS)[number]>("Website");
   const [budget, setBudget] = useState<(typeof BUDGET_OPTIONS)[number]>("Under £2k");
@@ -45,6 +46,7 @@ export default function ContactForm() {
   const [hpWebsite, setHpWebsite] = useState("");
 
   const [file, setFile] = useState<File | null>(null);
+  const [isDrag, setIsDrag] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -64,7 +66,6 @@ export default function ContactForm() {
   }, [name, email, message, file]);
 
   function calcTimeoutMs(f: File | null) {
-    // base 20s, +1.5s per MB, cap 45s
     const base = 20000;
     if (!f) return base;
     const mb = f.size / (1024 * 1024);
@@ -72,10 +73,37 @@ export default function ContactForm() {
     return Math.min(45000, base + extra);
   }
 
+  function validateFile(f: File) {
+    if (!f.type.startsWith("image/")) {
+      throw new Error("Only image files are allowed (PNG/JPG/WebP).");
+    }
+    if (f.size > MAX_FILE_BYTES) {
+      throw new Error("Image is too large. Please keep it under 3MB.");
+    }
+  }
+
+  function onPickFile(f: File | null) {
+    setError("");
+    if (!f) {
+      setFile(null);
+      return;
+    }
+    try {
+      validateFile(f);
+      setFile(f);
+    } catch (e: any) {
+      setFile(null);
+      setError(e?.message || "Invalid file.");
+    }
+  }
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
     setSent(false);
+
+    if (inFlightRef.current) return;
+    inFlightRef.current = true;
 
     const n = name.trim();
     const em = email.trim();
@@ -83,21 +111,21 @@ export default function ContactForm() {
 
     if (!n || !em || msg.length < 10) {
       setError("Please fill in all required fields (message min. 10 characters).");
+      inFlightRef.current = false;
       return;
     }
     if (!isEmail(em)) {
       setError("Please enter a valid email address.");
+      inFlightRef.current = false;
       return;
     }
 
-    // file checks (opcjonalny obrazek)
     if (file) {
-      if (!file.type.startsWith("image/")) {
-        setError("Only image files are allowed (PNG/JPG/WebP).");
-        return;
-      }
-      if (file.size > MAX_FILE_BYTES) {
-        setError("Image is too large. Please keep it under 3MB.");
+      try {
+        validateFile(file);
+      } catch (e: any) {
+        setError(e?.message || "Invalid file.");
+        inFlightRef.current = false;
         return;
       }
     }
@@ -107,7 +135,6 @@ export default function ContactForm() {
     abortRef.current = controller;
 
     setLoading(true);
-
     const timeoutMs = calcTimeoutMs(file);
     const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -134,7 +161,7 @@ export default function ContactForm() {
           message: msg,
           website: hpWebsite,
           startedAt: startedAtRef.current,
-          attachment, // optional
+          attachment,
         }),
       });
 
@@ -159,49 +186,50 @@ export default function ContactForm() {
     } finally {
       clearTimeout(timeout);
       setLoading(false);
+      inFlightRef.current = false;
     }
   }
 
   return (
     <form className="k-cform" onSubmit={onSubmit} noValidate>
-      <div className="k-cform__top">
-        <div className="k-cform__group">
-          <div className="k-cform__label">SERVICE</div>
-          <div className="k-cform__chips" role="list" aria-label="Service selection">
-            {SERVICE_OPTIONS.map((opt) => (
-              <button
-                key={opt}
-                type="button"
-                className={cx("k-chip", service === opt && "is-active")}
-                onClick={() => setService(opt)}
-              >
-                {opt}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="k-cform__group">
-          <div className="k-cform__label">BUDGET</div>
-          <div className="k-cform__chips" role="list" aria-label="Budget selection">
-            {BUDGET_OPTIONS.map((opt) => (
-              <button
-                key={opt}
-                type="button"
-                className={cx("k-chip", budget === opt && "is-active")}
-                onClick={() => setBudget(opt)}
-              >
-                {opt}
-              </button>
-            ))}
-          </div>
+      {/* TOP: service + budget */}
+      <div className="k-cform__group">
+        <div className="k-cform__label">Service</div>
+        <div className="k-cform__chips" role="list" aria-label="Service selection">
+          {SERVICE_OPTIONS.map((opt) => (
+            <button
+              key={opt}
+              type="button"
+              className={cx("k-cchip", service === opt && "is-on")}
+              onClick={() => setService(opt)}
+            >
+              {opt}
+            </button>
+          ))}
         </div>
       </div>
 
-      <div className="k-cform__grid">
-        <div className="k-cform__field">
-          <label className="k-cform__label" htmlFor="fullName">
-            FULL NAME <span aria-hidden="true">*</span>
+      <div className="k-cform__group">
+        <div className="k-cform__label">Budget</div>
+        <div className="k-cform__chips" role="list" aria-label="Budget selection">
+          {BUDGET_OPTIONS.map((opt) => (
+            <button
+              key={opt}
+              type="button"
+              className={cx("k-cchip", budget === opt && "is-on")}
+              onClick={() => setBudget(opt)}
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* NAME + EMAIL */}
+      <div className="k-cform__row">
+        <div className="k-uline">
+          <label className="k-uline__hint" htmlFor="fullName">
+            Full name <span aria-hidden="true">*</span>
           </label>
           <input
             id="fullName"
@@ -210,13 +238,14 @@ export default function ContactForm() {
             autoComplete="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            placeholder=""
             required
           />
         </div>
 
-        <div className="k-cform__field">
-          <label className="k-cform__label" htmlFor="email">
-            EMAIL <span aria-hidden="true">*</span>
+        <div className="k-uline">
+          <label className="k-uline__hint" htmlFor="email">
+            Email <span aria-hidden="true">*</span>
           </label>
           <input
             id="email"
@@ -225,59 +254,123 @@ export default function ContactForm() {
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            placeholder=""
             required
           />
         </div>
+      </div>
 
-        <div className="k-cform__field k-cform__field--wide">
-          <label className="k-cform__label" htmlFor="details">
-            PROJECT DETAILS <span aria-hidden="true">*</span>
-          </label>
-          <textarea
-            id="details"
-            name="message"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            required
-            minLength={10}
-          />
-        </div>
+      {/* MESSAGE */}
+      <div className="k-uline">
+        <label className="k-uline__hint" htmlFor="details">
+          Project details <span aria-hidden="true">*</span>
+        </label>
+        <textarea
+          id="details"
+          name="message"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder=""
+          required
+          minLength={10}
+        />
+      </div>
 
-        <div className="k-cform__field k-cform__field--wide">
-          <label className="k-cform__label" htmlFor="file">
-            OPTIONAL IMAGE (max 3MB)
-          </label>
+      {/* UPLOAD */}
+      <div className="k-cform__group">
+        <div className="k-cform__label">Attach a file (optional)</div>
+
+        <label
+          className={cx("k-upload", isDrag && "is-drag")}
+          onDragEnter={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsDrag(true);
+          }}
+          onDragOver={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsDrag(true);
+          }}
+          onDragLeave={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsDrag(false);
+          }}
+          onDrop={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsDrag(false);
+            const f = e.dataTransfer.files?.[0] ?? null;
+            onPickFile(f);
+          }}
+        >
           <input
             id="file"
             name="file"
             type="file"
             accept="image/*"
-            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+            onChange={(e) => onPickFile(e.target.files?.[0] ?? null)}
           />
-        </div>
 
-        {/* honeypot (ukryte) */}
-        <div style={{ position: "absolute", left: "-9999px", opacity: 0 }} aria-hidden="true">
-          <label htmlFor="website">Website</label>
-          <input
-            id="website"
-            name="website"
-            type="text"
-            value={hpWebsite}
-            onChange={(e) => setHpWebsite(e.target.value)}
-            tabIndex={-1}
-            autoComplete="off"
-          />
-        </div>
+          <div style={{ textAlign: "center", display: "grid", gap: 6 }}>
+            <div style={{ color: "rgba(255,255,255,.88)", fontWeight: 650 }}>
+              {file ? file.name : "Choose a file or drag and drop here"}
+            </div>
+            <div style={{ color: "rgba(255,255,255,.58)" }}>
+              Tip: include a screenshot or reference image. (max 3MB)
+            </div>
+
+            {file && (
+              <button
+                type="button"
+                onClick={(ev) => {
+                  ev.preventDefault();
+                  onPickFile(null);
+                }}
+                style={{
+                  marginTop: 2,
+                  background: "transparent",
+                  border: "none",
+                  color: "rgba(190,145,255,.92)",
+                  fontWeight: 650,
+                  cursor: "pointer",
+                }}
+              >
+                Remove file
+              </button>
+            )}
+          </div>
+        </label>
       </div>
 
-      <div className="k-cform__actions">
-        <button className="k-cform__submit" type="submit" disabled={!canSubmit}>
-          {loading ? "Sending..." : "Submit inquiry"}
-        </button>
+      {/* honeypot */}
+      <div style={{ position: "absolute", left: "-9999px", opacity: 0 }} aria-hidden="true">
+        <label htmlFor="website">Website</label>
+        <input
+          id="website"
+          name="website"
+          type="text"
+          value={hpWebsite}
+          onChange={(e) => setHpWebsite(e.target.value)}
+          tabIndex={-1}
+          autoComplete="off"
+        />
+      </div>
 
-        {sent && <div className="k-cform__success">Sent. We’ll reply shortly.</div>}
-        {error && <div className="k-cform__error">{error}</div>}
+      {/* ACTIONS */}
+      <button className="k-submit" type="submit" disabled={!canSubmit}>
+        {loading ? "Sending..." : "Submit inquiry"}
+      </button>
+
+      {sent && <div className="k-cform__notice k-cform__notice--ok">Sent. We’ll reply shortly.</div>}
+      {error && <div className="k-cform__notice k-cform__notice--err">{error}</div>}
+
+      <div className="k-cform__foot">
+        No spam. Just a clean reply. If you prefer: email us directly at{" "}
+        <a href="mailto:hello@kersivo.co.uk" style={{ color: "rgba(255,255,255,.86)", borderBottom: "1px solid rgba(255,255,255,.22)" }}>
+          hello@kersivo.co.uk
+        </a>.
       </div>
     </form>
   );
