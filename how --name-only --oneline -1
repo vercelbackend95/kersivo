@@ -1,5 +1,0 @@
-[33mcommit d12d5bad840efdbce28049165495925ea714a009[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
-Author: Bartek Jasinski <bartoszjasinski01@gmail.com>
-Date:   Tue Feb 3 14:45:40 2026 +0000
-
-    Enable Vercel adapter (server output) + add /api/ping
