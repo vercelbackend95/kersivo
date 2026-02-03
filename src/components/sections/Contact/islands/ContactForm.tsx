@@ -62,6 +62,14 @@ export default function ContactForm() {
       return;
     }
 
+    // jeśli bot wypełni honeypot → udajemy sukces i kończymy
+    if (hpWebsite.trim()) {
+      setSent(true);
+      setFile(null);
+      setMessage("");
+      return;
+    }
+
     abortRef.current?.abort();
     const controller = new AbortController();
     abortRef.current = controller;
@@ -69,13 +77,13 @@ export default function ContactForm() {
     setLoading(true);
 
     const timeoutMs = calcTimeoutMs(file);
-    const timeout = setTimeout(() => controller.abort(), 25000);
-
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
       const hasFile = Boolean(file);
 
-      const res = await fetch("/api/contact-v2", {
+      // IMPORTANT: trailingSlash: "always" → wołamy endpoint ze slashem
+      const res = await fetch("/api/lead/", {
         method: "POST",
         signal: controller.signal,
         ...(hasFile
@@ -110,9 +118,7 @@ export default function ContactForm() {
       const data = (await res.json().catch(() => null)) as ApiOk | ApiErr | null;
 
       if (!res.ok || !data || (data as ApiErr).ok === false) {
-        const msg =
-          (data as ApiErr | null)?.error ||
-          `Request failed (${res.status}). Please try again.`;
+        const msg = (data as ApiErr | null)?.error || `Request failed (${res.status}). Please try again.`;
         throw new Error(msg);
       }
 
