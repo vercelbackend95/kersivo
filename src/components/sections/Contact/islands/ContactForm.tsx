@@ -6,8 +6,7 @@ type ApiErr = { ok: false; error?: string };
 const SERVICE_OPTIONS = ["Website", "Brand + UI", "E-commerce", "Ongoing"] as const;
 const BUDGET_OPTIONS = ["Under £2k", "£2k–£5k", "£5k+"] as const;
 
-const API_ENDPOINT = "/api/lead/"; // <-- ważne: trailing slash (u Ciebie jest trailingSlash: "always")
-
+const API_ENDPOINT = "/api/lead"; // ✅ bez slasha 
 // max 3MB na obrazek (bezpiecznie dla body limitów + base64 rośnie)
 const MAX_FILE_BYTES = 3 * 1024 * 1024;
 

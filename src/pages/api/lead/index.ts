@@ -1,1 +1,1 @@
-export { prerender, POST } from "../lead";
+export { prerender, GET, POST } from "../lead";

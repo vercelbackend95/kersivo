@@ -1,37 +1,61 @@
 import type { APIRoute } from "astro";
 
+export const prerender = false;
+
+function json(status: number, body: any) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: {
+      "content-type": "application/json; charset=utf-8",
+      "cache-control": "no-store",
+    },
+  });
+}
+
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-function tooFast(startedAt?: number) {
-  if (!startedAt) return false;
-  const ms = Date.now() - startedAt;
-  return ms < 1200; // boty często wysyłają “instant”
-}
-
-const MAX_ATTACHMENT_BYTES = 3 * 1024 * 1024;
+export const GET: APIRoute = async () => {
+  // pozwala testować w przeglądarce /api/lead oraz /api/lead/
+  return json(200, { ok: true, route: "lead", ts: Date.now() });
+};
 
 export const POST: APIRoute = async ({ request }) => {
-  // JSON only (prościej + stabilniej)
-  let body: any = null;
+  let body: any;
   try {
     body = await request.json();
   } catch {
-    return new Response(JSON.stringify({ ok: false, error: "Invalid JSON" }), {
-      status: 400,
-      headers: { "content-type": "application/json" },
-    });
+    return json(400, { ok: false, error: "Invalid JSON" });
   }
 
-  const key = import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY;
-  const to = import.meta.env.CONTACT_TO_EMAIL || process.env.CONTACT_TO_EMAIL || "hello@kersivo.co.uk";
-  if (!key) {
-    return new Response(JSON.stringify({ ok: false, error: "Missing RESEND_API_KEY" }), {
-      status: 500,
-      headers: { "content-type": "application/json" },
-    });
-  }
+  // honeypot + too-fast (anti-bot)
+  const hp = String(body?.website ?? "").trim();
+  if (hp) return json(200, { ok: true });
+
+  const startedAt = Number(body?.startedAt ?? 0);
+  if (startedAt && Date.now() - startedAt < 1200) return json(200, { ok: true });
+
+  // ENV: obsługujemy stare i nowe nazwy (żebyś nie musiał teraz latać po Vercel)
+  const key =
+    import.meta.env.RESEND_API_KEY ||
+    process.env.RESEND_API_KEY;
+
+  const to =
+    import.meta.env.CONTACT_TO_EMAIL ||
+    process.env.CONTACT_TO_EMAIL ||
+    import.meta.env.CONTACT_TO ||
+    process.env.CONTACT_TO ||
+    "hello@kersivo.co.uk";
+
+  const from =
+    import.meta.env.RESEND_FROM ||
+    process.env.RESEND_FROM ||
+    import.meta.env.CONTACT_FROM ||
+    process.env.CONTACT_FROM ||
+    "Kersivo <hello@kersivo.co.uk>";
+
+  if (!key) return json(500, { ok: false, error: "Missing RESEND_API_KEY" });
 
   const service = String(body?.service ?? "");
   const budget = String(body?.budget ?? "");
@@ -39,38 +63,14 @@ export const POST: APIRoute = async ({ request }) => {
   const email = String(body?.email ?? "").trim();
   const message = String(body?.message ?? "").trim();
 
-  // honeypot: jeśli wypełnione, udajemy sukces (nie karmimy botów)
-  const hp = String(body?.website ?? "").trim();
-  if (hp) {
-    return new Response(JSON.stringify({ ok: true }), {
-      status: 200,
-      headers: { "content-type": "application/json" },
-    });
-  }
-
-  // “too fast”: też udajemy sukces (soft shield)
-  const startedAt = Number(body?.startedAt ?? 0) || undefined;
-  if (tooFast(startedAt)) {
-    return new Response(JSON.stringify({ ok: true }), {
-      status: 200,
-      headers: { "content-type": "application/json" },
-    });
-  }
-
   if (!name || !email || message.length < 10) {
-    return new Response(JSON.stringify({ ok: false, error: "Missing required fields" }), {
-      status: 400,
-      headers: { "content-type": "application/json" },
-    });
+    return json(400, { ok: false, error: "Missing required fields" });
   }
   if (!isValidEmail(email)) {
-    return new Response(JSON.stringify({ ok: false, error: "Invalid email" }), {
-      status: 400,
-      headers: { "content-type": "application/json" },
-    });
+    return json(400, { ok: false, error: "Invalid email" });
   }
 
-  // Optional attachment (image only)
+  // optional image attachment (base64)
   const att = body?.attachment ?? null;
   let attachments: Array<{ filename: string; content: string }> | undefined;
 
@@ -80,23 +80,15 @@ export const POST: APIRoute = async ({ request }) => {
     const size = Number(att.size || 0);
 
     if (!contentType.startsWith("image/")) {
-      return new Response(JSON.stringify({ ok: false, error: "Only image attachments are allowed" }), {
-        status: 400,
-        headers: { "content-type": "application/json" },
-      });
+      return json(400, { ok: false, error: "Only image attachments are allowed" });
     }
-    if (!size || size > MAX_ATTACHMENT_BYTES) {
-      return new Response(JSON.stringify({ ok: false, error: "Attachment too large (max 3MB)" }), {
-        status: 400,
-        headers: { "content-type": "application/json" },
-      });
+    if (!size || size > 3 * 1024 * 1024) {
+      return json(400, { ok: false, error: "Attachment too large (max 3MB)" });
     }
 
-    // Resend expects base64 content + filename :contentReference[oaicite:1]{index=1}
     attachments = [{ filename, content: String(att.base64) }];
   }
 
-  // Timeout dla Resend
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), 12000);
 
@@ -109,7 +101,7 @@ export const POST: APIRoute = async ({ request }) => {
       },
       signal: ctrl.signal,
       body: JSON.stringify({
-        from: "Kersivo <hello@kersivo.co.uk>",
+        from,
         to,
         subject: `New lead — ${name}`,
         reply_to: email,
@@ -126,21 +118,15 @@ export const POST: APIRoute = async ({ request }) => {
     const out = await r.json().catch(() => null);
 
     if (!r.ok) {
-      return new Response(
-        JSON.stringify({ ok: false, error: out?.message || out?.error || `Resend failed (${r.status})` }),
-        { status: 500, headers: { "content-type": "application/json" } }
-      );
+      return json(500, {
+        ok: false,
+        error: out?.message || out?.error || `Resend failed (${r.status})`,
+      });
     }
 
-    return new Response(JSON.stringify({ ok: true, id: out?.id }), {
-      status: 200,
-      headers: { "content-type": "application/json" },
-    });
+    return json(200, { ok: true, id: out?.id });
   } catch (e: any) {
     const msg = e?.name === "AbortError" ? "Email send timed out" : e?.message || "Server error";
-    return new Response(JSON.stringify({ ok: false, error: msg }), {
-      status: 500,
-      headers: { "content-type": "application/json" },
-    });
+    return json(500, { ok: false, error: msg });
   }
 };
