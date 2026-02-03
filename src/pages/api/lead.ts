@@ -1,132 +1,146 @@
-export const prerender = false;
-
-function json(status: number, body: any) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: {
-      "content-type": "application/json; charset=utf-8",
-      "cache-control": "no-store",
-    },
-  });
-}
+import type { APIRoute } from "astro";
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-function escapeHtml(str: string) {
-  return String(str)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+function tooFast(startedAt?: number) {
+  if (!startedAt) return false;
+  const ms = Date.now() - startedAt;
+  return ms < 1200; // boty często wysyłają “instant”
 }
 
-function toBase64(bytes: Uint8Array) {
-  let bin = "";
-  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
-  // @ts-ignore
-  return btoa(bin);
-}
+const MAX_ATTACHMENT_BYTES = 3 * 1024 * 1024;
 
-export async function POST({ request }: { request: Request }) {
+export const POST: APIRoute = async ({ request }) => {
+  // JSON only (prościej + stabilniej)
+  let body: any = null;
   try {
-    const RESEND_API_KEY = import.meta.env.RESEND_API_KEY || "";
-    const TO = import.meta.env.CONTACT_TO_EMAIL || "hello@kersivo.co.uk";
+    body = await request.json();
+  } catch {
+    return new Response(JSON.stringify({ ok: false, error: "Invalid JSON" }), {
+      status: 400,
+      headers: { "content-type": "application/json" },
+    });
+  }
 
-    if (!RESEND_API_KEY) return json(500, { ok: false, error: "Missing RESEND_API_KEY" });
+  const key = import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY;
+  const to = import.meta.env.CONTACT_TO_EMAIL || process.env.CONTACT_TO_EMAIL || "hello@kersivo.co.uk";
+  if (!key) {
+    return new Response(JSON.stringify({ ok: false, error: "Missing RESEND_API_KEY" }), {
+      status: 500,
+      headers: { "content-type": "application/json" },
+    });
+  }
 
-    const ct = (request.headers.get("content-type") || "").toLowerCase();
+  const service = String(body?.service ?? "");
+  const budget = String(body?.budget ?? "");
+  const name = String(body?.name ?? "").trim();
+  const email = String(body?.email ?? "").trim();
+  const message = String(body?.message ?? "").trim();
 
-    let service = "";
-    let budget = "";
-    let name = "";
-    let email = "";
-    let message = "";
-    let file: File | null = null;
+  // honeypot: jeśli wypełnione, udajemy sukces (nie karmimy botów)
+  const hp = String(body?.website ?? "").trim();
+  if (hp) {
+    return new Response(JSON.stringify({ ok: true }), {
+      status: 200,
+      headers: { "content-type": "application/json" },
+    });
+  }
 
-    if (ct.includes("multipart/form-data")) {
-      const fd = await request.formData();
-      service = String(fd.get("service") || "");
-      budget = String(fd.get("budget") || "");
-      name = String(fd.get("name") || "");
-      email = String(fd.get("email") || "");
-      message = String(fd.get("message") || "");
-      const f = fd.get("file");
-      if (f && typeof f === "object") file = f as File;
-    } else {
-      const body = await request.json().catch(() => ({} as any));
-      service = String(body.service || "");
-      budget = String(body.budget || "");
-      name = String(body.name || "");
-      email = String(body.email || "");
-      message = String(body.message || "");
+  // “too fast”: też udajemy sukces (soft shield)
+  const startedAt = Number(body?.startedAt ?? 0) || undefined;
+  if (tooFast(startedAt)) {
+    return new Response(JSON.stringify({ ok: true }), {
+      status: 200,
+      headers: { "content-type": "application/json" },
+    });
+  }
+
+  if (!name || !email || message.length < 10) {
+    return new Response(JSON.stringify({ ok: false, error: "Missing required fields" }), {
+      status: 400,
+      headers: { "content-type": "application/json" },
+    });
+  }
+  if (!isValidEmail(email)) {
+    return new Response(JSON.stringify({ ok: false, error: "Invalid email" }), {
+      status: 400,
+      headers: { "content-type": "application/json" },
+    });
+  }
+
+  // Optional attachment (image only)
+  const att = body?.attachment ?? null;
+  let attachments: Array<{ filename: string; content: string }> | undefined;
+
+  if (att?.base64 && att?.filename) {
+    const filename = String(att.filename);
+    const contentType = String(att.contentType || "");
+    const size = Number(att.size || 0);
+
+    if (!contentType.startsWith("image/")) {
+      return new Response(JSON.stringify({ ok: false, error: "Only image attachments are allowed" }), {
+        status: 400,
+        headers: { "content-type": "application/json" },
+      });
+    }
+    if (!size || size > MAX_ATTACHMENT_BYTES) {
+      return new Response(JSON.stringify({ ok: false, error: "Attachment too large (max 3MB)" }), {
+        status: 400,
+        headers: { "content-type": "application/json" },
+      });
     }
 
-    if (!name.trim() || !email.trim() || !message.trim()) {
-      return json(400, { ok: false, error: "Missing required fields" });
-    }
-    if (!isValidEmail(email.trim())) {
-      return json(400, { ok: false, error: "Invalid email" });
-    }
+    // Resend expects base64 content + filename :contentReference[oaicite:1]{index=1}
+    attachments = [{ filename, content: String(att.base64) }];
+  }
 
-    const attachments: Array<{ filename: string; content: string }> = [];
-    if (file) {
-      const maxBytes = 8 * 1024 * 1024;
-      if (file.size > maxBytes) return json(413, { ok: false, error: "File too large (max 8MB)" });
+  // Timeout dla Resend
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), 12000);
 
-      const ab = await file.arrayBuffer();
-      const base64 = toBase64(new Uint8Array(ab));
-      attachments.push({ filename: file.name || "attachment", content: base64 });
-    }
-
-    const subject = `New lead — ${name.trim()}`;
-
-    const payload: any = {
-      from: "Kersivo <hello@kersivo.co.uk>",
-      to: TO,
-      subject,
-      reply_to: email.trim(),
-      text: `Name: ${name}\nEmail: ${email}\nService: ${service}\nBudget: ${budget}\n\n${message}\n`,
-      html: `
-        <div style="font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;line-height:1.5">
-          <h2 style="margin:0 0 12px">New contact form lead</h2>
-          <p style="margin:0 0 8px"><strong>Name:</strong> ${escapeHtml(name)}</p>
-          <p style="margin:0 0 8px"><strong>Email:</strong> ${escapeHtml(email)}</p>
-          <p style="margin:0 0 8px"><strong>Service:</strong> ${escapeHtml(service || "—")}</p>
-          <p style="margin:0 0 16px"><strong>Budget:</strong> ${escapeHtml(budget || "—")}</p>
-          <div style="padding:12px 14px;border:1px solid rgba(0,0,0,.08);border-radius:12px">
-            <div style="font-weight:600;margin-bottom:6px">Message</div>
-            <div style="white-space:pre-wrap">${escapeHtml(message)}</div>
-          </div>
-        </div>
-      `.trim(),
-      ...(attachments.length ? { attachments } : {}),
-    };
-
-    const ctrl = new AbortController();
-    const t = setTimeout(() => ctrl.abort(), 9000);
-
+  try {
     const r = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${RESEND_API_KEY}`,
+        Authorization: `Bearer ${key}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(payload),
       signal: ctrl.signal,
+      body: JSON.stringify({
+        from: "Kersivo <hello@kersivo.co.uk>",
+        to,
+        subject: `New lead — ${name}`,
+        reply_to: email,
+        text:
+          `Name: ${name}\n` +
+          `Email: ${email}\n` +
+          `Service: ${service}\n` +
+          `Budget: ${budget}\n\n` +
+          `${message}\n`,
+        ...(attachments ? { attachments } : {}),
+      }),
     }).finally(() => clearTimeout(t));
 
     const out = await r.json().catch(() => null);
 
     if (!r.ok) {
-      return json(500, { ok: false, error: out?.message || out?.error || `Resend failed (${r.status})` });
+      return new Response(
+        JSON.stringify({ ok: false, error: out?.message || out?.error || `Resend failed (${r.status})` }),
+        { status: 500, headers: { "content-type": "application/json" } }
+      );
     }
 
-    return json(200, { ok: true, id: out?.id });
+    return new Response(JSON.stringify({ ok: true, id: out?.id }), {
+      status: 200,
+      headers: { "content-type": "application/json" },
+    });
   } catch (e: any) {
-    const msg = e?.name === "AbortError" ? "Email send timed out." : e?.message || "Server error";
-    return json(500, { ok: false, error: msg });
+    const msg = e?.name === "AbortError" ? "Email send timed out" : e?.message || "Server error";
+    return new Response(JSON.stringify({ ok: false, error: msg }), {
+      status: 500,
+      headers: { "content-type": "application/json" },
+    });
   }
-}
+};

@@ -6,8 +6,29 @@ type ApiErr = { ok: false; error?: string };
 const SERVICE_OPTIONS = ["Website", "Brand + UI", "E-commerce", "Ongoing"] as const;
 const BUDGET_OPTIONS = ["Under £2k", "£2k–£5k", "£5k+"] as const;
 
+const API_ENDPOINT = "/api/lead/"; // <-- ważne: trailing slash (u Ciebie jest trailingSlash: "always")
+
+// max 3MB na obrazek (bezpiecznie dla body limitów + base64 rośnie)
+const MAX_FILE_BYTES = 3 * 1024 * 1024;
+
 function cx(...parts: Array<string | false | null | undefined>) {
   return parts.filter(Boolean).join(" ");
+}
+
+function isEmail(email: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+async function fileToBase64(file: File): Promise<string> {
+  // returns base64 (bez "data:mime;base64,")
+  const buf = await file.arrayBuffer();
+  let binary = "";
+  const bytes = new Uint8Array(buf);
+  const chunkSize = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+  }
+  return btoa(binary);
 }
 
 export default function ContactForm() {
@@ -21,7 +42,7 @@ export default function ContactForm() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
 
-  // honeypot – boty kochają wypełniać ukryte pola
+  // honeypot
   const [hpWebsite, setHpWebsite] = useState("");
 
   const [file, setFile] = useState<File | null>(null);
@@ -33,7 +54,7 @@ export default function ContactForm() {
   const canSubmit = useMemo(() => {
     if (loading) return false;
     if (!name.trim()) return false;
-    if (!email.trim()) return false;
+    if (!email.trim() || !isEmail(email.trim())) return false;
     if (message.trim().length < 10) return false;
     return true;
   }, [loading, name, email, message]);
@@ -44,7 +65,7 @@ export default function ContactForm() {
   }, [name, email, message, file]);
 
   function calcTimeoutMs(f: File | null) {
-    // base 20s, +1.5s per MB, cap 45s (żeby Vercel/Resend miały oddech)
+    // base 20s, +1.5s per MB, cap 45s
     const base = 20000;
     if (!f) return base;
     const mb = f.size / (1024 * 1024);
@@ -57,17 +78,29 @@ export default function ContactForm() {
     setError("");
     setSent(false);
 
-    if (!name.trim() || !email.trim() || message.trim().length < 10) {
+    const n = name.trim();
+    const em = email.trim();
+    const msg = message.trim();
+
+    if (!n || !em || msg.length < 10) {
       setError("Please fill in all required fields (message min. 10 characters).");
       return;
     }
-
-    // jeśli bot wypełni honeypot → udajemy sukces i kończymy
-    if (hpWebsite.trim()) {
-      setSent(true);
-      setFile(null);
-      setMessage("");
+    if (!isEmail(em)) {
+      setError("Please enter a valid email address.");
       return;
+    }
+
+    // file checks (opcjonalny obrazek)
+    if (file) {
+      if (!file.type.startsWith("image/")) {
+        setError("Only image files are allowed (PNG/JPG/WebP).");
+        return;
+      }
+      if (file.size > MAX_FILE_BYTES) {
+        setError("Image is too large. Please keep it under 3MB.");
+        return;
+      }
     }
 
     abortRef.current?.abort();
@@ -80,57 +113,50 @@ export default function ContactForm() {
     const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
-      const hasFile = Boolean(file);
-
-      // IMPORTANT: trailingSlash: "always" → wołamy endpoint ze slashem
-      const res = await fetch("/api/lead/", {
-        method: "POST",
-        signal: controller.signal,
-        ...(hasFile
+      const attachment =
+        file
           ? {
-              body: (() => {
-                const fd = new FormData();
-                fd.append("service", service);
-                fd.append("budget", budget);
-                fd.append("name", name.trim());
-                fd.append("email", email.trim());
-                fd.append("message", message.trim());
-                fd.append("website", hpWebsite);
-                fd.append("startedAt", String(startedAtRef.current));
-                if (file) fd.append("file", file, file.name);
-                return fd;
-              })(),
+              filename: file.name,
+              contentType: file.type,
+              size: file.size,
+              base64: await fileToBase64(file),
             }
-          : {
-              headers: { "content-type": "application/json" },
-              body: JSON.stringify({
-                service,
-                budget,
-                name: name.trim(),
-                email: email.trim(),
-                message: message.trim(),
-                website: hpWebsite,
-                startedAt: startedAtRef.current,
-              }),
-            }),
+          : null;
+
+      const res = await fetch(API_ENDPOINT, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        signal: controller.signal,
+        body: JSON.stringify({
+          service,
+          budget,
+          name: n,
+          email: em,
+          message: msg,
+          website: hpWebsite,
+          startedAt: startedAtRef.current,
+          attachment, // optional
+        }),
       });
 
       const data = (await res.json().catch(() => null)) as ApiOk | ApiErr | null;
 
       if (!res.ok || !data || (data as ApiErr).ok === false) {
-        const msg = (data as ApiErr | null)?.error || `Request failed (${res.status}). Please try again.`;
-        throw new Error(msg);
+        const msg2 =
+          (data as ApiErr | null)?.error ||
+          `Request failed (${res.status}). Please try again.`;
+        throw new Error(msg2);
       }
 
       setSent(true);
       setFile(null);
       setMessage("");
     } catch (err: any) {
-      const msg =
+      const msg2 =
         err?.name === "AbortError"
           ? "Timed out. Please try again."
           : err?.message || "Something went wrong. Please try again.";
-      setError(msg);
+      setError(msg2);
     } finally {
       clearTimeout(timeout);
       setLoading(false);
@@ -183,7 +209,6 @@ export default function ContactForm() {
             name="name"
             type="text"
             autoComplete="name"
-            placeholder=""
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
@@ -199,7 +224,6 @@ export default function ContactForm() {
             name="email"
             type="email"
             autoComplete="email"
-            placeholder=""
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -213,11 +237,23 @@ export default function ContactForm() {
           <textarea
             id="details"
             name="message"
-            placeholder=""
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             required
             minLength={10}
+          />
+        </div>
+
+        <div className="k-cform__field k-cform__field--wide">
+          <label className="k-cform__label" htmlFor="file">
+            OPTIONAL IMAGE (max 3MB)
+          </label>
+          <input
+            id="file"
+            name="file"
+            type="file"
+            accept="image/*"
+            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
           />
         </div>
 
@@ -226,50 +262,23 @@ export default function ContactForm() {
           <label htmlFor="website">Website</label>
           <input
             id="website"
-            tabIndex={-1}
-            autoComplete="off"
+            name="website"
+            type="text"
             value={hpWebsite}
             onChange={(e) => setHpWebsite(e.target.value)}
+            tabIndex={-1}
+            autoComplete="off"
           />
-        </div>
-
-        <div className="k-cform__upload k-cform__field--wide">
-          <div className="k-cform__uploadInner">
-            <div className="k-cform__uploadTitle">Choose a file or drag and drop here</div>
-            <div className="k-cform__uploadHint">Tip: include a PDF brief, screenshots, or a sitemap.</div>
-
-            <input
-              className="k-cform__file"
-              type="file"
-              name="file"
-              onChange={(e) => setFile(e.target.files?.[0] || null)}
-              accept=".pdf,.png,.jpg,.jpeg,.webp,.zip"
-            />
-
-            {file ? (
-              <div className="k-cform__uploadMeta" aria-live="polite">
-                Selected: <strong>{file.name}</strong>
-              </div>
-            ) : null}
-          </div>
         </div>
       </div>
 
-      <button className="k-cform__cta" type="submit" disabled={!canSubmit}>
-        {loading ? "Sending…" : "Submit inquiry"}
-      </button>
+      <div className="k-cform__actions">
+        <button className="k-cform__submit" type="submit" disabled={!canSubmit}>
+          {loading ? "Sending..." : "Submit inquiry"}
+        </button>
 
-      <div className="k-cform__foot" aria-live="polite">
-        {sent ? (
-          <span>Sent. Clean and simple — we’ll reply soon.</span>
-        ) : error ? (
-          <span style={{ color: "rgba(255,90,90,.95)" }}>{error}</span>
-        ) : (
-          <span>
-            No spam. Just a clean reply. If you prefer: email us directly at{" "}
-            <a href="mailto:hello@kersivo.co.uk">hello@kersivo.co.uk</a>.
-          </span>
-        )}
+        {sent && <div className="k-cform__success">Sent. We’ll reply shortly.</div>}
+        {error && <div className="k-cform__error">{error}</div>}
       </div>
     </form>
   );
