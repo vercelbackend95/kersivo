@@ -75,7 +75,7 @@ export default function ContactForm() {
     try {
       const hasFile = Boolean(file);
 
-      const res = await fetch("/api/contact", {
+      const res = await fetch("/api/contact-v2", {
         method: "POST",
         signal: controller.signal,
         ...(hasFile
