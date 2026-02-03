@@ -1,13 +1,13 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resendKey = process.env.RESEND_API_KEY || "";
+const resend = resendKey ? new Resend(resendKey) : null;
 
 // prościutki rate-limit (best effort w serverless)
 type Bucket = { count: number; resetAt: number };
 const RL_WINDOW_MS = 10 * 60 * 1000; // 10 min
 const RL_MAX = 8; // 8 prób / 10 min / IP
-const rlMap: Map<string, Bucket> =
-  (globalThis as any).__kersivo_rl_map || new Map();
+const rlMap: Map<string, Bucket> = (globalThis as any).__kersivo_rl_map || new Map();
 (globalThis as any).__kersivo_rl_map = rlMap;
 
 function json(status: number, body: any) {
@@ -20,6 +20,13 @@ function json(status: number, body: any) {
   });
 }
 
+function withTimeout<T>(p: Promise<T>, ms: number, msg: string) {
+  return Promise.race<T>([
+    p,
+    new Promise<T>((_, rej) => setTimeout(() => rej(new Error(msg)), ms)),
+  ]);
+}
+
 function getIP(req: Request) {
   return (
     req.headers.get("x-real-ip") ||
@@ -29,7 +36,6 @@ function getIP(req: Request) {
 }
 
 function isValidEmail(email: string) {
-  // wystarczająco dobrze na lead form
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
@@ -92,6 +98,13 @@ export default async function handler(req: Request) {
       return json(403, { ok: false, error: "Forbidden origin" });
     }
 
+    if (!resend) {
+      return json(500, {
+        ok: false,
+        error: "Email service misconfigured (missing RESEND_API_KEY).",
+      });
+    }
+
     const ip = getIP(req);
     const rl = rateLimit(ip);
     if (!rl.ok) {
@@ -111,7 +124,13 @@ export default async function handler(req: Request) {
     let file: File | null = null;
 
     if (ct.includes("multipart/form-data")) {
-      const fd = await req.formData();
+      // ⛑️ twardy timeout na parsowanie formData (żeby nie wisiało)
+      const fd = (await withTimeout(
+        req.formData(),
+        7000,
+        "Form parsing timed out"
+      )) as FormData;
+
       service = String(fd.get("service") || "");
       budget = String(fd.get("budget") || "");
       name = String(fd.get("name") || "");
@@ -123,23 +142,28 @@ export default async function handler(req: Request) {
       const f = fd.get("file");
       if (f && typeof f === "object") file = f as File;
     } else {
-      const body = await req.json().catch(() => ({} as any));
-      service = String(body.service || "");
-      budget = String(body.budget || "");
-      name = String(body.name || "");
-      email = String(body.email || "");
-      message = String(body.message || "");
-      website = String(body.website || "");
-      startedAt = Number(body.startedAt || 0);
-      // (JSON fallback – bez pliku)
+      // JSON path = najstabilniejszy (i najszybszy)
+      const body = await withTimeout(
+        req.json().catch(() => ({} as any)),
+        4000,
+        "JSON parsing timed out"
+      );
+
+      service = String((body as any).service || "");
+      budget = String((body as any).budget || "");
+      name = String((body as any).name || "");
+      email = String((body as any).email || "");
+      message = String((body as any).message || "");
+      website = String((body as any).website || "");
+      startedAt = Number((body as any).startedAt || 0);
     }
 
-    // honeypot: jak coś tu jest -> bot. Udajemy sukces, żeby bot nie “uczył się” błędu.
+    // honeypot: jak coś tu jest -> bot. Udajemy sukces.
     if (website && website.trim().length > 0) {
       return json(200, { ok: true, id: "ignored-bot" });
     }
 
-    // time trap: człowiek nie klika w 50ms
+    // time trap
     const tookMs = Date.now() - (startedAt || Date.now());
     if (tookMs < 1800) {
       return json(200, { ok: true, id: "ignored-too-fast" });
@@ -156,15 +180,15 @@ export default async function handler(req: Request) {
       return json(400, { ok: false, error: "Message too short" });
     }
 
-    // attachment (prawdziwy)
+    // attachment
     const attachments: Array<{ filename: string; content: string }> = [];
     if (file) {
-      const maxBytes = 8 * 1024 * 1024; // 8MB (bezpiecznie)
+      const maxBytes = 8 * 1024 * 1024; // 8MB
       if (file.size > maxBytes) {
         return json(413, { ok: false, error: "File too large (max 8MB)." });
       }
 
-      const ab = await file.arrayBuffer();
+      const ab = await withTimeout(file.arrayBuffer(), 7000, "Reading file timed out");
       const base64 = toBase64(new Uint8Array(ab));
       attachments.push({
         filename: file.name || "attachment",
@@ -207,15 +231,20 @@ export default async function handler(req: Request) {
       .filter(Boolean)
       .join("\n");
 
-    const { data, error } = await resend.emails.send({
-      from: "Kersivo <hello@kersivo.co.uk>",
-      to,
-      subject,
-      replyTo: email.trim(),
-      html,
-      text,
-      attachments: attachments.length ? attachments : undefined,
-    });
+    // ⛑️ timeout na wysyłkę maila (żeby nie robić “silent hang”)
+    const { data, error } = await withTimeout(
+      resend.emails.send({
+        from: "Kersivo <hello@kersivo.co.uk>",
+        to,
+        subject,
+        replyTo: email.trim(),
+        html,
+        text,
+        attachments: attachments.length ? attachments : undefined,
+      }),
+      9000,
+      "Email send timed out"
+    );
 
     if (error) return json(500, { ok: false, error: error.message });
 

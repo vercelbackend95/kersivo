@@ -39,50 +39,71 @@ export default function ContactForm() {
   }, [loading, name, email, message]);
 
   useEffect(() => {
-    // reset “sent” po edycji
     if (sent && (name || email || message || file)) setSent(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [name, email, message, file]);
+
+  function calcTimeoutMs(f: File | null) {
+    // base 20s, +1.5s per MB, cap 45s (żeby Vercel/Resend miały oddech)
+    const base = 20000;
+    if (!f) return base;
+    const mb = f.size / (1024 * 1024);
+    const extra = Math.ceil(mb * 1500);
+    return Math.min(45000, base + extra);
+  }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
     setSent(false);
 
-    // ultra prosta walidacja
     if (!name.trim() || !email.trim() || message.trim().length < 10) {
       setError("Please fill in all required fields (message min. 10 characters).");
       return;
     }
 
-    // abort poprzedniego requestu (jak ktoś kliknie 2x)
     abortRef.current?.abort();
     const controller = new AbortController();
     abortRef.current = controller;
 
     setLoading(true);
 
-    // timeout żeby “sending…” nigdy nie wisiało w nieskończoność
-    const timeout = setTimeout(() => controller.abort(), 15000);
+    const timeoutMs = calcTimeoutMs(file);
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
-      const fd = new FormData();
-      fd.append("service", service);
-      fd.append("budget", budget);
-      fd.append("name", name.trim());
-      fd.append("email", email.trim());
-      fd.append("message", message.trim());
-
-      // anty-bot: honeypot + czas
-      fd.append("website", hpWebsite); // honeypot
-      fd.append("startedAt", String(startedAtRef.current));
-
-      if (file) fd.append("file", file, file.name);
+      const hasFile = Boolean(file);
 
       const res = await fetch("/api/contact", {
         method: "POST",
-        body: fd,
         signal: controller.signal,
+        ...(hasFile
+          ? {
+              body: (() => {
+                const fd = new FormData();
+                fd.append("service", service);
+                fd.append("budget", budget);
+                fd.append("name", name.trim());
+                fd.append("email", email.trim());
+                fd.append("message", message.trim());
+                fd.append("website", hpWebsite);
+                fd.append("startedAt", String(startedAtRef.current));
+                if (file) fd.append("file", file, file.name);
+                return fd;
+              })(),
+            }
+          : {
+              headers: { "content-type": "application/json" },
+              body: JSON.stringify({
+                service,
+                budget,
+                name: name.trim(),
+                email: email.trim(),
+                message: message.trim(),
+                website: hpWebsite,
+                startedAt: startedAtRef.current,
+              }),
+            }),
       });
 
       const data = (await res.json().catch(() => null)) as ApiOk | ApiErr | null;
@@ -97,7 +118,6 @@ export default function ContactForm() {
       setSent(true);
       setFile(null);
       setMessage("");
-      // (celowo nie resetuję name/email – UX: kolejny lead szybciej)
     } catch (err: any) {
       const msg =
         err?.name === "AbortError"
@@ -209,9 +229,7 @@ export default function ContactForm() {
         <div className="k-cform__upload k-cform__field--wide">
           <div className="k-cform__uploadInner">
             <div className="k-cform__uploadTitle">Choose a file or drag and drop here</div>
-            <div className="k-cform__uploadHint">
-              Tip: include a PDF brief, screenshots, or a sitemap.
-            </div>
+            <div className="k-cform__uploadHint">Tip: include a PDF brief, screenshots, or a sitemap.</div>
 
             <input
               className="k-cform__file"
