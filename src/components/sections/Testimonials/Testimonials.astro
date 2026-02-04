@@ -1,11 +1,14 @@
 ---
 import "./testimonials.css";
+import ReviewsCarousel from "./ReviewsCarousel";
+
 
 type Testimonial = {
   quote: string;
   name: string;
   role: string;
   avatar?: string; // optional local/public path
+  blank?: boolean; // keeps layout but can be empty
 };
 
 interface Props {
@@ -39,12 +42,6 @@ const {
   testimonials = [
     {
       quote:
-        "Partnering with Bartek changed everything. Clear direction, sharp taste, and delivery that actually lands.",
-      name: "Sophia Martinez",
-      role: "Product Designer",
-    },
-    {
-      quote:
         "No fluff — just organised execution. Milestones were clear and the polish level was genuinely premium.",
       name: "Tom W.",
       role: "Small Business Owner (UK)",
@@ -55,13 +52,17 @@ const {
       name: "Aisha K.",
       role: "Founder (UK)",
     },
+    {
+      quote:
+        "Clean comms, calm delivery. The process removed doubts early and the finish felt… expensive (in a good way).",
+      name: "Sophia M.",
+      role: "Product Designer",
+    },
   ],
 } = Astro.props as Props;
-
-const uid = `k-rev-${Math.random().toString(16).slice(2)}`;
 ---
 
-<section id="reviews" class="section k-reviews" data-reviews-root={uid}>
+<section id="reviews" class="section k-reviews" data-section>
   <div class="container">
     <header class="k-reviews__head sectionTitle">
       <h6>{kicker}</h6>
@@ -111,147 +112,9 @@ const uid = `k-rev-${Math.random().toString(16).slice(2)}`;
         </article>
 
         <article class="k-reviews__card k-reviews__card--main" aria-label="Testimonials">
-          <div class="k-reviews__mainInner">
-            <div class="k-reviews__track" data-track>
-              {testimonials.map((t, idx) => (
-                <div class="k-reviews__slide" data-slide tabindex={idx === 0 ? 0 : -1}>
-                  <div class="k-reviews__slideInner">
-                    <p class="k-reviews__quote">“{t.quote}”</p>
-
-                    <!-- Bottom panel INSIDE the slide -->
-                    <div class="k-reviews__bottomPanel" aria-label="Testimonial footer">
-                      <div class="k-reviews__author">
-                        {t.avatar ? (
-                          <img class="k-reviews__authorImg" src={t.avatar} alt="" loading="lazy" />
-                        ) : (
-                          <span class="k-reviews__authorImg k-reviews__authorImg--ph" aria-hidden="true"></span>
-                        )}
-
-                        <div class="k-reviews__authorMeta">
-                          <div class="k-reviews__authorName">{t.name}</div>
-                          <div class="k-reviews__authorRole">{t.role}</div>
-                        </div>
-                      </div>
-
-                      <div class="k-reviews__controls" aria-label="Testimonial controls">
-                        <button class="k-reviews__btn" type="button" data-prev aria-label="Previous testimonial">
-                          <span class="k-reviews__chev k-reviews__chev--left" aria-hidden="true"></span>
-                        </button>
-                        <button class="k-reviews__btn" type="button" data-next aria-label="Next testimonial">
-                          <span class="k-reviews__chev k-reviews__chev--right" aria-hidden="true"></span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div class="k-reviews__progress" aria-hidden="true">
-              <span data-cur>01</span>
-              <span class="k-reviews__slash">/</span>
-              <span data-total>{String(testimonials.length).padStart(2, "0")}</span>
-            </div>
-          </div>
+          <ReviewsCarousel testimonials={testimonials.filter(t => !t.blank && t.quote?.trim())} client:visible />
         </article>
       </div>
     </div>
-
-    <p class="k-reviews__disclaimer">
-      *Testimonials are from people I’ve worked with on projects, design, or delivery — not necessarily web design clients (yet).
-    </p>
   </div>
-
-  <script is:inline>
-    {String.raw`
-      (() => {
-        const rootId = ${JSON.stringify(uid)};
-        const root = document.querySelector('[data-reviews-root="'+rootId+'"]');
-        if (!root) return;
-
-        const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-        const track = root.querySelector('[data-track]');
-        if (!track) return;
-
-        const slides = Array.from(track.querySelectorAll('[data-slide]'));
-        const curEl = root.querySelector('[data-cur]');
-        const totalEl = root.querySelector('[data-total]');
-
-        const mod = (n, m) => ((n % m) + m) % m;
-
-        let index = 0;
-
-        if (totalEl) totalEl.textContent = String(slides.length).padStart(2, '0');
-
-        const syncUI = () => {
-          slides.forEach((s, i) => (s.tabIndex = i === index ? 0 : -1));
-          if (curEl) curEl.textContent = String(index + 1).padStart(2, '0');
-        };
-
-        const go = (next) => {
-          if (!slides.length) return;
-          index = mod(next, slides.length);
-
-          // ✅ Reliable horizontal scroll: move the TRACK to the slide's offset
-          const left = slides[index].offsetLeft;
-
-          track.scrollTo({
-            left,
-            behavior: reduced ? 'auto' : 'smooth',
-          });
-
-          syncUI();
-        };
-
-        // Strzałki (delegacja – przyciski są w każdej karcie)
-        root.addEventListener('click', (e) => {
-          const el = e.target instanceof Element ? e.target : null;
-          if (!el) return;
-
-          const prev = el.closest('[data-prev]');
-          const next = el.closest('[data-next]');
-          if (!prev && !next) return;
-
-          e.preventDefault();
-          go(index + (next ? 1 : -1));
-        });
-
-        // Klawiatura
-        root.addEventListener('keydown', (e) => {
-          if (e.key === 'ArrowLeft') go(index - 1);
-          if (e.key === 'ArrowRight') go(index + 1);
-        });
-
-        // Swipe/touchpad: licznik ma nadążać za scroll
-        let raf = 0;
-        const updateFromScroll = () => {
-          raf = 0;
-          if (!slides.length) return;
-
-          const x = track.scrollLeft;
-
-          let best = 0;
-          let bestDist = Infinity;
-          for (let i = 0; i < slides.length; i++) {
-            const d = Math.abs(slides[i].offsetLeft - x);
-            if (d < bestDist) { bestDist = d; best = i; }
-          }
-
-          if (best !== index) {
-            index = best;
-            syncUI();
-          }
-        };
-
-        track.addEventListener('scroll', () => {
-          if (raf) return;
-          raf = requestAnimationFrame(updateFromScroll);
-        }, { passive: true });
-
-        // init
-        syncUI();
-      })();
-    `}
-  </script>
 </section>

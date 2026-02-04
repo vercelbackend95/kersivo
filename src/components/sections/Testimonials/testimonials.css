@@ -1,7 +1,6 @@
 /* =========================
-   Reviews — premium panel
-   FIX: footer INSIDE slide (no overlay = no disappearing)
-   FIX: stop clipping bottom panel (no 100px hacks)
+   Testimonials / Reviews — premium panel
+   (Carousel: stage + arrows only)
    ========================= */
 
 .k-reviews{
@@ -71,17 +70,13 @@
   gap: 18px;
 }
 
-@media (min-width: 980px){
-  .k-reviews__right{ grid-template-rows: 132px 1fr; }
-}
-
 /* Card base */
 .k-reviews__card{
   position: relative;
   border-radius: 26px;
   border: 1px solid rgba(255,255,255,.11);
   background: rgba(255,255,255,.03);
-  overflow: hidden; /* keep premium rounding */
+  overflow: hidden;
   isolation: isolate;
 }
 
@@ -245,222 +240,33 @@
   letter-spacing: -0.01em;
 }
 
-/* MAIN */
+/* MAIN (holder) */
 .k-reviews__card--main{
   padding: 0;
   min-height: 360px;
 }
 
-.k-reviews__mainInner{
-  position: relative;
-  padding: clamp(18px, 2.6vw, 30px);
-  /* IMPORTANT: nie wymuszamy height:100% — to często jest źródłem ucięć przy paddingach */
+/* ✅ Single bubble: main card becomes a clean holder (no 2nd glass layer) */
+.k-reviews__card--main{
+  background: transparent;
+  border: 0;
+  overflow: visible;
 }
 
-/* Track */
-.k-reviews__track{
-  display: flex;
-
-  overflow-x: auto;
-  overflow-y: hidden; /* no micro vertical scroll */
-
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-
-  border-radius: 18px;
+.k-reviews__card--main::before,
+.k-reviews__card--main::after{
+  content: none;
 }
 
-.k-reviews__track::-webkit-scrollbar{ display:none; }
-.k-reviews__track{ scrollbar-width: none; }
-
-.k-reviews__slide{
-  scroll-snap-align: start;
-  flex: 0 0 100%;
-  min-width: 100%;
+@media (hover:hover){
+  .k-reviews__card--main:hover{
+    transform: none;
+    background: transparent;
+    border-color: transparent;
+  }
 }
 
-/* KEY FIX:
-   box-sizing + brak height:100% + bez konfliktu padding/height
-   panel siedzi w środku i nie wpada pod clipping
-*/
-.k-reviews__slideInner{
-  box-sizing: border-box;
-
-  min-height: 320px;
-  display: flex;
-  flex-direction: column;
-
-  /* premium layout: quote u góry, panel na dole */
-  gap: clamp(12px, 1.8vw, 18px);
-
-  padding: clamp(10px, 1.4vw, 14px);
-  padding-bottom: clamp(22px, 2.6vw, 30px); /* realny “safe area” (zamiast 100px margin hacka) */
-}
-
-/* Quote */
-.k-reviews__quote{
-  font-size: clamp(22px, 2.6vw, 40px);
-  line-height: 1.10;
-  letter-spacing: -0.045em;
-  color: rgba(255,255,255,.92);
-  margin: 0;
-  max-width: 40ch;
-}
-
-/* Bottom panel */
-.k-reviews__bottomPanel{
-  margin-top: auto; /* dopycha na dół, ale wciąż w ramach safe-area */
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-
-  padding: 14px 14px;
-  border-radius: 18px;
-
-  background: rgba(0,0,0,.22);
-  border: 1px solid rgba(255,255,255,.10);
-  backdrop-filter: blur(10px);
-
-  /* requested: remove shadow */
-  box-shadow: none;
-}
-
-/* Author */
-.k-reviews__author{
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-}
-
-.k-reviews__authorImg{
-  width: 44px;
-  height: 44px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.14);
-  box-shadow: 0 14px 34px rgba(0,0,0,.45);
-  object-fit: cover;
-  flex: 0 0 auto;
-}
-
-.k-reviews__authorImg--ph{
-  background:
-    radial-gradient(18px 18px at 30% 28%, rgba(255,255,255,.16), transparent 62%),
-    radial-gradient(46px 30px at 70% 78%, rgba(190,145,255,.18), transparent 62%),
-    rgba(255,255,255,.05);
-}
-
-.k-reviews__authorMeta{
-  display: grid;
-  gap: 2px;
-  min-width: 0;
-}
-
-.k-reviews__authorName{
-  font-weight: 720;
-  letter-spacing: -0.02em;
-  color: rgba(255,255,255,.92);
-  line-height: 1.1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.k-reviews__authorRole{
-  font-size: 12.5px;
-  color: rgba(255,255,255,.68);
-  letter-spacing: -0.01em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Controls */
-.k-reviews__controls{
-  display: inline-flex;
-  gap: 12px;
-  flex: 0 0 auto;
-}
-
-.k-reviews__btn{
-  width: 54px;
-  height: 54px;
-  border-radius: 999px;
-
-  border: 1px solid rgba(255,255,255,.18);
-  background: rgba(255,255,255,.02);
-  color: rgba(255,255,255,.92);
-
-  display: grid;
-  place-items: center;
-
-  cursor: pointer;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-
-  box-shadow:
-    0 16px 40px rgba(0,0,0,.45),
-    inset 0 1px 0 rgba(255,255,255,.08);
-
-  transition: transform .22s ease, border-color .22s ease, background-color .22s ease;
-}
-
-.k-reviews__btn:hover{
-  transform: translateY(-1px);
-  border-color: rgba(255,255,255,.26);
-  background: rgba(255,255,255,.035);
-}
-
-.k-reviews__btn:active{
-  transform: translateY(0px) scale(.98);
-}
-
-/* Chevrons — pure CSS */
-.k-reviews__chev{
-  width: 12px;
-  height: 12px;
-  display: block;
-  border-right: 2px solid rgba(255,255,255,.92);
-  border-top: 2px solid rgba(255,255,255,.92);
-  opacity: .95;
-}
-
-.k-reviews__chev--left{
-  transform: rotate(-135deg);
-  margin-left: 2px;
-}
-
-.k-reviews__chev--right{
-  transform: rotate(45deg);
-  margin-right: 2px;
-}
-
-/* Progress */
-.k-reviews__progress{
-  position: absolute;
-  left: clamp(16px, 2.2vw, 22px);
-  top: clamp(14px, 2vw, 18px);
-  z-index: 2;
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,.62);
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.10);
-  background: rgba(0,0,0,.18);
-  backdrop-filter: blur(10px);
-}
-
-.k-reviews__slash{ opacity: .55; }
-
-/* Disclaimer */
+/* Disclaimer (ok to keep even if you remove it from Astro) */
 .k-reviews__disclaimer{
   margin-top: 14px;
   font-size: 12px;
@@ -469,33 +275,297 @@
   max-width: 86ch;
 }
 
-@media (max-width: 520px){
-  .k-reviews__btn{ width: 50px; height: 50px; }
-  .k-reviews__authorImg{ width: 42px; height: 42px; }
-  .k-reviews__bottomPanel{ border-radius: 16px; padding: 12px; }
-  .k-reviews__slideInner{ min-height: 300px; }
+/* =========================================================
+   React + Framer Motion carousel
+   (stage + arrows only — no top, no dots, no progress)
+   ========================================================= */
+
+.k-reviewsCar{
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: 1fr;
+  padding: 0; /* full width like the top card */
 }
 
-@media (prefers-reduced-motion: reduce){
-  .k-reviews__track{ scroll-behavior: auto; }
-  .k-reviews__btn,
-  .k-reviews__card{ transition: none !important; }
+.k-reviewsCar__stage{
+  position: relative;
+  border-radius: 26px;
+  border: 1px solid rgba(255,255,255,.10);
+  background:
+    radial-gradient(900px 420px at 20% 10%, rgba(190,145,255,.12), transparent 60%),
+    radial-gradient(900px 420px at 80% 30%, rgba(120,255,220,.08), transparent 62%),
+    rgba(255,255,255,.02);
+  overflow: hidden;
+
+
+
+  /* ✅ keep height stable + align with left card */
+  display: flex;
+  align-items: center;
+  height: 100%;
+  min-height: 0;
+
+  isolation: isolate;
 }
-/* TEMP: ultra-proste strzałki, żeby na pewno było widać i klikało */
-.k-reviews__controls .k-reviews__btn{
+
+.k-reviewsCar__glow{
+  position:absolute;
+  inset: -35% -25% -40% -30%;
+  background:
+    radial-gradient(420px 520px at 30% 40%, rgba(190,145,255,.18), transparent 60%),
+    radial-gradient(420px 520px at 70% 30%, rgba(140,170,255,.14), transparent 60%);
+  filter: blur(18px);
+  opacity: .9;
+  pointer-events:none;
+  z-index: 0;
+}
+
+.k-reviewsCar__grain{
+  position:absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(255,255,255,.04), transparent 40%),
+    radial-gradient(circle at 70% 60%, rgba(255,255,255,.03), transparent 45%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0 1px, transparent 1px 3px);
+  opacity: .22;
+  mix-blend-mode: overlay;
+  pointer-events:none;
+  z-index: 0;
+}
+
+.k-reviewsCar__slide{
+  position: relative;
+  z-index: 1;
   display: grid;
-  place-items: center;
+  gap: 18px;
+  align-content: center;
+
+  min-height: 220px;
+  width: 100%;
+
+  /* ✅ readable measure + never clash with arrows */
+  max-width: min(74ch, 100%);
+  padding-right: clamp(70px, 8vw, 110px);
+}
+
+.k-reviewsCar__quote{
+  margin: 0;
+  font-size: clamp(18px, 1.5vw, 22px);
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+  color: rgba(255,255,255,.88);
+}
+
+.k-reviewsCar__quoteMark{
+  color: rgba(190,145,255,.62);
+  font-weight: 900;
+  letter-spacing: -0.06em;
+  margin-right: 6px;
+}
+
+.k-reviewsCar__quoteMark--end{
+  margin-left: 6px;
+  margin-right: 0;
+}
+
+.k-reviewsCar__who{
+  display:flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,.10);
+}
+
+.k-reviewsCar__whoLeft{
+  display:grid;
+  gap: 2px;
+}
+
+.k-reviewsCar__name{
+  font-weight: 780;
+  letter-spacing: -0.02em;
+  color: rgba(255,255,255,.92);
+  font-size: 14px;
+}
+
+.k-reviewsCar__role{
+  font-size: 13px;
+  color: rgba(255,255,255,.68);
+  letter-spacing: -0.01em;
+}
+
+/* Controls: pinned (does not affect layout height) */
+.k-reviewsCar__bottom{
+  position: absolute;
+  right: clamp(18px, 2.4vw, 28px);
+  bottom: clamp(18px, 2.4vw, 28px);
+  margin: 0;
+  z-index: 2;
+  display:flex;
+  align-items:center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Arrows only */
+.k-reviewsCar__arrows{
+  display:flex;
+  gap: 10px;
+}
+
+.k-reviewsCar__arrow{
   width: 44px;
   height: 44px;
   border-radius: 999px;
-  font-size: 20px;
-  line-height: 1;
-  color: rgba(255,255,255,.9);
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.14);
-  cursor: pointer;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.03);
+  color: rgba(255,255,255,.86);
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+  transition: transform .22s ease, background .22s ease, border-color .22s ease;
+  user-select:none;
 }
 
-.k-reviews__controls .k-reviews__btn:active{
-  transform: translateY(1px);
+.k-reviewsCar__arrow:hover{
+  transform: translateY(-1px);
+  background: rgba(255,255,255,.05);
+  border-color: rgba(190,145,255,.22);
+}
+
+.k-reviewsCar__arrow:active{
+  transform: translateY(0px) scale(.98);
+}
+
+.k-reviewsCar__arrow:focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(190,145,255,.22);
+}
+
+@media (max-width: 520px){
+  .k-reviewsCar__stage{
+    padding: 18px;
+  }
+
+  .k-reviewsCar__slide{
+    padding-right: 86px;
+  }
+
+  .k-reviewsCar__arrows{ gap: 8px; }
+
+  .k-reviewsCar__arrow{
+    width: 42px;
+    height: 42px;
+  }
+
+  .k-reviewsCar__bottom{
+    right: 14px;
+    bottom: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .k-reviewsCar__arrow{
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+/* =========================================================
+   HARD LOCK: right column ends exactly where left ends
+   (desktop only)
+   ========================================================= */
+@media (min-width: 980px){
+  .k-reviews__grid{
+    /* One height to rule them all.
+       If you want the whole block lower, drop this to 560 / 540 */
+    --kReviewsH: 600px;
+    align-items: stretch;
+  }
+
+  .k-reviews__card--left{
+    height: var(--kReviewsH);
+    min-height: 0;
+  }
+
+  .k-reviews__right{
+    height: var(--kReviewsH);
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .k-reviews__card--mini{
+    flex: 0 0 132px;
+  }
+
+  .k-reviews__card--main{
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+  }
+
+  .k-reviewsCar{
+    flex: 1 1 auto;
+    min-height: 0;
+    height: 100%;
+  }
+
+  .k-reviewsCar__stage{
+    height: 100%;
+    min-height: 0;
+  }
+}
+/* =========================================
+   Bubble stays same size
+   Padding only inside (quote left) + controls right
+   ========================================= */
+
+/* Stage: NO responsive padding (prevents bubble growth) */
+.k-reviewsCar__stage{
+  padding: 0;               /* <- klucz: bąbel nie rośnie od paddingu */
+  display: flex;
+  align-items: center;
+  height: 100%;
+  min-height: 0;
+}
+
+/* Slide: internal padding for content only */
+.k-reviewsCar__slide{
+  width: 100%;
+  max-width: min(74ch, 100%);
+  min-height: 0;
+
+  /* left padding for quote */
+  padding-left: 26px;
+
+  /* reserve space for arrows + a bit of right breathing room */
+  padding-right: 118px;
+
+  /* small vertical comfort without changing outer bubble */
+  padding-top: 22px;
+  padding-bottom: 22px;
+}
+
+/* Controls: their own right padding via absolute positioning */
+.k-reviewsCar__bottom{
+  right: 22px;
+  bottom: 22px;
+}
+
+/* Mobile: tighter but still clean */
+@media (max-width: 520px){
+  .k-reviewsCar__slide{
+    padding-left: 18px;
+    padding-right: 96px;
+    padding-top: 18px;
+    padding-bottom: 18px;
+  }
+  .k-reviewsCar__bottom{
+    right: 14px;
+    bottom: 14px;
+  }
 }

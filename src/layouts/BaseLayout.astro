@@ -141,10 +141,8 @@ const {
           const raw = (a.getAttribute("href") || a.href || "").trim();
           if (!raw) return false;
 
-          // Pure in-page hash always counts.
           if (raw === "#contact") return true;
 
-          // Only intercept if link points to THIS page.
           try {
             const u = new URL(raw, location.href);
             if (u.hash !== "#contact") return false;
@@ -188,7 +186,6 @@ const {
         const scrollToContact = () => {
           const target = document.querySelector("#contact");
 
-          // If this page doesn't have #contact, go to the contact page.
           if (!target) {
             window.location.href = "/contact/#contact";
             return;
@@ -264,12 +261,14 @@ const {
           vv.addEventListener("scroll", update);
         }
 
-        // Safari gesture hooks (best effort)
         window.addEventListener("gesturestart", () => set(true), { passive: true });
         window.addEventListener("gestureend", update, { passive: true });
 
         update();
       })();
     </script>
+
+    <!-- Reviews carousel -->
+    <script src="/scripts/reviews.js" defer></script>
   </body>
 </html>

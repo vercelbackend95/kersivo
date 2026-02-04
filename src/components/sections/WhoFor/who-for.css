@@ -21,7 +21,42 @@
   background: transparent;
 }
 
-/* ===== Header (centered, PACKAGES-like) ===== */
+/* =========================================
+   Kicker: make "WHO IT’S FOR" match PROCESS
+   (same micro style via .k-sectionHead__kicker)
+   + add the chevron ›
+   ========================================= */
+/* =========================================
+   WHO header/kicker — IDENTICAL to PROCESS
+   - same tracking, color, spacing, width rhythm
+   ========================================= */
+
+/* Match Process head width + bottom rhythm */
+.k-whoL .k-sectionHead{
+  max-width: 72ch; /* Process uses 72ch */
+  margin: 0 auto clamp(20px, 3vw, 42px); /* Process-like spacing */
+}
+
+/* Make kicker behave exactly like .k-process__micro */
+.k-whoL .k-sectionHead__kicker{
+  display: block;                 /* Process micro is plain text block */
+  font-size: 12px;
+  letter-spacing: .24em;          /* key difference vs global .18em */
+  text-transform: uppercase;
+  color: rgba(255,255,255,55);    /* key difference vs global 60 */
+  margin-bottom: 10px;            /* matches Process */
+}
+
+/* Add the same subtle chevron style (tight + calm) */
+.k-whoL .k-sectionHead__kicker::after{
+  content: " \203A";              /* space + › */
+  opacity: 1;                     /* Process-like: no “faint icon” vibe */
+}
+
+
+/* ===== Header (centered, PACKAGES-like) =====
+   (Older/legacy header hooks — safe to keep)
+*/
 .k-whoL__head{
   display: grid;
   gap: 14px;
