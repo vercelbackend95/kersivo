@@ -10,7 +10,7 @@ type Card = {
   desc: string;
   meta: string;
   bullets?: string[];
-  proof?: string; // ✅ Option A: micro-proof
+  proof?: string; // ✅ micro-proof
 };
 
 const ICONS: Record<string, React.ReactNode> = {
@@ -75,9 +75,7 @@ export default function ServiceMap({ cards }: { cards: Card[] }) {
     setOpen(true);
   };
 
-  const closeSheet = () => {
-    setOpen(false);
-  };
+  const closeSheet = () => setOpen(false);
 
   // ESC to close + focus restore
   React.useEffect(() => {
@@ -89,7 +87,6 @@ export default function ServiceMap({ cards }: { cards: Card[] }) {
 
     window.addEventListener("keydown", onKey);
 
-    // focus close button
     const t = window.setTimeout(() => closeBtnRef.current?.focus(), 40);
 
     return () => {
@@ -114,8 +111,6 @@ export default function ServiceMap({ cards }: { cards: Card[] }) {
     return () => {
       html.style.overflow = prevHtmlOverflow;
       body.style.overflow = prevBodyOverflow;
-
-      // restore focus
       lastFocusRef.current?.focus?.();
     };
   }, [open]);
@@ -152,7 +147,7 @@ export default function ServiceMap({ cards }: { cards: Card[] }) {
 
             <span className="k-svcMini__title">{c.title}</span>
 
-            {/* ✅ Option A: micro-proof */}
+            {/* micro-proof */}
             {c.proof ? <span className="k-svcMini__proof">{c.proof}</span> : null}
           </button>
         ))}
@@ -211,7 +206,6 @@ export default function ServiceMap({ cards }: { cards: Card[] }) {
                 <h3 className="k-svcSheet__title">{card.title}</h3>
                 <p className="k-svcSheet__desc">{card.desc}</p>
 
-                {/* ✅ Option A: micro-proof in sheet */}
                 {card.proof ? <p className="k-svcSheet__proof">{card.proof}</p> : null}
 
                 <ul className="k-svcSheet__bullets" aria-label="Highlights">
@@ -223,9 +217,7 @@ export default function ServiceMap({ cards }: { cards: Card[] }) {
                 <a href="/contact/#contact" className="k-btn k-btn--primary k-svcSheet__cta" data-magnetic="false">
                   <span className="k-btn__label">Get a quote</span>
                   <span className="k-btn__shine" aria-hidden="true"></span>
-                  <span className="k-btn__arrow" aria-hidden="true">
-                    →
-                  </span>
+                  <span className="k-btn__arrow" aria-hidden="true">→</span>
                 </a>
               </div>
             </motion.div>
