@@ -1045,3 +1045,41 @@
     transition: none;
   }
 }
+/* =========================================================
+   Mobile detail CTA — smaller, premium
+   ========================================================= */
+
+.k-svcX__cta{
+  width: fit-content;              /* zamiast full-width */
+  min-width: 0;
+  justify-content: center;
+  margin-top: 10px;
+
+  /* jeśli .k-btn ma własne paddingi, to je nadpisujemy */
+  padding: 12px 16px !important;
+  border-radius: 999px !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+}
+
+/* ogranicz szerokość i wycentruj w panelu */
+.k-svcX__body .k-svcX__cta{
+  max-width: 260px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* trochę mniejsza strzałka, żeby nie krzyczała */
+.k-svcX__cta .k-btn__arrow{
+  font-size: 14px;
+  transform: translateY(0);
+}
+
+/* na bardzo małych ekranach jeszcze odrobinkę ciaśniej */
+@media (max-width: 380px){
+  .k-svcX__cta{
+    padding: 11px 14px !important;
+    font-size: 13.5px !important;
+    max-width: 240px;
+  }
+}
