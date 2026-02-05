@@ -22,41 +22,29 @@
 }
 
 /* =========================================
-   Kicker: make "WHO IT’S FOR" match PROCESS
-   (same micro style via .k-sectionHead__kicker)
-   + add the chevron ›
-   ========================================= */
-/* =========================================
-   WHO header/kicker — IDENTICAL to PROCESS
-   - same tracking, color, spacing, width rhythm
+   WHO header/kicker — match PROCESS
    ========================================= */
 
-/* Match Process head width + bottom rhythm */
 .k-whoL .k-sectionHead{
-  max-width: 72ch; /* Process uses 72ch */
-  margin: 0 auto clamp(20px, 3vw, 42px); /* Process-like spacing */
+  max-width: 72ch;
+  margin: 0 auto clamp(20px, 3vw, 42px);
 }
 
-/* Make kicker behave exactly like .k-process__micro */
 .k-whoL .k-sectionHead__kicker{
-  display: block;                 /* Process micro is plain text block */
+  display: block;
   font-size: 12px;
-  letter-spacing: .24em;          /* key difference vs global .18em */
+  letter-spacing: .24em;
   text-transform: uppercase;
-  color: rgba(255,255,255,55);    /* key difference vs global 60 */
-  margin-bottom: 10px;            /* matches Process */
+  color: rgba(255,255,255,55);
+  margin-bottom: 10px;
 }
 
-/* Add the same subtle chevron style (tight + calm) */
 .k-whoL .k-sectionHead__kicker::after{
-  content: " \203A";              /* space + › */
-  opacity: 1;                     /* Process-like: no “faint icon” vibe */
+  content: " \203A";
+  opacity: 1;
 }
 
-
-/* ===== Header (centered, PACKAGES-like) =====
-   (Older/legacy header hooks — safe to keep)
-*/
+/* ===== Legacy header hooks (safe to keep) ===== */
 .k-whoL__head{
   display: grid;
   gap: 14px;
@@ -75,7 +63,7 @@
   max-width: 22ch;
 }
 
-/* moved under section content */
+/* Side copy under section */
 .k-whoL__side{
   display: grid;
   gap: 10px;
@@ -151,17 +139,14 @@
   border-radius: 26px;
   overflow: hidden;
 
-  /* square tile */
   aspect-ratio: 1 / 1;
 
-  /* layout */
   display: flex;
   flex-direction: column;
 
   background: rgba(255,255,255,.02);
   border: 1px solid rgba(255,255,255,.07);
 
-  /* desktop depth (mobile gets “no-shadow” patch below) */
   box-shadow:
     0 28px 90px rgba(0,0,0,.45),
     inset 0 1px 0 rgba(255,255,255,.05);
@@ -181,7 +166,7 @@
   opacity: .7;
 }
 
-/* inner vignette = more “single object”, less “two panels” */
+/* inner vignette */
 .k-whoL__cardInner::after{
   content:"";
   position:absolute;
@@ -193,7 +178,7 @@
   opacity:.7;
 }
 
-/* ===== Visual area (NO divider line) ===== */
+/* ===== Visual area ===== */
 .k-whoL__visual{
   position: relative;
   flex: 1 1 auto;
@@ -203,27 +188,13 @@
   border-bottom: 0 !important;
 }
 
-/* Visual label (tiny) */
-.k-whoL__visualLabel{
-  position: absolute;
-  top: 14px;
-  right: 16px;
-  color: rgba(255,255,255,.40);
-  font-weight: 750;
-  letter-spacing: -0.02em;
-  transform: rotate(-10deg);
-  user-select: none;
-  pointer-events: none;
-}
-
-/* ===== Bottom content (title + floating plus) ===== */
+/* ===== Bottom content (title + plus) ===== */
 .k-whoL__cardBottom{
   position: relative;
   display: block;
-  padding: 18px 18px 18px;
+  padding: 18px 18px 40px; /* higher bottom (~+30%) */
 }
 
-/* Title sits bottom-left */
 .k-whoL__cardTitle{
   white-space: pre-line;
   font-size: 19px;
@@ -232,14 +203,14 @@
   color: rgba(255,255,255,.92);
   font-weight: 760;
   max-width: 20ch;
-  padding-right: 56px; /* space for + bubble */
+  padding-right: 56px;
 }
 
-/* plus circle in bottom-right corner */
+/* plus bubble */
 .k-whoL__plus{
   position: absolute;
   right: 16px;
-  bottom: 16px;
+  bottom: 18px; /* slightly lower-stable with taller bottom */
   width: 44px;
   height: 44px;
   border-radius: 999px;
@@ -260,7 +231,7 @@
   transform: translateY(-.5px);
 }
 
-/* hover polish */
+/* hover */
 @media (hover:hover){
   .k-whoL__card:hover .k-whoL__cardInner{
     border-color: rgba(255,255,255,.10);
@@ -276,45 +247,22 @@
   }
 }
 
-/* ===== Visuals (CSS-only “illustrations”) ===== */
-/* 1) development */
+/* ===== Visual backgrounds ===== */
+
+/* 1) development (Fast by default) */
 .k-whoL__visual--development{
   background:
     radial-gradient(520px 240px at 70% 30%, rgba(190,145,255,.14), transparent 60%),
     radial-gradient(520px 240px at 25% 10%, rgba(255,255,255,.06), transparent 62%),
     rgba(0,0,0,.18);
-}
-.k-whoL__visual--development::before{
-  content:"";
-  position:absolute;
-  left: 16px;
-  top: 26px;
-  width: 180px;
-  height: 120px;
-  background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0));
-  border: 1px solid rgba(255,255,255,.10);
-  border-radius: 18px;
-  box-shadow: 0 26px 90px rgba(0,0,0,.45);
-  transform: rotate(-10deg);
-  opacity: .35;
-}
-.k-whoL__visual--development::after{
-  content:"";
-  position:absolute;
-  left: 58px;
-  top: 46px;
-  width: 180px;
-  height: 120px;
-  border-radius: 18px;
-  border: 1px solid rgba(255,255,255,.10);
-  background:
-    radial-gradient(120px 90px at 70% 60%, rgba(190,145,255,.18), rgba(0,0,0,0) 70%),
-    linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0));
-  transform: rotate(-2deg);
-  opacity: .28;
+  padding-top: 8px; /* subtle breathing room after taller bottom */
 }
 
-/* 2) speed */
+/* REMOVE the inner rectangles completely */
+.k-whoL__visual--development::before{ content: none; }
+.k-whoL__visual--development::after{ content: none; }
+
+/* 2) speed (SEO) */
 .k-whoL__visual--speed{
   background:
     radial-gradient(520px 260px at 75% 15%, rgba(255,255,255,.06), transparent 62%),
@@ -349,7 +297,7 @@
   opacity: .55;
 }
 
-/* 3) craft */
+/* 3) craft (Enquiries) */
 .k-whoL__visual--craft{
   background:
     linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,0)),
@@ -382,7 +330,7 @@
   opacity: .9;
 }
 
-/* Modal visual is taller (but still no divider) */
+/* Modal visual is taller */
 .k-whoL__visual--modal{
   height: 230px;
   border-bottom: 0 !important;
@@ -392,8 +340,6 @@
 .k-whoL__overlay{
   position: fixed;
   inset: 0;
-
-  /* IMPORTANT: must be above TopNav (TopNav is z=80) */
   z-index: 999;
 
   display: grid;
@@ -406,14 +352,11 @@
   background: rgba(0,0,0,.58);
   backdrop-filter: blur(10px);
 
-  /* prevent scroll “leaking” to the page */
   overscroll-behavior: contain;
 }
 
 .k-whoL__modalWrap{
   width: min(720px, 100%);
-
-  /* obey viewport height so the BODY can scroll */
   max-height: calc(100dvh - 36px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
 }
 
@@ -424,7 +367,6 @@
   border: 1px solid rgba(255,255,255,.10);
   box-shadow: 0 60px 220px rgba(0,0,0,.70);
 
-  /* enable internal scrolling (body), not page */
   display: flex;
   flex-direction: column;
   max-height: inherit;
@@ -453,17 +395,14 @@
 .k-whoL__close:hover{ background: rgba(0,0,0,.30); }
 .k-whoL__close span{ font-size: 20px; transform: translateY(-1px); }
 
-/* Body */
 .k-whoL__modalBody{
   padding: 18px 18px 18px;
 
-  /* this area scrolls */
   flex: 1 1 auto;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
 
-  /* iOS: nicer end */
   padding-bottom: calc(18px + env(safe-area-inset-bottom));
 }
 
@@ -488,7 +427,7 @@
 }
 .k-whoL__modalCopy p{ margin: 10px 0 0; }
 
-/* Quote block */
+/* Quote */
 .k-whoL__quote{
   margin-top: 16px;
   padding-top: 14px;
@@ -546,7 +485,7 @@
   line-height: 1.35;
 }
 
-/* Modal footer row */
+/* Footer row */
 .k-whoL__modalFoot{
   margin-top: 14px;
   padding-top: 14px;
@@ -574,25 +513,28 @@
 }
 .k-whoL__footLink:hover{ opacity: 1; }
 
-/* Mobile: modal takes more height and scrolls naturally */
+/* Mobile modal */
 @media (max-width: 520px){
-  .k-whoL__overlay{ padding-left: 12px; padding-right: 12px; place-items: end center; }
+  .k-whoL__overlay{
+    padding-left: 12px;
+    padding-right: 12px;
+    place-items: end center;
+  }
   .k-whoL__modalWrap{ width: 100%; }
   .k-whoL__modal{ border-radius: 22px; }
-  .k-whoL__modalBody{ padding: 16px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); }
+  .k-whoL__modalBody{
+    padding: 16px;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  }
 }
 
-/* Reduced motion: keep it calm */
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce){
   .k-whoL__overlay{ backdrop-filter: none; }
 }
 
 /* =========================================
-   MOBILE CAROUSEL (Uber-style) + PEEK
-   - Keep card size vibe
-   - Peek next card by ~10–12%
-   - Snap like a premium app
-   - NO track tint (show global background)
+   MOBILE CAROUSEL (peek + snap)
    ========================================= */
 
 @media (max-width: 759px){
@@ -621,7 +563,6 @@
 
     scrollbar-width: none;
 
-    /* kill any edge fade that can read as “dark band” */
     mask-image: none !important;
     -webkit-mask-image: none !important;
   }
@@ -640,12 +581,10 @@
     border-color: rgba(255,255,255,.09);
   }
 
-  /* plus bubble can cast the “mystery shadow” on iOS */
   .k-whoL__plus{
     box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
   }
 
-  /* dots */
   .k-whoL__dots{
     display: flex;
     justify-content: center;
@@ -691,10 +630,27 @@
   filter: drop-shadow(0 16px 36px rgba(0,0,0,.30));
 }
 
-/* reduced motion: keep things calm */
+/* Astro SVG fit */
+.k-whoL__imgVisual--astro{
+  width: min(72%, 290px);
+  height: auto;
+  transform: translateY(-6px);
+}
+
+@media (max-width: 759px){
+  .k-whoL__imgVisual--astro{
+    width: min(78%, 300px);
+    transform: translateY(-4px);
+  }
+}
+
+/* reduced motion */
 @media (prefers-reduced-motion: reduce){
   .k-whoL__lottie,
   .k-whoL__svgIcon{
     filter: none;
+  }
+  .k-whoL__imgVisual--astro{
+    transform: none;
   }
 }

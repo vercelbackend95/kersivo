@@ -5,7 +5,6 @@ import { AnimatePresence, MotionConfig, motion, useReducedMotion } from "framer-
 type Card = {
   id: "development" | "speed" | "craft";
   title: string;
-  visualLabel: string;
   modalTitle: string;
   body: string[];
   quote: { text: string; by: string };
@@ -16,94 +15,95 @@ function cn(...x: Array<string | false | undefined | null>) {
   return x.filter(Boolean).join(" ");
 }
 
-/** WebP wrzuć tu: public/visuals/rocket-fast.webp */
-const ROCKET_SRC = "/visuals/rocket-fast.webp";
+/** SVG wrzucone do: /public/astro-icon-light-gradient.svg */
+const ASTRO_ICON_SRC = "/astro-icon-light-gradient.svg";
 
-/** super proste, premium, czytelne svg — placeholdery dla innych kart (na razie) */
-function IconDocsChecklist({ className = "" }: { className?: string }) {
+/** Clean icon: checklist + lines, NO rectangles */
+function IconChecklist({ className = "" }: { className?: string }) {
   return (
     <svg viewBox="0 0 140 92" className={className} fill="none" aria-hidden="true">
-      <rect x="22" y="10" width="92" height="62" rx="14" stroke="rgba(255,255,255,.40)" />
-      <rect x="14" y="18" width="92" height="62" rx="14" stroke="rgba(255,255,255,.22)" />
-      <rect x="30" y="22" width="92" height="62" rx="14" stroke="rgba(255,255,255,.55)" />
+      {/* checks */}
       <path
-        d="M46 42l6 6 12-14"
+        d="M38 30l6 6 12-14"
         stroke="rgba(167,139,250,.95)"
-        strokeWidth="2.6"
+        strokeWidth="2.8"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
-        d="M70 44h26"
-        stroke="rgba(255,255,255,.46)"
-        strokeWidth="2.2"
-        strokeLinecap="round"
-      />
-      <path
-        d="M46 56l6 6 12-14"
-        stroke="rgba(167,139,250,.75)"
-        strokeWidth="2.6"
+        d="M38 48l6 6 12-14"
+        stroke="rgba(167,139,250,.78)"
+        strokeWidth="2.8"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
-        d="M70 58h22"
-        stroke="rgba(255,255,255,.36)"
-        strokeWidth="2.2"
+        d="M38 66l6 6 12-14"
+        stroke="rgba(167,139,250,.62)"
+        strokeWidth="2.8"
         strokeLinecap="round"
+        strokeLinejoin="round"
       />
+
+      {/* lines */}
+      <path d="M68 32h44" stroke="rgba(255,255,255,.44)" strokeWidth="2.4" strokeLinecap="round" />
+      <path d="M68 50h38" stroke="rgba(255,255,255,.34)" strokeWidth="2.4" strokeLinecap="round" />
+      <path d="M68 68h30" stroke="rgba(255,255,255,.26)" strokeWidth="2.4" strokeLinecap="round" />
+
+      {/* subtle dot cluster for “search signals” vibe */}
+      <g opacity="0.55">
+        <circle cx="104" cy="22" r="2.2" fill="rgba(125,211,252,.85)" />
+        <circle cx="114" cy="28" r="1.8" fill="rgba(255,255,255,.45)" />
+        <circle cx="98" cy="18" r="1.6" fill="rgba(255,255,255,.35)" />
+      </g>
     </svg>
   );
 }
 
-function IconGridPlus({ className = "" }: { className?: string }) {
+/** Clean icon: grid lines + plus, NO rectangles */
+function IconPlusGrid({ className = "" }: { className?: string }) {
   return (
     <svg viewBox="0 0 140 92" className={className} fill="none" aria-hidden="true">
-      <rect x="22" y="12" width="96" height="68" rx="18" stroke="rgba(255,255,255,.38)" />
-      <g opacity="0.65">
-        <path d="M54 24v44" stroke="rgba(255,255,255,.20)" />
-        <path d="M86 24v44" stroke="rgba(255,255,255,.20)" />
-        <path d="M34 46h72" stroke="rgba(255,255,255,.20)" />
+      {/* grid */}
+      <g opacity="0.55">
+        <path d="M34 26h72" stroke="rgba(255,255,255,.20)" strokeWidth="1.6" strokeLinecap="round" />
+        <path d="M34 46h72" stroke="rgba(255,255,255,.20)" strokeWidth="1.6" strokeLinecap="round" />
+        <path d="M34 66h72" stroke="rgba(255,255,255,.20)" strokeWidth="1.6" strokeLinecap="round" />
+        <path d="M54 22v52" stroke="rgba(255,255,255,.18)" strokeWidth="1.6" strokeLinecap="round" />
+        <path d="M86 22v52" stroke="rgba(255,255,255,.18)" strokeWidth="1.6" strokeLinecap="round" />
       </g>
 
-      <rect
-        x="78"
-        y="30"
-        width="32"
-        height="32"
-        rx="12"
-        fill="rgba(255,255,255,.06)"
-        stroke="rgba(125,211,252,.55)"
-      />
+      {/* plus */}
       <path
-        d="M94 40v12M88 46h12"
+        d="M104 38v20M94 48h20"
         stroke="rgba(125,211,252,.95)"
-        strokeWidth="2.4"
+        strokeWidth="2.8"
         strokeLinecap="round"
       />
+
+      {/* tiny halo */}
+      <circle cx="104" cy="48" r="18" stroke="rgba(125,211,252,.24)" />
     </svg>
   );
 }
 
 /**
- * Rakieta jako obraz.
- * Trik na “czarne tło” bez wycinania:
- * - mix-blend-mode: screen (czarne znika na ciemnym tle),
- * - plus delikatny drop-shadow i lekkie podbicie kontrastu.
+ * Astro icon jako obraz (SVG).
+ * Premium, bez blend-mode. Lekki “engine glow”.
  */
-function RocketVisual({ className = "" }: { className?: string }) {
+function AstroIconVisual({ className = "" }: { className?: string }) {
   return (
     <div className={className} aria-hidden="true">
       <img
-        src={ROCKET_SRC}
+        src={ASTRO_ICON_SRC}
         alt=""
         draggable={false}
         loading="lazy"
+        decoding="async"
         style={{
           width: "100%",
           height: "100%",
           objectFit: "contain",
-          mixBlendMode: "screen",
           opacity: 0.98,
           filter:
             "contrast(1.06) saturate(1.06) drop-shadow(0 18px 40px rgba(0,0,0,.45)) drop-shadow(0 0 22px rgba(167,139,250,.18))",
@@ -128,7 +128,6 @@ export default function WhoForMorph() {
       {
         id: "development",
         title: "Fast by default",
-        visualLabel: "Launch speed + smooth flow",
         modalTitle: "Fast by default",
         body: [
           "Speed isn’t a Lighthouse trophy — it’s fewer drop-offs and more enquiries. We build with performance budgets, not vibes.",
@@ -147,7 +146,6 @@ export default function WhoForMorph() {
       {
         id: "speed",
         title: "SEO that compounds",
-        visualLabel: "Search + structure",
         modalTitle: "SEO that compounds",
         body: [
           "SEO starts with structure: clean headings, semantic sections, and pages that map to what people actually search for.",
@@ -166,7 +164,6 @@ export default function WhoForMorph() {
       {
         id: "craft",
         title: "Built to bring enquiries",
-        visualLabel: "CTA path + frictionless",
         modalTitle: "Built to bring enquiries",
         body: [
           "Pretty doesn’t pay — clarity does. We design the page flow to answer questions fast and guide people to the next step.",
@@ -326,15 +323,15 @@ export default function WhoForMorph() {
                   }}
                 >
                   {c.id === "development" ? (
-                    <RocketVisual className="k-whoL__imgVisual" />
+                    <AstroIconVisual className="k-whoL__imgVisual k-whoL__imgVisual--astro" />
                   ) : c.id === "speed" ? (
-                    <IconDocsChecklist className="k-whoL__svgIcon" />
+                    <IconChecklist className="k-whoL__svgIcon" />
                   ) : (
-                    <IconGridPlus className="k-whoL__svgIcon" />
+                    <IconPlusGrid className="k-whoL__svgIcon" />
                   )}
                 </div>
 
-                <span className="k-whoL__visualLabel">{c.visualLabel}</span>
+                {/* visualLabel removed */}
               </motion.div>
 
               <motion.div className="k-whoL__cardBottom" layoutId={`bottom-${c.id}`} transition={trans}>
@@ -408,15 +405,15 @@ export default function WhoForMorph() {
                       }}
                     >
                       {active.id === "development" ? (
-                        <RocketVisual className="k-whoL__imgVisual" />
+                        <AstroIconVisual className="k-whoL__imgVisual k-whoL__imgVisual--astro" />
                       ) : active.id === "speed" ? (
-                        <IconDocsChecklist className="k-whoL__svgIcon" />
+                        <IconChecklist className="k-whoL__svgIcon" />
                       ) : (
-                        <IconGridPlus className="k-whoL__svgIcon" />
+                        <IconPlusGrid className="k-whoL__svgIcon" />
                       )}
                     </div>
 
-                    <span className="k-whoL__visualLabel">{active.visualLabel}</span>
+                    {/* visualLabel removed */}
                   </motion.div>
 
                   <button
