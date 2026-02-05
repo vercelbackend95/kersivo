@@ -16,7 +16,13 @@ type Card = {
 const ICONS: Record<string, React.ReactNode> = {
   build: (
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M4 17l6-6 4 4 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="M4 17l6-6 4 4 6-6"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
       <path d="M20 20H4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
     </svg>
   ),
@@ -24,36 +30,73 @@ const ICONS: Record<string, React.ReactNode> = {
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M7 3v3M17 3v3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
       <path d="M4 8h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <path d="M6 6h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+      <path
+        d="M6 6h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
       <path d="M8 12h4M8 16h6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
     </svg>
   ),
   wallet: (
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M3 7a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+      <path
+        d="M3 7a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
       <path d="M17 12h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
       <path d="M7 9h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
     </svg>
   ),
   inbox: (
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M4 5h16l-2 7h-4l-2 2h-4l-2-2H6L4 5z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+      <path
+        d="M4 5h16l-2 7h-4l-2 2h-4l-2-2H6L4 5z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
       <path d="M4 12v7h16v-7" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
     </svg>
   ),
   gifts: (
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M20 12v8a2 2 0 01-2 2H6a2 2 0 01-2-2v-8" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+      <path
+        d="M20 12v8a2 2 0 01-2 2H6a2 2 0 01-2-2v-8"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
       <path d="M4 8h16v4H4V8z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
       <path d="M12 8v14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <path d="M12 8c-2.5 0-4-1-4-2.5S9 3 10.5 3C12 3 12 5 12 6.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M12 8c2.5 0 4-1 4-2.5S15 3 13.5 3C12 3 12 5 12 6.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="M12 8c-2.5 0-4-1-4-2.5S9 3 10.5 3C12 3 12 5 12 6.5"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M12 8c2.5 0 4-1 4-2.5S15 3 13.5 3C12 3 12 5 12 6.5"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   ),
   reminders: (
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M12 22a2 2 0 002-2H10a2 2 0 002 2z" fill="currentColor" opacity=".55" />
-      <path d="M18 16v-5a6 6 0 10-12 0v5l-2 2h16l-2-2z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+      <path
+        d="M18 16v-5a6 6 0 10-12 0v5l-2 2h16l-2-2z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
     </svg>
   ),
 };
@@ -112,13 +155,33 @@ export default function ServiceMap({ cards }: { cards: Card[] }) {
     };
   }, [open]);
 
-  const overlay = reduced
-    ? { initial: { opacity: 1 }, animate: { opacity: 1 }, exit: { opacity: 1 }, transition: { duration: 0 } }
-    : { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.18 } };
+  const overlayMotion = reduced
+    ? {
+        initial: { opacity: 1 },
+        animate: { opacity: 1 },
+        exit: { opacity: 1 },
+        transition: { duration: 0 },
+      }
+    : {
+        initial: { opacity: 0 },
+        animate: { opacity: 1 },
+        exit: { opacity: 0 },
+        transition: { duration: 0.18 },
+      };
 
-  const panel = reduced
-    ? { initial: { opacity: 1 }, animate: { opacity: 1 }, exit: { opacity: 1 }, transition: { duration: 0 } }
-    : { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.12 } };
+  const panelMotion = reduced
+    ? {
+        initial: { opacity: 1 },
+        animate: { opacity: 1 },
+        exit: { opacity: 1 },
+        transition: { duration: 0 },
+      }
+    : {
+        initial: { opacity: 0 },
+        animate: { opacity: 1 },
+        exit: { opacity: 0 },
+        transition: { duration: 0.12 },
+      };
 
   return (
     <div className="k-svcMap" aria-label="Service map">
@@ -134,9 +197,10 @@ export default function ServiceMap({ cards }: { cards: Card[] }) {
               onClick={() => openDetail(i)}
               role="listitem"
               aria-label={`${c.tag}: ${c.title}`}
+              aria-haspopup="dialog"
               layout
               layoutId={`${id}-card`}
-              whileTap={reduced ? undefined : { scale: 0.995 }}
+              whileTap={reduced ? undefined : { scale: 0.992 }}
             >
               <span className="k-svcMini__bg k-tile__bg" aria-hidden="true" />
               <span className="k-svcMini__paper k-tile__paper" aria-hidden="true" />
@@ -168,21 +232,14 @@ export default function ServiceMap({ cards }: { cards: Card[] }) {
       <AnimatePresence>
         {open && card && (
           <>
-            {/* overlay */}
-            <motion.div
-              className="k-svcXOverlay"
-              {...overlay}
-              onClick={closeDetail}
-              aria-hidden="true"
-            />
+            <motion.div className="k-svcXOverlay" {...overlayMotion} onClick={closeDetail} aria-hidden="true" />
 
-            {/* expanded panel */}
             <motion.div
               className={`k-svcX k-tile--tone-${card.tone}`}
               role="dialog"
               aria-modal="true"
               aria-label={card.title}
-              {...panel}
+              {...panelMotion}
             >
               <motion.div className="k-svcX__card" layoutId={`svc-${card.key}-card`}>
                 <span className="k-svcX__bg k-tile__bg" aria-hidden="true" />
@@ -234,15 +291,19 @@ export default function ServiceMap({ cards }: { cards: Card[] }) {
                   <div className="k-svcX__meta">{card.meta}</div>
 
                   <ul className="k-svcX__bullets" aria-label="Highlights">
-                    {(card.bullets?.length ? card.bullets : ["Clear scope", "Conversion-ready build"]).slice(0, 3).map((b) => (
-                      <li key={b}>{b}</li>
-                    ))}
+                    {(card.bullets?.length ? card.bullets : ["Clear scope", "Conversion-ready build"])
+                      .slice(0, 3)
+                      .map((b) => (
+                        <li key={b}>{b}</li>
+                      ))}
                   </ul>
 
                   <a href="/contact/#contact" className="k-btn k-btn--primary k-svcX__cta" data-magnetic="false">
                     <span className="k-btn__label">Get a quote</span>
                     <span className="k-btn__shine" aria-hidden="true"></span>
-                    <span className="k-btn__arrow" aria-hidden="true">→</span>
+                    <span className="k-btn__arrow" aria-hidden="true">
+                      →
+                    </span>
                   </a>
                 </div>
               </motion.div>
