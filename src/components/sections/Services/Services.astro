@@ -64,6 +64,7 @@ const cards = [
     tag: "Build",
     title: "Astro performance build",
     desc: "Static-first speed with a studio finish. Clean code, fast loads, strong fundamentals.",
+    proof: "Fast load, clean handover",
     meta: "Best for: full sites",
     bullets: ["Core Web Vitals-ready", "SEO hygiene baked in"],
   },
@@ -75,6 +76,7 @@ const cards = [
     tag: "Conversion",
     title: "Landing pages that convert",
     desc: "Message clarity + flow. Designed to turn browsers into enquiries — without shouting.",
+    proof: "Clear CTA flow, higher intent",
     meta: "Best for: ads & promos",
     bullets: ["Clear offer hierarchy", "CTA flow tuned"],
   },
@@ -86,6 +88,7 @@ const cards = [
     tag: "Clarity",
     title: "Copy & structure",
     desc: "We shape the words and hierarchy so your offer lands instantly.",
+    proof: "Sharper offer, less friction",
     meta: "Best for: fuzzy offers",
     bullets: ["Tighter messaging", "Scan-friendly layout"],
   },
@@ -97,6 +100,7 @@ const cards = [
     tag: "SEO",
     title: "Local SEO foundations",
     desc: "Structure, schema, on-page hygiene. Built to rank for intent — not vanity.",
+    proof: "Local rankings, real leads",
     meta: "Best for: UK locals",
     bullets: ["Schema + internal links", "Technical hygiene"],
   },
@@ -108,6 +112,7 @@ const cards = [
     tag: "Signals",
     title: "Tracking & analytics",
     desc: "Events that matter. Know what converts — and what just looks pretty.",
+    proof: "Track what converts, not vanity",
     meta: "Best for: decisions",
     bullets: ["Meaningful events", "Clean dashboards"],
   },
@@ -119,6 +124,7 @@ const cards = [
     tag: "Support",
     title: "Care plan",
     desc: "Updates, fixes, small improvements. Keep it sharp after launch.",
+    proof: "Stay fresh, stay secure",
     meta: "Best for: peace of mind",
     bullets: ["Updates + fixes", "Small improvements"],
   },
@@ -188,6 +194,9 @@ const cards = [
                   ))}
                 </ul>
               ) : null}
+
+              {/* Option A: micro-proof (premium “result hint”) */}
+              {c.proof ? <p class="k-tile__proof">{c.proof}</p> : null}
             </div>
 
             <div class="k-tile__foot">
