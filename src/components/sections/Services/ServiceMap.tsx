@@ -10,6 +10,7 @@ type Card = {
   desc: string;
   meta: string;
   bullets?: string[];
+  proof?: string; // ✅ Option A: micro-proof
 };
 
 const ICONS: Record<string, React.ReactNode> = {
@@ -150,6 +151,9 @@ export default function ServiceMap({ cards }: { cards: Card[] }) {
             </span>
 
             <span className="k-svcMini__title">{c.title}</span>
+
+            {/* ✅ Option A: micro-proof */}
+            {c.proof ? <span className="k-svcMini__proof">{c.proof}</span> : null}
           </button>
         ))}
       </div>
@@ -157,12 +161,7 @@ export default function ServiceMap({ cards }: { cards: Card[] }) {
       <AnimatePresence>
         {open && (
           <>
-            <motion.div
-              className="k-svcOverlay"
-              {...overlayMotion}
-              onClick={closeSheet}
-              aria-hidden="true"
-            />
+            <motion.div className="k-svcOverlay" {...overlayMotion} onClick={closeSheet} aria-hidden="true" />
 
             <motion.div
               className={`k-svcSheet k-tile--tone-${card.tone}`}
@@ -212,6 +211,9 @@ export default function ServiceMap({ cards }: { cards: Card[] }) {
                 <h3 className="k-svcSheet__title">{card.title}</h3>
                 <p className="k-svcSheet__desc">{card.desc}</p>
 
+                {/* ✅ Option A: micro-proof in sheet */}
+                {card.proof ? <p className="k-svcSheet__proof">{card.proof}</p> : null}
+
                 <ul className="k-svcSheet__bullets" aria-label="Highlights">
                   {(card.bullets?.length ? card.bullets.slice(0, 2) : ["Clear scope", "Conversion-ready build"]).map((b) => (
                     <li key={b}>{b}</li>
@@ -221,7 +223,9 @@ export default function ServiceMap({ cards }: { cards: Card[] }) {
                 <a href="/contact/#contact" className="k-btn k-btn--primary k-svcSheet__cta" data-magnetic="false">
                   <span className="k-btn__label">Get a quote</span>
                   <span className="k-btn__shine" aria-hidden="true"></span>
-                  <span className="k-btn__arrow" aria-hidden="true">→</span>
+                  <span className="k-btn__arrow" aria-hidden="true">
+                    →
+                  </span>
                 </a>
               </div>
             </motion.div>
