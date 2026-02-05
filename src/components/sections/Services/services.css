@@ -1063,3 +1063,28 @@
     transition: none;
   }
 }
+/* tighter CTA width (detail view) */
+.k-svcX__cta{
+  min-width: 0 !important;
+  width: fit-content !important;
+  max-width: none !important;
+
+  padding: 0 16px !important;   /* trochę ciaśniej */
+  height: 44px !important;
+
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* optional: keep label crisp, avoid wrapping */
+.k-svcX__cta .k-btn__label{
+  white-space: nowrap;
+}
+
+/* tiny phones: jeszcze odrobinkę wężej */
+@media (max-width: 380px){
+  .k-svcX__cta{
+    height: 42px !important;
+    padding: 0 14px !important;
+  }
+}
