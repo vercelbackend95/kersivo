@@ -1,9 +1,14 @@
 /* =========================================================
    Kersivo — Services (App Tiles Mosaic)
    Apple-ish monochrome cards (premium, calm, no RGB)
-   + Option A: micro-proof line per module
-   + Mobile: 1-column mini cards (no truncation, no template vibe)
+   + Option A: micro-proof
+   + Mobile: 1-column mini cards
+   + Mobile detail: Shared-element expansion (FLIP / morph)
    ========================================================= */
+
+/* =========================
+   Section
+   ========================= */
 
 .k-services--appTiles{
   padding: clamp(54px, 6.5vw, 92px) 0;
@@ -52,7 +57,7 @@
 }
 
 /* =========================
-   GRID (desktop mosaic)
+   Desktop / tablet mosaic grid
    ========================= */
 
 .k-tiles{
@@ -87,7 +92,7 @@
 }
 
 /* =========================
-   TILE BASE (desktop tiles)
+   Desktop tile base
    ========================= */
 
 .k-tile{
@@ -181,7 +186,7 @@
 }
 
 /* =========================
-   Background layers per tile
+   Background layers (shared)
    ========================= */
 
 .k-tile__bg{
@@ -210,7 +215,7 @@
 }
 
 /* =========================
-   TOP (icon + pill)
+   Desktop top (icon + pill)
    ========================= */
 
 .k-tile__top{
@@ -271,7 +276,7 @@
 }
 
 /* =========================
-   MEDIA COLLAGE (desktop)
+   Media collage (desktop)
    ========================= */
 
 .k-tile__media{
@@ -293,7 +298,6 @@
 .k-m__a,.k-m__b,.k-m__c,.k-m__d,.k-m__e{
   position: absolute;
   border-radius: 18px;
-
   background: rgba(12,12,14,.58);
   border: 1px solid rgba(255,255,255,.12);
   box-shadow: 0 18px 56px rgba(0,0,0,.34);
@@ -434,7 +438,7 @@
 }
 
 /* =========================
-   TEXT (desktop)
+   Desktop text
    ========================= */
 
 .k-tile__content{ min-width: 0; min-height: 0; }
@@ -519,7 +523,7 @@
 }
 
 /* =========================
-   Responsive for desktop tiles
+   Responsive (desktop tiles)
    ========================= */
 
 @media (max-width: 1039px){
@@ -533,7 +537,6 @@
   .k-tile--mosaic-bottomRight{ grid-column: 1 / -1; }
 }
 
-/* When desktop tiles collapse to 1 column */
 @media (max-width: 739px){
   .k-tiles{ grid-template-columns: 1fr; }
 
@@ -564,7 +567,7 @@
 }
 
 /* =========================
-   Tones (disabled)
+   Tones (disabled on bg)
    ========================= */
 
 .k-tile--tone-violet .k-tile__bg,
@@ -577,7 +580,7 @@
 }
 
 /* =========================================================
-   Mobile: Service Map (mini cards + bottom sheet)
+   Mobile rendering: ServiceMap (React)
    ========================================================= */
 
 .k-svcMapWrap{ display:none; }
@@ -588,12 +591,12 @@
 }
 
 /* =========================
-   Mini cards grid (MOBILE) — NOW 1 COLUMN
+   Mini cards — MOBILE
    ========================= */
 
 .k-svcMiniGrid{
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr; /* ✅ 1 column */
   gap: 14px;
 }
 
@@ -646,7 +649,6 @@
   opacity: .44;
 }
 
-/* Top row */
 .k-svcMini__top{
   display:flex;
   align-items:center;
@@ -704,7 +706,7 @@
   white-space: nowrap;
 }
 
-/* Title: wrap + clamp (no mid-word cuts) */
+/* Title: wrap + clamp (no ugly cuts) */
 .k-svcMini__title{
   font-size: 15px;
   line-height: 1.22;
@@ -719,12 +721,11 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: normal;
-  word-break: normal;
   overflow-wrap: anywhere;
   hyphens: auto;
 }
 
-/* Micro-proof: wrap + clamp (no “handov”) */
+/* Micro-proof: wrap + clamp */
 .k-svcMini__proof{
   margin-top: 6px;
   font-size: 12.5px;
@@ -738,13 +739,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: normal;
-  word-break: normal;
   overflow-wrap: anywhere;
   hyphens: auto;
-
-  /* remove old ellipsis-style chip look */
-  align-items: initial;
-  gap: 0;
 }
 
 .k-svcMini__proof::before{
@@ -759,7 +755,7 @@
   transform: translateY(-1px);
 }
 
-/* tap / press state */
+/* Press (calm) */
 .k-svcMini:active{
   transform: scale(.992);
   border-color: rgba(255,255,255,.16);
@@ -769,172 +765,132 @@
   .k-svcMini:active{ transform: none; }
 }
 
-/* ✅ IMPORTANT: real mobile layout = 1 column */
-@media (max-width: 739px){
-  .k-svcMiniGrid{
-    grid-template-columns: 1fr;
-    gap: 14px;
-  }
-}
+/* =========================================================
+   Shared-element expansion (FLIP / morph)
+   ========================================================= */
 
-/* Overlay blur */
-.k-svcOverlay{
+.k-svcXOverlay{
   position: fixed;
   inset: 0;
-  z-index: 60;
-  background: rgba(0,0,0,.46);
+  z-index: 80;
+  background: rgba(0,0,0,.52);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
 
-/* Bottom sheet */
-.k-svcSheet{
+.k-svcX{
   position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 70;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: 12px;
+}
 
-  margin: 10px 10px 10px;
+/* expanded card itself */
+.k-svcX__card{
+  position: relative;
+  width: min(520px, 100%);
+  max-height: min(86vh, 760px);
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+
   border-radius: 22px;
-  overflow: hidden;
-  isolation: isolate;
-
   border: 1px solid rgba(255,255,255,.14);
   background: rgba(255,255,255,.03);
 
   box-shadow:
-    0 40px 140px -98px rgba(0,0,0,.98),
-    0 0 0 1px rgba(255,255,255,.04) inset;
+    0 60px 180px -120px rgba(0,0,0,.98),
+    0 1px 0 rgba(255,255,255,.08) inset;
 
-  max-height: min(82vh, 720px);
+  isolation: isolate;
 }
 
-.k-svcSheet__bg,
-.k-svcSheet__paper{
+.k-svcX__bg,
+.k-svcX__paper{
   position:absolute;
   inset:0;
   pointer-events:none;
   z-index: -1;
 }
 
-.k-svcSheet__bg{
-  background:
-    radial-gradient(900px 520px at 22% 12%, rgba(255,255,255,.10), transparent 60%),
-    radial-gradient(700px 420px at 80% 18%, rgba(255,255,255,.07), transparent 62%),
-    linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0) 52%),
-    rgba(8,8,10,.74);
-}
-
-.k-svcSheet__paper{
-  background:
-    radial-gradient(680px 220px at 28% 12%, rgba(255,255,255,.10), transparent 62%),
-    linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0) 64%);
-  opacity: .50;
-}
-
-.k-svcSheet__handle{
-  width: 48px;
-  height: 5px;
-  border-radius: 999px;
-  background: rgba(255,255,255,.18);
-  margin: 10px auto 2px;
-}
-
-.k-svcSheet__head{
+.k-svcX__head{
   display:flex;
-  align-items:flex-start;
+  align-items:center;
   justify-content:space-between;
   gap: 12px;
-  padding: 10px 12px 0;
+  padding: 14px 14px 10px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
 }
 
-.k-svcSheet__kicker{
+.k-svcX__left{
   display:flex;
-  flex-direction:column;
-  gap: 6px;
+  align-items:center;
+  gap: 10px;
   min-width: 0;
 }
 
-.k-svcSheet__pill{
-  display:inline-flex;
-  align-items:center;
-  height: 26px;
-  padding: 0 10px;
+.k-svcX__icon{
+  width: 38px;
+  height: 38px;
   border-radius: 999px;
+  display:grid;
+  place-items:center;
+  background: rgba(255,255,255,.055);
   border: 1px solid rgba(255,255,255,.14);
-  background: rgba(255,255,255,.05);
-  color: rgba(255,255,255,.80);
-  font-size: 11px;
-  letter-spacing: .14em;
+  box-shadow:
+    0 18px 60px -52px rgba(0,0,0,.96),
+    0 1px 0 rgba(255,255,255,.08) inset;
+}
+.k-svcX__icon svg{ width: 18px; height: 18px; opacity: .96; }
+
+.k-svcX__tag{
+  font-size: 10px;
+  letter-spacing: .22em;
   text-transform: uppercase;
-  width: fit-content;
+  color: rgba(255,255,255,.52);
 }
 
-.k-svcSheet__meta{
-  color: rgba(255,255,255,.58);
-  font-size: 12.5px;
-}
-
-.k-svcSheet__close{
-  width: 40px;
-  height: 40px;
+.k-svcX__close{
+  width: 42px;
+  height: 42px;
   border-radius: 999px;
   border: 1px solid rgba(255,255,255,.14);
   background: rgba(255,255,255,.04);
   color: rgba(255,255,255,.86);
   display:grid;
   place-items:center;
-  box-shadow: 0 18px 60px -50px rgba(0,0,0,.92);
 }
 
-.k-svcSheet__close:focus-visible{
+.k-svcX__close:focus-visible{
   outline: 2px solid rgba(255,255,255,.30);
   outline-offset: 3px;
 }
 
-.k-svcSheet__content{
-  padding: 12px 12px calc(14px + env(safe-area-inset-bottom, 0px));
+.k-svcX__body{
+  padding: 14px 14px calc(16px + env(safe-area-inset-bottom, 0px));
   display:grid;
   gap: 10px;
 }
 
-.k-svcSheet__media{
-  height: 132px;
-  border-radius: 18px;
-}
-
-.k-svcSheet__title{
-  margin: 6px 0 0;
+.k-svcX__title{
+  margin: 2px 0 0;
   font-size: 18px;
   letter-spacing: var(--track-tight);
-  text-shadow: 0 18px 56px rgba(0,0,0,.62);
   color: rgba(255,255,255,.94);
+  text-shadow: 0 18px 56px rgba(0,0,0,.62);
 }
 
-.k-svcSheet__desc{
+.k-svcX__proof{
   margin: 0;
-  color: rgba(255,255,255,.72);
-  font-size: 14px;
-  line-height: 1.55;
-}
-
-/* Option A: proof in sheet */
-.k-svcSheet__proof{
-  margin-top: 2px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(255,255,255,.08);
-
-  font-size: 12.5px;
+  font-size: 13px;
   line-height: 1.35;
-  color: rgba(255,255,255,.62);
-
+  color: rgba(255,255,255,.70);
   display: inline-flex;
   align-items: center;
   gap: 10px;
 }
-
-.k-svcSheet__proof::before{
+.k-svcX__proof::before{
   content:"";
   width: 7px;
   height: 7px;
@@ -943,23 +899,39 @@
   box-shadow: 0 0 0 6px rgba(255,255,255,.045);
 }
 
-.k-svcSheet__bullets{
-  margin: 2px 0 2px;
+.k-svcX__desc{
+  margin: 0;
+  color: rgba(255,255,255,.72);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.k-svcX__media{
+  height: 140px;
+  border-radius: 18px;
+  margin-top: 4px;
+}
+
+.k-svcX__meta{
+  font-size: 12.5px;
+  color: rgba(255,255,255,.58);
+}
+
+.k-svcX__bullets{
+  margin: 2px 0 4px;
   padding: 0;
   list-style: none;
   display:grid;
   gap: 8px;
 }
-
-.k-svcSheet__bullets li{
+.k-svcX__bullets li{
   display:flex;
   align-items:center;
   gap: 10px;
   font-size: 12.5px;
   color: rgba(255,255,255,.60);
 }
-
-.k-svcSheet__bullets li::before{
+.k-svcX__bullets li::before{
   content:"";
   width: 7px;
   height: 7px;
@@ -968,12 +940,12 @@
   box-shadow: 0 0 0 5px rgba(255,255,255,.055);
 }
 
-.k-svcSheet__cta{
+.k-svcX__cta{
   width: 100%;
   justify-content: center;
   margin-top: 6px;
 }
 
 @media (prefers-reduced-motion: reduce){
-  .k-svcOverlay{ backdrop-filter: none; -webkit-backdrop-filter: none; }
+  .k-svcXOverlay{ backdrop-filter: none; -webkit-backdrop-filter: none; }
 }
