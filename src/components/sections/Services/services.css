@@ -1,8 +1,10 @@
 /* =========================================================
    Kersivo — Services (App Tiles Mosaic)
-   FIX (bulletproof): no fixed grid-auto-rows
-   - rows are auto-sized -> never overlaps
-   - min-heights preserve the mosaic proportions
+   Apple-ish monochrome cards (premium, calm, no RGB)
+   - no colored tones
+   - soft glass + top light
+   - hover = sheen + crisp border (no lift)
+   - mobile mini grid + bottom sheet
    ========================================================= */
 
 .k-services--appTiles{
@@ -37,7 +39,9 @@
 .k-svcHead__grad{
   display: block;
   margin-top: 6px;
-  background: linear-gradient(90deg, rgba(140,170,255,1), rgba(210,150,255,1));
+
+  /* neutral “metal sheen” text */
+  background: linear-gradient(90deg, rgba(255,255,255,.92), rgba(255,255,255,.62));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -105,7 +109,8 @@
   grid-template-rows: auto auto 1fr auto;
   gap: 12px;
 
-  background: rgba(255,255,255,.03);
+  /* monochrome glass */
+  background: rgba(255,255,255,.028);
   border: 1px solid rgba(255,255,255,.10);
 
   /* reveal */
@@ -115,17 +120,16 @@
     border-color 420ms cubic-bezier(.2,.9,.2,1),
     box-shadow 420ms cubic-bezier(.2,.9,.2,1);
 
-  /* ABSOLUTELY NO layout-affecting motion */
+  /* no layout-affecting motion */
   transform: none;
   z-index: 0;
 
-  /* allow grid to size correctly (critical!) */
   min-width: 0;
   min-height: 0;
   align-self: stretch;
 
   box-shadow:
-    0 26px 78px -66px rgba(0,0,0,.92),
+    0 28px 88px -74px rgba(0,0,0,.96),
     0 1px 0 rgba(255,255,255,.06) inset;
 }
 
@@ -135,31 +139,30 @@
   .k-tile{ opacity: 1; transition: none; }
 }
 
-/* Preserve proportions without fixed grid rows */
 @media (min-width: 1040px){
   .k-tile{
     min-height: var(--rowH);
-    height: auto; /* let content grow -> rows grow -> no overlap */
+    height: auto;
   }
 
-  /* tall tile = 2 units + one gap */
   .k-tile--mosaic-leftTall{
     min-height: calc(var(--rowH) * 2 + var(--gap));
   }
 }
 
-/* Hover: no translate, no “lift” */
+/* Hover: calm sheen, no lift */
 @media (hover:hover){
   .k-tile:hover{
-    border-color: rgba(255,255,255,.14);
+    border-color: rgba(255,255,255,.18);
     box-shadow:
-      0 30px 90px -72px rgba(0,0,0,.94),
-      0 1px 0 rgba(255,255,255,.07) inset;
+      0 38px 124px -92px rgba(0,0,0,.98),
+      0 1px 0 rgba(255,255,255,.10) inset;
+  }
+
+  .k-tile:hover .k-tile__paper{
+    opacity: .60;
   }
 }
-
-/* Kill pill hover lift inside tiles (optional stability) */
-.k-tile .k-pill:hover{ transform: none; }
 
 .k-tile--link{
   text-decoration: none;
@@ -167,12 +170,12 @@
 }
 
 .k-tile--link:focus-visible{
-  outline: 2px solid rgba(190,145,255,.70);
+  outline: 2px solid rgba(255,255,255,.32);
   outline-offset: 4px;
   border-radius: 32px;
 }
 
-/* gradient “edge” (inside) */
+/* inner “edge” */
 .k-tile::after{
   content:"";
   position:absolute;
@@ -180,11 +183,13 @@
   border-radius: inherit;
   pointer-events: none;
   padding: 1px;
+
   background: linear-gradient(140deg,
     rgba(255,255,255,.18),
     rgba(255,255,255,.06),
     rgba(255,255,255,.12)
   );
+
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
@@ -195,17 +200,19 @@
 
 /* =========================
    Background layers per tile
+   (Apple-ish monochrome)
    ========================= */
 
 .k-tile__bg{
   position: absolute;
   inset: 0;
   z-index: -3;
+
   background:
-    radial-gradient(920px 520px at 20% 8%, rgba(190,145,255,.16), transparent 58%),
-    radial-gradient(920px 520px at 85% 18%, rgba(120,210,255,.10), transparent 62%),
-    linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0) 48%),
-    rgba(7,7,10,.62);
+    radial-gradient(900px 520px at 22% 12%, rgba(255,255,255,.10), transparent 60%),
+    radial-gradient(700px 420px at 80% 18%, rgba(255,255,255,.07), transparent 62%),
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0) 52%),
+    rgba(8,8,10,.72);
 }
 
 .k-tile__paper{
@@ -213,11 +220,12 @@
   inset: 0;
   z-index: -2;
   pointer-events: none;
+
   background:
-    radial-gradient(700px 260px at 25% 15%, rgba(255,255,255,.08), transparent 60%),
-    radial-gradient(700px 260px at 80% 20%, rgba(255,255,255,.06), transparent 64%),
-    linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,0) 60%);
-  opacity: .45;
+    radial-gradient(680px 220px at 28% 12%, rgba(255,255,255,.10), transparent 62%),
+    linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0) 64%);
+
+  opacity: .42;
 }
 
 /* =========================
@@ -245,10 +253,35 @@
   display: grid;
   place-items: center;
 
-  color: rgba(255,255,255,.86);
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.14);
-  box-shadow: 0 12px 34px rgba(0,0,0,.20);
+  color: rgba(255,255,255,.90);
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.12);
+
+  box-shadow:
+    0 18px 60px -48px rgba(0,0,0,.92),
+    0 1px 0 rgba(255,255,255,.08) inset;
+
+  position: relative;
+}
+
+/* neutral ring (no RGB) */
+.k-tile__icon::after{
+  content:"";
+  position:absolute;
+  inset:-1px;
+  border-radius: inherit;
+  padding: 1px;
+
+  background: linear-gradient(180deg, rgba(255,255,255,.28), rgba(255,255,255,.10));
+
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+
+  opacity: .55;
+  pointer-events: none;
 }
 
 .k-tile__icon svg{
@@ -265,10 +298,10 @@
   position: relative;
   border-radius: 22px;
   overflow: hidden;
-  background: rgba(255,255,255,.03);
+
+  background: rgba(255,255,255,.022);
   border: 1px solid rgba(255,255,255,.10);
 
-  /* stable media block so cards feel consistent */
   height: 124px;
 }
 
@@ -280,9 +313,11 @@
 .k-m__a,.k-m__b,.k-m__c,.k-m__d,.k-m__e{
   position: absolute;
   border-radius: 18px;
-  background: rgba(10,10,14,.55);
+
+  /* monochrome panels */
+  background: rgba(12,12,14,.58);
   border: 1px solid rgba(255,255,255,.12);
-  box-shadow: 0 16px 46px rgba(0,0,0,.28);
+  box-shadow: 0 18px 56px rgba(0,0,0,.34);
 }
 
 /* Customization (left tall) */
@@ -291,22 +326,22 @@
   left: 10%; top: 12%;
   transform: rotate(-5deg);
   background:
-    linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,0) 60%),
-    rgba(10,10,14,.55);
+    linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,0) 60%),
+    rgba(12,12,14,.58);
 }
 .k-tile__media--customization .k-m__b{
   width: 56%; height: 62%;
   left: 38%; top: 18%;
   transform: rotate(7deg);
   background:
-    radial-gradient(260px 160px at 35% 30%, rgba(255,255,255,.10), transparent 70%),
-    rgba(10,10,14,.55);
+    radial-gradient(260px 160px at 35% 30%, rgba(255,255,255,.08), transparent 70%),
+    rgba(12,12,14,.58);
 }
 .k-tile__media--customization .k-m__c{
   width: 86%; height: 18%;
   left: 7%; bottom: 10%;
   border-radius: 999px;
-  background: rgba(255,255,255,.07);
+  background: rgba(255,255,255,.06);
 }
 
 /* Scheduling (top wide) */
@@ -315,22 +350,22 @@
   left: 8%; top: 12%;
   border-radius: 22px;
   background:
-    linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,0) 60%),
-    rgba(10,10,14,.55);
+    linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,0) 60%),
+    rgba(12,12,14,.58);
 }
 .k-tile__media--scheduling .k-m__b{
   width: 34%; height: 64%;
   right: 10%; top: 18%;
   transform: rotate(8deg);
   background:
-    radial-gradient(220px 140px at 40% 25%, rgba(255,255,255,.10), transparent 70%),
-    rgba(10,10,14,.55);
+    radial-gradient(220px 140px at 40% 25%, rgba(255,255,255,.08), transparent 70%),
+    rgba(12,12,14,.58);
 }
 .k-tile__media--scheduling .k-m__c{
   width: 42%; height: 18%;
   left: 12%; bottom: 12%;
   border-radius: 999px;
-  background: rgba(255,255,255,.06);
+  background: rgba(255,255,255,.05);
 }
 
 /* Wallet */
@@ -338,13 +373,13 @@
   width: 74%; height: 46%;
   left: 13%; top: 18%;
   border-radius: 18px;
-  background: rgba(255,255,255,.06);
+  background: rgba(255,255,255,.05);
 }
 .k-tile__media--wallet .k-m__b{
   width: 54%; height: 16%;
   left: 22%; bottom: 16%;
   border-radius: 999px;
-  background: rgba(255,255,255,.06);
+  background: rgba(255,255,255,.05);
 }
 
 /* Inbox */
@@ -352,19 +387,19 @@
   width: 82%; height: 20%;
   left: 9%; top: 16%;
   border-radius: 14px;
-  background: rgba(255,255,255,.06);
+  background: rgba(255,255,255,.05);
 }
 .k-tile__media--inbox .k-m__b{
   width: 78%; height: 18%;
   left: 11%; top: 42%;
   border-radius: 14px;
-  background: rgba(255,255,255,.05);
+  background: rgba(255,255,255,.045);
 }
 .k-tile__media--inbox .k-m__c{
   width: 74%; height: 18%;
   left: 13%; top: 64%;
   border-radius: 14px;
-  background: rgba(255,255,255,.05);
+  background: rgba(255,255,255,.045);
 }
 
 /* Gifts */
@@ -377,7 +412,7 @@
   width: 32%; height: 54%;
   left: 33%; top: 14%;
   transform: rotate(2deg);
-  background: rgba(255,255,255,.06);
+  background: rgba(255,255,255,.05);
 }
 .k-tile__media--gifts .k-m__c{
   width: 32%; height: 54%;
@@ -388,7 +423,7 @@
   width: 58%; height: 16%;
   left: 21%; bottom: 14%;
   border-radius: 999px;
-  background: rgba(255,255,255,.06);
+  background: rgba(255,255,255,.05);
 }
 
 /* Reminders */
@@ -397,26 +432,26 @@
   left: 20%; top: 8%;
   border-radius: 24px;
   background:
-    linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,0) 60%),
-    rgba(10,10,14,.55);
+    linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0) 60%),
+    rgba(12,12,14,.58);
 }
 .k-tile__media--reminders .k-m__b{
   width: 46%; height: 12%;
   left: 27%; top: 22%;
   border-radius: 999px;
-  background: rgba(255,255,255,.06);
+  background: rgba(255,255,255,.05);
 }
 .k-tile__media--reminders .k-m__c{
   width: 52%; height: 10%;
   left: 24%; top: 42%;
   border-radius: 999px;
-  background: rgba(255,255,255,.05);
+  background: rgba(255,255,255,.042);
 }
 .k-tile__media--reminders .k-m__d{
   width: 40%; height: 12%;
   left: 30%; bottom: 14%;
   border-radius: 999px;
-  background: rgba(255,255,255,.06);
+  background: rgba(255,255,255,.05);
 }
 
 /* =========================
@@ -428,14 +463,15 @@
 .k-tile__title{
   font-size: clamp(18px, 1.15vw, 22px);
   letter-spacing: var(--track-tight);
-  text-shadow: 0 14px 34px rgba(0,0,0,.55);
+  text-shadow: 0 16px 46px rgba(0,0,0,.58);
   margin: 0;
+  color: rgba(255,255,255,.94);
 }
 
 .k-tile__desc{
   font-size: 14.5px;
   line-height: 1.55;
-  color: rgba(255,255,255,.74);
+  color: rgba(255,255,255,.72);
   max-width: 60ch;
   margin: 0;
 }
@@ -453,7 +489,7 @@
   align-items: center;
   gap: 10px;
   font-size: 12.5px;
-  color: rgba(255,255,255,.62);
+  color: rgba(255,255,255,.60);
 }
 
 .k-tile__bullets li::before{
@@ -462,7 +498,7 @@
   height: 7px;
   border-radius: 999px;
   background: rgba(255,255,255,.22);
-  box-shadow: 0 0 0 5px rgba(255,255,255,.06);
+  box-shadow: 0 0 0 5px rgba(255,255,255,.055);
 }
 
 .k-tile__foot{
@@ -474,7 +510,7 @@
 
 .k-tile__meta{
   font-size: 12.5px;
-  color: rgba(255,255,255,.58);
+  color: rgba(255,255,255,.56);
 }
 
 /* =========================
@@ -526,44 +562,17 @@
 }
 
 /* =========================
-   Tones
+   Tones (disabled)
+   Keep classes in markup if you want, but they do nothing now.
    ========================= */
 
-.k-tile--tone-violet .k-tile__bg{
-  background:
-    radial-gradient(900px 520px at 22% 10%, rgba(190,145,255,.26), transparent 58%),
-    linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0) 52%),
-    rgba(7,7,10,.62);
-}
-.k-tile--tone-rose .k-tile__bg{
-  background:
-    radial-gradient(900px 520px at 22% 10%, rgba(255,150,190,.18), transparent 58%),
-    linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0) 52%),
-    rgba(7,7,10,.62);
-}
-.k-tile--tone-mint .k-tile__bg{
-  background:
-    radial-gradient(900px 520px at 22% 10%, rgba(120,255,210,.14), transparent 58%),
-    linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0) 52%),
-    rgba(7,7,10,.62);
-}
-.k-tile--tone-amber .k-tile__bg{
-  background:
-    radial-gradient(900px 520px at 22% 10%, rgba(255,210,120,.14), transparent 58%),
-    linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0) 52%),
-    rgba(7,7,10,.62);
-}
-.k-tile--tone-sunset .k-tile__bg{
-  background:
-    radial-gradient(900px 520px at 22% 10%, rgba(255,160,110,.16), transparent 58%),
-    linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0) 52%),
-    rgba(7,7,10,.62);
-}
+.k-tile--tone-violet .k-tile__bg,
+.k-tile--tone-rose .k-tile__bg,
+.k-tile--tone-mint .k-tile__bg,
+.k-tile--tone-amber .k-tile__bg,
+.k-tile--tone-sunset .k-tile__bg,
 .k-tile--tone-sky .k-tile__bg{
-  background:
-    radial-gradient(900px 520px at 22% 10%, rgba(120,210,255,.18), transparent 58%),
-    linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0) 52%),
-    rgba(7,7,10,.62);
+  background: inherit;
 }
 
 /* =========================================================
@@ -592,7 +601,7 @@
   text-align: left;
 
   border: 1px solid rgba(255,255,255,.10);
-  background: rgba(255,255,255,.03);
+  background: rgba(255,255,255,.028);
 
   display: grid;
   gap: 10px;
@@ -600,14 +609,14 @@
   isolation: isolate;
 
   box-shadow:
-    0 24px 70px -62px rgba(0,0,0,.92),
+    0 26px 84px -78px rgba(0,0,0,.96),
     0 1px 0 rgba(255,255,255,.06) inset;
 
   -webkit-tap-highlight-color: transparent;
 }
 
 .k-svcMini:focus-visible{
-  outline: 2px solid rgba(190,145,255,.70);
+  outline: 2px solid rgba(255,255,255,.30);
   outline-offset: 3px;
 }
 
@@ -619,7 +628,19 @@
   z-index: -1;
 }
 
-.k-svcMini__paper{ opacity: .35; }
+.k-svcMini__bg{
+  background:
+    radial-gradient(760px 440px at 24% 12%, rgba(255,255,255,.10), transparent 62%),
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0) 60%),
+    rgba(8,8,10,.72);
+}
+
+.k-svcMini__paper{
+  background:
+    radial-gradient(540px 180px at 28% 12%, rgba(255,255,255,.10), transparent 62%),
+    linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0) 64%);
+  opacity: .40;
+}
 
 /* Top row */
 .k-svcMini__top{
@@ -637,16 +658,41 @@
   display:grid;
   place-items:center;
 
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.12);
+
+  position: relative;
+  box-shadow:
+    0 18px 60px -50px rgba(0,0,0,.94),
+    0 1px 0 rgba(255,255,255,.08) inset;
 }
+
+.k-svcMini__icon::after{
+  content:"";
+  position:absolute;
+  inset:-1px;
+  border-radius: inherit;
+  padding: 1px;
+
+  background: linear-gradient(180deg, rgba(255,255,255,.28), rgba(255,255,255,.10));
+
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+
+  opacity: .55;
+  pointer-events: none;
+}
+
 .k-svcMini__icon svg{ width: 16px; height: 16px; opacity: .95; }
 
 .k-svcMini__tag{
   font-size: 11px;
   letter-spacing: .14em;
   text-transform: uppercase;
-  color: rgba(255,255,255,.62);
+  color: rgba(255,255,255,.58);
   white-space: nowrap;
 }
 
@@ -667,7 +713,7 @@
   position: fixed;
   inset: 0;
   z-index: 60;
-  background: rgba(0,0,0,.42);
+  background: rgba(0,0,0,.46);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
@@ -689,8 +735,8 @@
   background: rgba(255,255,255,.03);
 
   box-shadow:
-    0 34px 120px -78px rgba(0,0,0,.92),
-    0 1px 0 rgba(255,255,255,.07) inset;
+    0 40px 140px -98px rgba(0,0,0,.98),
+    0 1px 0 rgba(255,255,255,.08) inset;
 
   max-height: min(82vh, 720px);
 }
@@ -703,7 +749,20 @@
   z-index: -1;
 }
 
-.k-svcSheet__paper{ opacity: .50; }
+.k-svcSheet__bg{
+  background:
+    radial-gradient(900px 520px at 22% 12%, rgba(255,255,255,.10), transparent 60%),
+    radial-gradient(700px 420px at 80% 18%, rgba(255,255,255,.07), transparent 62%),
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0) 52%),
+    rgba(8,8,10,.74);
+}
+
+.k-svcSheet__paper{
+  background:
+    radial-gradient(680px 220px at 28% 12%, rgba(255,255,255,.10), transparent 62%),
+    linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0) 64%);
+  opacity: .50;
+}
 
 .k-svcSheet__handle{
   width: 48px;
@@ -736,7 +795,7 @@
   border-radius: 999px;
   border: 1px solid rgba(255,255,255,.14);
   background: rgba(255,255,255,.05);
-  color: rgba(255,255,255,.82);
+  color: rgba(255,255,255,.80);
   font-size: 11px;
   letter-spacing: .14em;
   text-transform: uppercase;
@@ -744,7 +803,7 @@
 }
 
 .k-svcSheet__meta{
-  color: rgba(255,255,255,.60);
+  color: rgba(255,255,255,.58);
   font-size: 12.5px;
 }
 
@@ -757,11 +816,11 @@
   color: rgba(255,255,255,.86);
   display:grid;
   place-items:center;
-  box-shadow: 0 18px 60px -50px rgba(0,0,0,.9);
+  box-shadow: 0 18px 60px -50px rgba(0,0,0,.92);
 }
 
 .k-svcSheet__close:focus-visible{
-  outline: 2px solid rgba(190,145,255,.70);
+  outline: 2px solid rgba(255,255,255,.30);
   outline-offset: 3px;
 }
 
@@ -780,12 +839,13 @@
   margin: 6px 0 0;
   font-size: 18px;
   letter-spacing: var(--track-tight);
-  text-shadow: 0 16px 44px rgba(0,0,0,.58);
+  text-shadow: 0 18px 56px rgba(0,0,0,.62);
+  color: rgba(255,255,255,.94);
 }
 
 .k-svcSheet__desc{
   margin: 0;
-  color: rgba(255,255,255,.74);
+  color: rgba(255,255,255,.72);
   font-size: 14px;
   line-height: 1.55;
 }
@@ -803,7 +863,7 @@
   align-items:center;
   gap: 10px;
   font-size: 12.5px;
-  color: rgba(255,255,255,.62);
+  color: rgba(255,255,255,.60);
 }
 
 .k-svcSheet__bullets li::before{
@@ -812,7 +872,7 @@
   height: 7px;
   border-radius: 999px;
   background: rgba(255,255,255,.22);
-  box-shadow: 0 0 0 5px rgba(255,255,255,.06);
+  box-shadow: 0 0 0 5px rgba(255,255,255,.055);
 }
 
 .k-svcSheet__cta{
