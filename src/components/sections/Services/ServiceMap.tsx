@@ -169,7 +169,8 @@ export default function ServiceMap({ cards }: { cards: Card[] }) {
         transition: { duration: 0.18 },
       };
 
-  const panelMotion = reduced
+  // Important: don't fade the morph-card itself; let layoutId do the work.
+  const shellMotion = reduced
     ? {
         initial: { opacity: 1 },
         animate: { opacity: 1 },
@@ -180,8 +181,12 @@ export default function ServiceMap({ cards }: { cards: Card[] }) {
         initial: { opacity: 0 },
         animate: { opacity: 1 },
         exit: { opacity: 0 },
-        transition: { duration: 0.12 },
+        transition: { duration: 0.10 },
       };
+
+  const morphTransition = reduced
+    ? { duration: 0 }
+    : { type: "spring", stiffness: 420, damping: 34, mass: 0.8 };
 
   return (
     <div className="k-svcMap" aria-label="Service map">
@@ -200,27 +205,33 @@ export default function ServiceMap({ cards }: { cards: Card[] }) {
               aria-haspopup="dialog"
               layout
               layoutId={`${id}-card`}
+              transition={morphTransition}
               whileTap={reduced ? undefined : { scale: 0.992 }}
             >
               <span className="k-svcMini__bg k-tile__bg" aria-hidden="true" />
               <span className="k-svcMini__paper k-tile__paper" aria-hidden="true" />
 
               <div className="k-svcMini__top">
-                <motion.span className="k-svcMini__icon" aria-hidden="true" layoutId={`${id}-icon`}>
+                <motion.span
+                  className="k-svcMini__icon"
+                  aria-hidden="true"
+                  layoutId={`${id}-icon`}
+                  transition={morphTransition}
+                >
                   {ICONS[c.key]}
                 </motion.span>
 
-                <motion.span className="k-svcMini__tag" layoutId={`${id}-tag`}>
+                <motion.span className="k-svcMini__tag" layoutId={`${id}-tag`} transition={morphTransition}>
                   {c.tag}
                 </motion.span>
               </div>
 
-              <motion.span className="k-svcMini__title" layoutId={`${id}-title`}>
+              <motion.span className="k-svcMini__title" layoutId={`${id}-title`} transition={morphTransition}>
                 {c.title}
               </motion.span>
 
               {c.proof ? (
-                <motion.span className="k-svcMini__proof" layoutId={`${id}-proof`}>
+                <motion.span className="k-svcMini__proof" layoutId={`${id}-proof`} transition={morphTransition}>
                   {c.proof}
                 </motion.span>
               ) : null}
@@ -229,29 +240,45 @@ export default function ServiceMap({ cards }: { cards: Card[] }) {
         })}
       </div>
 
-      <AnimatePresence>
+      {/* ✅ popLayout = smoother reverse morph (no blink) */}
+      <AnimatePresence mode="popLayout" initial={false}>
         {open && card && (
           <>
             <motion.div className="k-svcXOverlay" {...overlayMotion} onClick={closeDetail} aria-hidden="true" />
 
+            {/* shell can fade; morph-card should rely on layoutId */}
             <motion.div
               className={`k-svcX k-tile--tone-${card.tone}`}
               role="dialog"
               aria-modal="true"
               aria-label={card.title}
-              {...panelMotion}
+              {...shellMotion}
+              layout
             >
-              <motion.div className="k-svcX__card" layoutId={`svc-${card.key}-card`}>
+              <motion.div
+                className="k-svcX__card"
+                layoutId={`svc-${card.key}-card`}
+                transition={morphTransition}
+              >
                 <span className="k-svcX__bg k-tile__bg" aria-hidden="true" />
                 <span className="k-svcX__paper k-tile__paper" aria-hidden="true" />
 
                 <div className="k-svcX__head">
                   <div className="k-svcX__left">
-                    <motion.span className="k-svcX__icon" aria-hidden="true" layoutId={`svc-${card.key}-icon`}>
+                    <motion.span
+                      className="k-svcX__icon"
+                      aria-hidden="true"
+                      layoutId={`svc-${card.key}-icon`}
+                      transition={morphTransition}
+                    >
                       {ICONS[card.key]}
                     </motion.span>
 
-                    <motion.span className="k-svcX__tag" layoutId={`svc-${card.key}-tag`}>
+                    <motion.span
+                      className="k-svcX__tag"
+                      layoutId={`svc-${card.key}-tag`}
+                      transition={morphTransition}
+                    >
                       {card.tag}
                     </motion.span>
                   </div>
@@ -268,12 +295,20 @@ export default function ServiceMap({ cards }: { cards: Card[] }) {
                 </div>
 
                 <div className="k-svcX__body">
-                  <motion.h3 className="k-svcX__title" layoutId={`svc-${card.key}-title`}>
+                  <motion.h3
+                    className="k-svcX__title"
+                    layoutId={`svc-${card.key}-title`}
+                    transition={morphTransition}
+                  >
                     {card.title}
                   </motion.h3>
 
                   {card.proof ? (
-                    <motion.p className="k-svcX__proof" layoutId={`svc-${card.key}-proof`}>
+                    <motion.p
+                      className="k-svcX__proof"
+                      layoutId={`svc-${card.key}-proof`}
+                      transition={morphTransition}
+                    >
                       {card.proof}
                     </motion.p>
                   ) : null}
