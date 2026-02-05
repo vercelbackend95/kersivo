@@ -298,7 +298,8 @@
     rgba(255,255,255,.02);
   overflow: hidden;
 
-
+  /* ✅ bubble size stays stable */
+  padding: 0;
 
   /* ✅ keep height stable + align with left card */
   display: flex;
@@ -341,12 +342,19 @@
   gap: 18px;
   align-content: center;
 
-  min-height: 220px;
   width: 100%;
+  min-height: 0;
 
-  /* ✅ readable measure + never clash with arrows */
+  /* readable measure */
   max-width: min(74ch, 100%);
-  padding-right: clamp(70px, 8vw, 110px);
+
+  /* ✅ internal padding only (doesn't resize bubble) */
+  padding-left: 26px;
+  padding-right: 26px;
+
+  /* ✅ reserve space for the NEW bottom pill */
+  padding-top: 22px;
+  padding-bottom: 96px;
 }
 
 .k-reviewsCar__quote{
@@ -369,15 +377,7 @@
   margin-right: 0;
 }
 
-.k-reviewsCar__who{
-  display:flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding-top: 14px;
-  border-top: 1px solid rgba(255,255,255,.10);
-}
-
+/* Who (left side inside pill) */
 .k-reviewsCar__whoLeft{
   display:grid;
   gap: 2px;
@@ -396,23 +396,36 @@
   letter-spacing: -0.01em;
 }
 
-/* Controls: pinned (does not affect layout height) */
-.k-reviewsCar__bottom{
+/* ✅ ONE WIDE PILL: who (left) + arrows (right) */
+.k-reviewsCar__whoPill{
   position: absolute;
-  right: clamp(18px, 2.4vw, 28px);
-  bottom: clamp(18px, 2.4vw, 28px);
-  margin: 0;
+  left: 22px;
+  right: 22px;
+  bottom: 22px;
   z-index: 2;
-  display:flex;
-  align-items:center;
-  justify-content: flex-end;
-  gap: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+
+  padding: 10px 10px 10px 14px;
+  border-radius: 999px;
+
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.12);
+  backdrop-filter: blur(12px);
+
+  box-shadow:
+    0 18px 70px rgba(0,0,0,.30),
+    0 0 0 1px rgba(255,255,255,.06) inset;
 }
 
-/* Arrows only */
+/* Arrows inside pill */
 .k-reviewsCar__arrows{
   display:flex;
   gap: 10px;
+  flex: 0 0 auto;
 }
 
 .k-reviewsCar__arrow{
@@ -427,6 +440,7 @@
   cursor:pointer;
   transition: transform .22s ease, background .22s ease, border-color .22s ease;
   user-select:none;
+  flex: 0 0 auto;
 }
 
 .k-reviewsCar__arrow:hover{
@@ -445,12 +459,18 @@
 }
 
 @media (max-width: 520px){
-  .k-reviewsCar__stage{
-    padding: 18px;
+  .k-reviewsCar__slide{
+    padding-left: 18px;
+    padding-right: 18px;
+    padding-top: 18px;
+    padding-bottom: 88px;
   }
 
-  .k-reviewsCar__slide{
-    padding-right: 86px;
+  .k-reviewsCar__whoPill{
+    left: 14px;
+    right: 14px;
+    bottom: 14px;
+    padding: 9px 9px 9px 12px;
   }
 
   .k-reviewsCar__arrows{ gap: 8px; }
@@ -458,11 +478,6 @@
   .k-reviewsCar__arrow{
     width: 42px;
     height: 42px;
-  }
-
-  .k-reviewsCar__bottom{
-    right: 14px;
-    bottom: 14px;
   }
 }
 
@@ -517,55 +532,5 @@
   .k-reviewsCar__stage{
     height: 100%;
     min-height: 0;
-  }
-}
-/* =========================================
-   Bubble stays same size
-   Padding only inside (quote left) + controls right
-   ========================================= */
-
-/* Stage: NO responsive padding (prevents bubble growth) */
-.k-reviewsCar__stage{
-  padding: 0;               /* <- klucz: bąbel nie rośnie od paddingu */
-  display: flex;
-  align-items: center;
-  height: 100%;
-  min-height: 0;
-}
-
-/* Slide: internal padding for content only */
-.k-reviewsCar__slide{
-  width: 100%;
-  max-width: min(74ch, 100%);
-  min-height: 0;
-
-  /* left padding for quote */
-  padding-left: 26px;
-
-  /* reserve space for arrows + a bit of right breathing room */
-  padding-right: 118px;
-
-  /* small vertical comfort without changing outer bubble */
-  padding-top: 22px;
-  padding-bottom: 22px;
-}
-
-/* Controls: their own right padding via absolute positioning */
-.k-reviewsCar__bottom{
-  right: 22px;
-  bottom: 22px;
-}
-
-/* Mobile: tighter but still clean */
-@media (max-width: 520px){
-  .k-reviewsCar__slide{
-    padding-left: 18px;
-    padding-right: 96px;
-    padding-top: 18px;
-    padding-bottom: 18px;
-  }
-  .k-reviewsCar__bottom{
-    right: 14px;
-    bottom: 14px;
   }
 }

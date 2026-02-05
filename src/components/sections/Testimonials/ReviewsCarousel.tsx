@@ -97,19 +97,17 @@ export default function ReviewsCarousel({
                 ”
               </span>
             </blockquote>
-
-            <div className="k-reviewsCar__who">
-              <div className="k-reviewsCar__whoLeft">
-                <span className="k-reviewsCar__name">{cur?.name}</span>
-                <span className="k-reviewsCar__role">{cur?.role}</span>
-              </div>
-            </div>
           </motion.div>
         </AnimatePresence>
 
-        {/* ✅ STALE (nie re-mountuje się przy zmianie slajdu) */}
-        <div className="k-reviewsCar__bottom" aria-label="Carousel controls">
-          <div className="k-reviewsCar__arrows">
+        {/* ✅ ONE wide pill: who (left) + arrows (right) — STALE, no remount flicker */}
+        <div className="k-reviewsCar__whoPill" aria-label="Testimonial and controls">
+          <div className="k-reviewsCar__whoLeft">
+            <span className="k-reviewsCar__name">{cur?.name}</span>
+            <span className="k-reviewsCar__role">{cur?.role}</span>
+          </div>
+
+          <div className="k-reviewsCar__arrows" aria-label="Carousel controls">
             <button
               type="button"
               className="k-reviewsCar__arrow"
