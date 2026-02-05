@@ -65,6 +65,7 @@ const cards = [
     proof: "Loads fast. Feels premium.",
     meta: "Best for: full sites",
     bullets: ["Core Web Vitals-ready", "SEO hygiene baked in"],
+    stats: [{"big": "90+", "small": "Core Web Vitals-ready"}, {"big": "<1s", "small": "Snappy first load"}],
   },
   {
     key: "scheduling",
@@ -77,6 +78,7 @@ const cards = [
     proof: "Clear CTAs. More enquiries.",
     meta: "Best for: ads & promos",
     bullets: ["Clear offer hierarchy", "CTA flow tuned"],
+    stats: [{"big": "+Enquiries", "small": "Clear CTA flow"}, {"big": "Lower bounce", "small": "Less friction"}],
   },
   {
     key: "wallet",
@@ -85,10 +87,11 @@ const cards = [
     mosaic: "midLeft",
     tag: "Clarity",
     title: "Copy & structure",
-    desc: "We shape the words and hierarchy so your offer lands instantly.",
+    desc: "Sharper messaging and calmer layout — so people understand you in seconds.",
     proof: "Sharper message. Less friction.",
-    meta: "Best for: fuzzy offers",
-    bullets: ["Tighter messaging", "Scan-friendly layout"],
+    meta: "Best for: repositioning",
+    bullets: ["Offer clarity", "Structure that scans"],
+    stats: [{"big": "1 message", "small": "Sharper offer"}, {"big": "Faster yes", "small": "Cleaner decisions"}],
   },
   {
     key: "inbox",
@@ -97,10 +100,11 @@ const cards = [
     mosaic: "midRight",
     tag: "SEO",
     title: "Local SEO foundations",
-    desc: "Structure, schema, on-page hygiene. Built to rank for intent — not vanity.",
+    desc: "Local ranking basics done properly: pages, metadata, schema, and signals.",
     proof: "Ranks locally. Brings leads.",
-    meta: "Best for: UK locals",
-    bullets: ["Schema + internal links", "Technical hygiene"],
+    meta: "Best for: service areas",
+    bullets: ["Local pages + schema", "Metadata tuned"],
+    stats: [{"big": "Local ranks", "small": "Map + pages"}, {"big": "More leads", "small": "Search intent"}],
   },
   {
     key: "gifts",
@@ -109,10 +113,11 @@ const cards = [
     mosaic: "bottomWide",
     tag: "Signals",
     title: "Tracking & analytics",
-    desc: "Events that matter. Know what converts — and what just looks pretty.",
+    desc: "Know what converts: events, funnels, and dashboards that tell the truth.",
     proof: "Track actions that matter.",
-    meta: "Best for: decisions",
-    bullets: ["Meaningful events", "Clean dashboards"],
+    meta: "Best for: growth decisions",
+    bullets: ["Events that matter", "Simple reporting"],
+    stats: [{"big": "Tracked", "small": "Calls, forms, taps"}, {"big": "Clarity", "small": "What converts"}],
   },
   {
     key: "reminders",
@@ -121,36 +126,35 @@ const cards = [
     mosaic: "bottomRight",
     tag: "Support",
     title: "Care plan",
-    desc: "Updates, fixes, small improvements. Keep it sharp after launch.",
+    desc: "Keep things healthy: updates, fixes, and small improvements — handled.",
     proof: "Stay updated. Stay secure.",
-    meta: "Best for: peace of mind",
-    bullets: ["Updates + fixes", "Small improvements"],
+    meta: "Best for: busy owners",
+    bullets: ["Updates + monitoring", "Quick fixes"],
+    stats: [{"big": "Updated", "small": "Secure + monitored"}, {"big": "Fast fixes", "small": "Small changes, handled"}],
   },
 ];
 ---
 
-<section id="services" class="k-services k-services--appTiles" aria-labelledby="services-title" data-services>
-  <div class="container k-services__inner">
+<section class="k-services--appTiles" data-services>
+  <div class="k-container">
     <header class="k-svcHead">
       <div class="k-svcHead__kicker">SERVICES</div>
-
-      <TitleTag class="k-svcHead__title" id="services-title">
+      <TitleTag class="k-svcHead__title">
         Six modules. One clean system.
         <span class="k-svcHead__grad">Built to convert.</span>
       </TitleTag>
-
       <p class="k-svcHead__lead">
         Clear scope, clean build, and a site that’s ready to earn — without fluffy promises.
       </p>
     </header>
 
-    <!-- Mobile: Service Map (mini cards + bottom sheet) -->
-    <div class="k-svcMapWrap" aria-label="Services map">
-      <ServiceMap client:visible cards={cards} />
+    <!-- Mobile: React map (morph detail view) -->
+    <div class="k-svcMapWrap">
+      <ServiceMap client:only="react" cards={cards} />
     </div>
 
-    <!-- Desktop / tablet: mosaic tiles -->
-    <div class="k-tiles" role="list" aria-label="Kersivo services">
+    <!-- Desktop / Tablet: Mosaic tiles -->
+    <div class="k-tiles" role="list" aria-label="Service modules">
       {cards.map((c) => {
         const cls = [
           "k-tile",
@@ -191,6 +195,19 @@ const cards = [
                     <li>{b}</li>
                   ))}
                 </ul>
+              ) : null}
+
+              {c.stats?.length ? (
+                <div class="k-tile__stats" aria-label="Module stats">
+                  <div class="k-tile__stat">
+                    <div class="k-tile__statBig">{c.stats[0].big}</div>
+                    <div class="k-tile__statSmall">{c.stats[0].small}</div>
+                  </div>
+                  <div class="k-tile__stat">
+                    <div class="k-tile__statBig">{c.stats[1].big}</div>
+                    <div class="k-tile__statSmall">{c.stats[1].small}</div>
+                  </div>
+                </div>
               ) : null}
 
               {c.proof ? <p class="k-tile__proof">{c.proof}</p> : null}
@@ -235,12 +252,10 @@ const cards = [
       const io = new IntersectionObserver(
         (entries) => {
           entries.forEach((e) => {
-            if (!e.isIntersecting) return;
-            e.target.classList.add("is-in");
-            io.unobserve(e.target);
+            if (e.isIntersecting) e.target.classList.add("is-in");
           });
         },
-        { threshold: 0.2, rootMargin: "120px 0px" }
+        { threshold: 0.18 }
       );
 
       tiles.forEach((el) => io.observe(el));

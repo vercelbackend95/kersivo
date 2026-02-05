@@ -1,6 +1,8 @@
 import * as React from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
+type Stat = { big: string; small: string };
+
 type Card = {
   key: string;
   tone: "violet" | "rose" | "mint" | "amber" | "sunset" | "sky";
@@ -11,6 +13,7 @@ type Card = {
   meta: string;
   bullets?: string[];
   proof?: string;
+  stats?: [Stat, Stat];
 };
 
 const ICONS: Record<string, React.ReactNode> = {
@@ -122,7 +125,6 @@ export default function ServiceMap({ cards }: { cards: Card[] }) {
 
   const closeDetail = () => setActive(null);
 
-  // ESC close
   React.useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -136,7 +138,6 @@ export default function ServiceMap({ cards }: { cards: Card[] }) {
     };
   }, [open]);
 
-  // lock scroll + restore focus
   React.useEffect(() => {
     if (!open) return;
 
@@ -169,7 +170,6 @@ export default function ServiceMap({ cards }: { cards: Card[] }) {
         transition: { duration: 0.18 },
       };
 
-  // Important: don't fade the morph-card itself; let layoutId do the work.
   const shellMotion = reduced
     ? {
         initial: { opacity: 1 },
@@ -181,7 +181,7 @@ export default function ServiceMap({ cards }: { cards: Card[] }) {
         initial: { opacity: 0 },
         animate: { opacity: 1 },
         exit: { opacity: 0 },
-        transition: { duration: 0.10 },
+        transition: { duration: 0.1 },
       };
 
   const morphTransition = reduced
@@ -240,13 +240,11 @@ export default function ServiceMap({ cards }: { cards: Card[] }) {
         })}
       </div>
 
-      {/* ✅ popLayout = smoother reverse morph (no blink) */}
       <AnimatePresence mode="popLayout" initial={false}>
         {open && card && (
           <>
             <motion.div className="k-svcXOverlay" {...overlayMotion} onClick={closeDetail} aria-hidden="true" />
 
-            {/* shell can fade; morph-card should rely on layoutId */}
             <motion.div
               className={`k-svcX k-tile--tone-${card.tone}`}
               role="dialog"
@@ -255,11 +253,7 @@ export default function ServiceMap({ cards }: { cards: Card[] }) {
               {...shellMotion}
               layout
             >
-              <motion.div
-                className="k-svcX__card"
-                layoutId={`svc-${card.key}-card`}
-                transition={morphTransition}
-              >
+              <motion.div className="k-svcX__card" layoutId={`svc-${card.key}-card`} transition={morphTransition}>
                 <span className="k-svcX__bg k-tile__bg" aria-hidden="true" />
                 <span className="k-svcX__paper k-tile__paper" aria-hidden="true" />
 
@@ -332,6 +326,19 @@ export default function ServiceMap({ cards }: { cards: Card[] }) {
                         <li key={b}>{b}</li>
                       ))}
                   </ul>
+
+                  {card.stats?.length ? (
+                    <div className="k-svcX__stats" aria-label="Module stats">
+                      <div className="k-svcX__stat">
+                        <div className="k-svcX__statBig">{card.stats[0].big}</div>
+                        <div className="k-svcX__statSmall">{card.stats[0].small}</div>
+                      </div>
+                      <div className="k-svcX__stat">
+                        <div className="k-svcX__statBig">{card.stats[1].big}</div>
+                        <div className="k-svcX__statSmall">{card.stats[1].small}</div>
+                      </div>
+                    </div>
+                  ) : null}
 
                   <a href="/contact/#contact" className="k-btn k-btn--primary k-svcX__cta" data-magnetic="false">
                     <span className="k-btn__label">Get a quote</span>

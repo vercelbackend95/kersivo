@@ -523,6 +523,45 @@
 }
 
 /* =========================
+   Desktop micro-stats (WhoFor-style tiles)
+   ========================= */
+
+.k-tile__stats{
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.k-tile__stat{
+  padding: 12px 12px 10px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.02);
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+  min-width: 0;
+}
+
+.k-tile__statBig{
+  font-size: 38px;
+  line-height: 1;
+  letter-spacing: -0.06em;
+  color: rgba(255,255,255,.94);
+  font-weight: 820;
+}
+
+.k-tile__statSmall{
+  margin-top: 6px;
+  color: rgba(255,255,255,.56);
+  font-size: 12.5px;
+  line-height: 1.35;
+}
+
+@media (max-width: 1039px){
+  .k-tile__statBig{ font-size: 34px; }
+}
+
+/* =========================
    Responsive (desktop tiles)
    ========================= */
 
@@ -558,6 +597,7 @@
   }
 
   .k-tile__bullets{ display: none; }
+  .k-tile__stats{ display: none; }
 
   .k-tile__proof{
     margin-top: 8px;
@@ -596,7 +636,7 @@
 
 .k-svcMiniGrid{
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr; /* ✅ 1 column */
   gap: 14px;
 }
 
@@ -620,7 +660,6 @@
     0 1px 0 rgba(255,255,255,.07) inset;
 
   -webkit-tap-highlight-color: transparent;
-  cursor: pointer;
 }
 
 .k-svcMini:focus-visible{
@@ -660,8 +699,6 @@
   padding-bottom: 12px;
   margin-bottom: 6px;
   border-bottom: 1px solid rgba(255,255,255,.08);
-
-  padding-right: 34px;
 }
 
 .k-svcMini__icon{
@@ -709,6 +746,7 @@
   white-space: nowrap;
 }
 
+/* Title: wrap + clamp (no ugly cuts) */
 .k-svcMini__title{
   font-size: 15px;
   line-height: 1.22;
@@ -727,6 +765,7 @@
   hyphens: auto;
 }
 
+/* Micro-proof: wrap + clamp */
 .k-svcMini__proof{
   margin-top: 6px;
   font-size: 12.5px;
@@ -756,6 +795,7 @@
   transform: translateY(-1px);
 }
 
+/* Press (calm) */
 .k-svcMini:active{
   transform: scale(.992);
   border-color: rgba(255,255,255,.16);
@@ -787,6 +827,7 @@
   padding: 12px;
 }
 
+/* expanded card itself */
 .k-svcX__card{
   position: relative;
   width: min(520px, 100%);
@@ -939,50 +980,10 @@
   box-shadow: 0 0 0 5px rgba(255,255,255,.055);
 }
 
-/* =========================================================
-   CTA in detail view — PRO (fix the "balloon pill")
-   ========================================================= */
-
 .k-svcX__cta{
-  /* stop inheriting global button height */
-  height: 44px !important;
-  padding: 0 18px !important;
-
-  /* sane width + stable shape */
-  width: auto !important;
-  min-width: 190px;
-  max-width: 260px;
-  margin: 12px auto 0;
-
+  width: 100%;
   justify-content: center;
-  border-radius: 999px !important;
-
-  font-size: 15px !important;
-  line-height: 1 !important;
-  white-space: nowrap;
-
-  /* calmer shadow inside glass panel */
-  box-shadow: 0 18px 60px rgba(105,140,255,.22) !important;
-}
-
-@media (hover:hover){
-  .k-svcX__cta:hover{
-    box-shadow: 0 22px 80px rgba(105,140,255,.28) !important;
-  }
-}
-
-.k-svcX__cta .k-btn__arrow{
-  font-size: 15px;
-  transform: translateY(0);
-}
-
-@media (max-width: 380px){
-  .k-svcX__cta{
-    height: 42px !important;
-    min-width: 176px;
-    padding: 0 16px !important;
-    font-size: 14.5px !important;
-  }
+  margin-top: 6px;
 }
 
 @media (prefers-reduced-motion: reduce){
@@ -991,15 +992,23 @@
 
 /* =========================================================
    Mobile affordance: "this opens" cue (premium, subtle)
+   - corner cue (↗)
+   - press glow highlight
+   - hover lift (only on hover devices)
    ========================================================= */
 
+.k-svcMini{
+  cursor: pointer;
+}
+
+/* press glow (teaches interaction without text) */
 .k-svcMini::before{
   content:"";
   position:absolute;
   inset:-1px;
   border-radius: inherit;
   pointer-events:none;
-  z-index: 1;
+  z-index: 1; /* above bg/paper, below content */
 
   background:
     radial-gradient(520px 220px at 28% 0%,
@@ -1010,8 +1019,11 @@
   transition: opacity 180ms ease;
 }
 
-.k-svcMini:active::before{ opacity: 1; }
+.k-svcMini:active::before{
+  opacity: 1;
+}
 
+/* corner cue */
 .k-svcMini::after{
   content: "↗";
   position: absolute;
@@ -1042,6 +1054,12 @@
   z-index: 2;
 }
 
+/* keep cue legible on super-busy areas */
+.k-svcMini__top{
+  padding-right: 34px; /* room for corner cue */
+}
+
+/* hover polish (desktop pointers only) */
 @media (hover:hover){
   .k-svcMini:hover{
     border-color: rgba(255,255,255,.16);
@@ -1049,39 +1067,99 @@
       0 38px 110px -92px rgba(0,0,0,.98),
       0 1px 0 rgba(255,255,255,.08) inset;
   }
+
   .k-svcMini:hover::after{
     opacity: 1;
     transform: translateY(-1px);
     border-color: rgba(255,255,255,.16);
   }
-  .k-svcMini:hover::before{ opacity: .65; }
+
+  .k-svcMini:hover::before{
+    opacity: .65;
+  }
 }
 
+/* respect reduced motion */
 @media (prefers-reduced-motion: reduce){
   .k-svcMini::before,
   .k-svcMini::after{
     transition: none;
   }
 }
-/* tighter CTA width (detail view) */
+
+/* =========================================================
+   Detail micro-stats (WhoFor-style tiles) — above CTA
+   ========================================================= */
+
+.k-svcX__stats{
+  margin-top: 12px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,.08);
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.k-svcX__stat{
+  padding: 12px 12px 10px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+  min-width: 0;
+}
+
+.k-svcX__statBig{
+  font-size: 34px;
+  line-height: 1;
+  letter-spacing: -0.06em;
+  color: rgba(255,255,255,.95);
+  font-weight: 820;
+}
+
+.k-svcX__statSmall{
+  margin-top: 6px;
+  color: rgba(255,255,255,.56);
+  font-size: 12.5px;
+  line-height: 1.35;
+}
+
+@media (max-width: 380px){
+  .k-svcX__stats{ grid-template-columns: 1fr; }
+  .k-svcX__statBig{ font-size: 32px; }
+}
+
+/* =========================================================
+   Detail CTA — PRO pill (narrow, stable, not a balloon)
+   ========================================================= */
+
 .k-svcX__cta{
-  min-width: 0 !important;
+  height: 44px !important;
+  padding: 0 16px !important;
+
   width: fit-content !important;
+  min-width: 0 !important;
   max-width: none !important;
 
-  padding: 0 16px !important;   /* trochę ciaśniej */
-  height: 44px !important;
+  margin: 12px auto 0 !important;
+  justify-content: center !important;
 
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* optional: keep label crisp, avoid wrapping */
-.k-svcX__cta .k-btn__label{
+  border-radius: 999px !important;
   white-space: nowrap;
+
+  box-shadow: 0 18px 60px rgba(105,140,255,.22) !important;
 }
 
-/* tiny phones: jeszcze odrobinkę wężej */
+@media (hover:hover){
+  .k-svcX__cta:hover{
+    box-shadow: 0 22px 80px rgba(105,140,255,.28) !important;
+  }
+}
+
+.k-svcX__cta .k-btn__label{ white-space: nowrap; }
+.k-svcX__cta .k-btn__arrow{ font-size: 15px; transform: translateY(0); }
+
 @media (max-width: 380px){
   .k-svcX__cta{
     height: 42px !important;
