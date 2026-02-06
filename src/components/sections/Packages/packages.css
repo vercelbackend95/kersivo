@@ -593,3 +593,66 @@
     color: rgba(255,255,255,.86);
   }
 }
+
+/* =========================================
+   ✅ NEW — Mobile: label column as ONE continuous sheet
+   (no "tile" breaks between Best for / Pages / Design / etc.)
+   ========================================= */
+
+@media (max-width: 720px){
+  /* keep in sync with current mobile grid-template */
+  .k-packMatrix{ --label-col: 170px; }
+
+  .k-packScroll{
+    position: relative; /* anchor for ::before */
+  }
+
+  /* One continuous sticky “sheet” behind the entire label column */
+  .k-packScroll::before{
+    content:"";
+    position: sticky;
+    left: 0;
+    top: 0;
+
+    width: var(--label-col);
+    height: 100%;
+
+    z-index: 22; /* behind sticky cells text, above tier cells */
+    pointer-events: none;
+
+    background:
+      radial-gradient(120% 90% at 30% 10%, rgba(190,145,255,.10) 0%, rgba(190,145,255,0) 55%),
+      linear-gradient(180deg, rgba(7,7,10,.92) 0%, rgba(7,7,10,.86) 55%, rgba(7,7,10,.78) 100%),
+      linear-gradient(90deg, rgba(7,7,10,.92) 0%, rgba(7,7,10,.70) 78%, rgba(7,7,10,0) 100%);
+
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+  }
+
+  /* Make label cells transparent so the sheet is continuous */
+  .k-packHeadCell--label,
+  .k-packStickyCell,
+  .k-packCell.k-packCell--label{
+    background: transparent !important;
+    border-bottom: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* kill any seam lines */
+  .k-packHeadCell--label::after,
+  .k-packStickyCell::after{
+    display: none !important;
+  }
+
+  /* Ensure label text sits above the sheet */
+  .k-packHeadCell--label{ z-index: 30; }
+  .k-packStickyCell{ z-index: 28; }
+
+  .k-packCell--label{
+    color: rgba(255,255,255,.82);
+  }
+}
+
+@media (max-width: 420px){
+  .k-packMatrix{ --label-col: 155px; }
+}
