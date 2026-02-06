@@ -672,7 +672,7 @@
 
 /* =========================================================
    CALL MORPH — “Book a free call” → phone input + send
-   Premium pill → panel, controlled motion, Apple-ish.
+   (No X button. No label. Click outside / ESC to close.)
    ========================================================= */
 
 .k-callMorph{
@@ -719,9 +719,7 @@
     0 0 0 1px rgba(190,145,255,.10) inset;
 }
 
-.k-callMorph__btn:active{
-  transform: translateY(0);
-}
+.k-callMorph__btn:active{ transform: translateY(0); }
 
 .k-callMorph__btn:focus-visible{
   outline: 2px solid rgba(190,145,255,.70);
@@ -753,11 +751,11 @@
 }
 .k-callMorph__btn:hover .k-callMorph__chev{ transform: translateX(2px); }
 
-/* the expanded panel */
+/* Expanded panel */
 .k-callMorph__panel{
   position: relative;
   border-radius: 999px;
-  padding: 10px 10px 10px 12px;
+  padding: 10px 10px 12px 12px;
 
   border: 1px solid rgba(255,255,255,.14);
   background:
@@ -777,7 +775,7 @@
 
 .k-callMorph__row{
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: 1fr auto;
   gap: 10px;
   align-items: center;
 }
@@ -787,16 +785,8 @@
   min-width: 0;
 }
 
-.k-callMorph__hint{
-  position: absolute;
-  left: 10px;
-  top: -18px;
-  font-size: 11px;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,.60);
-  font-weight: var(--w-semibold, 650);
-}
+/* label removed (kept for safety if any markup still exists) */
+.k-callMorph__hint{ display: none; }
 
 .k-callMorph__field input{
   width: 100%;
@@ -824,7 +814,7 @@
   background: rgba(0,0,0,.16);
 }
 
-/* send button */
+/* Send */
 .k-callMorph__send{
   height: 46px;
   border-radius: 999px;
@@ -867,36 +857,19 @@
   color: rgba(7, 17, 12, .94);
 }
 
-/* close */
-.k-callMorph__close{
-  width: 46px;
-  height: 46px;
-  border-radius: 999px;
-
-  border: 1px solid rgba(255,255,255,.10);
-  background: rgba(255,255,255,.05);
-  color: rgba(255,255,255,.86);
-
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-
-  transition: transform 220ms cubic-bezier(.2,.9,.2,1), background 180ms ease, border-color 180ms ease;
-}
-
-.k-callMorph__close:hover{
-  transform: translateY(-1px);
-  background: rgba(255,255,255,.07);
-  border-color: rgba(255,255,255,.16);
-}
-.k-callMorph__close:active{ transform: translateY(0); }
-
+/* Fine print — always fits nicely */
 .k-callMorph__fine{
-  margin-top: 8px;
+  margin-top: 10px;
   padding-left: 10px;
+  padding-right: 10px;
+
   color: rgba(255,255,255,.62);
   font-size: 12.5px;
-  line-height: 1.35;
+  line-height: 1.45;
+
+  max-width: 54ch;
+  text-wrap: pretty;
+  overflow-wrap: anywhere;
 }
 
 .k-callMorph__error{
@@ -928,22 +901,15 @@
   .k-callMorph__row{
     grid-template-columns: 1fr;
   }
-  .k-callMorph__send,
-  .k-callMorph__close{
+  .k-callMorph__send{
     width: 100%;
-  }
-  .k-callMorph__hint{
-    position: static;
-    display: inline-block;
-    margin: 0 0 8px 6px;
   }
 }
 
 /* motion safety */
 @media (prefers-reduced-motion: reduce){
   .k-callMorph__btn,
-  .k-callMorph__send,
-  .k-callMorph__close{
+  .k-callMorph__send{
     transition: none !important;
     transform: none !important;
   }

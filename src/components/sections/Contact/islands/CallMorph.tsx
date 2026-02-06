@@ -19,6 +19,7 @@ export default function CallMorph(props: { endpoint?: string }) {
   const endpoint = props.endpoint || "/api/callback";
   const startedAtRef = useRef<number>(Date.now());
 
+  const rootRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const [open, setOpen] = useState(false);
@@ -39,15 +40,51 @@ export default function CallMorph(props: { endpoint?: string }) {
   }, []);
 
   useEffect(() => {
-    if (open && !reducedMotion) {
-      // let layout settle, then focus
-      const t = window.setTimeout(() => inputRef.current?.focus(), 80);
-      return () => window.clearTimeout(t);
-    }
-    if (open && reducedMotion) {
-      inputRef.current?.focus();
-    }
+    if (!open) return;
+    const t = window.setTimeout(() => inputRef.current?.focus(), reducedMotion ? 0 : 80);
+    return () => window.clearTimeout(t);
   }, [open, reducedMotion]);
+
+  // Close on outside click + ESC (no X button needed)
+  useEffect(() => {
+    if (!open) return;
+
+    const onDown = (e: PointerEvent) => {
+      const el = rootRef.current;
+      if (!el) return;
+      const target = e.target as Node | null;
+      if (target && !el.contains(target)) {
+        // keep it gentle: close only if not loading
+        if (!loading) closePanel();
+      }
+    };
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        if (!loading) closePanel();
+      }
+    };
+
+    document.addEventListener("pointerdown", onDown, { passive: true });
+    window.addEventListener("keydown", onKey);
+
+    return () => {
+      document.removeEventListener("pointerdown", onDown as any);
+      window.removeEventListener("keydown", onKey);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, loading]);
+
+  function closePanel() {
+    setOpen(false);
+    setError("");
+    setLoading(false);
+    setSent(false);
+    setPhone("");
+    setHpWebsite("");
+    startedAtRef.current = Date.now();
+  }
 
   const canSend = useMemo(() => {
     if (loading || sent) return false;
@@ -81,14 +118,12 @@ export default function CallMorph(props: { endpoint?: string }) {
 
       if (!res.ok || !data || (data as ApiErr).ok === false) {
         const msg =
-          (data as ApiErr | null)?.error || `Request failed (${res.status}). Please try again.`;
+          (data as ApiErr | null)?.error ||
+          `Request failed (${res.status}). Please try again.`;
         throw new Error(msg);
       }
 
       setSent(true);
-      setTimeout(() => {
-        // keep it calm; user can close or type again
-      }, 200);
     } catch (e: any) {
       setError(e?.message || "Something went wrong. Please try again.");
     } finally {
@@ -96,19 +131,16 @@ export default function CallMorph(props: { endpoint?: string }) {
     }
   }
 
-  function reset() {
-    setSent(false);
-    setError("");
-    setPhone("");
-    setOpen(false);
-    startedAtRef.current = Date.now();
-  }
-
   return (
     <motion.div
+      ref={rootRef}
       className={cx("k-callMorph", open && "is-open", sent && "is-sent")}
       layout
-      transition={reducedMotion ? { duration: 0 } : { type: "spring", stiffness: 420, damping: 34 }}
+      transition={
+        reducedMotion
+          ? { duration: 0 }
+          : { type: "spring", stiffness: 420, damping: 34 }
+      }
     >
       {!open && (
         <motion.button
@@ -136,7 +168,9 @@ export default function CallMorph(props: { endpoint?: string }) {
           </span>
 
           <span className="k-callMorph__label">Book a free call</span>
-          <span className="k-callMorph__chev" aria-hidden="true">→</span>
+          <span className="k-callMorph__chev" aria-hidden="true">
+            →
+          </span>
         </motion.button>
       )}
 
@@ -152,9 +186,6 @@ export default function CallMorph(props: { endpoint?: string }) {
           >
             <div className="k-callMorph__row">
               <div className="k-callMorph__field">
-                <label className="k-callMorph__hint" htmlFor="callPhone">
-                  Your phone number
-                </label>
                 <input
                   ref={inputRef}
                   id="callPhone"
@@ -174,10 +205,12 @@ export default function CallMorph(props: { endpoint?: string }) {
                     }
                     if (e.key === "Escape") {
                       e.preventDefault();
-                      reset();
+                      if (!loading) closePanel();
                     }
                   }}
+                  aria-label="Phone number"
                 />
+
                 {/* honeypot */}
                 <div className="k-callMorph__hp" aria-hidden="true">
                   <label htmlFor="website">Website</label>
@@ -198,10 +231,6 @@ export default function CallMorph(props: { endpoint?: string }) {
                 disabled={!canSend}
               >
                 {sent ? "Sent ✓" : loading ? "Sending…" : "Send"}
-              </button>
-
-              <button type="button" className="k-callMorph__close" onClick={reset} aria-label="Close">
-                ✕
               </button>
             </div>
 
