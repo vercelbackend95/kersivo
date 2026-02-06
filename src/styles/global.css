@@ -77,6 +77,9 @@ html{
   font-kerning: normal;
   color-scheme: dark;
 
+  /* ✅ keep base canvas stable (dots live in fixed layer) */
+  background: var(--bg);
+
   /* anchors when topnav overlays */
   scroll-padding-top: var(--nav-h);
 
@@ -88,7 +91,10 @@ body{
   margin: 0;
   font-family: var(--font-sans);
   line-height: var(--leading-base);
-  background: var(--bg);
+
+  /* ✅ let the fixed SiteBg be the only background */
+  background: transparent;
+
   color: var(--fg);
 }
 

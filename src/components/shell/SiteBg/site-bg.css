@@ -12,7 +12,7 @@
 .site-bg{
   position: fixed;
   inset: 0;
-  z-index: -1;
+  z-index: 0;
   pointer-events: none;
   overflow: hidden;
   background: var(--bg, #07070a);
@@ -31,25 +31,22 @@
 }
 
 /* -----------------------------------------
-   Dotted grid — premium micro-texture
-   - visible, but still refined
-   - top-focused mask (fade down + edges)
+   Dotted grid — PINNED (no scroll drift)
+   - fixed layer to avoid "follow the scroll" feel
+   - no blur (blur causes raster jitter on scroll)
    ----------------------------------------- */
 .site-bg__grid{
-  position: absolute;
+  position: fixed;          /* ✅ pin to viewport */
   inset: 0;
+  left: 0;
+  top: 0;
 
-  /* +20% presence */
+  /* presence */
   opacity: .22;
 
-  /*
-    Two-layer dot field:
-    - Layer A: main dots (neutral)
-    - Layer B: offset micro dots (adds depth, avoids "cheap wallpaper")
-  */
   background-image:
-    radial-gradient(rgba(255,255,255,.216) 1px, transparent 1px),
-    radial-gradient(rgba(190,145,255,.144) .85px, transparent .85px);
+    radial-gradient(rgba(255,255,255,.20) .95px, transparent .95px),
+    radial-gradient(rgba(190,145,255,.12) .80px, transparent .80px);
 
   background-size:
     24px 24px,
@@ -59,8 +56,9 @@
     0 0,
     12px 12px;
 
-  /* softness = "printed texture", not pixel pattern */
-  filter: blur(.18px);
+  /* ✅ stabilize painting */
+  transform: translateZ(0);
+  will-change: transform;
 
   /* film-like overlay blend */
   mix-blend-mode: screen;
@@ -71,37 +69,33 @@
 }
 
 /* -----------------------------------------
-   Extra "micro-dust" layer
-   - only on larger screens (premium richness)
-   - extremely subtle, doesn't fight content
+   (Optional) Extra micro-dust — also pinned
+   Keep disabled unless you render it in SiteBg.astro
    ----------------------------------------- */
 .site-bg__dust{
   display: none;
-  position: absolute;
+  position: fixed;          /* ✅ pin to viewport */
   inset: 0;
+  left: 0;
+  top: 0;
 
-  /* +20% presence */
   opacity: .12;
 
-  /*
-    Tiny dots at a different cadence than the main grid.
-    Adds that "expensive paper / sensor noise" vibe.
-  */
   background-image:
-    radial-gradient(rgba(255,255,255,.12) .7px, transparent .7px);
+    radial-gradient(rgba(255,255,255,.12) .70px, transparent .70px);
 
   background-size: 14px 14px;
   background-position: 7px 3px;
 
-  filter: blur(.14px);
+  transform: translateZ(0);
+  will-change: transform;
+
   mix-blend-mode: overlay;
 
-  /* same idea: top focus, fade down + edges */
   mask-image: radial-gradient(70% 60% at 50% 25%, #000 22%, transparent 78%);
   -webkit-mask-image: radial-gradient(70% 60% at 50% 25%, #000 22%, transparent 78%);
 }
 
-/* enable the dust only when it actually pays off visually */
 @media (min-width: 820px){
   .site-bg__dust{ display: block; }
 }
