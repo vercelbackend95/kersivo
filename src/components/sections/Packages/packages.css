@@ -531,41 +531,65 @@
   }
 }
 /* =========================================
-   PACKAGES — Mobile: “invisible wall”
-   Stop tier columns bleeding under the sticky label column
-   Paste at the VERY BOTTOM of packages.css
+   PACKAGES — Mobile: “invisible wall” (Apple-ish)
+   Opaque blocker + premium smoked-glass styling
    ========================================= */
 
 @media (max-width: 720px){
 
-  /* 1) Make the sticky label column truly opaque (no see-through) */
+  /* Label (sticky) column — smoked glass, not a flat slab */
   .k-packHeadCell--label,
   .k-packStickyCell{
-    background: rgba(7,7,10,.96) !important;  /* solid wall */
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    position: sticky;
+    left: 0;
+
+    /* ✅ wall: blocks bleed, but keeps your earlier shading vibe */
+    background:
+      radial-gradient(120% 120% at 30% 18%, rgba(190,145,255,.10) 0%, rgba(190,145,255,0) 55%),
+      linear-gradient(180deg, rgba(255,255,255,.06) 0%, rgba(255,255,255,.03) 34%, rgba(7,7,10,.80) 100%),
+      rgba(7,7,10,.72) !important;
+
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+
+    /* micro-depth like iOS panels */
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.06) inset,
+      0 -1px 0 rgba(0,0,0,.18) inset;
   }
 
-  /* 2) Add a soft “edge shadow” that sits ABOVE the tiers (the actual wall vibe) */
+  /* Ensure the wall is always above tier cells */
+  .k-packHeadCell--label{ z-index: 30; }
+  .k-packStickyCell{ z-index: 28; }
+
+  /* The “invisible wall” edge: hairline + soft shadow + tiny glow */
   .k-packHeadCell--label::after,
   .k-packStickyCell::after{
     content:"";
     position:absolute;
     top:0;
-    right:-22px;             /* push shadow slightly into tier area */
-    width: 22px;
+    right:-26px;
+    width: 26px;
     height:100%;
     pointer-events:none;
-    z-index: 999;            /* above tier cells */
-    background: linear-gradient(
-      90deg,
-      rgba(7,7,10,.98) 0%,
-      rgba(7,7,10,.78) 45%,
-      rgba(7,7,10,0) 100%
-    );
+    z-index: 999;
+
+    background:
+      /* hairline separator (super subtle) */
+      linear-gradient(90deg, rgba(255,255,255,.14) 0px, rgba(255,255,255,0) 1px),
+      /* main edge shadow to hide “under” content */
+      linear-gradient(90deg,
+        rgba(7,7,10,.92) 0%,
+        rgba(7,7,10,.62) 42%,
+        rgba(7,7,10,0) 100%
+      ),
+      /* tiny premium glow hint */
+      radial-gradient(80% 60% at 0% 20%, rgba(190,145,255,.12) 0%, rgba(190,145,255,0) 70%);
   }
 
-  /* 3) Extra safety: ensure sticky column is always above tier cells */
-  .k-packHeadCell--label{ z-index: 30; }
-  .k-packStickyCell{ z-index: 28; }
+  /* Optional: if your label text feels too dim on glass */
+  .k-packStickyCell,
+  .k-packHeadCell--label{
+    color: rgba(255,255,255,.86);
+  }
 }
