@@ -197,7 +197,28 @@
   border:0;
 }
 
-/* responsive */
+/* =========================================
+   SMART SPEED — mobile & small tablets
+   Desktop stays at 36s.
+   Smaller screen => slightly faster (feels “premium alive”, not frantic).
+   ========================================= */
+
+/* Tablet-ish: a bit faster than desktop */
+@media (max-width: 900px){
+  .k-techStripe__track{ --duration: 33s; }
+}
+
+/* iPad/large mobile */
+@media (max-width: 768px){
+  .k-techStripe__track{ --duration: 31.5s; }
+}
+
+/* common mobile */
+@media (max-width: 640px){
+  .k-techStripe__track{ --duration: 30s; }
+}
+
+/* your “+25% on mobile” target zone (36s -> 28.8s) */
 @media (max-width: 520px){
   .k-techStripe{
     margin-top: -10px;
@@ -208,10 +229,22 @@
     --kTechWord: 13.8px;
   }
 
+  .k-techStripe__track{ --duration: 28.8s; } /* +25% speed vs 36s */
+
   .k-techStripe__frame{ height: 74px; } /* was 70px */
   .k-techStripe__row{ gap: 24px; padding: 0 18px; }
   .k-techStripe__word{ letter-spacing: 0.075em; }
   .k-techStripe__item::after{ margin-left: 14px; }
+}
+
+/* small phones: slightly faster (still calm) */
+@media (max-width: 420px){
+  .k-techStripe__track{ --duration: 27.2s; }
+}
+
+/* tiny phones: fastest of the bunch */
+@media (max-width: 360px){
+  .k-techStripe__track{ --duration: 26s; }
 }
 
 /* reduced motion: no marquee, wrap nicely */
