@@ -5,15 +5,31 @@
    - remove extra side padding on mobile -> matches Services width
    - remove double border (main border is transparent; frame owns stroke)
    - zoom-safe mode via html[data-zoomed="1"] (kills heavy paint)
+
+   PATCH (2026):
+   - separators always perfectly centered between steps:
+     one shared variable --pill-gap used by stack + separator
+   - separator slightly more visible (still premium, not neon)
    ========================================= */
 
 .k-processPill__stack{
   margin-top: clamp(18px, 3vw, 28px);
   display: grid;
-  gap: clamp(14px, 2.6vw, 20px);
+
+  /* ✅ single source of truth for spacing */
+  --pill-gap: clamp(16px, 3.2vw, 26px);
+  gap: var(--pill-gap);
+}
+
+@media (min-width: 900px){
+  .k-processPill__stack{
+    /* ✅ desktop gap + separator stay in sync */
+    --pill-gap: clamp(18px, 2.4vw, 30px);
+  }
 }
 
 .k-processPill__wrap{
+  position: relative; /* needed for separator ::before */
   display: grid;
   justify-items: center;
   --heat: 0;
@@ -22,6 +38,57 @@
   padding-inline: clamp(10px, 2.6vw, 16px);
   width: 100%;
   box-sizing: border-box;
+}
+
+/* =========================================
+   Premium step separator (between pills)
+   - subtle hairline + soft glow
+   - matches card width (1100px)
+   - no extra markup
+   - ✅ perfectly centered between items via --pill-gap
+   ========================================= */
+
+.k-processPill__wrap::before{
+  content: "";
+  position: absolute;
+
+  /* ✅ sit exactly between items (half of the actual gap above) */
+  top: calc(var(--pill-gap) * -0.5);
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: min(1100px, 100%);
+  height: 2px;
+
+  background:
+    linear-gradient(90deg,
+      transparent,
+      rgba(255,255,255,.10) 16%,
+      rgba(170,95,255,.22) 50%,
+      rgba(255,255,255,.10) 84%,
+      transparent
+    );
+
+  opacity: .66;
+  pointer-events: none;
+
+  /* ✅ slightly more presence, still controlled */
+  filter:
+    drop-shadow(0 10px 22px rgba(170,95,255,.14))
+    drop-shadow(0 0 18px rgba(255,255,255,.06));
+}
+
+/* hide separator before first item */
+.k-processPill__wrap:first-child::before{
+  display: none;
+}
+
+/* when the pill is “heated”, separator quietly wakes up */
+.k-processPill__wrap::before{
+  opacity: calc(.58 + var(--heat) * .22);
+  filter:
+    drop-shadow(0 10px 22px rgba(170,95,255, calc(.10 + var(--heat) * .16)))
+    drop-shadow(0 0 18px rgba(255,255,255, calc(.04 + var(--heat) * .04)));
 }
 
 /* =========================
@@ -268,7 +335,7 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
 /* micro */
 .k-processPill__micro{
   display:flex;
-   align-items: baseline;
+  align-items: baseline;
   justify-content: space-between;
   gap: 10px;
 }
@@ -355,6 +422,11 @@ html[data-scroll-dir="up"] .k-processPill__frame::before{
     overflow: visible;
     text-overflow: clip;
   }
+
+  /* keep separator inside container gutter on small screens */
+  .k-processPill__wrap::before{
+    width: min(1100px, calc(100% - 0px));
+  }
 }
 
 /* iOS: mask-composite can be expensive during zoom -> simplify on mobile */
@@ -401,4 +473,9 @@ html[data-zoomed="1"] .k-processPill__frame::before{ display:none !important; }
   }
   .k-processPill__main::after{ opacity: .18; }
   .k-processPill__frame{ opacity: .35; }
+
+  .k-processPill__wrap::before{
+    filter: none;
+    opacity: .65;
+  }
 }
