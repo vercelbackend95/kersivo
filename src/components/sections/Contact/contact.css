@@ -352,11 +352,11 @@
 
 .k-submit{
   /* ✅ LOCK SIZE: never changes through states */
-  --submit-h: 68px;                /* <- this is the "max" height we keep always */
+  --submit-h: 68px;
   height: var(--submit-h);
   width: 100%;
-  max-width: 560px;                /* nice width in panel */
-  justify-self: center;            /* ✅ center in form */
+  max-width: 560px;
+  justify-self: center;
 
   border-radius: 999px;
   padding: 0 var(--btn-pad, 22px);
@@ -485,7 +485,6 @@
 
 /* ✅ SUCCESS GREEN — premium emerald, calm, high-end */
 .k-submit.is-sent{
-  /* keep size identical */
   height: var(--submit-h);
 
   background: linear-gradient(
@@ -501,7 +500,7 @@
 
 .k-submit.is-sent::after,
 .k-submit.is-sent:hover::after{
-  opacity: 0 !important; /* no sweep on success */
+  opacity: 0 !important;
 }
 
 .k-submit.is-sent .k-submit__sub{
@@ -575,16 +574,52 @@
   100% { opacity: 0; transform: translateX(58%) skewX(-12deg); }
 }
 
-/* Mobile */
-@media (max-width: 520px){
+/* =========================================================
+   ✅ MOBILE: remove OUTER bubble (double cloud)
+   - outer frame becomes transparent + no border/shadow
+   - only the form panel stays as the single bubble
+   - form becomes wider (no extra padding bottleneck)
+   ========================================================= */
+@media (max-width: 768px){
+  /* kill the outer "mega bubble" */
   .k-contact2__frame{
-    border-radius: 26px;
-    padding: 16px;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    padding: 0;            /* ✅ frees width */
+    border-radius: 0;
+    overflow: visible;
   }
+
+  .k-contact2__frame::before{
+    display: none;
+  }
+
+  .k-contact2__glow{
+    display: none;         /* glow was tied to the outer card */
+  }
+
+  /* keep left content readable without a card */
+  .k-contact2__left{
+    padding: 0;
+    max-width: 72ch;
+  }
+
+  /* make the remaining single bubble feel premium + wide */
   .k-contact2__right{
+    width: 100%;
     border-radius: 22px;
-    padding: 14px;
+    padding: 16px;         /* comfy, but not choking */
   }
+
+  /* tighten spacing a touch so it feels intentional */
+  .k-contact2__grid{
+    gap: 16px;
+  }
+}
+
+/* Small phones polish */
+@media (max-width: 520px){
   .k-contact2__title{
     font-size: clamp(34px, 9vw, 44px);
     line-height: 1.03;
@@ -600,7 +635,7 @@
   /* keep fixed size but allow comfy width on narrow screens */
   .k-submit{
     max-width: 100%;
-    --submit-h: 70px; /* tiny bit more breathing on small phones */
+    --submit-h: 70px;
   }
 }
 
