@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 
 type ApiOk = { ok: true; id?: string };
 type ApiErr = { ok: false; error?: string };
@@ -6,11 +6,11 @@ type ApiErr = { ok: false; error?: string };
 const SERVICE_OPTIONS = ["Website", "Brand + UI", "E-commerce", "Ongoing"] as const;
 const BUDGET_OPTIONS = ["Under £2k", "£2k–£5k", "£5k+"] as const;
 
-const API_ENDPOINT = "/api/lead"; // ✅ bez slasha
+const API_ENDPOINT = "/api/lead"; // ✅ bez końcowego slasha
 
 const MAX_FILES = 5;
 const MAX_FILE_BYTES = 3 * 1024 * 1024; // 3MB per image
-const MAX_TOTAL_BYTES = 8 * 1024 * 1024; // ~8MB total (base64 i tak urośnie)
+const MAX_TOTAL_BYTES = 8 * 1024 * 1024; // ~8MB total (base64 urośnie)
 
 function cx(...parts: Array<string | false | null | undefined>) {
   return parts.filter(Boolean).join(" ");
@@ -58,6 +58,11 @@ export default function ContactForm() {
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string>("");
 
+  function clearSentOnEdit() {
+    // ✅ success receipt znika dopiero kiedy user zacznie znowu edytować
+    if (sent) setSent(false);
+  }
+
   const canSubmit = useMemo(() => {
     if (loading) return false;
     if (!name.trim()) return false;
@@ -65,11 +70,6 @@ export default function ContactForm() {
     if (message.trim().length < 10) return false;
     return true;
   }, [loading, name, email, message]);
-
-  useEffect(() => {
-    if (sent && (name || email || message || files.length)) setSent(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [name, email, message, files]);
 
   function validateFiles(next: File[]) {
     if (next.length > MAX_FILES) {
@@ -94,6 +94,7 @@ export default function ContactForm() {
   }
 
   function addFiles(incoming: File[]) {
+    if (sent) setSent(false); // ✅ edycja plików = koniec success receipt
     setError("");
 
     const merged = [...files];
@@ -117,6 +118,7 @@ export default function ContactForm() {
   }
 
   function removeFile(idx: number) {
+    if (sent) setSent(false);
     setFiles((prev) => prev.filter((_, i) => i !== idx));
   }
 
@@ -135,7 +137,6 @@ export default function ContactForm() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-    setSent(false);
 
     if (inFlightRef.current) return;
     inFlightRef.current = true;
@@ -200,18 +201,22 @@ export default function ContactForm() {
           message: msg,
           website: hpWebsite,
           startedAt: startedAtRef.current,
-          attachments, // <-- ARRAY
+          attachments,
         }),
       });
 
       const data = (await res.json().catch(() => null)) as ApiOk | ApiErr | null;
 
       if (!res.ok || !data || (data as ApiErr).ok === false) {
-        const msg2 = (data as ApiErr | null)?.error || `Request failed (${res.status}). Please try again.`;
+        const msg2 =
+          (data as ApiErr | null)?.error || `Request failed (${res.status}). Please try again.`;
         throw new Error(msg2);
       }
 
+      // ✅ sukces: pokazujemy receipt w przycisku
       setSent(true);
+
+      // opcjonalnie czyścimy tylko treść + pliki (name/email zostają, bo UX)
       clearAllFiles();
       setMessage("");
     } catch (err: any) {
@@ -228,19 +233,10 @@ export default function ContactForm() {
   }
 
   const submitLabel = sent
-    ? {
-        title: "Thanks — message received",
-        sub: "We’ll get back to you within 24 hours.",
-      }
+    ? { title: "Message received.", sub: "We’ll reply within 24 hours." }
     : loading
-      ? {
-          title: "Sending…",
-          sub: "One moment — delivering your message.",
-        }
-      : {
-          title: "Submit inquiry",
-          sub: "We reply fast — usually same day.",
-        };
+      ? { title: "Sending…", sub: "One moment — delivering your message." }
+      : { title: "Submit inquiry", sub: "We reply fast — usually same day." };
 
   return (
     <form className="k-cform" onSubmit={onSubmit} noValidate>
@@ -253,7 +249,10 @@ export default function ContactForm() {
               key={opt}
               type="button"
               className={cx("k-cchip", service === opt && "is-on")}
-              onClick={() => setService(opt)}
+              onClick={() => {
+                clearSentOnEdit();
+                setService(opt);
+              }}
             >
               {opt}
             </button>
@@ -269,7 +268,10 @@ export default function ContactForm() {
               key={opt}
               type="button"
               className={cx("k-cchip", budget === opt && "is-on")}
-              onClick={() => setBudget(opt)}
+              onClick={() => {
+                clearSentOnEdit();
+                setBudget(opt);
+              }}
             >
               {opt}
             </button>
@@ -289,8 +291,10 @@ export default function ContactForm() {
             type="text"
             autoComplete="name"
             value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder=""
+            onChange={(e) => {
+              clearSentOnEdit();
+              setName(e.target.value);
+            }}
             required
           />
         </div>
@@ -305,8 +309,10 @@ export default function ContactForm() {
             type="email"
             autoComplete="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder=""
+            onChange={(e) => {
+              clearSentOnEdit();
+              setEmail(e.target.value);
+            }}
             required
           />
         </div>
@@ -321,8 +327,10 @@ export default function ContactForm() {
           id="details"
           name="message"
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder=""
+          onChange={(e) => {
+            clearSentOnEdit();
+            setMessage(e.target.value);
+          }}
           required
           minLength={10}
         />
@@ -425,6 +433,7 @@ export default function ContactForm() {
                   type="button"
                   onClick={(ev) => {
                     ev.preventDefault();
+                    if (sent) setSent(false);
                     clearAllFiles();
                   }}
                   style={{
@@ -464,7 +473,7 @@ export default function ContactForm() {
       <button
         className={cx("k-submit", sent && "is-sent", loading && "is-loading")}
         type="submit"
-        disabled={!canSubmit || sent}
+        disabled={loading || sent || !canSubmit}
         aria-live="polite"
       >
         <span className="k-submit__content">
