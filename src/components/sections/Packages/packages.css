@@ -251,17 +251,10 @@
 /* -------------------------
    Responsive + motion safety
    ------------------------- */
-@media (max-width: 720px){
-  .k-pack__below{ justify-content: flex-start; }
-  .k-packMatrix{
-    grid-template-columns: 260px repeat(3, minmax(240px, 1fr));
-    min-width: 980px;
-  }
-}
-
 @media (prefers-reduced-motion: reduce){
   .k-packGhost{ transition: none !important; transform: none !important; }
 }
+
 /* -------------------------
    Add-ons (under table) — short & premium
    ------------------------- */
@@ -313,50 +306,88 @@
   color: rgba(255,255,255,.56);
   font-size: 12px;
 }
+
 /* =========================================
-   PACKAGES — Mobile polish (no frames on label column)
-   - label column stays aligned + sticky
-   - but looks "frameless" on mobile
-   - reduces iOS sticky/scroll ghosting
+   PACKAGES — Mobile: ONE continuous sticky wall (Apple-ish)
+   - Left label column looks like one panel, not per-row boxes
+   - Labels feel “loose” (no frames / row dividers)
+   - Tier columns can’t bleed under the label column
    ========================================= */
 
 @media (max-width: 720px){
-  /* a touch less "empty space" on the left */
+
+  /* mobile: place the “below” link left */
+  .k-pack__below{ justify-content: flex-start; }
+
+  /* slightly slimmer label column on mobile */
   .k-packMatrix{
     grid-template-columns: 220px repeat(3, minmax(240px, 1fr));
     min-width: 940px;
   }
 
-  /* ===== Frameless label column (header + rows) ===== */
-  .k-packHeadCell--label,
-  .k-packStickyCell{
-    /* keep sticky, but remove all “cell box” visuals */
-    border-bottom: 0 !important;
-    background: linear-gradient(
-      90deg,
-      rgba(7,7,10,.92) 0%,
-      rgba(7,7,10,.86) 78%,
-      rgba(7,7,10,0) 100%
-    ) !important;
+  /* Hide hints on mobile (keeps the label column airy) */
+  .k-packCellHint{ display: none !important; }
 
-    /* iOS compositing stability (kills text smear/ghosting) */
-    isolation: isolate;
-    contain: paint;
-    transform: translateZ(0);
+  /* Kill “cell framing” in the label column */
+  .k-packHeadCell--label,
+  .k-packStickyCell,
+  .k-packCell.k-packCell--label{
+    border-bottom: 0 !important;
+    box-shadow: none !important;
   }
 
-  /* kill the seam line that we draw for sticky column */
+  /* Remove the sticky seam line (we'll create a softer edge) */
   .k-packHeadCell--label::after,
   .k-packStickyCell::after{
     display: none !important;
   }
 
-  /* kill the “grid row lines” inside the label column only */
-  .k-packCell.k-packCell--label{
-    border-bottom: 0 !important;
+  /* Optional: remove the grid’s border-right on label column cells */
+  .k-packMatrix > *:nth-child(4n + 1){
+    border-right: 0 !important;
   }
 
-  /* optional: make dust calmer on mobile so it doesn't fight readability */
+  /* The actual “wall”: smoked-glass, continuous, premium */
+  .k-packHeadCell--label,
+  .k-packStickyCell{
+    background:
+      radial-gradient(120% 140% at 20% 12%, rgba(190,145,255,.10) 0%, rgba(190,145,255,0) 60%),
+      linear-gradient(180deg, rgba(255,255,255,.06) 0%, rgba(255,255,255,.03) 34%, rgba(7,7,10,.78) 100%),
+      rgba(7,7,10,.70) !important;
+
+    backdrop-filter: blur(14px) saturate(145%);
+    -webkit-backdrop-filter: blur(14px) saturate(145%);
+
+    /* iOS compositing stability (kills smear/ghosting) */
+    isolation: isolate;
+    contain: paint;
+    transform: translateZ(0);
+
+    /* subtle panel depth + ONE consistent edge shadow (the invisible wall) */
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.06) inset,
+      0 -1px 0 rgba(0,0,0,.18) inset,
+      18px 0 26px rgba(0,0,0,.40) !important;
+  }
+
+  /* Ensure the wall is above tier cells */
+  .k-packHeadCell--label{ z-index: 30; }
+  .k-packStickyCell{ z-index: 28; }
+
+  /* Labels feel loose: slightly stronger type, no “boxed” look */
+  .k-packCell--label{
+    color: rgba(255,255,255,.78) !important;
+    font-weight: 780 !important;
+    letter-spacing: -0.01em;
+  }
+
+  /* A touch more breathing room per row (calmer rhythm) */
+  .k-packStickyCell{
+    padding-top: 14px !important;
+    padding-bottom: 14px !important;
+  }
+
+  /* Dust calmer on mobile so it doesn’t fight readability */
   .k-packDust{ opacity: .45; }
 }
 
@@ -365,231 +396,5 @@
   .k-packMatrix{
     grid-template-columns: 200px repeat(3, minmax(230px, 1fr));
     min-width: 900px;
-  }
-}
-/* =========================================
-   PACKAGES — Mobile cleanup
-   - hide hints on mobile
-   - NO visible borders/lines in the 1st (label) column
-   ========================================= */
-
-@media (max-width: 720px){
-
-  /* 1) Na mobile: nie pokazuj podpowiedzi (k-packCellHint) */
-  .k-packCellHint{ display: none !important; }
-
-  /* 2) Zabij “ramki”/linie w 1. kolumnie (labels) */
-  .k-packHeadCell--label,
-  .k-packStickyCell,
-  .k-packCell.k-packCell--label{
-    border-bottom: 0 !important;        /* brak poziomych linii w labelach */
-    box-shadow: none !important;
-  }
-
-  /* 3) Usuń pionową “szwę” sticky (to robi tę kreskę przy granicy) */
-  .k-packHeadCell--label::after,
-  .k-packStickyCell::after{
-    display: none !important;
-  }
-
-  /* 4) Usuń separator pionowy należący do 1. kolumny (grid border-right) */
-  .k-packMatrix > *:nth-child(4n + 1){
-    border-right: 0 !important;
-  }
-}
-/* =========================================
-   PACKAGES — Mobile: narrower label column + wider table
-   (drop this at the VERY BOTTOM of packages.css)
-   ========================================= */
-
-@media (max-width: 720px){
-  /* widen the section on mobile by shrinking container gutters (scoped to #packages only) */
-  .k-pack{
-    --gutter: 10px;
-  }
-
-  /* narrower labels + wider tier columns */
-  .k-packMatrix{
-    grid-template-columns: 170px repeat(3, minmax(270px, 1fr));
-    min-width: 980px;
-  }
-
-  /* a touch tighter padding so text gets more room */
-  .k-packHeadCell,
-  .k-packCell{
-    padding-left: 12px;
-    padding-right: 12px;
-  }
-
-  /* label column: slightly tighter still */
-  .k-packHeadCell--label,
-  .k-packStickyCell{
-    padding-left: 12px;
-    padding-right: 10px;
-  }
-}
-
-@media (max-width: 420px){
-  .k-pack{
-    --gutter: 8px;
-  }
-
-  .k-packMatrix{
-    grid-template-columns: 160px repeat(3, minmax(260px, 1fr));
-    min-width: 940px;
-  }
-}
-/* =========================================
-   PACKAGES — Mobile FULL-BLEED (option B)
-   Make the table card go nearly edge-to-edge
-   ========================================= */
-
-@media (max-width: 720px){
-  /* Card goes wider than container by exactly the container gutters */
-  .k-packCard{
-    width: calc(100% + (var(--gutter, 16px) * 2));
-    margin-left: calc(var(--gutter, 16px) * -1);
-    margin-right: calc(var(--gutter, 16px) * -1);
-    border-radius: 24px;
-  }
-
-  /* Keep radii consistent inside */
-  .k-packStage,
-  .k-packScroll{
-    border-radius: 24px;
-  }
-}
-
-@media (max-width: 420px){
-  .k-packCard{ border-radius: 22px; }
-  .k-packStage,
-  .k-packScroll{ border-radius: 22px; }
-}
-/* =========================================
-   PACKAGES — TRUE edge-to-edge on mobile
-   + tiers (Base/Plus/Bespoke) ~20% narrower
-   Paste at the VERY BOTTOM of packages.css
-   ========================================= */
-
-@media (max-width: 720px){
-  /* TRUE full-bleed regardless of container/gutter */
-  .k-packCard{
-    width: 100vw;
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
-
-    border-radius: 0 !important;
-    border-left: 0;
-    border-right: 0;
-  }
-
-  .k-packStage,
-  .k-packScroll{
-    border-radius: 0 !important;
-  }
-
-  /* Make tier columns ~20% narrower */
-  .k-packMatrix{
-    /* was: 220px + 3 * 240px = 940px */
-    grid-template-columns: 220px repeat(3, minmax(190px, 1fr));
-    min-width: 790px;
-  }
-}
-
-@media (max-width: 420px){
-  .k-packMatrix{
-    /* was: 200px + 3 * 230px = 900px */
-    grid-template-columns: 200px repeat(3, minmax(180px, 1fr));
-    min-width: 740px;
-  }
-}
-/* PACKAGES — Mobile: narrower first (label) column */
-@media (max-width: 720px){
-  .k-packMatrix{
-    grid-template-columns: 170px repeat(3, minmax(190px, 1fr));
-    min-width: 640px; /* 170 + 3*190 */
-  }
-
-  /* trochę ciaśniej w labelach, żeby nie marnować px */
-  .k-packHeadCell--label,
-  .k-packStickyCell{
-    padding-left: 12px;
-    padding-right: 10px;
-  }
-
-  .k-packHeadCell,
-  .k-packCell{
-    padding-left: 12px;
-    padding-right: 12px;
-  }
-}
-
-@media (max-width: 420px){
-  .k-packMatrix{
-    grid-template-columns: 155px repeat(3, minmax(180px, 1fr));
-    min-width: 595px; /* 155 + 3*180 */
-  }
-}
-/* =========================================
-   PACKAGES — Mobile: “invisible wall” (Apple-ish)
-   Opaque blocker + premium smoked-glass styling
-   ========================================= */
-
-@media (max-width: 720px){
-
-  /* Label (sticky) column — smoked glass, not a flat slab */
-  .k-packHeadCell--label,
-  .k-packStickyCell{
-    position: sticky;
-    left: 0;
-
-    /* ✅ wall: blocks bleed, but keeps your earlier shading vibe */
-    background:
-      radial-gradient(120% 120% at 30% 18%, rgba(190,145,255,.10) 0%, rgba(190,145,255,0) 55%),
-      linear-gradient(180deg, rgba(255,255,255,.06) 0%, rgba(255,255,255,.03) 34%, rgba(7,7,10,.80) 100%),
-      rgba(7,7,10,.72) !important;
-
-    backdrop-filter: blur(14px) saturate(140%);
-    -webkit-backdrop-filter: blur(14px) saturate(140%);
-
-    /* micro-depth like iOS panels */
-    box-shadow:
-      0 1px 0 rgba(255,255,255,.06) inset,
-      0 -1px 0 rgba(0,0,0,.18) inset;
-  }
-
-  /* Ensure the wall is always above tier cells */
-  .k-packHeadCell--label{ z-index: 30; }
-  .k-packStickyCell{ z-index: 28; }
-
-  /* The “invisible wall” edge: hairline + soft shadow + tiny glow */
-  .k-packHeadCell--label::after,
-  .k-packStickyCell::after{
-    content:"";
-    position:absolute;
-    top:0;
-    right:-26px;
-    width: 26px;
-    height:100%;
-    pointer-events:none;
-    z-index: 999;
-
-    background:
-      /* hairline separator (super subtle) */
-      linear-gradient(90deg, rgba(255,255,255,.14) 0px, rgba(255,255,255,0) 1px),
-      /* main edge shadow to hide “under” content */
-      linear-gradient(90deg,
-        rgba(7,7,10,.92) 0%,
-        rgba(7,7,10,.62) 42%,
-        rgba(7,7,10,0) 100%
-      ),
-      /* tiny premium glow hint */
-      radial-gradient(80% 60% at 0% 20%, rgba(190,145,255,.12) 0%, rgba(190,145,255,0) 70%);
-  }
-
-  /* Optional: if your label text feels too dim on glass */
-  .k-packStickyCell,
-  .k-packHeadCell--label{
-    color: rgba(255,255,255,.86);
   }
 }
