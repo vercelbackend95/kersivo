@@ -59,7 +59,6 @@ export default function ContactForm() {
   const [error, setError] = useState<string>("");
 
   function clearSentOnEdit() {
-    // ✅ success receipt znika dopiero kiedy user zacznie znowu edytować
     if (sent) setSent(false);
   }
 
@@ -94,7 +93,7 @@ export default function ContactForm() {
   }
 
   function addFiles(incoming: File[]) {
-    if (sent) setSent(false); // ✅ edycja plików = koniec success receipt
+    if (sent) setSent(false);
     setError("");
 
     const merged = [...files];
@@ -127,7 +126,6 @@ export default function ContactForm() {
   }
 
   function calcTimeoutMs(totalBytes: number) {
-    // base 20s, +1.5s per MB, cap 45s
     const base = 20000;
     const mb = totalBytes / (1024 * 1024);
     const extra = Math.ceil(mb * 1500);
@@ -213,10 +211,8 @@ export default function ContactForm() {
         throw new Error(msg2);
       }
 
-      // ✅ sukces: pokazujemy receipt w przycisku
       setSent(true);
 
-      // opcjonalnie czyścimy tylko treść + pliki (name/email zostają, bo UX)
       clearAllFiles();
       setMessage("");
     } catch (err: any) {
@@ -240,7 +236,6 @@ export default function ContactForm() {
 
   return (
     <form className="k-cform" onSubmit={onSubmit} noValidate>
-      {/* TOP: service + budget */}
       <div className="k-cform__group">
         <div className="k-cform__label">Service</div>
         <div className="k-cform__chips" role="list" aria-label="Service selection">
@@ -279,7 +274,6 @@ export default function ContactForm() {
         </div>
       </div>
 
-      {/* NAME + EMAIL */}
       <div className="k-cform__row">
         <div className="k-uline">
           <label className="k-uline__hint" htmlFor="fullName">
@@ -318,7 +312,6 @@ export default function ContactForm() {
         </div>
       </div>
 
-      {/* MESSAGE */}
       <div className="k-uline">
         <label className="k-uline__hint" htmlFor="details">
           Project details <span aria-hidden="true">*</span>
@@ -336,7 +329,6 @@ export default function ContactForm() {
         />
       </div>
 
-      {/* UPLOAD */}
       <div className="k-cform__group">
         <div className="k-cform__label">Attach files (optional)</div>
 
@@ -375,7 +367,9 @@ export default function ContactForm() {
 
           <div style={{ textAlign: "center", display: "grid", gap: 6 }}>
             <div style={{ color: "rgba(255,255,255,.88)", fontWeight: 650 }}>
-              {files.length ? `${files.length} file(s) selected` : "Choose up to 5 images or drag and drop here"}
+              {files.length
+                ? `${files.length} file(s) selected`
+                : "Choose up to 5 images or drag and drop here"}
             </div>
             <div style={{ color: "rgba(255,255,255,.58)" }}>
               Tip: include screenshots or reference images. (max 3MB each)
@@ -455,7 +449,6 @@ export default function ContactForm() {
         </label>
       </div>
 
-      {/* honeypot */}
       <div style={{ position: "absolute", left: "-9999px", opacity: 0 }} aria-hidden="true">
         <label htmlFor="website">Website</label>
         <input
@@ -469,7 +462,6 @@ export default function ContactForm() {
         />
       </div>
 
-      {/* ACTIONS */}
       <button
         className={cx("k-submit", sent && "is-sent", loading && "is-loading")}
         type="submit"

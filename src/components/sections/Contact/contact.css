@@ -1,7 +1,5 @@
 /* =========================================
    Kersivo — Contact (Premium Split Form)
-   Purple global vibe + Proof Console CTA style
-   100% mobile-safe
    ========================================= */
 
 #contact{
@@ -28,7 +26,6 @@
 
   padding: clamp(18px, 3vw, 30px);
 
-  /* ✅ purple-only aurora (no green) */
   background:
     radial-gradient(1200px 780px at 18% 92%, rgba(190,145,255,.18), rgba(0,0,0,0) 62%),
     radial-gradient(920px 640px at 92% 22%, rgba(255,200,235,.12), rgba(0,0,0,0) 58%),
@@ -68,10 +65,6 @@
       rgba(190,145,255,.20),
       rgba(0,0,0,0) 66%);
 }
-
-/* ✅ dots texture REMOVED
-   We keep only the GLOBAL site background dot-grid
-   to avoid double-pattern moiré in the form panel. */
 
 /* Layout grid */
 .k-contact2__grid{
@@ -126,7 +119,6 @@
   line-height: 1.55;
 }
 
-/* ✅ make checks purple-consistent */
 .k-contact2__check{
   width: 20px;
   height: 20px;
@@ -297,11 +289,6 @@
   min-width: 0;
 }
 
-.k-uline input::placeholder,
-.k-uline textarea::placeholder{
-  color: rgba(255,255,255,.36);
-}
-
 .k-uline textarea{
   min-height: 120px;
   resize: vertical;
@@ -359,27 +346,46 @@
   cursor:pointer;
 }
 
-/* ✅ Submit: match "Get a quote" (CTA primary vibe) */
+/* =========================================
+   SUBMIT — fixed-size, centered, success green
+   ========================================= */
+
 .k-submit{
-  /* match CTA system if present */
-  height: var(--btn-h, 52px);
-  border-radius: var(--btn-radius, 999px);
+  /* ✅ LOCK SIZE: never changes through states */
+  --submit-h: 68px;                /* <- this is the "max" height we keep always */
+  height: var(--submit-h);
+  width: 100%;
+  max-width: 560px;                /* nice width in panel */
+  justify-self: center;            /* ✅ center in form */
+
+  border-radius: 999px;
   padding: 0 var(--btn-pad, 22px);
+
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  overflow: hidden;
 
   border: 1px solid rgba(255,255,255,.10);
   color: #0a0b10;
+
   font-weight: var(--w-semibold, 650);
   letter-spacing: var(--btn-track, -0.015em);
 
-  background: linear-gradient(135deg, var(--btn-g1, rgba(105,140,255,1)), var(--btn-g2, rgba(170,95,255,1)));
+  background: linear-gradient(
+    135deg,
+    var(--btn-g1, rgba(105,140,255,1)),
+    var(--btn-g2, rgba(170,95,255,1))
+  );
   box-shadow: 0 28px 90px rgba(105,140,255,.22);
-  overflow: hidden;
 
   cursor: pointer;
   transition:
     transform 220ms cubic-bezier(.2,.9,.2,1),
     box-shadow 200ms ease,
-    filter 200ms ease;
+    filter 200ms ease,
+    border-color 220ms ease,
+    background 260ms ease;
 }
 
 .k-submit:hover{
@@ -397,7 +403,7 @@
   outline-offset: 3px;
 }
 
-/* shine sweep like CTA */
+/* shine sweep */
 .k-submit::after{
   content:"";
   position: absolute;
@@ -418,45 +424,22 @@
 }
 
 .k-submit:disabled{
-  opacity: .55;
+  opacity: .65;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
-  filter: grayscale(.15);
+  filter: grayscale(.12);
 }
 
-/* -----------------------------------------
-   Submit morph (success / loading report)
-   - premium “pill to panel” morph
-   - message lives inside the button (requested)
-   ----------------------------------------- */
-
-.k-submit{
-  position: relative;
-  width: 100%;
-  max-width: 520px;
-  justify-self: start;
-
-  display: inline-grid;
-  place-items: center;
-
-  /* morph feel */
-  transition:
-    transform 220ms cubic-bezier(.2,.9,.2,1),
-    box-shadow 200ms ease,
-    filter 200ms ease,
-    border-color 220ms ease,
-    background 260ms ease,
-    height 260ms cubic-bezier(.2,.9,.2,1);
-}
-
+/* content layout inside fixed height */
 .k-submit__content{
   display: grid;
   gap: 4px;
   align-items: center;
   justify-items: center;
   text-align: center;
-  padding: 0 2px;
+  padding: 0 8px;
+  line-height: 1.1;
 }
 
 .k-submit__row{
@@ -472,9 +455,11 @@
   border-radius: 999px;
   display: grid;
   place-items: center;
+
   background: rgba(255,255,255,.16);
   border: 1px solid rgba(255,255,255,.16);
   box-shadow: 0 14px 46px rgba(190,145,255,.20);
+
   color: rgba(255,255,255,.92);
   font-size: 16px;
   line-height: 1;
@@ -483,6 +468,7 @@
 .k-submit__title{
   font-weight: var(--w-semibold, 650);
   letter-spacing: var(--btn-track, -0.015em);
+  font-size: 14.5px;
 }
 
 .k-submit__sub{
@@ -492,21 +478,25 @@
   opacity: .92;
 }
 
-/* loading: keep the main gradient, but soften subtext */
+/* Loading */
 .k-submit.is-loading .k-submit__sub{
   color: rgba(10,11,16,.70);
 }
 
-/* success: morph into a calmer glass panel */
+/* ✅ SUCCESS GREEN — premium emerald, calm, high-end */
 .k-submit.is-sent{
-  height: 64px; /* morph taller */
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
-  border-color: rgba(190,145,255,.28);
-  box-shadow:
-    0 26px 110px rgba(0,0,0,.34),
-    0 0 0 1px rgba(190,145,255,.10) inset;
-  color: rgba(255,255,255,.92);
+  /* keep size identical */
+  height: var(--submit-h);
+
+  background: linear-gradient(
+    135deg,
+    rgba(64, 232, 162, .92),
+    rgba(32, 184, 120, .92)
+  );
+  border-color: rgba(80, 255, 190, .35);
+  box-shadow: 0 30px 120px rgba(32, 184, 120, .18);
+
+  color: rgba(7, 17, 12, .94);
 }
 
 .k-submit.is-sent::after,
@@ -515,17 +505,14 @@
 }
 
 .k-submit.is-sent .k-submit__sub{
-  color: rgba(255,255,255,.74);
+  color: rgba(7, 17, 12, .72);
 }
 
-/* Slight “settle” after success */
-.k-submit.is-sent{
-  transform: translateY(-1px);
-}
-
-@media (max-width: 520px){
-  .k-submit{ max-width: 100%; }
-  .k-submit.is-sent{ height: 68px; }
+.k-submit.is-sent .k-submit__icon{
+  background: rgba(7, 17, 12, .12);
+  border-color: rgba(7, 17, 12, .14);
+  box-shadow: 0 14px 46px rgba(32, 184, 120, .22);
+  color: rgba(7, 17, 12, .92);
 }
 
 /* helper text */
@@ -535,6 +522,29 @@
   font-size: 12.5px;
   line-height: 1.45;
   min-width: 0;
+}
+
+/* notices */
+.k-cform__notice{
+  border-radius: 14px;
+  padding: 12px 12px;
+  font-size: 13px;
+  line-height: 1.45;
+  letter-spacing: var(--track-normal, -0.01em);
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  color: rgba(255,255,255,.84);
+}
+
+.k-cform__notice--ok{
+  border-color: rgba(80, 255, 190, .22);
+  background: rgba(80, 255, 190, .08);
+}
+
+.k-cform__notice--err{
+  border-color: rgba(255,120,170,.28);
+  background: rgba(255,120,170,.08);
+  color: rgba(255,255,255,.90);
 }
 
 /* highlight sweep on jump */
@@ -565,7 +575,7 @@
   100% { opacity: 0; transform: translateX(58%) skewX(-12deg); }
 }
 
-/* ✅ Mobile: truly safe */
+/* Mobile */
 @media (max-width: 520px){
   .k-contact2__frame{
     border-radius: 26px;
@@ -586,12 +596,14 @@
     padding: 8px 11px;
     font-size: 12.5px;
   }
+
+  /* keep fixed size but allow comfy width on narrow screens */
   .k-submit{
-    height: 54px;
+    max-width: 100%;
+    --submit-h: 70px; /* tiny bit more breathing on small phones */
   }
 }
 
-/* ultra-small phones */
 @media (max-width: 380px){
   .k-contact2__title{
     font-size: 34px;
@@ -613,26 +625,4 @@
   }
   .k-submit::after{ display:none; }
   .k-contact2__frame.is-highlight::after{ display:none; animation:none !important; }
-}
-/* status notes */
-.k-cform__notice{
-  border-radius: 14px;
-  padding: 12px 12px;
-  font-size: 13px;
-  line-height: 1.45;
-  letter-spacing: var(--track-normal, -0.01em);
-  border: 1px solid rgba(255,255,255,.10);
-  background: rgba(255,255,255,.04);
-  color: rgba(255,255,255,.84);
-}
-
-.k-cform__notice--ok{
-  border-color: rgba(190,145,255,.22);
-  background: rgba(190,145,255,.08);
-}
-
-.k-cform__notice--err{
-  border-color: rgba(255,120,170,.28);
-  background: rgba(255,120,170,.08);
-  color: rgba(255,255,255,.90);
 }
