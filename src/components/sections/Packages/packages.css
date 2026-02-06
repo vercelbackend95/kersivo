@@ -530,3 +530,42 @@
     min-width: 595px; /* 155 + 3*180 */
   }
 }
+/* =========================================
+   PACKAGES — Mobile: “invisible wall”
+   Stop tier columns bleeding under the sticky label column
+   Paste at the VERY BOTTOM of packages.css
+   ========================================= */
+
+@media (max-width: 720px){
+
+  /* 1) Make the sticky label column truly opaque (no see-through) */
+  .k-packHeadCell--label,
+  .k-packStickyCell{
+    background: rgba(7,7,10,.96) !important;  /* solid wall */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  /* 2) Add a soft “edge shadow” that sits ABOVE the tiers (the actual wall vibe) */
+  .k-packHeadCell--label::after,
+  .k-packStickyCell::after{
+    content:"";
+    position:absolute;
+    top:0;
+    right:-22px;             /* push shadow slightly into tier area */
+    width: 22px;
+    height:100%;
+    pointer-events:none;
+    z-index: 999;            /* above tier cells */
+    background: linear-gradient(
+      90deg,
+      rgba(7,7,10,.98) 0%,
+      rgba(7,7,10,.78) 45%,
+      rgba(7,7,10,0) 100%
+    );
+  }
+
+  /* 3) Extra safety: ensure sticky column is always above tier cells */
+  .k-packHeadCell--label{ z-index: 30; }
+  .k-packStickyCell{ z-index: 28; }
+}
