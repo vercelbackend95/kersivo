@@ -316,17 +316,19 @@ export default function ContactForm() {
         <label className="k-uline__hint" htmlFor="details">
           Project details <span aria-hidden="true">*</span>
         </label>
-        <textarea
-          id="details"
-          name="message"
-          value={message}
-          onChange={(e) => {
-            clearSentOnEdit();
-            setMessage(e.target.value);
-          }}
-          required
-          minLength={10}
-        />
+<textarea
+  id="details"
+  name="message"
+  value={message}
+  placeholder="Briefly describe your project — what you need, your business goals, and any inspirations/links."
+  onChange={(e) => {
+    clearSentOnEdit();
+    setMessage(e.target.value);
+  }}
+  required
+  minLength={10}
+/>
+
       </div>
 
       <div className="k-cform__group">
