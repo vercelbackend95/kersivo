@@ -1,7 +1,7 @@
 /* =========================================
    KERSIVO — PACKAGES
    One-grid table so sticky labels align perfectly
-   Premium + mobile-safe sticky (no ghosting)
+   Tabs removed. Truth lives in the table.
    ========================================= */
 
 .k-pack{
@@ -154,7 +154,9 @@
 }
 
 /* CTA wrapper spacing */
-.k-packCtaWrap{ margin-top: 8px; }
+.k-packCtaWrap{
+  margin-top: 8px;
+}
 
 /* Make global .k-btn fit table cells */
 .k-packCta{
@@ -247,6 +249,20 @@
 }
 
 /* -------------------------
+   Responsive + motion safety
+   ------------------------- */
+@media (max-width: 720px){
+  .k-pack__below{ justify-content: flex-start; }
+  .k-packMatrix{
+    grid-template-columns: 260px repeat(3, minmax(240px, 1fr));
+    min-width: 980px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .k-packGhost{ transition: none !important; transform: none !important; }
+}
+/* -------------------------
    Add-ons (under table) — short & premium
    ------------------------- */
 .k-packAddons{
@@ -297,118 +313,220 @@
   color: rgba(255,255,255,.56);
   font-size: 12px;
 }
-
-/* -------------------------
-   Responsive + motion safety
-   ------------------------- */
-@media (prefers-reduced-motion: reduce){
-  .k-packGhost{ transition: none !important; transform: none !important; }
-}
-
 /* =========================================
-   MOBILE — Sticky label "WALL" (PRO fix)
-   Stops tier columns from sliding under labels
-   + calmer visuals (no hints, less dust)
+   PACKAGES — Mobile polish (no frames on label column)
+   - label column stays aligned + sticky
+   - but looks "frameless" on mobile
+   - reduces iOS sticky/scroll ghosting
    ========================================= */
+
 @media (max-width: 720px){
-
-  .k-pack__below{ justify-content: flex-start; }
-
-  /* slightly narrower label column, keep tiers readable */
+  /* a touch less "empty space" on the left */
   .k-packMatrix{
-    grid-template-columns: 200px repeat(3, minmax(240px, 1fr));
-    min-width: 920px;
+    grid-template-columns: 220px repeat(3, minmax(240px, 1fr));
+    min-width: 940px;
   }
 
-  /* less noise on small screens */
-  .k-packCellHint{ display: none !important; }
-  .k-packDust{ opacity: .45; }
+  /* ===== Frameless label column (header + rows) ===== */
+  .k-packHeadCell--label,
+  .k-packStickyCell{
+    /* keep sticky, but remove all “cell box” visuals */
+    border-bottom: 0 !important;
+    background: linear-gradient(
+      90deg,
+      rgba(7,7,10,.92) 0%,
+      rgba(7,7,10,.86) 78%,
+      rgba(7,7,10,0) 100%
+    ) !important;
 
-  /* tier cells always sit UNDER the wall */
+    /* iOS compositing stability (kills text smear/ghosting) */
+    isolation: isolate;
+    contain: paint;
+    transform: translateZ(0);
+  }
+
+  /* kill the seam line that we draw for sticky column */
+  .k-packHeadCell--label::after,
+  .k-packStickyCell::after{
+    display: none !important;
+  }
+
+  /* kill the “grid row lines” inside the label column only */
+  .k-packCell.k-packCell--label{
+    border-bottom: 0 !important;
+  }
+
+  /* optional: make dust calmer on mobile so it doesn't fight readability */
+  .k-packDust{ opacity: .45; }
+}
+
+/* tighter phones */
+@media (max-width: 420px){
+  .k-packMatrix{
+    grid-template-columns: 200px repeat(3, minmax(230px, 1fr));
+    min-width: 900px;
+  }
+}
+/* =========================================
+   PACKAGES — Mobile cleanup
+   - hide hints on mobile
+   - NO visible borders/lines in the 1st (label) column
+   ========================================= */
+
+@media (max-width: 720px){
+
+  /* 1) Na mobile: nie pokazuj podpowiedzi (k-packCellHint) */
+  .k-packCellHint{ display: none !important; }
+
+  /* 2) Zabij “ramki”/linie w 1. kolumnie (labels) */
+  .k-packHeadCell--label,
+  .k-packStickyCell,
+  .k-packCell.k-packCell--label{
+    border-bottom: 0 !important;        /* brak poziomych linii w labelach */
+    box-shadow: none !important;
+  }
+
+  /* 3) Usuń pionową “szwę” sticky (to robi tę kreskę przy granicy) */
+  .k-packHeadCell--label::after,
+  .k-packStickyCell::after{
+    display: none !important;
+  }
+
+  /* 4) Usuń separator pionowy należący do 1. kolumny (grid border-right) */
+  .k-packMatrix > *:nth-child(4n + 1){
+    border-right: 0 !important;
+  }
+}
+/* =========================================
+   PACKAGES — Mobile: narrower label column + wider table
+   (drop this at the VERY BOTTOM of packages.css)
+   ========================================= */
+
+@media (max-width: 720px){
+  /* widen the section on mobile by shrinking container gutters (scoped to #packages only) */
+  .k-pack{
+    --gutter: 10px;
+  }
+
+  /* narrower labels + wider tier columns */
+  .k-packMatrix{
+    grid-template-columns: 170px repeat(3, minmax(270px, 1fr));
+    min-width: 980px;
+  }
+
+  /* a touch tighter padding so text gets more room */
   .k-packHeadCell,
   .k-packCell{
-    position: relative;
-    z-index: 1;
     padding-left: 12px;
     padding-right: 12px;
   }
 
-  /* ===== THE WALL (header + sticky label cells) ===== */
+  /* label column: slightly tighter still */
   .k-packHeadCell--label,
   .k-packStickyCell{
-    z-index: 50;
-
-    /* opaque wall: no more “text bleeding under” */
-    background: rgba(7,7,10,.94) !important;
-
-    /* premium glass + iOS stability */
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    isolation: isolate;
-    contain: paint;
-    transform: translateZ(0);
-
-    /* slightly tighter */
     padding-left: 12px;
     padding-right: 10px;
   }
+}
 
-  /* wall edge scrim (makes it feel physical) */
-  .k-packHeadCell--label::before,
-  .k-packStickyCell::before{
-    content:"";
-    position:absolute;
-    top: 0;
-    right: -22px;
-    width: 22px;
-    height: 100%;
-    pointer-events: none;
-    background: linear-gradient(
-      90deg,
-      rgba(7,7,10,.94) 0%,
-      rgba(7,7,10,.80) 45%,
-      rgba(7,7,10,0) 100%
-    );
+@media (max-width: 420px){
+  .k-pack{
+    --gutter: 8px;
   }
 
-  /* premium boundary line + soft depth */
-  .k-packHeadCell--label::after,
-  .k-packStickyCell::after{
-    display:block !important;
-    content:"";
-    position:absolute;
-    top:0;
-    right:-1px;
-    width:1px;
-    height:100%;
-    background: rgba(255,255,255,.10);
-    box-shadow: 10px 0 22px rgba(0,0,0,.35);
-    pointer-events:none;
+  .k-packMatrix{
+    grid-template-columns: 160px repeat(3, minmax(260px, 1fr));
+    min-width: 940px;
+  }
+}
+/* =========================================
+   PACKAGES — Mobile FULL-BLEED (option B)
+   Make the table card go nearly edge-to-edge
+   ========================================= */
+
+@media (max-width: 720px){
+  /* Card goes wider than container by exactly the container gutters */
+  .k-packCard{
+    width: calc(100% + (var(--gutter, 16px) * 2));
+    margin-left: calc(var(--gutter, 16px) * -1);
+    margin-right: calc(var(--gutter, 16px) * -1);
+    border-radius: 24px;
   }
 
-  /* optional: remove row lines inside the label column only (cleaner) */
-  .k-packCell.k-packCell--label{
-    border-bottom-color: transparent;
-  }
-
-  /* reduce inner radii a touch on mobile */
-  .k-packCard,
+  /* Keep radii consistent inside */
   .k-packStage,
   .k-packScroll{
     border-radius: 24px;
   }
 }
 
-/* tighter phones */
 @media (max-width: 420px){
-  .k-packMatrix{
-    grid-template-columns: 185px repeat(3, minmax(230px, 1fr));
-    min-width: 875px;
+  .k-packCard{ border-radius: 22px; }
+  .k-packStage,
+  .k-packScroll{ border-radius: 22px; }
+}
+/* =========================================
+   PACKAGES — TRUE edge-to-edge on mobile
+   + tiers (Base/Plus/Bespoke) ~20% narrower
+   Paste at the VERY BOTTOM of packages.css
+   ========================================= */
+
+@media (max-width: 720px){
+  /* TRUE full-bleed regardless of container/gutter */
+  .k-packCard{
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+
+    border-radius: 0 !important;
+    border-left: 0;
+    border-right: 0;
   }
 
-  .k-packCard,
   .k-packStage,
   .k-packScroll{
-    border-radius: 22px;
+    border-radius: 0 !important;
+  }
+
+  /* Make tier columns ~20% narrower */
+  .k-packMatrix{
+    /* was: 220px + 3 * 240px = 940px */
+    grid-template-columns: 220px repeat(3, minmax(190px, 1fr));
+    min-width: 790px;
+  }
+}
+
+@media (max-width: 420px){
+  .k-packMatrix{
+    /* was: 200px + 3 * 230px = 900px */
+    grid-template-columns: 200px repeat(3, minmax(180px, 1fr));
+    min-width: 740px;
+  }
+}
+/* PACKAGES — Mobile: narrower first (label) column */
+@media (max-width: 720px){
+  .k-packMatrix{
+    grid-template-columns: 170px repeat(3, minmax(190px, 1fr));
+    min-width: 640px; /* 170 + 3*190 */
+  }
+
+  /* trochę ciaśniej w labelach, żeby nie marnować px */
+  .k-packHeadCell--label,
+  .k-packStickyCell{
+    padding-left: 12px;
+    padding-right: 10px;
+  }
+
+  .k-packHeadCell,
+  .k-packCell{
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+@media (max-width: 420px){
+  .k-packMatrix{
+    grid-template-columns: 155px repeat(3, minmax(180px, 1fr));
+    min-width: 595px; /* 155 + 3*180 */
   }
 }
