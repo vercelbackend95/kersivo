@@ -227,6 +227,21 @@ export default function ContactForm() {
     }
   }
 
+  const submitLabel = sent
+    ? {
+        title: "Thanks — message received",
+        sub: "We’ll get back to you within 24 hours.",
+      }
+    : loading
+      ? {
+          title: "Sending…",
+          sub: "One moment — delivering your message.",
+        }
+      : {
+          title: "Submit inquiry",
+          sub: "We reply fast — usually same day.",
+        };
+
   return (
     <form className="k-cform" onSubmit={onSubmit} noValidate>
       {/* TOP: service + budget */}
@@ -446,11 +461,25 @@ export default function ContactForm() {
       </div>
 
       {/* ACTIONS */}
-      <button className="k-submit" type="submit" disabled={!canSubmit}>
-        {loading ? "Sending..." : "Submit inquiry"}
+      <button
+        className={cx("k-submit", sent && "is-sent", loading && "is-loading")}
+        type="submit"
+        disabled={!canSubmit || sent}
+        aria-live="polite"
+      >
+        <span className="k-submit__content">
+          <span className="k-submit__row">
+            {sent && (
+              <span className="k-submit__icon" aria-hidden="true">
+                ✓
+              </span>
+            )}
+            <span className="k-submit__title">{submitLabel.title}</span>
+          </span>
+          <span className="k-submit__sub">{submitLabel.sub}</span>
+        </span>
       </button>
 
-      {sent && <div className="k-cform__notice k-cform__notice--ok">Sent. We’ll reply shortly.</div>}
       {error && <div className="k-cform__notice k-cform__notice--err">{error}</div>}
 
       <div className="k-cform__foot">
