@@ -41,11 +41,14 @@ export default function CallMorph(props: { endpoint?: string }) {
 
   useEffect(() => {
     if (!open) return;
-    const t = window.setTimeout(() => inputRef.current?.focus(), reducedMotion ? 0 : 80);
+    const t = window.setTimeout(
+      () => inputRef.current?.focus(),
+      reducedMotion ? 0 : 80
+    );
     return () => window.clearTimeout(t);
   }, [open, reducedMotion]);
 
-  // Close on outside click + ESC (no X button needed)
+  // Close on outside click + ESC (premium: no X)
   useEffect(() => {
     if (!open) return;
 
@@ -54,7 +57,6 @@ export default function CallMorph(props: { endpoint?: string }) {
       if (!el) return;
       const target = e.target as Node | null;
       if (target && !el.contains(target)) {
-        // keep it gentle: close only if not loading
         if (!loading) closePanel();
       }
     };
@@ -131,119 +133,139 @@ export default function CallMorph(props: { endpoint?: string }) {
     }
   }
 
+  const spring = reducedMotion
+    ? { duration: 0 }
+    : { type: "spring", stiffness: 420, damping: 34 };
+
+  const noteAnim = reducedMotion
+    ? { initial: false, animate: { opacity: 1 }, exit: { opacity: 0 } }
+    : {
+        initial: { opacity: 0, y: -4, filter: "blur(6px)" },
+        animate: { opacity: 1, y: 0, filter: "blur(0px)" },
+        exit: { opacity: 0, y: -4, filter: "blur(6px)" },
+      };
+
   return (
-    <motion.div
-      ref={rootRef}
-      className={cx("k-callMorph", open && "is-open", sent && "is-sent")}
-      layout
-      transition={
-        reducedMotion
-          ? { duration: 0 }
-          : { type: "spring", stiffness: 420, damping: 34 }
-      }
-    >
-      {!open && (
-        <motion.button
-          type="button"
-          className="k-callMorph__btn"
-          onClick={() => {
-            setError("");
-            setSent(false);
-            setOpen(true);
-          }}
-          layout
-          whileTap={reducedMotion ? undefined : { scale: 0.99 }}
-        >
-          <span className="k-callMorph__ico" aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M6.6 3.9l2.6-.6c.7-.2 1.5.2 1.8.9l1.1 2.7c.3.7.1 1.5-.5 2l-1.6 1.2c1 2 2.6 3.6 4.6 4.6l1.2-1.6c.5-.6 1.3-.8 2-.5l2.7 1.1c.7.3 1.1 1.1.9 1.8l-.6 2.6c-.2.8-.9 1.3-1.7 1.3C10 21.4 2.6 14 2.6 5.6c0-.8.5-1.5 1.3-1.7z"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                opacity=".95"
-              />
-            </svg>
-          </span>
-
-          <span className="k-callMorph__label">Book a free call</span>
-          <span className="k-callMorph__chev" aria-hidden="true">
-            →
-          </span>
-        </motion.button>
-      )}
-
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            className="k-callMorph__panel"
+    <div className="k-callMorphWrap" ref={rootRef}>
+      <motion.div
+        className={cx("k-callMorph", open && "is-open", sent && "is-sent")}
+        layout
+        transition={spring}
+      >
+        {!open && (
+          <motion.button
+            type="button"
+            className="k-callMorph__btn"
+            onClick={() => {
+              setError("");
+              setSent(false);
+              setOpen(true);
+            }}
             layout
-            initial={reducedMotion ? false : { opacity: 0, y: -4 }}
-            animate={reducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-            exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: -4 }}
-            transition={reducedMotion ? { duration: 0 } : { duration: 0.18 }}
+            whileTap={reducedMotion ? undefined : { scale: 0.99 }}
           >
-            <div className="k-callMorph__row">
-              <div className="k-callMorph__field">
-                <input
-                  ref={inputRef}
-                  id="callPhone"
-                  inputMode="tel"
-                  autoComplete="tel"
-                  placeholder="+44 7xxx xxx xxx"
-                  value={phone}
-                  onChange={(e) => {
-                    setSent(false);
-                    setError("");
-                    setPhone(e.target.value);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      if (canSend) submit();
-                    }
-                    if (e.key === "Escape") {
-                      e.preventDefault();
-                      if (!loading) closePanel();
-                    }
-                  }}
-                  aria-label="Phone number"
+            <span className="k-callMorph__ico" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M6.6 3.9l2.6-.6c.7-.2 1.5.2 1.8.9l1.1 2.7c.3.7.1 1.5-.5 2l-1.6 1.2c1 2 2.6 3.6 4.6 4.6l1.2-1.6c.5-.6 1.3-.8 2-.5l2.7 1.1c.7.3 1.1 1.1.9 1.8l-.6 2.6c-.2.8-.9 1.3-1.7 1.3C10 21.4 2.6 14 2.6 5.6c0-.8.5-1.5 1.3-1.7z"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  opacity=".95"
                 />
+              </svg>
+            </span>
 
-                {/* honeypot */}
-                <div className="k-callMorph__hp" aria-hidden="true">
-                  <label htmlFor="website">Website</label>
+            <span className="k-callMorph__label">Book a free call</span>
+            <span className="k-callMorph__chev" aria-hidden="true">
+              →
+            </span>
+          </motion.button>
+        )}
+
+        <AnimatePresence initial={false}>
+          {open && (
+            <motion.div
+              className="k-callMorph__panel"
+              layout
+              initial={reducedMotion ? false : { opacity: 0, y: -4 }}
+              animate={reducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+              exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: -4 }}
+              transition={reducedMotion ? { duration: 0 } : { duration: 0.18 }}
+            >
+              <div className="k-callMorph__row">
+                <div className="k-callMorph__field">
                   <input
-                    id="website"
-                    tabIndex={-1}
-                    autoComplete="off"
-                    value={hpWebsite}
-                    onChange={(e) => setHpWebsite(e.target.value)}
+                    ref={inputRef}
+                    id="callPhone"
+                    inputMode="tel"
+                    autoComplete="tel"
+                    placeholder="+44 7xxx xxx xxx"
+                    value={phone}
+                    onChange={(e) => {
+                      setSent(false);
+                      setError("");
+                      setPhone(e.target.value);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        if (canSend) submit();
+                      }
+                      if (e.key === "Escape") {
+                        e.preventDefault();
+                        if (!loading) closePanel();
+                      }
+                    }}
+                    aria-label="Phone number"
                   />
+
+                  {/* honeypot */}
+                  <div className="k-callMorph__hp" aria-hidden="true">
+                    <label htmlFor="website">Website</label>
+                    <input
+                      id="website"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={hpWebsite}
+                      onChange={(e) => setHpWebsite(e.target.value)}
+                    />
+                  </div>
                 </div>
+
+                <button
+                  type="button"
+                  className={cx("k-callMorph__send", sent && "is-sent")}
+                  onClick={submit}
+                  disabled={!canSend}
+                >
+                  {sent ? "Sent ✓" : loading ? "Sending…" : "Send"}
+                </button>
               </div>
 
-              <button
-                type="button"
-                className={cx("k-callMorph__send", sent && "is-sent")}
-                onClick={submit}
-                disabled={!canSend}
-              >
-                {sent ? "Sent ✓" : loading ? "Sending…" : "Send"}
-              </button>
-            </div>
+              {error && <div className="k-callMorph__error">{error}</div>}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
 
-            <div className="k-callMorph__fine">
-              {sent
-                ? "Got it. We’ll call you ASAP."
-                : "Drop your number — we’ll confirm a time by SMS or email."}
-            </div>
-
-            {error && <div className="k-callMorph__error">{error}</div>}
-          </motion.div>
+      {/* ✅ NOTE: appears only after click, morphy + calm */}
+      <AnimatePresence initial={false}>
+        {open && !error && (
+          <motion.p
+            className="k-callMorph__note"
+            {...noteAnim}
+            transition={reducedMotion ? { duration: 0 } : { duration: 0.22 }}
+          >
+            {sent
+              ? "Got it. We’ll call you ASAP."
+              : "Drop your number — we’ll confirm a time by SMS or email."}
+          </motion.p>
         )}
       </AnimatePresence>
-    </motion.div>
+
+      {/* if error exists, we still show the error block inside pill, so no note here */}
+    </div>
   );
 }
