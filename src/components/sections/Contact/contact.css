@@ -669,3 +669,283 @@
   .k-submit::after{ display:none; }
   .k-contact2__frame.is-highlight::after{ display:none; animation:none !important; }
 }
+
+/* =========================================================
+   CALL MORPH — “Book a free call” → phone input + send
+   Premium pill → panel, controlled motion, Apple-ish.
+   ========================================================= */
+
+.k-callMorph{
+  position: relative;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.k-callMorph__btn{
+  appearance: none;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.05);
+  color: rgba(255,255,255,.92);
+
+  height: 52px;
+  padding: 0 18px;
+  border-radius: 999px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  cursor: pointer;
+  user-select: none;
+  backdrop-filter: blur(12px);
+
+  box-shadow:
+    0 22px 90px rgba(0,0,0,.26),
+    0 0 0 1px rgba(255,255,255,.04) inset;
+
+  transition:
+    transform 220ms cubic-bezier(.2,.9,.2,1),
+    background 200ms ease,
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.k-callMorph__btn:hover{
+  transform: translateY(-1px);
+  background: rgba(255,255,255,.07);
+  border-color: rgba(190,145,255,.26);
+  box-shadow:
+    0 26px 110px rgba(0,0,0,.32),
+    0 0 0 1px rgba(190,145,255,.10) inset;
+}
+
+.k-callMorph__btn:active{
+  transform: translateY(0);
+}
+
+.k-callMorph__btn:focus-visible{
+  outline: 2px solid rgba(190,145,255,.70);
+  outline-offset: 3px;
+}
+
+.k-callMorph__ico{
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.10);
+  color: rgba(255,255,255,.92);
+  box-shadow: 0 14px 50px rgba(190,145,255,.10);
+}
+
+.k-callMorph__label{
+  font-weight: var(--w-semibold, 650);
+  letter-spacing: var(--track-normal, -0.01em);
+  font-size: 14px;
+}
+
+.k-callMorph__chev{
+  opacity: .85;
+  transform: translateX(0);
+  transition: transform 220ms cubic-bezier(.2,.9,.2,1);
+}
+.k-callMorph__btn:hover .k-callMorph__chev{ transform: translateX(2px); }
+
+/* the expanded panel */
+.k-callMorph__panel{
+  position: relative;
+  border-radius: 999px;
+  padding: 10px 10px 10px 12px;
+
+  border: 1px solid rgba(255,255,255,.14);
+  background:
+    radial-gradient(520px 240px at 35% 0%,
+      rgba(190,145,255,.22),
+      rgba(0,0,0,0) 66%),
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+
+  backdrop-filter: blur(14px);
+
+  box-shadow:
+    0 34px 140px rgba(0,0,0,.40),
+    0 0 0 1px rgba(0,0,0,.18) inset;
+
+  max-width: min(560px, 100%);
+}
+
+.k-callMorph__row{
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.k-callMorph__field{
+  position: relative;
+  min-width: 0;
+}
+
+.k-callMorph__hint{
+  position: absolute;
+  left: 10px;
+  top: -18px;
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.60);
+  font-weight: var(--w-semibold, 650);
+}
+
+.k-callMorph__field input{
+  width: 100%;
+  height: 46px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(0,0,0,.22);
+  color: rgba(255,255,255,.92);
+
+  padding: 0 14px;
+  font-size: 14.5px;
+  letter-spacing: var(--track-normal, -0.01em);
+
+  outline: none;
+  transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.k-callMorph__field input::placeholder{
+  color: rgba(255,255,255,.46);
+}
+
+.k-callMorph__field input:focus{
+  border-color: rgba(190,145,255,.32);
+  box-shadow: 0 0 0 4px rgba(190,145,255,.10);
+  background: rgba(0,0,0,.16);
+}
+
+/* send button */
+.k-callMorph__send{
+  height: 46px;
+  border-radius: 999px;
+  padding: 0 16px;
+
+  border: 1px solid rgba(255,255,255,.10);
+  background: linear-gradient(
+    135deg,
+    var(--btn-g1, rgba(105,140,255,1)),
+    var(--btn-g2, rgba(170,95,255,1))
+  );
+  color: #0a0b10;
+
+  font-weight: var(--w-semibold, 650);
+  letter-spacing: var(--btn-track, -0.015em);
+  cursor: pointer;
+
+  box-shadow: 0 22px 90px rgba(105,140,255,.20);
+  transition: transform 220ms cubic-bezier(.2,.9,.2,1), box-shadow 200ms ease, filter 200ms ease;
+}
+
+.k-callMorph__send:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 28px 110px rgba(105,140,255,.26);
+}
+.k-callMorph__send:active{ transform: translateY(0); filter: brightness(.98); }
+
+.k-callMorph__send:disabled{
+  opacity: .55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  filter: grayscale(.10);
+}
+
+.k-callMorph__send.is-sent{
+  background: linear-gradient(135deg, rgba(64, 232, 162, .92), rgba(32, 184, 120, .92));
+  border-color: rgba(80, 255, 190, .35);
+  box-shadow: 0 28px 110px rgba(32, 184, 120, .16);
+  color: rgba(7, 17, 12, .94);
+}
+
+/* close */
+.k-callMorph__close{
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.05);
+  color: rgba(255,255,255,.86);
+
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+
+  transition: transform 220ms cubic-bezier(.2,.9,.2,1), background 180ms ease, border-color 180ms ease;
+}
+
+.k-callMorph__close:hover{
+  transform: translateY(-1px);
+  background: rgba(255,255,255,.07);
+  border-color: rgba(255,255,255,.16);
+}
+.k-callMorph__close:active{ transform: translateY(0); }
+
+.k-callMorph__fine{
+  margin-top: 8px;
+  padding-left: 10px;
+  color: rgba(255,255,255,.62);
+  font-size: 12.5px;
+  line-height: 1.35;
+}
+
+.k-callMorph__error{
+  margin-top: 10px;
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.45;
+  border: 1px solid rgba(255,120,170,.28);
+  background: rgba(255,120,170,.08);
+  color: rgba(255,255,255,.90);
+}
+
+/* honeypot hidden */
+.k-callMorph__hp{
+  position: absolute;
+  left: -9999px;
+  opacity: 0;
+}
+
+/* mobile fit */
+@media (max-width: 520px){
+  .k-callMorph__panel{
+    width: 100%;
+    max-width: 100%;
+    border-radius: 26px;
+    padding: 14px;
+  }
+  .k-callMorph__row{
+    grid-template-columns: 1fr;
+  }
+  .k-callMorph__send,
+  .k-callMorph__close{
+    width: 100%;
+  }
+  .k-callMorph__hint{
+    position: static;
+    display: inline-block;
+    margin: 0 0 8px 6px;
+  }
+}
+
+/* motion safety */
+@media (prefers-reduced-motion: reduce){
+  .k-callMorph__btn,
+  .k-callMorph__send,
+  .k-callMorph__close{
+    transition: none !important;
+    transform: none !important;
+  }
+  .k-callMorph__chev{ transition: none !important; }
+}

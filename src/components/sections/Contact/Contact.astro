@@ -1,10 +1,9 @@
 ---
 import "./contact.css";
 import ContactForm from "./islands/ContactForm";
-import CtaButton from "../../ui/CtaButton/CtaButton.astro";
+import CallMorph from "./islands/CallMorph";
 
 const EMAIL = "hello@kersivo.co.uk";
-const CALENDLY = "#"; // TODO: wstaw link do bookingu (Calendly) gdy gotowe
 
 // ✅ SEO: landing = h2, /contact = h1
 const { asPage = false } = Astro.props;
@@ -67,7 +66,7 @@ const titleId = asPage ? "contact-page-title" : "contact-title";
               </p>
 
               <div class="k-contact2__cta">
-                <CtaButton href={CALENDLY} label="Book a free call" variant="ghost" magnetic={false} />
+                <CallMorph client:load endpoint="/api/callback" />
               </div>
             </div>
           </div>
