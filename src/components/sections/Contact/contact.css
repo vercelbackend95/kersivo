@@ -69,16 +69,9 @@
       rgba(0,0,0,0) 66%);
 }
 
-/* dots texture */
-.k-contact2__dots{
-  position:absolute;
-  inset: 0;
-  pointer-events:none;
-  opacity: .15;
-  background-image: radial-gradient(rgba(255,255,255,.22) 1px, transparent 1px);
-  background-size: 22px 22px;
-  mask-image: radial-gradient(70% 70% at 75% 35%, #000 26%, rgba(0,0,0,.6) 46%, transparent 74%);
-}
+/* ✅ dots texture REMOVED
+   We keep only the GLOBAL site background dot-grid
+   to avoid double-pattern moiré in the form panel. */
 
 /* Layout grid */
 .k-contact2__grid{

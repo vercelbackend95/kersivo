@@ -19,16 +19,12 @@
    Keeps the mosaic from hugging screen edges.
 */
 .k-services--appTiles .k-container{
-  /* center + width cap */
-  max-width: min(var(--container, 1400px), 1240px);
+  max-width: var(--container, 1400px);
   margin-inline: auto;
-
-  /* global side padding (matches the rest of the site vibe) */
-  padding-inline: clamp(18px, 4.2vw, 28px);
-
-  /* guard against any weird overflow */
+  padding-inline: var(--gutter, 16px);
   box-sizing: border-box;
 }
+
 
 
 /* =========================
