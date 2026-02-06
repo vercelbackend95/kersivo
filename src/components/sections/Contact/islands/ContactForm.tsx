@@ -6,7 +6,7 @@ type ApiErr = { ok: false; error?: string };
 const SERVICE_OPTIONS = ["Website", "Brand + UI", "E-commerce", "Ongoing"] as const;
 const BUDGET_OPTIONS = ["Under £2k", "£2k–£5k", "£5k+"] as const;
 
-const API_ENDPOINT = "/api/lead"; // ✅ bez slasha
+const API_ENDPOINT = "/api/lead/"; // ✅ trailingSlash: "always" — unikamy redirectów
 
 const MAX_FILES = 5;
 const MAX_FILE_BYTES = 3 * 1024 * 1024; // 3MB per image
@@ -41,6 +41,8 @@ export default function ContactForm() {
   const abortRef = useRef<AbortController | null>(null);
   const inFlightRef = useRef(false);
 
+  const toastTimerRef = useRef<number | null>(null);
+
   const [service, setService] = useState<(typeof SERVICE_OPTIONS)[number]>("Website");
   const [budget, setBudget] = useState<(typeof BUDGET_OPTIONS)[number]>("Under £2k");
 
@@ -57,6 +59,23 @@ export default function ContactForm() {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string>("");
+
+  const [toastKey, setToastKey] = useState(0);
+  const [toastOpen, setToastOpen] = useState(false);
+  const toastMsg = "Message sent. We’ll reply within 24 hours.";
+
+  function openToast() {
+    if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
+    setToastKey(Date.now());
+    setToastOpen(true);
+    toastTimerRef.current = window.setTimeout(() => setToastOpen(false), 5200);
+  }
+
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
+    };
+  }, []);
 
   const canSubmit = useMemo(() => {
     if (loading) return false;
@@ -212,6 +231,7 @@ export default function ContactForm() {
       }
 
       setSent(true);
+      openToast();
       clearAllFiles();
       setMessage("");
     } catch (err: any) {
@@ -450,7 +470,26 @@ export default function ContactForm() {
         {loading ? "Sending..." : "Submit inquiry"}
       </button>
 
-      {sent && <div className="k-cform__notice k-cform__notice--ok">Sent. We’ll reply shortly.</div>}
+      {/* ✅ morph toast (success) */}
+      <div className="k-cToastWrap" aria-live="polite" aria-atomic="true">
+        {toastOpen && (
+          <div key={toastKey} className="k-cToast" role="status">
+            <div className="k-cToast__pill">
+              <span className="k-cToast__dot" aria-hidden="true" />
+              <span className="k-cToast__text">{toastMsg}</span>
+              <button
+                type="button"
+                className="k-cToast__x"
+                onClick={() => setToastOpen(false)}
+                aria-label="Dismiss"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
       {error && <div className="k-cform__notice k-cform__notice--err">{error}</div>}
 
       <div className="k-cform__foot">

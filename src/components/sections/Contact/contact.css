@@ -511,6 +511,7 @@
   .k-submit::after{ display:none; }
   .k-contact2__frame.is-highlight::after{ display:none; animation:none !important; }
 }
+
 /* status notes */
 .k-cform__notice{
   border-radius: 14px;
@@ -532,4 +533,127 @@
   border-color: rgba(255,120,170,.28);
   background: rgba(255,120,170,.08);
   color: rgba(255,255,255,.90);
+}
+
+/* =========================================
+   Success morph toast (bubble)
+   Appears after a real successful send
+   ========================================= */
+
+.k-cToastWrap{
+  position: relative;
+  height: 0; /* no layout shift */
+}
+
+.k-cToast{
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -10px;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.k-cToast__pill{
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(560px, 100%);
+  padding: 12px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(190,145,255,.28);
+  background:
+    radial-gradient(700px 220px at 18% 0%, rgba(190,145,255,.20), rgba(0,0,0,0) 62%),
+    linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+  color: rgba(255,255,255,.92);
+  box-shadow:
+    0 26px 120px rgba(0,0,0,.55),
+    0 0 0 1px rgba(0,0,0,.20) inset,
+    0 20px 70px rgba(190,145,255,.12);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transform-origin: 50% 100%;
+  animation: kToastIn 520ms cubic-bezier(.2,.9,.2,1) both, kToastMorph 3200ms ease-in-out 160ms infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+/* soft sheen sweep */
+.k-cToast__pill::after{
+  content: "";
+  position: absolute;
+  inset: -80% -30%;
+  background: radial-gradient(closest-side at 50% 50%, rgba(255,255,255,.55), transparent 72%);
+  transform: translateX(-40%);
+  opacity: 0;
+  filter: blur(10px);
+  pointer-events: none;
+  animation: kToastSheen 1200ms cubic-bezier(.2,.9,.2,1) 120ms both;
+}
+
+.k-cToast__dot{
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: rgba(190,145,255,.95);
+  box-shadow: 0 0 0 4px rgba(190,145,255,.14), 0 0 26px rgba(190,145,255,.24);
+  flex: 0 0 auto;
+}
+
+.k-cToast__text{
+  font-size: 13px;
+  line-height: 1.35;
+  letter-spacing: var(--track-normal, -0.01em);
+  color: rgba(255,255,255,.92);
+  min-width: 0;
+}
+
+.k-cToast__x{
+  appearance: none;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.04);
+  color: rgba(255,255,255,.84);
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  line-height: 1;
+  font-size: 18px;
+  flex: 0 0 auto;
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.k-cToast__x:hover{
+  transform: translateY(-1px);
+  border-color: rgba(190,145,255,.32);
+  background: rgba(190,145,255,.10);
+}
+
+@keyframes kToastIn{
+  0%{ opacity: 0; transform: translateY(10px) scale(.96); filter: blur(6px); }
+  60%{ opacity: 1; filter: blur(0px); }
+  100%{ opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes kToastMorph{
+  0%   { border-radius: 999px 999px 840px 840px; }
+  50%  { border-radius: 880px 999px 999px 820px; }
+  100% { border-radius: 999px 860px 999px 999px; }
+}
+
+@keyframes kToastSheen{
+  0%   { opacity: 0; transform: translateX(-44%); }
+  18%  { opacity: .6; }
+  100% { opacity: 0; transform: translateX(44%); }
+}
+
+/* Motion safety */
+@media (prefers-reduced-motion: reduce){
+  .k-cToast__pill{ animation: none !important; }
+  .k-cToast__pill::after{ display:none; }
+  .k-cToast__x{ transition: none !important; transform: none !important; }
 }
