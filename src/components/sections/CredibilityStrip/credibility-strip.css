@@ -5,25 +5,28 @@
 
 .k-credStrip__shell{
   position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 20px;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.065), rgba(255,255,255,0.028));
+    linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.02));
   box-shadow:
-    0 34px 120px rgba(0, 0, 0, 0.34),
-    0 1px 0 rgba(255, 255, 255, 0.05) inset;
-  backdrop-filter: blur(10px);
+    0 26px 90px rgba(0, 0, 0, 0.26),
+    0 1px 0 rgba(255, 255, 255, 0.04) inset;
+  backdrop-filter: blur(8px);
+
   overflow: clip;
 }
 
 .k-credStrip__shell::before{
   content: "";
   position: absolute;
-  inset: -80px -20% auto;
-  height: 180px;
+  inset: -90px -20% auto;
+  height: 160px;
+
   background:
-    radial-gradient(40% 80% at 20% 10%, rgba(161, 192, 255, 0.15), transparent 60%),
-    radial-gradient(34% 70% at 80% 0%, rgba(208, 154, 255, 0.12), transparent 60%);
+    radial-gradient(40% 80% at 20% 10%, rgba(161, 192, 255, 0.12), transparent 60%),
+    radial-gradient(34% 70% at 80% 0%, rgba(208, 154, 255, 0.08), transparent 60%);
+
   pointer-events: none;
 }
 
@@ -76,7 +79,7 @@
 .k-credStrip__grid{
   position: relative;
   display: grid;
-  gap: 12px;
+  gap: 10px;
   padding: 6px clamp(20px, 5vw, 44px) 18px;
 }
 
@@ -84,7 +87,7 @@
   border: 1px solid rgba(255,255,255,.1);
   border-radius: 14px;
   padding: 16px 16px 14px;
-  background: rgba(8,11,22,.42);
+  background: rgba(8,11,22,.32);
 }
 
 .k-credStrip__card h3{
@@ -105,60 +108,20 @@
 }
 
 .k-credStrip__foot{
-  border-top: 1px solid rgba(255,255,255,.1);
-  padding: 16px clamp(20px, 5vw, 44px) clamp(20px, 4vw, 30px);
+  border-top: 1px solid rgba(255,255,255,.08);
+  padding: 14px clamp(20px, 5vw, 44px) clamp(22px, 4vw, 32px);
+
   display: grid;
-  gap: 16px;
+  gap: 14px;
 }
+.k-credStrip__meta{
+  margin: 0;
+  color: rgba(255,255,255,.68);
+  font-size: 14px;
+  line-height: 1.55;
 
-.k-credStrip__process{
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.k-credStrip__step{
-  display: inline-grid;
-  grid-template-columns: auto auto;
-  grid-template-areas:
-    "index label"
-    "index note";
-
-  align-items: center;
-    column-gap: 8px;
-  row-gap: 2px;
-
-  gap: 8px;
-  min-height: 40px;
-  padding: 7px 12px 6px;
-
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.12);
-  background: rgba(255,255,255,.035);
-}
-
-.k-credStrip__step strong{
-      grid-area: index;
-  font-size: 11px;
-  letter-spacing: .09em;
-  color: rgba(255,255,255,.56);
-  font-weight: var(--w-semibold, 650);
-}
-
-.k-credStrip__step em{
-      grid-area: label;
-  font-style: normal;
-  font-size: 13px;
   letter-spacing: -0.01em;
-  color: rgba(255,255,255,.82);
-  font-weight: var(--w-medium, 560);
-}
-.k-credStrip__step small{
-  grid-area: note;
-  font-size: 11px;
-  line-height: 1.15;
-  letter-spacing: -0.005em;
-  color: rgba(255,255,255,.58);
+    max-width: 64ch;
 }
 
 .k-credStrip__cta{
@@ -170,11 +133,11 @@
 @media (min-width: 860px){
   .k-credStrip__grid{
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 14px;
+    gap: 12px;
   }
 
   .k-credStrip__foot{
-    grid-template-columns: 1fr auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
   }
 

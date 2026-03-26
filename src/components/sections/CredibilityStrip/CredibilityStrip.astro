@@ -18,13 +18,6 @@ const outcomes = [
   },
 ];
 
-const process = [
-  { label: "Discovery", note: "goals and constraints" },
-  { label: "Scope", note: "deliverables and timeline" },
-  { label: "Build", note: "design and development" },
-  { label: "Launch", note: "QA and handover" },
-];
-
 ---
 
 <section class="k-credStrip section" aria-label="How Kersivo works">
@@ -47,20 +40,13 @@ const process = [
       </div>
 
       <div class="k-credStrip__foot" data-cred-item>
-        <div class="k-credStrip__process" aria-label="Delivery process">
-          {process.map((step, i) => (
-            <span class="k-credStrip__step">
-              <strong>{String(i + 1).padStart(2, "0")}</strong>
-              <em>{step.label}</em>
-              <small>{step.note}</small>
+        <p class="k-credStrip__meta">
+          Discovery, scope, build, and launch are handled with clear milestones and documented handover.
+        </p>
 
-            </span>
-          ))}
-        </div>
 
         <div class="k-credStrip__cta">
           <CtaButton href="/contact/#contact" label="Book a discovery call" variant="primary" />
-          <CtaButton href="/work" label="View case studies" variant="ghost" magnetic={false} />
         </div>
       </div>
     </div>
