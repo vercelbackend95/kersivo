@@ -1,85 +1,98 @@
 ---
 import "./credibility-strip.css";
-import CtaButton from "../../ui/CtaButton/CtaButton.astro";
-const trustSignals = [
-  "Structured scope before production",
-  "Mobile-first quality checks before launch",
-  "Practical handover, not agency dependency",
-];
 
-
-const steps = [
+const calibrationPoints = [
   {
-    title: "1. Scope around business goals",
-    text: "We start with offer clarity, target audience, and enquiry goals, then lock scope, timeline, and owners.",
-
-
+    key: "trust",
+    label: "First impression",
+    statement: "Trust has to land fast.",
+    lead: "Especially on mobile, where most first visits and contact decisions happen.",
+    text: "Offer clarity, visual confidence, and proof are placed where hesitation usually starts.",
   },
   {
-    title: "2. Build through decision checkpoints",
-    text: "Design and development move in short approval rounds, so decisions stay focused and delivery stays predictable.",
-
-
-
+    key: "time",
+    label: "Owner attention",
+    statement: "Time is tight.",
+    lead: "The process has to move cleanly, without dragging the owner into agency theatre.",
+    text: "Short decision rounds, defined scope, and a handover your team can actually use.",
   },
   {
-    title: "3. Launch with clean handover",
-    text: "You get a production-ready site, QA across core breakpoints, and handover notes your team can actually use.",
-
-
+    key: "weight",
+    label: "Commercial role",
+    statement: "The site has to pull its weight.",
+    lead: "It should sharpen perception, filter fit, and help better enquiries happen.",
+    text: "Built around enquiry quality, not vanity traffic or decorative complexity.",
   },
 ];
-
 ---
-<section class="k-credStrip section" aria-label="How projects are delivered">
-  <div class="container">
-    <div class="k-credStrip__shell" data-cred-shell>
-      <header class="k-credStrip__head" data-cred-item>
+
+<section class="k-credStrip section" id="built-for" aria-label="Built for UK small businesses">
+  <div class="container k-credStrip__container">
+    <header class="k-credStrip__intro" data-cred-reveal>
+      <div class="k-credStrip__introMeta">
         <p class="k-credStrip__eyebrow">Built for UK small businesses</p>
-        <h2 class="k-credStrip__title">
-          A delivery system built to <span>reduce risk</span> and keep momentum.
-        </h2>
-                <ul class="k-credStrip__signals" aria-label="Project reliability signals">
-          {trustSignals.map((item) => <li>{item}</li>)}
-        </ul>
-
-      </header>
-
-      <div class="k-credStrip__grid" role="list" aria-label="Delivery steps" data-cred-item>
-        {steps.map((item) => (
-
-          <article class="k-credStrip__card" role="listitem">
-            <h3>{item.title}</h3>
-            <p>{item.text}</p>
-          </article>
-        ))}
+        <p class="k-credStrip__micro">Premium work, shaped around real owner pressure.</p>
       </div>
 
-      <div class="k-credStrip__foot" data-cred-item>
-        <p class="k-credStrip__meta">
-          Every project follows one structure: clear scope, controlled production, then launch support with no ambiguity.
+      <div class="k-credStrip__introMain">
+        <h2 class="k-credStrip__title">Built around how small businesses actually decide.</h2>
+        <p class="k-credStrip__lead">
+          Trust has to land quickly, the process has to stay clear, and the site has to
+          help the right enquiries happen. That is what shapes the work.
         </p>
-
-
-        <div class="k-credStrip__cta">
-          <CtaButton href="/contact/#contact" label="Book a discovery call" variant="primary" />
-        </div>
       </div>
+    </header>
+
+    <div
+      class="k-credStrip__field"
+      role="list"
+      aria-label="What shapes the work for UK small businesses"
+    >
+      {calibrationPoints.map((item, index) => (
+        <article
+          class={`k-credStrip__line k-credStrip__line--${item.key}`}
+          role="listitem"
+          data-cred-line
+          style={`--cred-delay:${index * 88}ms;`}
+        >
+          <div class="k-credStrip__lineMain">
+            <p class="k-credStrip__lineLabel">{item.label}</p>
+            <h3 class="k-credStrip__statement">{item.statement}</h3>
+          </div>
+
+          <div class="k-credStrip__lineNote">
+            <p class="k-credStrip__noteLead">{item.lead}</p>
+            <p class="k-credStrip__noteText">{item.text}</p>
+          </div>
+        </article>
+      ))}
     </div>
+
+    <footer class="k-credStrip__bridge" data-cred-reveal>
+      <span class="k-credStrip__bridgeLine" aria-hidden="true"></span>
+      <p class="k-credStrip__bridgeText">
+        Then the decision becomes who can shape that with clarity, discipline, and
+        commercial focus.
+      </p>
+    </footer>
   </div>
 
   <script>
     (() => {
-      const root = document.querySelector("[data-cred-shell]");
+      const root = document.querySelector("#built-for");
       if (!root) return;
 
       const reduced =
         window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const items = root.querySelectorAll("[data-cred-item]");
+      const items = Array.from(
+        root.querySelectorAll("[data-cred-reveal], [data-cred-line]")
+      );
 
       if (!items.length) return;
-      if (reduced) {
-        items.forEach((el) => el.classList.add("is-in"));
+      root.dataset.credEnhanced = "true";
+
+      if (reduced || !("IntersectionObserver" in window)) {
+        items.forEach((item) => item.classList.add("is-in"));
         return;
       }
 
@@ -94,9 +107,11 @@ const steps = [
         { threshold: 0.18 }
       );
 
-      items.forEach((el, i) => {
-        el.style.setProperty("--d", `${i * 85}ms`);
-        io.observe(el);
+      items.forEach((item, index) => {
+        if (!item.style.getPropertyValue("--cred-delay")) {
+          item.style.setProperty("--cred-delay", `${index * 72}ms`);
+        }
+        io.observe(item);
       });
     })();
   </script>

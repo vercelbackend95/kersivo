@@ -1,85 +1,110 @@
 ---
 import "./about.css";
-import CtaButton from "../../ui/CtaButton/CtaButton.astro";
+
 const differentiators = [
   {
-    label: "Positioning quality",
-    title: "Messaging built for buying decisions",
-    text: "Each key page is structured around what prospects need to see before they enquire: offer clarity, proof, and next step.",
+    key: "clarity",
+    number: "01",
+    label: "Positioning clarity",
+    title: "Positioning people understand faster.",
+    text: "Offer clarity, proof, and next step are structured from the start, so the site feels easier to trust and easier to act on.",
+    cues: ["Offer first, not filler", "Proof in decision points"],
   },
   {
+    key: "discipline",
+    number: "02",
     label: "Execution discipline",
-    title: "Premium output without production bloat",
-    text: "Design and development stay lean, documented, and accountable, so quality stays high without dragging your team into noise.",
+    title: "Premium output without production theatre.",
+    text: "Design and development stay lean, accountable, and documented, so quality rises without dragging the client into noise.",
+    cues: ["Calm delivery rhythm", "Lean scope, clean handover"],
   },
   {
+    key: "focus",
+    number: "03",
     label: "Commercial focus",
-    title: "Designed to move visitors to contact",
-    text: "Sections are built with a clear conversion role, especially on mobile where most first visits and contact decisions happen.",
+    title: "Pages shaped around better enquiries.",
+    text: "Each section has a conversion role, especially on mobile, where first impressions and contact decisions usually happen.",
+    cues: ["Mobile-first contact logic", "Built for enquiry quality"],
   },
-
 ];
+
 const proofSignals = [
   {
-    metric: "Live client site",
-    value: "sewingataga.co.uk",
-
-  },
-  {
-    metric: "Build approach",
+    metric: "Build model",
     value: "Astro-first, performance-led",
-
-
   },
   {
     metric: "Best-fit clients",
     value: "UK service-led small businesses",
-
-
+  },
+  {
+    metric: "Live reference",
+    value: "sewingataga.co.uk",
   },
 ];
-
 ---
 
 <section class="k-about section" id="about" aria-label="Why clients choose Kersivo">
-  <div class="container">
-    <div class="k-about__grid">
- 
-      <div class="k-about__left">
+  <div class="container k-about__container">
+    <header class="k-about__head">
+      <div class="k-about__headMeta">
         <p class="k-about__eyebrow">Why clients choose Kersivo</p>
+      </div>
+
+      <div class="k-about__headMain">
         <h2 class="k-about__title">
-                  Strategic websites for teams that need <span class="k-about__muted">better enquiries, not just better visuals.</span>
+          Premium by feel. <span class="k-about__muted">Commercial by design.</span>
         </h2>
         <p class="k-about__intro">
-          Once process is clear, the real decision is execution quality. Kersivo combines premium presentation with practical conversion logic so your website helps sales, not only brand perception.
+          Once the process is clear, the real decision is whether the site sharpens positioning,
+          lifts perceived quality, and helps the right people move to contact with confidence.
+          That is where Kersivo tends to get chosen.
         </p>
-        <div class="k-about__ctaRow">
-          <CtaButton href="/contact/#contact" label="Start your project" variant="primary" />
-          <CtaButton href="/packages" label="View packages" variant="ghost" />
-        </div>
-
-
       </div>
-      <div class="k-about__right" role="list" aria-label="Key reasons clients choose Kersivo">
-        {differentiators.map((item) => (
-          <article class="k-about__card" role="listitem">
-            <p class="k-about__card-label">{item.label}</p>
-            <h3>{item.title}</h3>
-            <p>{item.text}</p>
-          </article>
-        ))}
+    </header>
 
+    <div class="k-about__ledger" role="list" aria-label="Key reasons clients choose Kersivo">
+      {differentiators.map((item) => (
+        <article class={`k-about__row k-about__row--${item.key}`} role="listitem">
+          <div class="k-about__rowIndex" aria-hidden="true">{item.number}</div>
 
-      </div>
-    </div>
-        <div class="k-about__proofBand" aria-label="Proof signals">
-      {proofSignals.map((item) => (
-        <div class="k-about__proofItem">
-          <small>{item.metric}</small>
-          <strong>{item.value}</strong>
-        </div>
+          <div class="k-about__rowMain">
+            <p class="k-about__rowLabel">{item.label}</p>
+            <h3 class="k-about__rowTitle">{item.title}</h3>
+          </div>
+
+          <div class="k-about__rowAside">
+            <p class="k-about__rowText">{item.text}</p>
+
+            <div class="k-about__cues" aria-label={`${item.label} proof cues`}>
+              {item.cues.map((cue) => (
+                <span class="k-about__cue">{cue}</span>
+              ))}
+            </div>
+          </div>
+        </article>
       ))}
     </div>
-  </div>
 
+    <footer class="k-about__foot">
+      <div class="k-about__proofStrip" aria-label="Proof signals">
+        {proofSignals.map((item) => (
+          <div class="k-about__proofItem">
+            <small>{item.metric}</small>
+            <strong>{item.value}</strong>
+          </div>
+        ))}
+      </div>
+
+      <div class="k-about__closing">
+        <p class="k-about__closingText">
+          Usually chosen when the business is already strong and the website needs to catch up.
+        </p>
+        <a class="k-about__link" href="/work/">
+          <span>See how this shows up in live work</span>
+          <span aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+    </footer>
+  </div>
 </section>
