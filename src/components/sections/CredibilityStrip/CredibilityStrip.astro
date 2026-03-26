@@ -1,0 +1,92 @@
+---
+import "./credibility-strip.css";
+import CtaButton from "../../ui/CtaButton/CtaButton.astro";
+
+const outcomes = [
+  {
+    title: "Clear scope before build",
+    text: "Defined deliverables, timeline, and priorities before production starts.",
+  },
+  {
+    title: "Conversion-first structure",
+    text: "Pages shaped around trust, clarity, and enquiry-driven user journeys.",
+  },
+  {
+    title: "Fast, maintainable delivery",
+    text: "Mobile-first, performance-focused builds with clean and reliable foundations.",
+  },
+];
+
+const process = ["Discovery", "Scope", "Build", "Launch"];
+---
+
+<section class="k-credStrip section" aria-label="How Kersivo works">
+  <div class="container">
+    <div class="k-credStrip__shell" data-cred-shell>
+      <header class="k-credStrip__head" data-cred-item>
+        <p class="k-credStrip__eyebrow">Built for UK small businesses</p>
+        <h2 class="k-credStrip__title">
+          A focused process designed to <span>earn trust</span> and generate qualified enquiries.
+        </h2>
+      </header>
+
+      <div class="k-credStrip__grid" role="list" aria-label="What clients get" data-cred-item>
+        {outcomes.map((item) => (
+          <article class="k-credStrip__card" role="listitem">
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
+          </article>
+        ))}
+      </div>
+
+      <div class="k-credStrip__foot" data-cred-item>
+        <div class="k-credStrip__process" aria-label="Delivery process">
+          {process.map((step, i) => (
+            <span class="k-credStrip__step">
+              <strong>{String(i + 1).padStart(2, "0")}</strong>
+              <em>{step}</em>
+            </span>
+          ))}
+        </div>
+
+        <div class="k-credStrip__cta">
+          <CtaButton href="/contact/#contact" label="Book a discovery call" variant="primary" />
+          <CtaButton href="/work" label="View work demos" variant="ghost" magnetic={false} />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const root = document.querySelector("[data-cred-shell]");
+      if (!root) return;
+
+      const reduced =
+        window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const items = root.querySelectorAll("[data-cred-item]");
+
+      if (!items.length) return;
+      if (reduced) {
+        items.forEach((el) => el.classList.add("is-in"));
+        return;
+      }
+
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add("is-in");
+            io.unobserve(entry.target);
+          });
+        },
+        { threshold: 0.18 }
+      );
+
+      items.forEach((el, i) => {
+        el.style.setProperty("--d", `${i * 85}ms`);
+        io.observe(el);
+      });
+    })();
+  </script>
+</section>
