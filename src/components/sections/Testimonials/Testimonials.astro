@@ -1,112 +1,149 @@
 ---
 import "./testimonials.css";
-import ReviewsCarousel from "./ReviewsCarousel";
 
-
-type Testimonial = {
+type ClientNote = {
   quote: string;
   name: string;
   role: string;
-  avatar?: string; // optional local/public path
-  blank?: boolean; // keeps layout but can be empty
+  context?: string;
+};
+
+type TrustSignal = {
+  label: string;
+  title: string;
+  text: string;
 };
 
 interface Props {
   kicker?: string;
   title?: string;
   subtitle?: string;
-
-  leftStatValue?: string;
-  leftStatLabel?: string;
-
-  rightStatValue?: string;
-  rightStatLabel?: string;
-
-  avatars?: { label: string }[];
-  testimonials?: Testimonial[];
+  reference?: string;
+  noteLabel?: string;
+  note?: ClientNote;
+  standardsEyebrow?: string;
+  standardsTitle?: string;
+  standardsIntro?: string;
+  signals?: TrustSignal[];
 }
 
 const {
-  kicker = "REVIEWS",
-  title = "What people say",
-  subtitle = "Early-stage studio, real client feedback. Quality over volume.",
-
-  leftStatValue = "1",
-  leftStatLabel = "Live client project delivered",
-
-
-  rightStatValue = "2025",
-  rightStatLabel = "Studio launch year",
-
-
-
-  avatars = [{ label: "S" }],
-
-  testimonials = [
+  kicker = "WORKING STANDARD",
+  title = "The studio is early. The standard is not.",
+  subtitle =
+    "Selected feedback, backed by the things that actually build trust: fast mobile performance, conversion-aware structure, clean implementation, and a calm delivery process.",
+  reference = "Live reference: sewingataga.co.uk",
+  noteLabel = "Selected client note",
+  note = {
+    quote:
+      "Kersivo organised everything clearly, moved fast, and delivered a website that feels premium while still being practical for day-to-day enquiries.",
+    name: "Sewing Ataga",
+    role: "Tailoring business, UK",
+    context: "Live client website",
+  },
+  standardsEyebrow = "Trust signals",
+  standardsTitle = "How the work earns confidence.",
+  standardsIntro =
+    "This is the layer beneath the visual finish: build quality, page logic, and a delivery process that stays clear from scope to launch.",
+  signals = [
     {
-      quote:
-        "Kersivo organised everything clearly, moved fast, and delivered a website that feels premium while still being practical for day-to-day enquiries.",
-      name: "Sewing Ataga",
-      role: "Tailoring business (UK)",
-
+      label: "Performance-first",
+      title: "Fast where it matters.",
+      text:
+        "Astro-first builds, lean assets, and restrained motion keep the site feeling sharp on mobile and on slower connections.",
+    },
+    {
+      label: "Mobile-first thinking",
+      title: "The primary journey starts on a phone.",
+      text:
+        "Layout, hierarchy, and contact prompts are designed around the screen most service-business visitors actually use.",
+    },
+    {
+      label: "Conversion-aware structure",
+      title: "Each section has a job to do.",
+      text:
+        "Offer clarity, proof, and next steps are placed deliberately so the site helps the right visitor move to enquiry faster.",
+    },
+    {
+      label: "Clean implementation",
+      title: "Premium finish without future mess.",
+      text:
+        "Readable code, tidy handover, and a straightforward feedback rhythm keep the site easy to maintain after launch.",
     },
   ],
 } = Astro.props as Props;
 ---
 
-<section id="reviews" class="section k-reviews" data-section>
+<section
+  id="reviews"
+  class="section k-reviews"
+  data-section
+  data-light-zone
+  data-light-x="58"
+  data-light-y="44"
+  data-light-size="0.96"
+  data-light-strength="0.62"
+  data-light-focus="0.34"
+>
   <div class="container">
     <header class="k-reviews__head sectionTitle">
-      <h6>{kicker}</h6>
+      <div class="k-reviews__titles">
+        <h6>{kicker}</h6>
+        <h2>{title}</h2>
+        <p class="k-reviews__sub measure">{subtitle}</p>
+      </div>
 
-      <div class="k-reviews__headRow">
-        <div class="k-reviews__titles">
-          <h2>{title}</h2>
-          <p class="k-reviews__sub measure">{subtitle}</p>
-        </div>
-
-        <div class="k-reviews__note" aria-hidden="true">
-          <span class="k-reviews__noteDot"></span>
-          <span>Case reference: sewingataga.co.uk</span>
-        </div>
+      <div class="k-reviews__note" aria-label="Live project reference">
+        <span class="k-reviews__noteDot"></span>
+        <span>{reference}</span>
       </div>
     </header>
 
     <div class="k-reviews__grid">
-      <!-- LEFT: portrait + big stat -->
-      <article class="k-reviews__card k-reviews__card--left" aria-label="Satisfaction highlight">
-        <div class="k-reviews__portrait" role="img" aria-label="Studio portrait placeholder">
-          <div class="k-reviews__portraitGlow" aria-hidden="true"></div>
-          <div class="k-reviews__portraitGrain" aria-hidden="true"></div>
+      <article class="k-reviews__card k-reviews__card--note" aria-labelledby="client-note-heading">
+        <div class="k-reviews__cardMeta">
+          <p class="k-reviews__eyebrow">{noteLabel}</p>
+          {note.context && <span class="k-reviews__pill">{note.context}</span>}
         </div>
 
-        <div class="k-reviews__stat">
-          <div class="k-reviews__statValue">{leftStatValue}</div>
-          <div class="k-reviews__statLabel">{leftStatLabel}</div>
-        </div>
+        <blockquote class="k-reviews__quote">
+          <span class="k-reviews__quoteMark" aria-hidden="true">"</span>
+          <p id="client-note-heading">{note.quote}</p>
+        </blockquote>
+
+        <footer class="k-reviews__client">
+          <div class="k-reviews__clientIdentity">
+            <span class="k-reviews__clientName">{note.name}</span>
+            <span class="k-reviews__clientRole">{note.role}</span>
+          </div>
+
+          <span class="k-reviews__clientSeal">Selected feedback</span>
+        </footer>
       </article>
 
-      <!-- RIGHT: mini stat + main quote carousel -->
-      <div class="k-reviews__right">
-        <article class="k-reviews__card k-reviews__card--mini" aria-label="Happy customers highlight">
-          <div class="k-reviews__avatars" aria-hidden="true">
-            {avatars.slice(0, 4).map((a, i) => (
-              <span class="k-reviews__avatar" style={`--i:${i}`} title={a.label}>
-                <span class="k-reviews__avatarInner">{a.label}</span>
-              </span>
-            ))}
-          </div>
+      <article class="k-reviews__card k-reviews__card--standards" aria-labelledby="trust-signals-heading">
+        <div class="k-reviews__standardsHead">
+          <p class="k-reviews__eyebrow">{standardsEyebrow}</p>
+          <h3 id="trust-signals-heading">{standardsTitle}</h3>
+          <p>{standardsIntro}</p>
+        </div>
 
-          <div class="k-reviews__miniStat">
-            <div class="k-reviews__miniValue">{rightStatValue}</div>
-            <div class="k-reviews__miniLabel">{rightStatLabel}</div>
-          </div>
-        </article>
+        <div class="k-reviews__signals" role="list" aria-label="Trust signals">
+          {signals.map((signal, index) => (
+            <article class="k-reviews__signal" role="listitem">
+              <div class="k-reviews__signalIndex" aria-hidden="true">
+                {String(index + 1).padStart(2, "0")}
+              </div>
 
-        <article class="k-reviews__card k-reviews__card--main" aria-label="Testimonials">
-          <ReviewsCarousel testimonials={testimonials.filter(t => !t.blank && t.quote?.trim())} client:visible />
-        </article>
-      </div>
+              <div class="k-reviews__signalBody">
+                <p class="k-reviews__signalLabel">{signal.label}</p>
+                <h4 class="k-reviews__signalTitle">{signal.title}</h4>
+                <p class="k-reviews__signalText">{signal.text}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </article>
     </div>
   </div>
 </section>

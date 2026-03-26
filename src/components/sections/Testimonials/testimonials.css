@@ -1,32 +1,22 @@
-/* =========================
-   Testimonials / Reviews — premium panel
-   (Carousel: stage + arrows only)
-   ========================= */
-
-.k-reviews{
-  padding: clamp(56px, 7vw, 96px) 0;
-}
-
-/* Head */
-.k-reviews__headRow{
+.k-reviews__head{
   display: grid;
-  gap: 14px;
-  align-items: end;
+  gap: 16px;
 }
 
-@media (min-width: 820px){
-  .k-reviews__headRow{
-    grid-template-columns: 1fr auto;
-    gap: 18px;
-  }
+.k-reviews__titles{
+  display: grid;
+  gap: 10px;
 }
 
-.k-reviews__sub{ max-width: 62ch; }
+.k-reviews__sub{
+  color: rgba(255,255,255,.74);
+}
 
 .k-reviews__note{
   display: inline-flex;
   align-items: center;
   gap: 10px;
+  width: fit-content;
   padding: 10px 12px;
   border-radius: 999px;
   border: 1px solid rgba(255,255,255,.10);
@@ -34,48 +24,31 @@
   color: rgba(255,255,255,.76);
   font-size: 13px;
   letter-spacing: -0.01em;
-  user-select: none;
-  justify-self: start;
-}
-
-@media (min-width: 820px){
-  .k-reviews__note{ justify-self: end; }
 }
 
 .k-reviews__noteDot{
   width: 9px;
   height: 9px;
   border-radius: 999px;
-  background: rgba(190,145,255,.85);
-  box-shadow: 0 0 0 3px rgba(190,145,255,.18);
+  background: rgba(var(--scene-steel-rgb), .82);
+  box-shadow: 0 0 0 3px rgba(var(--scene-steel-rgb), .16);
 }
 
-/* Grid */
 .k-reviews__grid{
-  margin-top: clamp(18px, 3vw, 28px);
+  margin-top: clamp(22px, 3vw, 32px);
   display: grid;
   gap: 18px;
 }
 
-@media (min-width: 980px){
-  .k-reviews__grid{
-    grid-template-columns: 0.95fr 1.45fr;
-    gap: 18px;
-    align-items: stretch;
-  }
-}
-
-.k-reviews__right{
-  display: grid;
-  gap: 18px;
-}
-
-/* Card base */
 .k-reviews__card{
   position: relative;
-  border-radius: 26px;
+  border-radius: 28px;
   border: 1px solid rgba(255,255,255,.11);
-  background: rgba(255,255,255,.03);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03)),
+    radial-gradient(1200px 420px at 18% 10%, rgba(var(--scene-ivory-rgb), .08), transparent 58%),
+    radial-gradient(900px 380px at 82% 30%, rgba(var(--scene-steel-rgb), .08), transparent 62%),
+    rgba(255,255,255,.03);
   overflow: hidden;
   isolation: isolate;
 }
@@ -86,451 +59,228 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 0;
 }
 
 .k-reviews__card::before{
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.10), transparent 26%),
-    radial-gradient(1200px 420px at 20% 10%, rgba(190,145,255,.10), transparent 60%),
-    radial-gradient(900px 380px at 80% 30%, rgba(120,255,220,.06), transparent 62%);
-  opacity: .9;
+  background: linear-gradient(180deg, rgba(255,255,255,.08), transparent 20%);
+  opacity: .8;
 }
 
 .k-reviews__card::after{
-  inset: -2px;
-  background: radial-gradient(800px 240px at 30% 0%, rgba(255,255,255,.10), transparent 55%);
-  opacity: .55;
+  inset: -18% -10% auto;
+  height: 55%;
+  background: radial-gradient(520px 240px at 30% 0%, rgba(255,255,255,.08), transparent 65%);
+  opacity: .65;
 }
 
-.k-reviews__card > *{ position: relative; z-index: 1; }
+.k-reviews__card > *{
+  position: relative;
+  z-index: 1;
+}
 
 @media (hover:hover){
   .k-reviews__card{
     transition: transform .28s ease, border-color .28s ease, background-color .28s ease;
   }
+
   .k-reviews__card:hover{
-    transform: translateY(-1px);
+    transform: translateY(-2px);
     border-color: rgba(255,255,255,.16);
-    background: rgba(255,255,255,.035);
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.065), rgba(255,255,255,.035)),
+      radial-gradient(1200px 420px at 18% 10%, rgba(var(--scene-ivory-rgb), .09), transparent 58%),
+      radial-gradient(900px 380px at 82% 30%, rgba(var(--scene-steel-rgb), .09), transparent 62%),
+      rgba(255,255,255,.035);
   }
 }
 
-/* LEFT */
-.k-reviews__card--left{
-  min-height: 600px;
+.k-reviews__card--note{
   display: grid;
-  grid-template-rows: 1fr auto;
+  gap: clamp(28px, 5vw, 56px);
+  align-content: space-between;
+  padding: clamp(22px, 3vw, 34px);
 }
 
-@media (max-width: 979px){
-  .k-reviews__card--left{ min-height: 480px; }
-}
-
-@media (max-width: 520px){
-  .k-reviews__card--left{ min-height: 420px; }
-}
-
-.k-reviews__portrait{
-  position: relative;
-  width: 100%;
-  height: 100%;
-  min-height: 320px;
-  background:
-    radial-gradient(500px 420px at 40% 30%, rgba(255,255,255,.08), transparent 62%),
-    radial-gradient(600px 420px at 10% 40%, rgba(255,60,60,.18), transparent 62%),
-    linear-gradient(180deg, rgba(0,0,0,.4), rgba(0,0,0,.75));
-}
-
-.k-reviews__portraitGlow{
-  position: absolute;
-  inset: -20% -10% -10% -30%;
-  background: radial-gradient(420px 520px at 35% 40%, rgba(255,60,60,.30), transparent 65%);
-  filter: blur(18px);
-  opacity: .85;
-}
-
-.k-reviews__portraitGrain{
-  position: absolute;
-  inset: 0;
-  background-image:
-    radial-gradient(circle at 20% 30%, rgba(255,255,255,.04), transparent 40%),
-    radial-gradient(circle at 70% 60%, rgba(255,255,255,.03), transparent 45%),
-    repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0 1px, transparent 1px 3px);
-  opacity: .25;
-  mix-blend-mode: overlay;
-}
-
-.k-reviews__stat{
-  padding: 26px 26px 28px;
-  display: grid;
-  gap: 8px;
-}
-
-.k-reviews__statValue{
-  font-size: clamp(52px, 5.2vw, 84px);
-  line-height: 0.95;
-  letter-spacing: -0.06em;
-  font-weight: 880;
-  color: rgba(255,255,255,.96);
-}
-
-.k-reviews__statLabel{
-  color: rgba(255,255,255,.70);
-  font-size: 14px;
-  letter-spacing: -0.01em;
-}
-
-/* MINI */
-.k-reviews__card--mini{
-  padding: 18px 20px;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: 14px;
-}
-
-.k-reviews__avatars{
-  display: inline-flex;
-  align-items: center;
-  padding-left: 6px;
-}
-
-.k-reviews__avatar{
-  width: 44px;
-  height: 44px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.14);
-  background:
-    radial-gradient(22px 22px at 30% 30%, rgba(255,255,255,.18), transparent 60%),
-    radial-gradient(40px 26px at 70% 70%, rgba(190,145,255,.20), transparent 60%),
-    rgba(255,255,255,.05);
-  box-shadow: 0 10px 26px rgba(0,0,0,.35);
-  margin-left: -12px;
-  position: relative;
-  z-index: calc(10 - var(--i));
-  display: grid;
-  place-items: center;
-}
-
-.k-reviews__avatarInner{
-  font-size: 12px;
-  color: rgba(255,255,255,.78);
-  font-weight: 650;
-  letter-spacing: -0.02em;
-  opacity: .85;
-}
-
-.k-reviews__miniStat{
-  display: grid;
-  gap: 2px;
-  text-align: left;
-}
-
-.k-reviews__miniValue{
-  font-size: clamp(34px, 3.2vw, 52px);
-  line-height: 1;
-  letter-spacing: -0.05em;
-  font-weight: 880;
-}
-
-.k-reviews__miniLabel{
-  color: rgba(255,255,255,.72);
-  font-size: 14px;
-  letter-spacing: -0.01em;
-}
-
-/* MAIN (holder) */
-.k-reviews__card--main{
-  padding: 0;
-  min-height: 360px;
-}
-
-/* ✅ Single bubble: main card becomes a clean holder (no 2nd glass layer) */
-.k-reviews__card--main{
-  background: transparent;
-  border: 0;
-  overflow: visible;
-}
-
-.k-reviews__card--main::before,
-.k-reviews__card--main::after{
-  content: none;
-}
-
-@media (hover:hover){
-  .k-reviews__card--main:hover{
-    transform: none;
-    background: transparent;
-    border-color: transparent;
-  }
-}
-
-/* Disclaimer (ok to keep even if you remove it from Astro) */
-.k-reviews__disclaimer{
-  margin-top: 14px;
-  font-size: 12px;
-  color: rgba(255,255,255,.55);
-  letter-spacing: -0.01em;
-  max-width: 86ch;
-}
-
-/* =========================================================
-   React + Framer Motion carousel
-   (stage + arrows only — no top, no dots, no progress)
-   ========================================================= */
-
-.k-reviewsCar{
-  height: 100%;
-  min-height: 0;
-  display: grid;
-  grid-template-rows: 1fr;
-  padding: 0; /* full width like the top card */
-}
-
-.k-reviewsCar__stage{
-  position: relative;
-  border-radius: 26px;
-  border: 1px solid rgba(255,255,255,.10);
-  background:
-    radial-gradient(900px 420px at 20% 10%, rgba(190,145,255,.12), transparent 60%),
-    radial-gradient(900px 420px at 80% 30%, rgba(120,255,220,.08), transparent 62%),
-    rgba(255,255,255,.02);
-  overflow: hidden;
-
-  /* ✅ bubble size stays stable */
-  padding: 0;
-
-  /* ✅ keep height stable + align with left card */
-  display: flex;
-  align-items: center;
-  height: 100%;
-  min-height: 0;
-
-  isolation: isolate;
-}
-
-.k-reviewsCar__glow{
-  position:absolute;
-  inset: -35% -25% -40% -30%;
-  background:
-    radial-gradient(420px 520px at 30% 40%, rgba(190,145,255,.18), transparent 60%),
-    radial-gradient(420px 520px at 70% 30%, rgba(140,170,255,.14), transparent 60%);
-  filter: blur(18px);
-  opacity: .9;
-  pointer-events:none;
-  z-index: 0;
-}
-
-.k-reviewsCar__grain{
-  position:absolute;
-  inset: 0;
-  background-image:
-    radial-gradient(circle at 20% 30%, rgba(255,255,255,.04), transparent 40%),
-    radial-gradient(circle at 70% 60%, rgba(255,255,255,.03), transparent 45%),
-    repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0 1px, transparent 1px 3px);
-  opacity: .22;
-  mix-blend-mode: overlay;
-  pointer-events:none;
-  z-index: 0;
-}
-
-.k-reviewsCar__slide{
-  position: relative;
-  z-index: 1;
-  display: grid;
-  gap: 18px;
-  align-content: center;
-
-  width: 100%;
-  min-height: 0;
-
-  /* readable measure */
-  max-width: min(74ch, 100%);
-
-  /* ✅ internal padding only (doesn't resize bubble) */
-  padding-left: 26px;
-  padding-right: 26px;
-
-  /* ✅ reserve space for the NEW bottom pill */
-  padding-top: 22px;
-  padding-bottom: 96px;
-}
-
-.k-reviewsCar__quote{
-  margin: 0;
-  font-size: clamp(18px, 1.5vw, 22px);
-  line-height: 1.5;
-  letter-spacing: -0.02em;
-  color: rgba(255,255,255,.88);
-}
-
-.k-reviewsCar__quoteMark{
-  color: rgba(190,145,255,.62);
-  font-weight: 900;
-  letter-spacing: -0.06em;
-  margin-right: 6px;
-}
-
-.k-reviewsCar__quoteMark--end{
-  margin-left: 6px;
-  margin-right: 0;
-}
-
-/* Who (left side inside pill) */
-.k-reviewsCar__whoLeft{
-  display:grid;
-  gap: 2px;
-}
-
-.k-reviewsCar__name{
-  font-weight: 780;
-  letter-spacing: -0.02em;
-  color: rgba(255,255,255,.92);
-  font-size: 14px;
-}
-
-.k-reviewsCar__role{
-  font-size: 13px;
-  color: rgba(255,255,255,.68);
-  letter-spacing: -0.01em;
-}
-
-/* ✅ ONE WIDE PILL: who (left) + arrows (right) */
-.k-reviewsCar__whoPill{
-  position: absolute;
-  left: 22px;
-  right: 22px;
-  bottom: 22px;
-  z-index: 2;
-
+.k-reviews__cardMeta{
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
 
-  padding: 10px 10px 10px 14px;
+.k-reviews__eyebrow{
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.58);
+}
+
+.k-reviews__pill,
+.k-reviews__clientSeal{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
   border-radius: 999px;
-
+  border: 1px solid rgba(255,255,255,.10);
   background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.12);
-  backdrop-filter: blur(12px);
-
-  box-shadow:
-    0 18px 70px rgba(0,0,0,.30),
-    0 0 0 1px rgba(255,255,255,.06) inset;
+  color: rgba(255,255,255,.74);
+  font-size: 12px;
+  letter-spacing: -0.01em;
 }
 
-/* Arrows inside pill */
-.k-reviewsCar__arrows{
-  display:flex;
+.k-reviews__quote{
+  display: grid;
+  gap: 18px;
+  margin: 0;
+}
+
+.k-reviews__quoteMark{
+  font-size: clamp(42px, 6vw, 72px);
+  line-height: .9;
+  font-weight: 780;
+  color: rgba(var(--scene-ivory-rgb), .52);
+}
+
+.k-reviews__quote p{
+  margin: 0;
+  max-width: 16ch;
+  font-size: clamp(24px, 3vw, 40px);
+  line-height: 1.22;
+  letter-spacing: -0.05em;
+  color: rgba(255,255,255,.95);
+}
+
+.k-reviews__client{
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,.09);
+}
+
+.k-reviews__clientIdentity{
+  display: grid;
+  gap: 4px;
+}
+
+.k-reviews__clientName{
+  font-size: 16px;
+  font-weight: 780;
+  letter-spacing: -0.02em;
+  color: rgba(255,255,255,.92);
+}
+
+.k-reviews__clientRole{
+  font-size: 14px;
+  color: rgba(255,255,255,.66);
+  letter-spacing: -0.01em;
+}
+
+.k-reviews__card--standards{
+  display: grid;
+  gap: 24px;
+  padding: clamp(22px, 3vw, 34px);
+}
+
+.k-reviews__standardsHead{
+  display: grid;
   gap: 10px;
-  flex: 0 0 auto;
 }
 
-.k-reviewsCar__arrow{
-  width: 44px;
-  height: 44px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.12);
-  background: rgba(255,255,255,.03);
-  color: rgba(255,255,255,.86);
-  display:grid;
-  place-items:center;
-  cursor:pointer;
-  transition: transform .22s ease, background .22s ease, border-color .22s ease;
-  user-select:none;
-  flex: 0 0 auto;
+.k-reviews__standardsHead h3{
+  font-size: clamp(26px, 2.8vw, 34px);
+  line-height: 1.08;
 }
 
-.k-reviewsCar__arrow:hover{
-  transform: translateY(-1px);
-  background: rgba(255,255,255,.05);
-  border-color: rgba(190,145,255,.22);
+.k-reviews__standardsHead p:last-child{
+  color: rgba(255,255,255,.70);
 }
 
-.k-reviewsCar__arrow:active{
-  transform: translateY(0px) scale(.98);
+.k-reviews__signals{
+  display: grid;
 }
 
-.k-reviewsCar__arrow:focus-visible{
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(190,145,255,.22);
+.k-reviews__signal{
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 16px;
+  padding: 18px 0;
+  border-top: 1px solid rgba(255,255,255,.09);
 }
 
-@media (max-width: 520px){
-  .k-reviewsCar__slide{
-    padding-left: 18px;
-    padding-right: 18px;
-    padding-top: 18px;
-    padding-bottom: 88px;
+.k-reviews__signalIndex{
+  padding-top: 2px;
+  font-size: 12px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.42);
+}
+
+.k-reviews__signalBody{
+  display: grid;
+  gap: 6px;
+}
+
+.k-reviews__signalLabel{
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.52);
+}
+
+.k-reviews__signalTitle{
+  font-size: clamp(18px, 1.8vw, 21px);
+  line-height: 1.18;
+  letter-spacing: -0.03em;
+}
+
+.k-reviews__signalText{
+  color: rgba(255,255,255,.72);
+}
+
+@media (min-width: 900px){
+  .k-reviews__head{
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 20px;
   }
 
-  .k-reviewsCar__whoPill{
-    left: 14px;
-    right: 14px;
-    bottom: 14px;
-    padding: 9px 9px 9px 12px;
-  }
-
-  .k-reviewsCar__arrows{ gap: 8px; }
-
-  .k-reviewsCar__arrow{
-    width: 42px;
-    height: 42px;
+  .k-reviews__note{
+    justify-self: end;
   }
 }
 
-@media (prefers-reduced-motion: reduce){
-  .k-reviewsCar__arrow{
-    transition: none !important;
-    transform: none !important;
-  }
-}
-
-/* =========================================================
-   HARD LOCK: right column ends exactly where left ends
-   (desktop only)
-   ========================================================= */
 @media (min-width: 980px){
   .k-reviews__grid{
-    /* One height to rule them all.
-       If you want the whole block lower, drop this to 560 / 540 */
-    --kReviewsH: 600px;
+    grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr);
     align-items: stretch;
   }
 
-  .k-reviews__card--left{
-    height: var(--kReviewsH);
-    min-height: 0;
+  .k-reviews__card--note,
+  .k-reviews__card--standards{
+    min-height: 100%;
+  }
+}
+
+@media (max-width: 720px){
+  .k-reviews__quote p{
+    max-width: none;
+  }
+}
+
+@media (max-width: 560px){
+  .k-reviews__signal{
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
 
-  .k-reviews__right{
-    height: var(--kReviewsH);
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-  }
-
-  .k-reviews__card--mini{
-    flex: 0 0 132px;
-  }
-
-  .k-reviews__card--main{
-    flex: 1 1 auto;
-    min-height: 0;
-    display: flex;
-  }
-
-  .k-reviewsCar{
-    flex: 1 1 auto;
-    min-height: 0;
-    height: 100%;
-  }
-
-  .k-reviewsCar__stage{
-    height: 100%;
-    min-height: 0;
+  .k-reviews__signalIndex{
+    padding-top: 0;
   }
 }

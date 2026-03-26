@@ -4,37 +4,184 @@ import "./site-bg.css";
 
 
 <div class="site-bg" aria-hidden="true">
-  <div class="site-bg__spot"></div>
-  <div class="site-bg__grid"></div>
+  <div class="site-bg__base"></div>
+  <div class="site-bg__lamp"></div>
+  <div class="site-bg__beam"></div>
+  <div class="site-bg__architecture"></div>
   <div class="site-bg__grain"></div>
   <div class="site-bg__vignette"></div>
 </div>
 
 <script>
   (() => {
+    const root = document.documentElement;
     const reduced =
       window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced) return;
 
-    let raf = 0;
-    let x = 0, y = 0;
+    const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+    const mix = (from, to, amount) => from + (to - from) * amount;
 
-    const paint = () => {
-      raf = 0;
-      const mx = (x / window.innerWidth) * 100;
-      const my = (y / window.innerHeight) * 100;
-      document.documentElement.style.setProperty("--mx", mx.toFixed(2) + "%");
-      document.documentElement.style.setProperty("--my", my.toFixed(2) + "%");
+    const read = (el, attribute, fallback) => {
+      const raw = el.getAttribute(attribute);
+      const value = raw == null ? Number.NaN : Number.parseFloat(raw);
+      return Number.isFinite(value) ? value : fallback;
     };
 
-    window.addEventListener(
-      "pointermove",
-      (e) => {
-        x = e.clientX;
-        y = e.clientY;
-        if (!raf) raf = requestAnimationFrame(paint);
-      },
-      { passive: true }
-    );
+    let zones = [];
+    let raf = 0;
+
+    const defaults = {
+      x: 56,
+      y: 18,
+      size: 1.04,
+      strength: 0.74,
+      spread: 0.78,
+    };
+
+    let current = { ...defaults };
+    let target = { ...defaults };
+    let progress = 0;
+
+    const collectZones = () => {
+      zones = Array.from(document.querySelectorAll("[data-light-zone]"));
+    };
+
+    const getFallback = (scrollProgress) => ({
+      x: mix(54, 60, scrollProgress),
+      y: mix(16, 30, scrollProgress),
+      size: mix(1.03, 1.12, Math.min(scrollProgress * 1.08, 1)),
+      strength: mix(0.8, 0.62, scrollProgress),
+      spread: mix(0.72, 0.92, scrollProgress),
+    });
+
+    const setVars = (state, scrollProgress) => {
+      root.style.setProperty("--lamp-x", `${state.x.toFixed(2)}%`);
+      root.style.setProperty("--lamp-y", `${state.y.toFixed(2)}%`);
+      root.style.setProperty("--lamp-size", state.size.toFixed(3));
+      root.style.setProperty("--lamp-strength", state.strength.toFixed(3));
+      root.style.setProperty("--lamp-spread", state.spread.toFixed(3));
+      root.style.setProperty("--scene-progress", scrollProgress.toFixed(4));
+    };
+
+    const computeTarget = () => {
+      const viewportHeight = window.innerHeight || 1;
+      const scrollHeight = Math.max(
+        document.documentElement.scrollHeight,
+        document.body.scrollHeight
+      );
+      const maxScroll = Math.max(scrollHeight - viewportHeight, 1);
+
+      progress = clamp(
+        (window.scrollY || window.pageYOffset || 0) / maxScroll,
+        0,
+        1
+      );
+
+      const fallback = getFallback(progress);
+      const focusLine = viewportHeight * 0.38;
+      const baseWeight = 0.8;
+
+      const accum = {
+        x: fallback.x * baseWeight,
+        y: fallback.y * baseWeight,
+        size: fallback.size * baseWeight,
+        strength: fallback.strength * baseWeight,
+        spread: fallback.spread * baseWeight,
+      };
+
+      let weightTotal = baseWeight;
+
+      zones.forEach((zone) => {
+        const rect = zone.getBoundingClientRect();
+
+        if (rect.bottom < -viewportHeight * 0.25 || rect.top > viewportHeight * 1.15) {
+          return;
+        }
+
+        const focus = read(zone, "data-light-focus", 0.42);
+        const center = rect.top + rect.height * focus;
+        const distance = Math.abs(center - focusLine);
+        const visibility = clamp(1 - distance / (viewportHeight * 0.92), 0, 1);
+        const overlap = clamp(
+          (Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0)) /
+            Math.max(rect.height, 1),
+          0,
+          1
+        );
+        const weight =
+          Math.pow(visibility, 1.85) *
+          (0.5 + overlap * 0.5) *
+          read(zone, "data-light-weight", 1);
+
+        if (weight <= 0) return;
+
+        weightTotal += weight;
+        accum.x += read(zone, "data-light-x", fallback.x) * weight;
+        accum.y += read(zone, "data-light-y", fallback.y) * weight;
+        accum.size += read(zone, "data-light-size", fallback.size) * weight;
+        accum.strength += read(zone, "data-light-strength", fallback.strength) * weight;
+        accum.spread += read(zone, "data-light-spread", fallback.spread) * weight;
+      });
+
+      target = {
+        x: accum.x / weightTotal,
+        y: accum.y / weightTotal,
+        size: accum.size / weightTotal,
+        strength: accum.strength / weightTotal,
+        spread: accum.spread / weightTotal,
+      };
+    };
+
+    const frame = () => {
+      computeTarget();
+
+      const ease = reduced ? 1 : 0.11;
+
+      current = {
+        x: mix(current.x, target.x, ease),
+        y: mix(current.y, target.y, ease),
+        size: mix(current.size, target.size, ease),
+        strength: mix(current.strength, target.strength, ease),
+        spread: mix(current.spread, target.spread, ease),
+      };
+
+      setVars(current, progress);
+
+      const delta =
+        Math.abs(current.x - target.x) +
+        Math.abs(current.y - target.y) +
+        Math.abs(current.size - target.size) +
+        Math.abs(current.strength - target.strength) +
+        Math.abs(current.spread - target.spread);
+
+      if (!reduced && delta > 0.04) {
+        raf = requestAnimationFrame(frame);
+        return;
+      }
+
+      raf = 0;
+
+      if (!reduced) {
+        current = { ...target };
+        setVars(current, progress);
+      }
+    };
+
+    const schedule = () => {
+      if (!raf) {
+        raf = requestAnimationFrame(frame);
+      }
+    };
+
+    const refresh = () => {
+      collectZones();
+      schedule();
+    };
+
+    refresh();
+    document.addEventListener("DOMContentLoaded", refresh, { once: true });
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", refresh, { passive: true });
+    window.addEventListener("load", refresh, { once: true });
   })();
 </script>

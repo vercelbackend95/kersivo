@@ -58,13 +58,16 @@
   --space-6: 40px;
 
   /* Colors */
-  --bg: #07070a;
+  --bg: #06070a;
   --fg: rgba(255,255,255,.92);
   --muted: rgba(255,255,255,.78);
   --muted2: rgba(255,255,255,.70);
+  --scene-ivory-rgb: 244, 239, 229;
+  --scene-steel-rgb: 152, 178, 196;
+  --scene-shadow-rgb: 8, 10, 13;
 
   /* Focus */
-  --focus: rgba(190,145,255,.70);
+  --focus: rgba(168, 194, 212, .78);
 }
 
 html{
@@ -129,7 +132,7 @@ img{
 
 /* Selection */
 ::selection{
-  background: rgba(190,145,255,.35);
+  background: rgba(168, 194, 212, .28);
 }
 
 /* Accessible focus */

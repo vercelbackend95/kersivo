@@ -17,22 +17,18 @@
 }
 
 .k-about::before {
-  inset: 2% -16% auto 38%;
-  height: min(42vw, 480px);
-  background:
-    radial-gradient(circle at 25% 50%, rgba(229, 218, 191, 0.14), transparent 34%),
-    radial-gradient(circle at 72% 42%, rgba(152, 184, 223, 0.12), transparent 30%);
-  filter: blur(20px);
-  opacity: 0.9;
+  inset: 0 0 auto 0;
+  height: clamp(120px, 16vw, 180px);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0));
+  opacity: 0.44;
 }
 
 .k-about::after {
-  inset: 12% 6% auto auto;
-  width: min(42vw, 520px);
-  height: min(42vw, 520px);
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  opacity: 0.45;
+  inset: 14% 0 auto auto;
+  width: min(28vw, 320px);
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0));
+  opacity: 0.58;
 }
 
 .k-about__container {
@@ -120,8 +116,7 @@
   content: "";
   position: absolute;
   inset: 18px -4% 18px -4%;
-  background: linear-gradient(90deg, var(--about-row-glow), transparent 58%);
-  filter: blur(26px);
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0) 58%);
   opacity: 0;
   transform: translate3d(-8px, 0, 0);
   transition:
@@ -337,14 +332,11 @@
 
 @media (max-width: 979px) {
   .k-about::before {
-    inset: 8% -26% auto 18%;
-    height: 280px;
+    height: 120px;
   }
 
   .k-about::after {
-    inset: 16% -18% auto auto;
-    width: min(60vw, 300px);
-    height: min(60vw, 300px);
+    width: min(42vw, 180px);
   }
 
   .k-about__title {
