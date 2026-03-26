@@ -1,21 +1,21 @@
 ---
 import "./about.css";
-
+import CtaButton from "../../ui/CtaButton/CtaButton.astro";
 const differentiators = [
   {
     label: "Positioning quality",
     title: "Messaging built for buying decisions",
-    text: "Service pages are structured around objections, trust signals, and clear next steps, not generic portfolio language.",
+    text: "Each key page is structured around what prospects need to see before they enquire: offer clarity, proof, and next step.",
   },
   {
     label: "Execution discipline",
     title: "Premium output without production bloat",
-    text: "The process stays lean and practical, so quality is high, delivery is controlled, and teams are not buried in unnecessary complexity.",
+    text: "Design and development stay lean, documented, and accountable, so quality stays high without dragging your team into noise.",
   },
   {
     label: "Commercial focus",
     title: "Designed to move visitors to contact",
-    text: "Every major section has a clear role in the journey from first impression to enquiry intent, especially on mobile.",
+    text: "Sections are built with a clear conversion role, especially on mobile where most first visits and contact decisions happen.",
   },
 
 ];
@@ -26,13 +26,15 @@ const proofSignals = [
 
   },
   {
-    metric: "Studio stage",
-    value: "Early-stage, selective projects",
+    metric: "Build approach",
+    value: "Astro-first, performance-led",
+
 
   },
   {
-    metric: "Core focus",
-    value: "UK service businesses",
+    metric: "Best-fit clients",
+    value: "UK service-led small businesses",
+
 
   },
 ];
@@ -46,11 +48,16 @@ const proofSignals = [
       <div class="k-about__left">
         <p class="k-about__eyebrow">Why clients choose Kersivo</p>
         <h2 class="k-about__title">
-          Strategic web delivery for small businesses that need more than a <span class="k-about__muted">good-looking site.</span>
+                  Strategic websites for teams that need <span class="k-about__muted">better enquiries, not just better visuals.</span>
         </h2>
         <p class="k-about__intro">
-          After process clarity comes the real decision: who can turn that process into a credible, conversion-aware website that actually supports sales.
+          Once process is clear, the real decision is execution quality. Kersivo combines premium presentation with practical conversion logic so your website helps sales, not only brand perception.
         </p>
+        <div class="k-about__ctaRow">
+          <CtaButton href="/contact/#contact" label="Start your project" variant="primary" />
+          <CtaButton href="/packages" label="View packages" variant="ghost" />
+        </div>
+
 
       </div>
       <div class="k-about__right" role="list" aria-label="Key reasons clients choose Kersivo">

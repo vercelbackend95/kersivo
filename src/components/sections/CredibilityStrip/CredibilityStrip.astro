@@ -1,22 +1,31 @@
 ---
 import "./credibility-strip.css";
 import CtaButton from "../../ui/CtaButton/CtaButton.astro";
+const trustSignals = [
+  "Structured scope before production",
+  "Mobile-first quality checks before launch",
+  "Practical handover, not agency dependency",
+];
+
 
 const steps = [
   {
-    title: "1. Discovery and scope",
-    text: "We align on offer, audience, and priorities first, then lock deliverables, timeline, and responsibilities.",
-
-  },
-  {
-    title: "2. Build with checkpoints",
-    text: "Design and development run through defined review points, so decisions stay focused and delivery stays predictable.",
+    title: "1. Scope around business goals",
+    text: "We start with offer clarity, target audience, and enquiry goals, then lock scope, timeline, and owners.",
 
 
   },
   {
-    title: "3. Launch and handover",
-    text: "You get a production-ready, mobile-first site with practical handover notes your team can actually use.",
+    title: "2. Build through decision checkpoints",
+    text: "Design and development move in short approval rounds, so decisions stay focused and delivery stays predictable.",
+
+
+
+  },
+  {
+    title: "3. Launch with clean handover",
+    text: "You get a production-ready site, QA across core breakpoints, and handover notes your team can actually use.",
+
 
   },
 ];
@@ -28,8 +37,12 @@ const steps = [
       <header class="k-credStrip__head" data-cred-item>
         <p class="k-credStrip__eyebrow">Built for UK small businesses</p>
         <h2 class="k-credStrip__title">
-          A clear process that <span>removes delivery guesswork</span> from day one.
+          A delivery system built to <span>reduce risk</span> and keep momentum.
         </h2>
+                <ul class="k-credStrip__signals" aria-label="Project reliability signals">
+          {trustSignals.map((item) => <li>{item}</li>)}
+        </ul>
+
       </header>
 
       <div class="k-credStrip__grid" role="list" aria-label="Delivery steps" data-cred-item>
@@ -44,7 +57,7 @@ const steps = [
 
       <div class="k-credStrip__foot" data-cred-item>
         <p class="k-credStrip__meta">
-          Every project follows the same structure: clarity first, controlled production, then a clean launch and handover.
+          Every project follows one structure: clear scope, controlled production, then launch support with no ambiguity.
         </p>
 
 

@@ -54,6 +54,12 @@
   
 
 }
+.k-about__ctaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+}
 
 .k-about__right {
   display: grid;
