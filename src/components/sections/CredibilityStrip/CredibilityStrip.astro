@@ -5,19 +5,26 @@ import CtaButton from "../../ui/CtaButton/CtaButton.astro";
 const outcomes = [
   {
     title: "Clear scope before build",
-    text: "Defined deliverables, timeline, and priorities before production starts.",
+    text: "Defined deliverables, timeline, and responsibilities before production starts.",
   },
   {
-    title: "Conversion-first structure",
-    text: "Pages shaped around trust, clarity, and enquiry-driven user journeys.",
+    title: "Conversion-led page architecture",
+    text: "Each page is structured around trust signals, clear messaging, and enquiry intent.",
+
   },
   {
-    title: "Fast, maintainable delivery",
-    text: "Mobile-first, performance-focused builds with clean and reliable foundations.",
+    title: "Reliable launch and handover",
+    text: "Mobile-first builds with clean foundations your business can update with confidence."
   },
 ];
 
-const process = ["Discovery", "Scope", "Build", "Launch"];
+const process = [
+  { label: "Discovery", note: "goals and constraints" },
+  { label: "Scope", note: "deliverables and timeline" },
+  { label: "Build", note: "design and development" },
+  { label: "Launch", note: "QA and handover" },
+];
+
 ---
 
 <section class="k-credStrip section" aria-label="How Kersivo works">
@@ -26,7 +33,7 @@ const process = ["Discovery", "Scope", "Build", "Launch"];
       <header class="k-credStrip__head" data-cred-item>
         <p class="k-credStrip__eyebrow">Built for UK small businesses</p>
         <h2 class="k-credStrip__title">
-          A focused process designed to <span>earn trust</span> and generate qualified enquiries.
+          A structured delivery model that <span>reduces risk</span> and turns interest into qualified enquiries.
         </h2>
       </header>
 
@@ -44,14 +51,16 @@ const process = ["Discovery", "Scope", "Build", "Launch"];
           {process.map((step, i) => (
             <span class="k-credStrip__step">
               <strong>{String(i + 1).padStart(2, "0")}</strong>
-              <em>{step}</em>
+              <em>{step.label}</em>
+              <small>{step.note}</small>
+
             </span>
           ))}
         </div>
 
         <div class="k-credStrip__cta">
           <CtaButton href="/contact/#contact" label="Book a discovery call" variant="primary" />
-          <CtaButton href="/work" label="View work demos" variant="ghost" magnetic={false} />
+          <CtaButton href="/work" label="View case studies" variant="ghost" magnetic={false} />
         </div>
       </div>
     </div>

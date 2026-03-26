@@ -118,17 +118,27 @@
 }
 
 .k-credStrip__step{
-  display: inline-flex;
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  grid-template-areas:
+    "index label"
+    "index note";
+
   align-items: center;
+    column-gap: 8px;
+  row-gap: 2px;
+
   gap: 8px;
-  height: 32px;
-  padding: 0 12px;
+  min-height: 40px;
+  padding: 7px 12px 6px;
+
   border-radius: 999px;
   border: 1px solid rgba(255,255,255,.12);
   background: rgba(255,255,255,.035);
 }
 
 .k-credStrip__step strong{
+      grid-area: index;
   font-size: 11px;
   letter-spacing: .09em;
   color: rgba(255,255,255,.56);
@@ -136,11 +146,19 @@
 }
 
 .k-credStrip__step em{
+      grid-area: label;
   font-style: normal;
   font-size: 13px;
   letter-spacing: -0.01em;
   color: rgba(255,255,255,.82);
   font-weight: var(--w-medium, 560);
+}
+.k-credStrip__step small{
+  grid-area: note;
+  font-size: 11px;
+  line-height: 1.15;
+  letter-spacing: -0.005em;
+  color: rgba(255,255,255,.58);
 }
 
 .k-credStrip__cta{
