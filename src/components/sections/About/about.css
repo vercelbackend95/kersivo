@@ -1,48 +1,55 @@
-/* =========================================
-   Kersivo — About (tabs + image)
-   Inspired by your reference (clean, minimal)
-   ========================================= */
-
-.k-about{
+.k-about {
   position: relative;
   overflow: hidden;
 }
 
-.k-about__grid{
+.k-about__grid {
   display: grid;
-  gap: clamp(18px, 3.2vw, 28px);
-  align-items: center;
+  gap: clamp(18px, 3.2vw, 34px);
+  align-items: start;
+
 }
 
-@media (min-width: 980px){
-  .k-about__grid{
-    grid-template-columns: 1.08fr .92fr;
-    gap: clamp(22px, 3.2vw, 36px);
+@media (min-width: 980px) {
+  .k-about__grid {
+    grid-template-columns: 1.1fr 0.9fr;
+
   }
 }
 
-.k-about__left{
-  max-width: 70ch;
+.k-about__left {
+  max-width: 72ch;
+
   display: grid;
   gap: 14px;
 }
 
-.k-about__title{
+.k-about__eyebrow {
   margin: 0;
-  font-size: clamp(36px, 4.6vw, 58px);
-  line-height: 1.03;
-  letter-spacing: var(--track-tight, -0.045em);
-  font-weight: var(--w-black, 880);
-  color: rgba(255,255,255,.94);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: rgba(255, 255, 255, 0.66);
+  font-weight: var(--w-semibold, 650);
+
 }
 
-.k-about__muted{
-  color: rgba(255,255,255,.38);
-  font-weight: var(--w-black, 880);
+.k-about__title {
+  margin: 0;
+  font-size: clamp(30px, 4.5vw, 54px);
+  line-height: 1.04;
+  letter-spacing: var(--track-tight, -0.04em);
+  font-weight: var(--w-black, 860);
+  color: rgba(255, 255, 255, 0.94);
+
 }
 
-/* Tabs (capsule group) */
-.k-about__tabs{
+.k-about__muted {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.k-about__tabs {
+
   display: inline-flex;
   gap: 8px;
   padding: 6px;
@@ -51,17 +58,20 @@
   width: fit-content;
   max-width: 100%;
 
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+
   backdrop-filter: blur(10px);
 
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-.k-about__tabs::-webkit-scrollbar{ height: 0; }
+.k-about__tabs::-webkit-scrollbar {
+  height: 0;
+}
 
-.k-about__tab{
+.k-about__tab {
   height: 34px;
   padding: 0 14px;
   border-radius: 999px;
@@ -69,7 +79,7 @@
   border: 1px solid transparent;
   background: transparent;
 
-  color: rgba(255,255,255,.72);
+  color: rgba(255, 255, 255, 0.72);
   font-size: 12.5px;
   font-weight: var(--w-semibold, 650);
   letter-spacing: -0.01em;
@@ -85,75 +95,158 @@
     transform 180ms ease;
 }
 
-.k-about__tab:hover{
-  color: rgba(255,255,255,.90);
+.k-about__tab:hover {
+  color: rgba(255, 255, 255, 0.9);
+
   transform: translateY(-1px);
 }
 
-.k-about__tab.is-active{
-  background: rgba(255,255,255,.10);
-  border-color: rgba(255,255,255,.18);
-  color: rgba(255,255,255,.92);
-  box-shadow: 0 14px 60px rgba(0,0,0,.28);
+.k-about__tab.is-active {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 14px 60px rgba(0, 0, 0, 0.28);
 }
 
-.k-about__copy{
-  margin-top: 4px;
-}
-
-.k-about__copy p{
-  color: rgba(255,255,255,.74);
-  max-width: var(--measure, 65ch);
-}
-
-/* Subtle swap animation */
-@media (prefers-reduced-motion: no-preference){
-  .k-about__copy.is-swap{
-    animation: kAboutSwap 320ms cubic-bezier(.2,.9,.2,1) both;
-  }
-  @keyframes kAboutSwap{
-    0%{ opacity: .65; transform: translateY(2px); filter: blur(.6px); }
-    100%{ opacity: 1; transform: translateY(0); filter: blur(0); }
-  }
-}
-
-/* Media card */
-.k-about__right{
+.k-about__copy {
   display: grid;
-  justify-items: end;
+  gap: 12px;
+
 }
 
-.k-about__media{
-  position: relative;
-  width: min(520px, 100%);
-  aspect-ratio: 16 / 11;
+.k-about__copy p {
   margin: 0;
+  color: rgba(255, 255, 255, 0.78);
+  max-width: var(--measure, 64ch);
 
-  border-radius: 22px;
-  overflow: hidden;
-
-  background: rgba(255,255,255,.03);
-  border: 1px solid rgba(255,255,255,.10);
-  box-shadow: 0 38px 140px rgba(0,0,0,.46);
 }
 
-.k-about__img{
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+.k-about__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
 
-  filter: saturate(1.02) contrast(1.02);
-  transform: translateZ(0);
 }
 
-/* tiny premium “glass” sheen */
-.k-about__glass{
+.k-about__list li {
+  position: relative;
+  margin: 0;
+  padding-left: 18px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 14.5px;
+  line-height: 1.45;
+}
+
+.k-about__list li::before {
+  content: "";
   position: absolute;
-  inset: -1px;
-  pointer-events: none;
+  left: 0;
+  top: 0.55em;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(164, 196, 255, 0.92);
+  box-shadow: 0 0 0 4px rgba(164, 196, 255, 0.15);
+
+}
+
+.k-about__right {
+  display: grid;
+  align-items: start;
+}
+
+.k-about__proof {
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
   background:
-    radial-gradient(80% 120% at 18% 0%, rgba(190,145,255,.16), rgba(0,0,0,0) 58%),
-    linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0) 55%);
-  opacity: .75;
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.03));
+  box-shadow:
+    0 34px 120px rgba(0, 0, 0, 0.34),
+    0 1px 0 rgba(255, 255, 255, 0.05) inset;
+  padding: clamp(18px, 3vw, 24px);
+  display: grid;
+  gap: 12px;
+}
+
+.k-about__proof-kicker {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.62);
+  font-weight: var(--w-semibold, 650);
+}
+
+.k-about__proof h3 {
+
+  margin: 0;
+  font-size: clamp(20px, 2.5vw, 28px);
+  line-height: 1.14;
+  letter-spacing: -0.02em;
+  color: rgba(255, 255, 255, 0.93);
+}
+.k-about__proof p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.74);
+}
+
+.k-about__proof-metrics {
+  margin-top: 2px;
+  display: grid;
+  gap: 10px;
+}
+
+
+.k-about__proof-metrics > div {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(8, 11, 22, 0.36);
+  border-radius: 12px;
+  padding: 10px 12px;
+  display: grid;
+  gap: 4px;
+
+}
+
+.k-about__proof-metrics small {
+  color: rgba(255, 255, 255, 0.56);
+  font-size: 11px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+k-about__proof-metrics strong {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  font-weight: var(--w-semibold, 650);
+
+}
+
+@media (min-width: 760px) {
+  .k-about__proof-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .k-about__copy.is-swap,
+  .k-about__proof.is-swap {
+    animation: kAboutSwap 320ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+  }
+
+  @keyframes kAboutSwap {
+    0% {
+      opacity: 0.65;
+      transform: translateY(2px);
+      filter: blur(0.6px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+  }
+
 }
