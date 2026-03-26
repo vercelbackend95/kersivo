@@ -5,23 +5,23 @@
 
 .k-about__grid {
   display: grid;
-  gap: clamp(18px, 3.2vw, 34px);
+  gap: clamp(18px, 3vw, 32px);
   align-items: start;
 
 }
 
 @media (min-width: 980px) {
   .k-about__grid {
-    grid-template-columns: 1.1fr 0.9fr;
+    grid-template-columns: 0.95fr 1.05fr;
 
   }
 }
 
 .k-about__left {
-  max-width: 72ch;
+  max-width: 70ch;
 
   display: grid;
-  gap: 14px;
+  gap: 12px;
 }
 
 .k-about__eyebrow {
@@ -45,177 +45,86 @@
 }
 
 .k-about__muted {
-  color: rgba(255, 255, 255, 0.75);
-}
-
-.k-about__tabs {
-
-  display: inline-flex;
-  gap: 8px;
-  padding: 6px;
-  border-radius: 999px;
-
-  width: fit-content;
-  max-width: 100%;
-
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.11);
-
-  backdrop-filter: blur(10px);
-
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.k-about__tabs::-webkit-scrollbar {
-  height: 0;
-}
-
-.k-about__tab {
-  height: 34px;
-  padding: 0 14px;
-  border-radius: 999px;
-
-  border: 1px solid transparent;
-  background: transparent;
-
-  color: rgba(255, 255, 255, 0.72);
-  font-size: 12.5px;
-  font-weight: var(--w-semibold, 650);
-  letter-spacing: -0.01em;
-
-  cursor: pointer;
-  user-select: none;
-  white-space: nowrap;
-
-  transition:
-    background 180ms ease,
-    border-color 180ms ease,
-    color 180ms ease,
-    transform 180ms ease;
-}
-
-.k-about__tab:hover {
-  color: rgba(255, 255, 255, 0.9);
-
-  transform: translateY(-1px);
-}
-
-.k-about__tab.is-active {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.18);
-  color: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 14px 60px rgba(0, 0, 0, 0.28);
-}
-
-.k-about__copy {
-  display: grid;
-  gap: 12px;
-
-}
-
-.k-about__copy p {
+   color: rgba(255, 255, 255, 0.74);
+   }
+.k-about__intro {
   margin: 0;
+    max-width: 60ch;
   color: rgba(255, 255, 255, 0.78);
-  max-width: var(--measure, 64ch);
-
-}
-
-.k-about__list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 8px;
-
-}
-
-.k-about__list li {
-  position: relative;
-  margin: 0;
-  padding-left: 18px;
-  color: rgba(255, 255, 255, 0.72);
-  font-size: 14.5px;
-  line-height: 1.45;
-}
-
-.k-about__list li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0.55em;
-  width: 7px;
-  height: 7px;
-  border-radius: 999px;
-  background: rgba(164, 196, 255, 0.92);
-  box-shadow: 0 0 0 4px rgba(164, 196, 255, 0.15);
+  
 
 }
 
 .k-about__right {
   display: grid;
-  align-items: start;
+  gap: 10px;
 }
 
-.k-about__proof {
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.03));
-  box-shadow:
-    0 34px 120px rgba(0, 0, 0, 0.34),
-    0 1px 0 rgba(255, 255, 255, 0.05) inset;
-  padding: clamp(18px, 3vw, 24px);
+.k-about__card {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 16px 16px 15px;
+  background: rgba(8, 11, 22, 0.28);
+  box-shadow: 0 18px 70px rgba(0, 0, 0, 0.18);
+
   display: grid;
-  gap: 12px;
+  gap: 8px;
 }
 
-.k-about__proof-kicker {
+.k-about__card-label {
   margin: 0;
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.62);
+  color: rgba(255, 255, 255, 0.58);
   font-weight: var(--w-semibold, 650);
 }
 
-.k-about__proof h3 {
+.k-about__card h3 {
 
   margin: 0;
-  font-size: clamp(20px, 2.5vw, 28px);
-  line-height: 1.14;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: clamp(19px, 2.4vw, 24px);
+  line-height: 1.2;
+
   letter-spacing: -0.02em;
-  color: rgba(255, 255, 255, 0.93);
 }
-.k-about__proof p {
+.k-about__card p {
   margin: 0;
-  color: rgba(255, 255, 255, 0.74);
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 14.5px;
+  line-height: 1.5;
+
 }
 
-.k-about__proof-metrics {
-  margin-top: 2px;
-  display: grid;
-  gap: 10px;
-}
-
-
-.k-about__proof-metrics > div {
+.k-about__proofBand {
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(8, 11, 22, 0.36);
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+
+  display: grid;
+  gap: 8px;
+}
+
+.k-about__proofItem {
+  border-radius: 11px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(8, 11, 22, 0.35);
+
   padding: 10px 12px;
   display: grid;
   gap: 4px;
 
 }
-
-.k-about__proof-metrics small {
+.k-about__proofItem small {
   color: rgba(255, 255, 255, 0.56);
   font-size: 11px;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
-k-about__proof-metrics strong {
+.k-about__proofItem strong {
   color: rgba(255, 255, 255, 0.9);
   font-size: 14px;
   letter-spacing: -0.01em;
@@ -224,29 +133,8 @@ k-about__proof-metrics strong {
 }
 
 @media (min-width: 760px) {
-  .k-about__proof-metrics {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .k-about__proofBand {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
   }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .k-about__copy.is-swap,
-  .k-about__proof.is-swap {
-    animation: kAboutSwap 320ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
-  }
-
-  @keyframes kAboutSwap {
-    0% {
-      opacity: 0.65;
-      transform: translateY(2px);
-      filter: blur(0.6px);
-    }
-
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-      filter: blur(0);
-    }
-  }
-
 }

@@ -2,36 +2,39 @@
 import "./credibility-strip.css";
 import CtaButton from "../../ui/CtaButton/CtaButton.astro";
 
-const outcomes = [
+const steps = [
   {
-    title: "Clear scope before build",
-    text: "Defined deliverables, timeline, and responsibilities before production starts.",
-  },
-  {
-    title: "Conversion-led page architecture",
-    text: "Each page is structured around trust signals, clear messaging, and enquiry intent.",
+    title: "1. Discovery and scope",
+    text: "We align on offer, audience, and priorities first, then lock deliverables, timeline, and responsibilities.",
 
   },
   {
-    title: "Reliable launch and handover",
-    text: "Mobile-first builds with clean foundations your business can update with confidence."
+    title: "2. Build with checkpoints",
+    text: "Design and development run through defined review points, so decisions stay focused and delivery stays predictable.",
+
+
+  },
+  {
+    title: "3. Launch and handover",
+    text: "You get a production-ready, mobile-first site with practical handover notes your team can actually use.",
+
   },
 ];
 
 ---
-
-<section class="k-credStrip section" aria-label="How Kersivo works">
+<section class="k-credStrip section" aria-label="How projects are delivered">
   <div class="container">
     <div class="k-credStrip__shell" data-cred-shell>
       <header class="k-credStrip__head" data-cred-item>
         <p class="k-credStrip__eyebrow">Built for UK small businesses</p>
         <h2 class="k-credStrip__title">
-          A structured delivery model that <span>reduces risk</span> and turns interest into qualified enquiries.
+          A clear process that <span>removes delivery guesswork</span> from day one.
         </h2>
       </header>
 
-      <div class="k-credStrip__grid" role="list" aria-label="What clients get" data-cred-item>
-        {outcomes.map((item) => (
+      <div class="k-credStrip__grid" role="list" aria-label="Delivery steps" data-cred-item>
+        {steps.map((item) => (
+
           <article class="k-credStrip__card" role="listitem">
             <h3>{item.title}</h3>
             <p>{item.text}</p>
@@ -41,7 +44,7 @@ const outcomes = [
 
       <div class="k-credStrip__foot" data-cred-item>
         <p class="k-credStrip__meta">
-          Discovery, scope, build, and launch are handled with clear milestones and documented handover.
+          Every project follows the same structure: clarity first, controlled production, then a clean launch and handover.
         </p>
 
 
