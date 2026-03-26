@@ -1,66 +1,187 @@
 ---
 import "./who-for.css";
-import CtaButton from "../../ui/CtaButton/CtaButton.astro";
 
-const bestFor = [
-  "UK service businesses upgrading from an outdated site",
-  "Owner-led teams that need a premium first impression",
-  "Teams that want clearer enquiries, not just more traffic",
+const recognitionLines = [
+  {
+    key: "reposition",
+    label: "Reposition",
+    statement: "The business has moved on. The website hasn't.",
+    note: "Often the point where structure, tone, and perceived quality need catching up.",
+  },
+  {
+    key: "enquiries",
+    label: "Enquiries",
+    statement: "You need fewer vague enquiries and more serious ones.",
+    note: "Usually a clarity problem first: offer, proof, and the next step.",
+  },
+  {
+    key: "launch",
+    label: "Launch",
+    statement: "You want the launch to feel credible from day one.",
+    note: "A new business still needs a site that looks considered, not improvised.",
+  },
+  {
+    key: "process",
+    label: "Process",
+    statement: "You want a clean build, not layers of agency theatre.",
+    note: "Defined scope, calm delivery, and a handover your team can actually use.",
+  },
 ];
-
-const alsoWorksFor = [
-  "First serious website after relying on social media only",
-  "Site refresh after poor freelancer handover",
-  "Businesses that need launch support without agency dependency",
-];
-
-const everyProjectIncludes = [
-  "Clear scope and timeline before production",
-  "Mobile-first build with performance checks",
-  "Practical handover your team can actually use",
-];
-
 ---
 
-<section class="k-fit section" id="who-its-for" aria-label="Who we work best with">
+<section
+  class="k-fit section"
+  id="who-its-for"
+  aria-label="Who we work best with"
+  data-fit-active={recognitionLines[0].key}
+>
   <div class="container k-fit__container">
-    <header class="k-fit__head">
-      <p class="k-fit__kicker">Who we work best with</p>
-      <h2 class="k-fit__title">
-        Built for small businesses that need a site to <span>look premium and win trust fast.</span>
-      </h2>
-      <p class="k-fit__lead">
-        If you need more enquiries and a cleaner process, this is likely a good fit.
+    <div class="k-fit__shell" data-fit-shell>
+      <header class="k-fit__intro" data-fit-intro>
+        <p class="k-fit__kicker">When it clicks</p>
+        <h2 class="k-fit__title">For service businesses that need trust before the first call.</h2>
+        <p class="k-fit__lead">
+          Usually a strong fit when the work is good, the site is lagging behind, and enquiry quality
+          matters more than vanity traffic.
+        </p>
+        <p class="k-fit__micro">If one or two of these feel familiar, the fit is usually strong.</p>
 
-      </p>
-    </header>
+        <div class="k-fit__actions">
+          <a class="k-fit__link" href="/contact/#contact">
+            <span>Book a discovery call</span>
+            <span aria-hidden="true">&rarr;</span>
+          </a>
+          <p class="k-fit__note">No hard sell. Just a clear view on fit.</p>
+        </div>
 
-    <div class="k-fit__grid" role="list" aria-label="Client fit guidance">
-      <article class="k-fit__card" role="listitem" aria-label="Best for">
-        <h3>Best for</h3>
-        <ul>
-          {bestFor.map((item) => <li>{item}</li>)}
-        </ul>
-      </article>
+        <div class="k-fit__bridge" aria-hidden="true">
+          <span class="k-fit__bridgeLine"></span>
+          <span class="k-fit__bridgeDot"></span>
+        </div>
+      </header>
 
-      <article class="k-fit__card" role="listitem" aria-label="Also works for">
-        <h3>Also works for</h3>
-        <ul>
-          {alsoWorksFor.map((item) => <li>{item}</li>)}
-        </ul>
-      </article>
-    </div>
-
-    <div class="k-fit__includes" aria-label="What every project includes">
-      <p class="k-fit__includesLabel">Every Kersivo project includes</p>
-      <ul>
-        {everyProjectIncludes.map((item) => <li>{item}</li>)}
-      </ul>
-    </div>
-    <div class="k-fit__ctaRow">
-      <CtaButton href="/contact/#contact" label="Book a discovery call" variant="primary" />
-      <p class="k-fit__ctaNote">Not sure if it’s the right fit? We can still review your current site.</p>
-
+      <div class="k-fit__railWrap" data-fit-rail-wrap>
+        <div
+          class="k-fit__rail"
+          role="list"
+          aria-label="Fit signals that usually point to a strong project match"
+          data-fit-rail
+        >
+          {recognitionLines.map((item, index) => (
+            <article
+              class={`k-fit__item k-fit__item--${item.key}${index === 0 ? " is-active" : ""}`}
+              role="listitem"
+              data-fit-item
+              data-fit-key={item.key}
+              style={`--fit-delay:${index * 72}ms;`}
+            >
+              <button
+                class="k-fit__trigger"
+                type="button"
+                data-fit-trigger
+                aria-pressed={index === 0 ? "true" : "false"}
+              >
+                <span class="k-fit__meta">{item.label}</span>
+                <span class="k-fit__statement">{item.statement}</span>
+                <span class="k-fit__support">{item.note}</span>
+              </button>
+            </article>
+          ))}
+        </div>
+      </div>
     </div>
   </div>
+
+  <script>
+    (() => {
+      const root = document.querySelector("#who-its-for");
+      if (!root) return;
+
+      const shell = root.querySelector("[data-fit-shell]");
+      const rail = root.querySelector("[data-fit-rail]");
+      const railWrap = root.querySelector("[data-fit-rail-wrap]");
+      const items = Array.from(root.querySelectorAll("[data-fit-item]"));
+      if (!items.length) return;
+
+      const reduced =
+        window.matchMedia &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const finePointer =
+        window.matchMedia && window.matchMedia("(pointer: fine)").matches;
+      let activeItem = items.find((item) => item.classList.contains("is-active")) || items[0];
+
+      root.dataset.fitEnhanced = "true";
+
+      const updateRailState = (target) => {
+        if (!rail || !railWrap || !target) return;
+
+        const railRect = rail.getBoundingClientRect();
+        const itemRect = target.getBoundingClientRect();
+        const top = Math.max(0, itemRect.top - railRect.top);
+        const height = itemRect.height;
+        const center = top + height / 2;
+
+        rail.style.setProperty("--fit-highlight-top", `${top}px`);
+        rail.style.setProperty("--fit-highlight-height", `${height}px`);
+        railWrap.style.setProperty("--fit-ambient-y", `${center}px`);
+      };
+
+      const setActive = (target) => {
+        if (!target) return;
+        activeItem = target;
+        root.dataset.fitActive = target.dataset.fitKey || "";
+
+        items.forEach((item) => {
+          const on = item === target;
+          item.classList.toggle("is-active", on);
+
+          const trigger = item.querySelector("[data-fit-trigger]");
+          if (trigger) trigger.setAttribute("aria-pressed", on ? "true" : "false");
+        });
+
+        updateRailState(target);
+      };
+
+      items.forEach((item) => {
+        const trigger = item.querySelector("[data-fit-trigger]");
+        if (!trigger) return;
+
+        trigger.addEventListener("click", () => setActive(item));
+        trigger.addEventListener("focus", () => setActive(item));
+
+        if (finePointer) {
+          item.addEventListener("pointerenter", () => setActive(item));
+        }
+      });
+
+      const reveal = () => root.classList.add("is-revealed");
+
+      if (reduced || !("IntersectionObserver" in window)) {
+        reveal();
+      } else {
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              reveal();
+              io.disconnect();
+            });
+          },
+          { threshold: 0.24 }
+        );
+
+        io.observe(shell || root);
+      }
+
+      const syncActiveState = () => updateRailState(activeItem);
+      window.addEventListener("resize", syncActiveState, { passive: true });
+
+      requestAnimationFrame(() => {
+        setActive(activeItem);
+        if (!reduced) {
+          setTimeout(syncActiveState, 140);
+        }
+      });
+    })();
+  </script>
 </section>
