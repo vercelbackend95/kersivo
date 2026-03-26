@@ -29,34 +29,26 @@ interface Props {
 const {
   kicker = "REVIEWS",
   title = "What people say",
-  subtitle = "Short, real words from people I’ve worked with — focused on delivery, clarity, and taste.",
+  subtitle = "Early-stage studio, real client feedback. Quality over volume.",
 
-  leftStatValue = "98%",
-  leftStatLabel = "Customer satisfaction rate",
+  leftStatValue = "1",
+  leftStatLabel = "Live client project delivered",
 
-  rightStatValue = "+2K",
-  rightStatLabel = "Happy Customers",
 
-  avatars = [{ label: "A" }, { label: "S" }, { label: "M" }, { label: "J" }],
+  rightStatValue = "2025",
+  rightStatLabel = "Studio launch year",
+
+
+
+  avatars = [{ label: "S" }],
 
   testimonials = [
     {
       quote:
-        "No fluff — just organised execution. Milestones were clear and the polish level was genuinely premium.",
-      name: "Tom W.",
-      role: "Small Business Owner (UK)",
-    },
-    {
-      quote:
-        "Detail-obsessed in the best way. Everything feels intentional, fast, and built to convert — especially on mobile.",
-      name: "Aisha K.",
-      role: "Founder (UK)",
-    },
-    {
-      quote:
-        "Clean comms, calm delivery. The process removed doubts early and the finish felt… expensive (in a good way).",
-      name: "Sophia M.",
-      role: "Product Designer",
+        "Kersivo organised everything clearly, moved fast, and delivered a website that feels premium while still being practical for day-to-day enquiries.",
+      name: "Sewing Ataga",
+      role: "Tailoring business (UK)",
+
     },
   ],
 } = Astro.props as Props;
@@ -75,7 +67,7 @@ const {
 
         <div class="k-reviews__note" aria-hidden="true">
           <span class="k-reviews__noteDot"></span>
-          <span>References available on request.</span>
+          <span>Case reference: sewingataga.co.uk</span>
         </div>
       </div>
     </header>

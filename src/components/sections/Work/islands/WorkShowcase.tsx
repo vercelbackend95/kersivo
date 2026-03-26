@@ -63,7 +63,7 @@ function CtaLink({
   );
 }
 
-const DEMO_HREF = "/demo";
+const DEMO_HREF = "https://sewingataga.co.uk";
 
 const focusCopy: Record<Focus, { title: string; lines: string[] }> = {
   conversion: {
@@ -71,14 +71,14 @@ const focusCopy: Record<Focus, { title: string; lines: string[] }> = {
     lines: [
       "Clear CTAs + one primary action per section.",
       "Frictionless contact — no forms that feel like tax.",
-      "Proof console + micro-feedback on interaction.",
+      "Clear route to enquiry for local service customers.",
     ],
   },
   seo: {
     title: "SEO foundations",
     lines: [
       "Fast, indexable pages with clean metadata.",
-      "Local intent pages — built for UK small businesses.",
+      "Service-led structure with local search intent in mind.",
       "Schema basics + page structure that reads well.",
     ],
   },
@@ -86,7 +86,7 @@ const focusCopy: Record<Focus, { title: string; lines: string[] }> = {
     title: "Speed & quality",
     lines: [
       "Instant preview — loads fast on mobile.",
-      "Minimal JS: islands only where it matters.",
+      "Lean build quality with practical handover notes.",
       "60fps motion, respects reduced motion preferences.",
     ],
   },
@@ -171,7 +171,7 @@ export default function WorkShowcase() {
           {/* LEFT: STAGE */}
           <div className="k-stage">
             <div className="k-stage__top">
-              <div className="k-stage__title">Neo Gentleman Barber</div>
+              <div className="k-stage__title">Sewing Ataga — live client website</div>
             </div>
 
             <div
@@ -184,8 +184,9 @@ export default function WorkShowcase() {
               <div className="k-stage__shot">
                 <img
                   className={frameClass}
-                  src="/work/neo-gentleman.webp"
-                  alt="Neo Gentleman demo preview"
+                  src="/og/kersivo-og.jpg"
+                  alt="Sewing Ataga client website preview"
+
                   loading="lazy"
                   decoding="async"
                   onLoad={(e) => {
@@ -234,7 +235,7 @@ export default function WorkShowcase() {
                     ))}
                   </div>
 
-                  <a className="k-stage__openShot" href={DEMO_HREF} aria-label="Open demo">
+                  <a className="k-stage__openShot" href={DEMO_HREF} aria-label="Open live client website" target="_blank" rel="noreferrer">
                     Open demo <span aria-hidden="true">→</span>
                   </a>
                 </div>
@@ -247,8 +248,9 @@ export default function WorkShowcase() {
             {/* NEXT DEMOS */}
             <div className="k-pipe">
               <div className="k-pipe__top">
-                <div className="k-pipe__title">Next demos</div>
-                <div className="k-pipe__badge">IN PRODUCTION</div>
+                <div className="k-pipe__title">Planned niche demos</div>
+                <div className="k-pipe__badge">ROADMAP</div>
+
               </div>
 
               <ul className="k-timeline" aria-label="Demo pipeline">
@@ -256,7 +258,7 @@ export default function WorkShowcase() {
                   <div className="k-timeline__dot is-on" aria-hidden="true" />
                   <div className="k-timeline__content">
                     <div className="k-timeline__row">
-                      <span className="k-timeline__name">Electrician</span>
+                      <span className="k-timeline__name">Electrician lead-gen demo</span>
                     </div>
                     <div className="k-timeline__meta">Service pages • quote flow • reviews</div>
                   </div>
@@ -266,13 +268,13 @@ export default function WorkShowcase() {
                   <div className="k-timeline__dot is-queued" aria-hidden="true" />
                   <div className="k-timeline__content">
                     <div className="k-timeline__row">
-                      <span className="k-timeline__name">Clinic intake</span>
+                      <span className="k-timeline__name">Clinic enquiry flow demo</span>
                     </div>
                     <div className="k-timeline__meta">Call-first UX • local SEO framing</div>
 
                     <CtaLink
                       href="/contact/#contact"
-                      label="Notify me"
+                      label="Request this niche"
                       variant="ghost"
                       className="k-timeline__btn"
                       ariaLabel="Notify me when Clinic intake demo is live"
@@ -349,7 +351,7 @@ export default function WorkShowcase() {
         <div className="k-ctaStrip" aria-label="Actions">
           <div className="k-stage__ctaRow k-stage__ctaRow--right">
             <div className="k-stage__ctaBtns">
-              <CtaLink href={DEMO_HREF} label="View live demo" variant="primary" ariaLabel="View live demo" />
+              <CtaLink href={DEMO_HREF} label="View live client site" variant="primary" ariaLabel="Open Sewing Ataga website" target="_blank" rel="noreferrer" />
               <CtaLink href="/contact/#contact" label="Get a quote" variant="ghost" />
             </div>
           </div>
