@@ -172,7 +172,7 @@ const points = [
       };
 
       const setActive = (key) => {
-                const next = CONTENT[key] || CONTENT.outcomes;
+        const next = CONTENT[key] || CONTENT.outcomes;
         btns.forEach((b) => {
           const active = b.getAttribute("data-about-tab") === key;
           b.classList.toggle("is-active", active);
@@ -183,9 +183,10 @@ const points = [
 
         });
 
-        if (reduced) {
-        animateSwap(root.querySelector(".k-about__copy"));
-        animateSwap(root.querySelector(".k-about__proof"));
+        if (!reduced) {
+          animateSwap(root.querySelector(".k-about__copy"));
+          animateSwap(root.querySelector(".k-about__proof"));
+        }
 
         copy.textContent = next.copy;
         list.innerHTML = next.points.map((point) => `<li>${point}</li>`).join("");
