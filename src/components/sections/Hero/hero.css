@@ -69,16 +69,7 @@
   cursor: default;
 }
 
-/* Force 3-line headline */
-.k3-line{
-  display: block;
-}
-
-.k3-line--swap{
-  display: block;
-  margin-top: .06em;
-}
-
+.k3-line{ display: block; }
 .k3-grad{
   background: linear-gradient(90deg, rgba(160,190,255,1), rgba(200,140,255,1));
   -webkit-background-clip: text;
@@ -86,16 +77,9 @@
   color: transparent;
 }
 
-.k3-grad2{
-  background: linear-gradient(90deg, rgba(200,140,255,1), rgba(255,170,220,1));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
 .k3-sub{
   margin: 18px 0 0;
-  max-width: 60ch;
+  max-width: 62ch;
   color: rgba(255,255,255,.78);
   font-size: clamp(16px, 1.25vw, 18px);
   line-height: 1.6;
@@ -110,140 +94,18 @@
   flex-wrap: wrap;
   justify-content: center;
 }
+.k3-cta-note{
+  margin: 12px 0 0;
+  color: rgba(255,255,255,.64);
+  font-size: 14px;
+  line-height: 1.45;
+  letter-spacing: 0;
+}
+
 
 .k-pills{
   margin-top: 14px;
   justify-content: center;
-}
-
-/* =========================
-   Rotating word — FIXED (no clip, no drift)
-   - width reserved in px via JS (wrap.style.width)
-   - reveal from left like “typing” using mask-size
-   - subtle brush sheen on reveal edge
-   ========================= */
-
-.k3-wordSwap{
-  display: inline-block;
-  vertical-align: baseline;
-
-  /* we are on a dedicated 3rd line -> no inline spacing needed */
-  margin-left: 0;
-
-  text-align: center;
-
-  /* room for descenders + underline */
-  padding-bottom: .12em;
-
-  /* small side breathing room so glyphs never kiss edges */
-  padding-inline: .14em;
-
-  /* never clip the word */
-  overflow: visible;
-}
-
-.k3-wordSwap [data-word-inner]{
-  position: relative;
-  display: inline-block;
-  white-space: nowrap;
-  text-align: center;
-
-  /* independent line box for g/y/p */
-  line-height: 1.12;
-  padding-bottom: .03em;
-
-  /* tiny right pad prevents edge scrape on some fonts */
-  padding-right: .06em;
-
-  /* reveal mask (L -> R) */
-  -webkit-mask-image: linear-gradient(#000, #000);
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-size: 100% 100%;
-  -webkit-mask-position: 0 0;
-
-  mask-image: linear-gradient(#000, #000);
-  mask-repeat: no-repeat;
-  mask-size: 100% 100%;
-  mask-position: 0 0;
-
-  will-change: -webkit-mask-size, mask-size, opacity, filter, transform;
-}
-
-/* TYPE REVEAL */
-@media (prefers-reduced-motion: no-preference){
-  .k3-wordSwap [data-word-inner].is-swapIn{
-    animation: kTypeMask 560ms cubic-bezier(.2,.9,.2,1) both;
-  }
-
-  @keyframes kTypeMask{
-    0%{
-      opacity: .22;
-      -webkit-mask-size: 0% 100%;
-      mask-size: 0% 100%;
-      filter: blur(1.1px);
-      transform: translateY(1px);
-    }
-    70%{
-      opacity: 1;
-      -webkit-mask-size: 104% 100%;
-      mask-size: 104% 100%;
-      filter: blur(.15px);
-      transform: translateY(0);
-    }
-    100%{
-      opacity: 1;
-      -webkit-mask-size: 104% 100%;
-      mask-size: 104% 100%;
-      filter: blur(0);
-      transform: translateY(0);
-    }
-  }
-
-  /* brush sheen riding the reveal edge */
-  .k3-wordSwap [data-word-inner]::after{
-    content:"";
-    position:absolute;
-    top: -0.08em;
-    bottom: -0.08em;
-    left: 0;
-    width: 36%;
-    pointer-events:none;
-    opacity: 0;
-
-    background: linear-gradient(
-      90deg,
-      rgba(255,255,255,0) 0%,
-      rgba(255,255,255,.18) 42%,
-      rgba(255,255,255,.28) 52%,
-      rgba(255,255,255,0) 100%
-    );
-
-    filter: blur(.25px);
-    transform: translateX(-160%);
-  }
-
-  .k3-wordSwap [data-word-inner].is-swapIn::after{
-    opacity: .85;
-    animation: kBrushSheen 560ms cubic-bezier(.2,.9,.2,1) both;
-  }
-
-  @keyframes kBrushSheen{
-    0%{ transform: translateX(-160%); opacity: 0; }
-    25%{ opacity: .85; }
-    100%{ transform: translateX(260%); opacity: 0; }
-  }
-}
-
-@media (prefers-reduced-motion: reduce){
-  .k3-wordSwap [data-word-inner].is-swapIn{ animation: none; }
-  .k3-wordSwap [data-word-inner]{
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-    opacity: 1;
-    filter: none;
-    transform: none;
-  }
-  .k3-wordSwap [data-word-inner]::after{ display:none; }
 }
 
 /* =========================
