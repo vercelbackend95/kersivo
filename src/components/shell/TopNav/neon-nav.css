@@ -65,6 +65,10 @@
   will-change: transform, width;
 }
 
+body[data-page="home"] .k-topnav:not(.is-scrolled) .k-navNeon{
+  opacity: .72;
+}
+
 /* =======================
    BLOOM (tight halo) — UP ONLY
    (small, stuck to the tube; avoids “pillow”)
@@ -103,6 +107,10 @@
     rgba(0,0,0,1) 72%,
     rgba(0,0,0,0)
   );
+}
+
+body[data-page="home"] .k-topnav:not(.is-scrolled) .k-navNeon::after{
+  opacity: .38;
 }
 
 /* =======================
@@ -148,6 +156,10 @@
   );
 }
 
+body[data-page="home"] .k-topnav:not(.is-scrolled) .k-navNeon::before{
+  opacity: .42;
+}
+
 /* =======================
    ACTIVE TEXT “LIT FROM BELOW”
    (subtle, no fat blob)
@@ -159,6 +171,12 @@
   text-shadow:
     0 0 10px rgba(190,145,255,.18),
     0 0 18px rgba(255,210,245,.10);
+}
+
+body[data-page="home"] .k-topnav:not(.is-scrolled) .k-topnav__link.is-active{
+  text-shadow:
+    0 0 8px rgba(206,214,221,.14),
+    0 0 14px rgba(255,255,255,.06);
 }
 
 /* Ensure links render above neon */

@@ -1,6 +1,6 @@
-2026/03/27-13:34:12.662 2c98 Reusing MANIFEST C:\dev\kersivo-agency\.edge-profile-audit-review\Default\EdgeCoupons/coupons_data.db/MANIFEST-000001
-2026/03/27-13:34:12.666 2c98 Recovering log #4
-2026/03/27-13:34:12.666 2c98 Reusing old log C:\dev\kersivo-agency\.edge-profile-audit-review\Default\EdgeCoupons/coupons_data.db/000004.log 
-2026/03/27-13:34:12.767 56cc Level-0 table #8: started
-2026/03/27-13:34:12.773 56cc Level-0 table #8: 682064 bytes OK
-2026/03/27-13:34:12.775 56cc Delete type=0 #4
+2026/03/27-18:59:55.688 4328 Reusing MANIFEST C:\dev\kersivo-agency\.edge-profile-audit-review\Default\EdgeCoupons/coupons_data.db/MANIFEST-000001
+2026/03/27-18:59:55.792 4328 Recovering log #25
+2026/03/27-18:59:55.815 4328 Reusing old log C:\dev\kersivo-agency\.edge-profile-audit-review\Default\EdgeCoupons/coupons_data.db/000025.log 
+2026/03/27-18:59:56.522 b1c Level-0 table #29: started
+2026/03/27-18:59:56.531 b1c Level-0 table #29: 682064 bytes OK
+2026/03/27-18:59:56.532 b1c Delete type=0 #25

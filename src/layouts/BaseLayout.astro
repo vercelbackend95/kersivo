@@ -9,6 +9,7 @@ const OG_IMAGE = `${SITE_URL}/og/kersivo-og.jpg`;
 
 const pathname = Astro.url.pathname.endsWith("/") ? Astro.url.pathname : `${Astro.url.pathname}/`;
 const PAGE_URL = `${SITE_URL}${pathname}`;
+const PAGE_KIND = pathname === "/" ? "home" : "inner";
 
 interface Props {
   title?: string;
@@ -87,7 +88,7 @@ const {
     </script>
   </head>
 
-  <body>
+  <body data-page={PAGE_KIND}>
     <SiteBg />
 
     <div id="top" class="k-shell site-foreground">

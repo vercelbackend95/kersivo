@@ -1,47 +1,24 @@
 ---
 import "./presence-intro.css";
 
-const perceptionStates = [
-  {
-    tone: "before",
-    label: "When the site falls behind",
-    intro: "The business can get read as:",
-    points: [
-      "Smaller than the work really is",
-      "Less established at first glance",
-      "Harder to trust at the right level",
-    ],
-  },
-  {
-    tone: "after",
-    label: "When the site catches up",
-    intro: "The same business starts reading as:",
-    points: [
-      "Established much earlier",
-      "Easier to value properly",
-      "Safer to contact with intent",
-    ],
-  },
-];
-
 const outcomes = [
   {
     index: "01",
-    label: "First impression",
-    title: "Established sooner.",
-    text: "The opening seconds stop underselling the business.",
+    label: "Trust",
+    title: "Looks established earlier.",
+    text: "The business reads as credible before visitors start testing the details.",
   },
   {
     index: "02",
-    label: "Perceived value",
-    title: "Quality reads faster.",
-    text: "Positioning, price, and finish land with less friction.",
+    label: "Value",
+    title: "Value feels easier to justify.",
+    text: "Price, quality, and fit land with less resistance because the presentation matches the level.",
   },
   {
     index: "03",
-    label: "Enquiry quality",
-    title: "Better-fit contact.",
-    text: "The right people arrive warmer, clearer, and readier to move.",
+    label: "Enquiries",
+    title: "Enquiries arrive warmer and clearer.",
+    text: "The next step feels safer, so the right people reach out with stronger intent.",
   },
 ];
 ---
@@ -49,132 +26,83 @@ const outcomes = [
 <section
   class="k-arrival section"
   id="next-stage"
-  aria-label="How a stronger website changes first impression and enquiry quality"
+  aria-label="How the website starts earning trust at the right level sooner"
   data-light-zone
   data-light-x="58"
-  data-light-y="25"
-  data-light-size="1.08"
-  data-light-strength="0.86"
-  data-light-focus="0.36"
-  data-light-spread="0.8"
+  data-light-y="24"
+  data-light-size="1.04"
+  data-light-strength="0.8"
+  data-light-focus="0.34"
+  data-light-spread="0.78"
 >
   <div class="container k-arrival__container">
-    <header class="k-arrival__intro" data-presence-reveal style="--presence-delay: 0ms;">
-      <div class="k-arrival__introMeta">
-        <p class="k-arrival__eyebrow">Where the gap shows first</p>
-        <p class="k-arrival__micro">
-          The website is often shaping the judgement before the first call ever happens.
-        </p>
-      </div>
+    <article class="k-arrival__card">
+      <div class="k-arrival__body">
+        <header class="k-arrival__intro">
+          <p class="k-arrival__eyebrow">Where the first impression starts earning trust</p>
 
-      <div class="k-arrival__introMain">
-        <h2 class="k-arrival__title">
-          If the site falls behind, the business can feel smaller than it is.
-        </h2>
+          <h2 class="k-arrival__title">
+            <span class="k-arrival__titleLine">Trusted at the</span>
+            <span class="k-arrival__titleLine">right level,</span>
+            <span class="k-arrival__titleLine k-arrival__titleLine--soft">sooner.</span>
+          </h2>
 
-        <p class="k-arrival__lead">
-          That mismatch is not cosmetic. It affects how quickly people trust the level,
-          believe the price, and decide whether this feels like the right business to
-          contact.
-        </p>
-      </div>
-    </header>
-
-    <article class="k-arrival__panel" data-presence-reveal style="--presence-delay: 110ms;">
-      <div class="k-arrival__panelTop">
-        <p class="k-arrival__panelKicker">Perception shift</p>
-        <p class="k-arrival__panelMeta">What changes in the first few seconds</p>
-      </div>
-
-      <div class="k-arrival__panelBody">
-        <div class="k-arrival__panelMain">
-          <p class="k-arrival__panelEyebrow">When the site finally catches up</p>
-
-          <h3 class="k-arrival__statement">
-            <span>Look as strong</span>
-            <span class="k-arrival__statementAccent">as the business already is.</span>
-          </h3>
-
-          <p class="k-arrival__summary">
-            Better structure, stronger tone, and a more considered finish help the
-            business read as established before the conversation has even started.
+          <p class="k-arrival__lead">
+            When the site finally matches the standard of the work, price, quality, and
+            intent all land with less resistance.
           </p>
 
-          <p class="k-arrival__closing">
-            The website stops introducing the business as a smaller version of itself.
+          <p class="k-arrival__support">
+            The opening seconds stop underselling the business and start doing commercial
+            work before the first call.
           </p>
+        </header>
+
+        <aside class="k-arrival__ledger" aria-labelledby="arrival-ledger-heading">
+          <div class="k-arrival__ledgerHead">
+            <p class="k-arrival__ledgerKicker" id="arrival-ledger-heading">What shifts first</p>
+            <p class="k-arrival__ledgerIntro">
+              Three signals people read before they read the details.
+            </p>
+          </div>
+
+          <div class="k-arrival__outcomes" role="list" aria-label="Commercial outcomes of a stronger website">
+            {outcomes.map((item) => (
+              <article class="k-arrival__outcome" role="listitem">
+                <div class="k-arrival__outcomeIndex">{item.index}</div>
+
+                <div class="k-arrival__outcomeBody">
+                  <p class="k-arrival__outcomeLabel">{item.label}</p>
+                  <p class="k-arrival__outcomeTitle">{item.title}</p>
+                  <p class="k-arrival__outcomeText">{item.text}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </aside>
+      </div>
+
+      <footer class="k-arrival__proof" aria-label="Selected live proof">
+        <div class="k-arrival__quoteBlock">
+          <p class="k-arrival__proofLabel">Selected client note</p>
+
+          <blockquote class="k-arrival__proofQuote">
+            <p>"Feels premium while still being practical for day-to-day enquiries."</p>
+          </blockquote>
         </div>
 
-        <div
-          class="k-arrival__states"
-          aria-label="How the business is perceived before and after the website catches up"
+        <a
+          class="k-arrival__seal"
+          href="https://sewingataga.co.uk"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Open the live Sewing Ataga client website"
         >
-          {perceptionStates.map((state) => (
-            <section class={`k-arrival__state k-arrival__state--${state.tone}`}>
-              <p class="k-arrival__stateLabel">{state.label}</p>
-              <p class="k-arrival__stateIntro">{state.intro}</p>
-
-              <ul class="k-arrival__stateList">
-                {state.points.map((point) => (
-                  <li>{point}</li>
-                ))}
-              </ul>
-            </section>
-          ))}
-        </div>
-      </div>
-
-      <div class="k-arrival__outcomes" role="list" aria-label="Commercial outcomes of a stronger website">
-        {outcomes.map((item) => (
-          <article class="k-arrival__outcome" role="listitem">
-            <div class="k-arrival__outcomeMeta">
-              <span class="k-arrival__outcomeIndex">{item.index}</span>
-              <span class="k-arrival__outcomeLabel">{item.label}</span>
-            </div>
-
-            <p class="k-arrival__outcomeTitle">{item.title}</p>
-            <p class="k-arrival__outcomeText">{item.text}</p>
-          </article>
-        ))}
-      </div>
+          <span class="k-arrival__sealLabel">Live reference</span>
+          <span class="k-arrival__sealTitle">Sewing Ataga</span>
+          <span class="k-arrival__sealMeta">Tailoring business, UK</span>
+        </a>
+      </footer>
     </article>
   </div>
-
-  <script>
-    (() => {
-      const root = document.querySelector("#next-stage");
-      if (!root) return;
-
-      const reduced =
-        window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const items = Array.from(root.querySelectorAll("[data-presence-reveal]"));
-
-      if (!items.length) return;
-      root.dataset.presenceEnhanced = "true";
-
-      if (reduced || !("IntersectionObserver" in window)) {
-        items.forEach((item) => item.classList.add("is-in"));
-        return;
-      }
-
-      const io = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (!entry.isIntersecting) return;
-            entry.target.classList.add("is-in");
-            io.unobserve(entry.target);
-          });
-        },
-        { threshold: 0.22 }
-      );
-
-      items.forEach((item, index) => {
-        if (!item.style.getPropertyValue("--presence-delay")) {
-          item.style.setProperty("--presence-delay", `${index * 90}ms`);
-        }
-
-        io.observe(item);
-      });
-    })();
-  </script>
 </section>

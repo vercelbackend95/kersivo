@@ -1,5 +1,10 @@
-2026/03/27-13:29:51.930 718c Creating DB C:\dev\kersivo-agency\.edge-profile-audit-review\Default\EdgeCoupons/coupons_data.db since it was missing.
-2026/03/27-13:29:52.052 718c Reusing MANIFEST C:\dev\kersivo-agency\.edge-profile-audit-review\Default\EdgeCoupons/coupons_data.db/MANIFEST-000001
-2026/03/27-13:29:52.608 d2c Level-0 table #5: started
-2026/03/27-13:29:52.613 d2c Level-0 table #5: 681961 bytes OK
-2026/03/27-13:29:52.615 d2c Delete type=0 #3
+2026/03/27-18:52:58.187 2e28 Reusing MANIFEST C:\dev\kersivo-agency\.edge-profile-audit-review\Default\EdgeCoupons/coupons_data.db/MANIFEST-000001
+2026/03/27-18:52:58.188 2e28 Recovering log #20
+2026/03/27-18:52:58.190 2e28 Level-0 table #24: started
+2026/03/27-18:52:58.204 2e28 Level-0 table #24: 682064 bytes OK
+2026/03/27-18:52:58.205 2e28 Recovering log #24
+2026/03/27-18:52:58.205 2e28 Reusing old log C:\dev\kersivo-agency\.edge-profile-audit-review\Default\EdgeCoupons/coupons_data.db/000024.log 
+2026/03/27-18:52:58.213 2e28 Delete type=0 #20
+2026/03/27-18:52:58.289 6bc0 Level-0 table #26: started
+2026/03/27-18:52:58.293 6bc0 Level-0 table #26: 682064 bytes OK
+2026/03/27-18:52:58.294 6bc0 Delete type=0 #24
