@@ -2,54 +2,130 @@
 import "./hero.css";
 
 import CtaButton from "../../ui/CtaButton/CtaButton.astro";
-import Pill from "../../ui/Pill/Pill.astro";
+
+const shiftSignals = [
+  {
+    label: "First impression",
+    text: "Look more established from the first click.",
+  },
+  {
+    label: "Trust",
+    text: "Make the next step feel safer to take.",
+  },
+  {
+    label: "Enquiries",
+    text: "Pull in better-fit leads with clearer intent.",
+  },
+];
 ---
 
 <section
   class="k3-hero"
   aria-label="Kersivo hero"
   data-light-zone
-  data-light-x="56"
+  data-light-x="54"
   data-light-y="18"
-  data-light-size="1.12"
-  data-light-strength="0.86"
-  data-light-focus="0.28"
+  data-light-size="1.14"
+  data-light-strength="0.9"
+  data-light-focus="0.26"
 >
-  <div class="k3-wrap">
-    <div class="k3-center">
-      <div class="k3-badges" data-reveal>
-        <span class="k3-badge">
-          <span class="k3-badge__dot" aria-hidden="true"></span>
-          Now booking for April–May 2026
-        </span>
+  <div class="container k3-shell">
+    <div class="k3-copy">
+      <div class="k3-meta" data-reveal>
+        <p class="k3-kicker">Kersivo for UK small businesses</p>
+
+        <div class="k3-availability" aria-label="Availability">
+          <span class="k3-availability__dot" aria-hidden="true"></span>
+          <span>Now booking April-May 2026</span>
+        </div>
       </div>
 
       <h1 class="k3-h1" data-reveal>
-        <span class="k3-line">Premium websites for UK small businesses,</span>
-        <span class="k3-line">built to <span class="k3-grad">earn trust</span></span>
-        <span class="k3-line">and drive enquiries</span>
-
+        <span class="k3-line">When the website feels right,</span>
+        <span class="k3-line">the business starts</span>
+        <span class="k3-line"><span class="k3-em">getting treated differently.</span></span>
       </h1>
 
       <p class="k3-sub" data-reveal>
-        Clear scope, fast delivery, and a website structure designed to turn interest into enquiries.
+        Kersivo designs and builds websites for UK small businesses that have outgrown
+        looking smaller than they are, so the first impression feels more established,
+        trust lands earlier, and the right enquiries feel easier to send.
       </p>
 
-      <div class="k3-cta" data-reveal>
-        <CtaButton href="/contact/#contact" label="Book a discovery call" variant="primary" />
-        <CtaButton href="/work" label="View case studies" variant="ghost" magnetic={false} />
+      <aside class="k3-proof" data-reveal aria-label="Selected client note">
+        <div class="k3-proof__top">
+          <p class="k3-proof__eyebrow">Selected client note</p>
+          <a
+            class="k3-proof__link"
+            href="https://sewingataga.co.uk"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Live client site
+          </a>
+        </div>
+
+        <blockquote class="k3-proof__quote">
+          "Organised everything clearly, moved fast, and delivered a site that feels
+          premium while still being practical for day-to-day enquiries."
+        </blockquote>
+
+        <div class="k3-proof__meta">
+          <span class="k3-proof__name">Sewing Ataga</span>
+          <span class="k3-proof__sep" aria-hidden="true"></span>
+          <span class="k3-proof__role">Tailoring business, UK</span>
+        </div>
+      </aside>
+
+      <div class="k3-actions" data-reveal>
+        <CtaButton href="/contact/#contact" label="Ask for a quote" variant="primary" />
+
+        <a class="k3-secondary" href="/work/">
+          <span>See live work</span>
+          <span aria-hidden="true">-></span>
+        </a>
       </div>
-      <p class="k3-cta-note" data-reveal>
-        Start with a quick discovery call, or review recent projects first.
+
+      <p class="k3-response" data-reveal>
+        Tell us what needs to change. We will reply within 12 hours.
       </p>
+    </div>
 
+    <div class="k3-stage" data-reveal aria-label="What changes when the site catches up">
+      <div class="k3-stage__panel">
+        <span class="k3-stage__wash" aria-hidden="true"></span>
+        <span class="k3-stage__beam" aria-hidden="true"></span>
+        <span class="k3-stage__grid" aria-hidden="true"></span>
+        <span class="k3-stage__halo" aria-hidden="true"></span>
 
-      <div class="k-pills" data-reveal aria-label="Key benefits">
-        <Pill label="Fast-loading pages" variant="accent" />
-        <Pill label="Built for mobile users" />
-        <Pill label="SEO-ready structure" />
+        <div class="k3-stage__intro">
+          <p class="k3-stage__eyebrow">A stronger first impression</p>
+          <p class="k3-stage__micro">
+            The site stops introducing the business as a smaller version of itself.
+          </p>
+        </div>
 
+        <div class="k3-stage__statement">
+          <span>Look more established</span>
+          <span class="k3-stage__statementAccent">before you have said a word.</span>
+        </div>
 
+        <div class="k3-stage__signals" role="list" aria-label="What changes">
+          {shiftSignals.map((signal, index) => (
+            <article
+              class="k3-stage__signal"
+              role="listitem"
+              style={`--k3-shift:${index * 14}px;`}
+            >
+              <span class="k3-stage__signalIndex">{String(index + 1).padStart(2, "0")}</span>
+
+              <div class="k3-stage__signalBody">
+                <p class="k3-stage__signalLabel">{signal.label}</p>
+                <p class="k3-stage__signalText">{signal.text}</p>
+              </div>
+            </article>
+          ))}
+        </div>
       </div>
     </div>
   </div>
@@ -65,28 +141,25 @@ import Pill from "../../ui/Pill/Pill.astro";
       const items = hero.querySelectorAll("[data-reveal]");
       if (items.length) hero.classList.add("k3-reveal");
 
-      if (reduced) {
+      if (reduced || !("IntersectionObserver" in window)) {
         items.forEach((el) => el.classList.add("is-in"));
-            return;
+        return;
       }
+
       const io = new IntersectionObserver(
         (entries) => {
-          entries.forEach((en) => {
-            if (en.isIntersecting) {
-              en.target.classList.add("is-in");
-              io.unobserve(en.target);
-            }
-
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add("is-in");
+            io.unobserve(entry.target);
           });
         },
         { threshold: 0.18 }
       );
 
-
-      items.forEach((el, i) => {
-        el.style.setProperty("--d", i * 75 + "ms");
+      items.forEach((el, index) => {
+        el.style.setProperty("--d", `${index * 85}ms`);
         io.observe(el);
-
       });
     })();
   </script>

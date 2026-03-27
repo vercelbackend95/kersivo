@@ -4,6 +4,13 @@ import CtaButton from "../../ui/CtaButton/CtaButton.astro";
 
 const year = new Date().getFullYear();
 
+interface Props {
+  showTopCta?: boolean;
+}
+
+const { showTopCta = true } = Astro.props as Props;
+const footCardClasses = `k-footcard${showTopCta ? "" : " k-footcard--flush"}`;
+
 const nav = [
   {
     title: "Product",
@@ -55,7 +62,7 @@ const legal = [
   data-light-focus="0.28"
 >
   <div class="k-footer2__wrap container">
-    <!-- TOP CTA CLOUD (like the screenshot) -->
+    {showTopCta && (
     <div class="k-footcta" role="region" aria-label="Call to action">
       <div class="k-footcta__inner">
         <h2 class="k-footcta__title">Ready to upgrade your website?</h2>
@@ -64,13 +71,13 @@ const legal = [
         </p>
 
         <div class="k-footcta__actions">
-          <CtaButton href="/contact/#contact" label="Get a quote" variant="primary" />
+          <CtaButton href="/contact/#contact" label="Ask for a quote" variant="primary" />
         </div>
       </div>
     </div>
+    )}
 
-    <!-- FOOTER CLOUD CARD -->
-    <footer class="k-footcard" role="contentinfo">
+    <footer class={footCardClasses} role="contentinfo">
       <div class="k-footcard__top">
         <div class="k-footcard__brand">
           <a class="k-footcard__logo" href="/" aria-label="Kersivo home">

@@ -1,0 +1,141 @@
+---
+import "./final-bridge.css";
+
+import CtaButton from "../../ui/CtaButton/CtaButton.astro";
+
+const contactEmail = "hello@kersivo.co.uk";
+
+const enquiryOutcomes = [
+  {
+    label: "Fit",
+    text: "Whether Kersivo is the right fit for the business, the timing, and the stage you are at.",
+  },
+  {
+    label: "Scope",
+    text: "What the website likely needs to do properly, without padding the project beyond what is useful.",
+  },
+  {
+    label: "Next step",
+    text: "A clear route into a quote, a call, or a straightforward answer if now is not the right moment.",
+  },
+];
+
+const reassurancePoints = [
+  "Reply within 12 hours.",
+  "No-pressure first fit check.",
+];
+---
+
+<section
+  class="k-turn section"
+  id="turning-point"
+  aria-label="Final invitation to start an enquiry with Kersivo"
+  data-light-zone
+  data-light-x="58"
+  data-light-y="54"
+  data-light-size="1.02"
+  data-light-strength="0.68"
+  data-light-focus="0.38"
+>
+  <div class="container">
+    <div class="k-turn__shell">
+      <header class="k-turn__intro" data-turn-reveal style="--turn-delay:0ms;">
+        <p class="k-turn__eyebrow">Start the conversation</p>
+
+        <h2 class="k-turn__title">
+          A short message is enough to get clear on fit, scope, and the right next step.
+        </h2>
+
+        <p class="k-turn__lead">
+          Send your current site, what needs to improve, and any rough timing. We'll
+          reply within 12 hours with a clear view on fit, likely scope, and how best to
+          move forward from here.
+        </p>
+      </header>
+
+      <div class="k-turn__main" data-turn-reveal style="--turn-delay:120ms;">
+        <div class="k-turn__offer">
+          <p class="k-turn__label">What the first message gives you</p>
+
+          <ul class="k-turn__assurances" aria-label="What the first message gives you">
+            {enquiryOutcomes.map((item) => (
+              <li class="k-turn__assurance">
+                <p class="k-turn__assuranceLabel">{item.label}</p>
+                <p class="k-turn__assuranceText">{item.text}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <aside class="k-turn__actionPane" aria-label="How to begin">
+          <p class="k-turn__label">How to begin</p>
+          <p class="k-turn__promise">
+            A short email with your current site, goals, and rough timing is usually
+            enough to begin.
+          </p>
+          <p class="k-turn__plain">
+            No drawn-out sales theatre. Just a straightforward first look at fit, likely
+            scope, and the best next step, even if the answer is "not yet".
+          </p>
+
+          <ul class="k-turn__reassuranceList" aria-label="First contact reassurances">
+            {reassurancePoints.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+
+          <div class="k-turn__actions">
+            <CtaButton
+              href="/contact/#contact"
+              label="Start with a short message"
+              variant="primary"
+              magnetic={false}
+              class="k-turn__cta"
+            />
+
+            <p class="k-turn__emailNote">
+              Prefer email? <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
+            </p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const root = document.querySelector("#turning-point");
+      if (!root) return;
+
+      const revealItems = Array.from(root.querySelectorAll("[data-turn-reveal]"));
+      if (!revealItems.length) return;
+
+      const reduced =
+        window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      revealItems.forEach((item, index) => {
+        if (!item.style.getPropertyValue("--turn-delay")) {
+          item.style.setProperty("--turn-delay", `${index * 120}ms`);
+        }
+      });
+
+      if (reduced || !("IntersectionObserver" in window)) {
+        root.classList.add("is-revealed");
+        return;
+      }
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            root.classList.add("is-revealed");
+            observer.disconnect();
+          });
+        },
+        { threshold: 0.22 }
+      );
+
+      observer.observe(root);
+    })();
+  </script>
+</section>

@@ -1,136 +1,143 @@
-﻿---
+---
 import "./presence-intro.css";
 
-const promisePoints = [
+const perceptionStates = [
   {
-    number: "01",
-    label: "More trust on first contact",
-    detail: "A calmer first impression that feels established from the opening seconds.",
+    tone: "before",
+    label: "When the site falls behind",
+    intro: "The business can get read as:",
+    points: [
+      "Smaller than the work really is",
+      "Less established at first glance",
+      "Harder to trust at the right level",
+    ],
   },
   {
-    number: "02",
-    label: "A stronger sense of credibility",
-    detail: "The business starts reading as more considered, dependable, and ready.",
-  },
-  {
-    number: "03",
-    label: "Momentum that feels easier to sustain",
-    detail: "Better-fit enquiries arrive with less friction and more confidence behind them.",
+    tone: "after",
+    label: "When the site catches up",
+    intro: "The same business starts reading as:",
+    points: [
+      "Established much earlier",
+      "Easier to value properly",
+      "Safer to contact with intent",
+    ],
   },
 ];
 
-const sceneSignals = ["Clearer signal", "Calmer confidence", "Stronger intent"];
+const outcomes = [
+  {
+    index: "01",
+    label: "First impression",
+    title: "Established sooner.",
+    text: "The opening seconds stop underselling the business.",
+  },
+  {
+    index: "02",
+    label: "Perceived value",
+    title: "Quality reads faster.",
+    text: "Positioning, price, and finish land with less friction.",
+  },
+  {
+    index: "03",
+    label: "Enquiry quality",
+    title: "Better-fit contact.",
+    text: "The right people arrive warmer, clearer, and readier to move.",
+  },
+];
 ---
 
 <section
-  class="k-presenceIntro section"
+  class="k-arrival section"
   id="next-stage"
-  aria-label="Invitation into a stronger business presence"
+  aria-label="How a stronger website changes first impression and enquiry quality"
   data-light-zone
-  data-light-x="66"
-  data-light-y="24"
-  data-light-size="1.18"
-  data-light-strength="0.96"
-  data-light-focus="0.44"
-  data-light-spread="0.9"
+  data-light-x="58"
+  data-light-y="25"
+  data-light-size="1.08"
+  data-light-strength="0.86"
+  data-light-focus="0.36"
+  data-light-spread="0.8"
 >
-  <div class="container k-presenceIntro__shell">
-    <div class="k-presenceIntro__copy" data-presence-reveal style="--presence-delay: 0ms;">
-      <p class="k-presenceIntro__eyebrow">A stronger next chapter</p>
-
-      <h2 class="k-presenceIntro__title">
-        <span class="k-presenceIntro__titleLine">When the presence feels right,</span>
-        <span class="k-presenceIntro__titleLine k-presenceIntro__titleLine--accent">
-          the business starts moving differently.
-        </span>
-      </h2>
-
-      <p class="k-presenceIntro__lead">
-        A refined website changes more than appearance. It changes the way the business is
-        felt. Trust lands faster, enquiries come with more confidence, and the company
-        begins to read as more established, more considered, and more ready for what comes
-        next.
-      </p>
-
-      <p class="k-presenceIntro__foot">
-        Not louder. Just clearer, calmer, and further ahead.
-      </p>
-    </div>
-
-    <div class="k-presenceIntro__scene" data-presence-reveal style="--presence-delay: 120ms;">
-      <div class="k-presenceIntro__frame">
-        <span class="k-presenceIntro__wash" aria-hidden="true"></span>
-        <span class="k-presenceIntro__beam" aria-hidden="true"></span>
-        <span class="k-presenceIntro__aperture" aria-hidden="true"></span>
-        <span class="k-presenceIntro__horizon" aria-hidden="true"></span>
-        <span class="k-presenceIntro__grid" aria-hidden="true"></span>
-        <span class="k-presenceIntro__halo" aria-hidden="true"></span>
-        <span class="k-presenceIntro__strata" aria-hidden="true"></span>
-
-        <p class="k-presenceIntro__sceneNote">
-          Made for businesses ready to be taken more seriously.
+  <div class="container k-arrival__container">
+    <header class="k-arrival__intro" data-presence-reveal style="--presence-delay: 0ms;">
+      <div class="k-arrival__introMeta">
+        <p class="k-arrival__eyebrow">Where the gap shows first</p>
+        <p class="k-arrival__micro">
+          The website is often shaping the judgement before the first call ever happens.
         </p>
+      </div>
 
-        <div class="k-presenceIntro__surface" aria-hidden="true">
-          <div class="k-presenceIntro__surfaceHead">
-            <span>Positioning</span>
-            <span>Next-stage presence</span>
-          </div>
+      <div class="k-arrival__introMain">
+        <h2 class="k-arrival__title">
+          If the site falls behind, the business can feel smaller than it is.
+        </h2>
 
-          <div class="k-presenceIntro__surfaceCore">
-            <span class="k-presenceIntro__surfacePlane k-presenceIntro__surfacePlane--rear"></span>
-            <span class="k-presenceIntro__surfacePlane k-presenceIntro__surfacePlane--front"></span>
-            <span class="k-presenceIntro__surfaceArc"></span>
-            <span class="k-presenceIntro__surfaceAxis k-presenceIntro__surfaceAxis--x"></span>
-            <span class="k-presenceIntro__surfaceAxis k-presenceIntro__surfaceAxis--y"></span>
-            <span
-              class="k-presenceIntro__surfaceMarker"
-              style="--presence-point-x: 18%; --presence-point-y: 66%;"
-            ></span>
-            <span
-              class="k-presenceIntro__surfaceMarker"
-              style="--presence-point-x: 47%; --presence-point-y: 44%;"
-            ></span>
-            <span
-              class="k-presenceIntro__surfaceMarker"
-              style="--presence-point-x: 78%; --presence-point-y: 22%;"
-            ></span>
-          </div>
+        <p class="k-arrival__lead">
+          That mismatch is not cosmetic. It affects how quickly people trust the level,
+          believe the price, and decide whether this feels like the right business to
+          contact.
+        </p>
+      </div>
+    </header>
 
-          <div class="k-presenceIntro__surfaceFoot">
-            {sceneSignals.map((signal) => <span>{signal}</span>)}
-          </div>
-        </div>
+    <article class="k-arrival__panel" data-presence-reveal style="--presence-delay: 110ms;">
+      <div class="k-arrival__panelTop">
+        <p class="k-arrival__panelKicker">Perception shift</p>
+        <p class="k-arrival__panelMeta">What changes in the first few seconds</p>
+      </div>
 
-        <div class="k-presenceIntro__statement">
-          <p class="k-presenceIntro__statementEyebrow">A more premium future</p>
-          <h3 class="k-presenceIntro__statementTitle">
-            Step into a version of the business that feels ready for more.
+      <div class="k-arrival__panelBody">
+        <div class="k-arrival__panelMain">
+          <p class="k-arrival__panelEyebrow">When the site finally catches up</p>
+
+          <h3 class="k-arrival__statement">
+            <span>Look as strong</span>
+            <span class="k-arrival__statementAccent">as the business already is.</span>
           </h3>
-          <p class="k-presenceIntro__statementText">
-            The right website gives the business a calmer, stronger presence people can
-            trust without hesitation.
+
+          <p class="k-arrival__summary">
+            Better structure, stronger tone, and a more considered finish help the
+            business read as established before the conversation has even started.
+          </p>
+
+          <p class="k-arrival__closing">
+            The website stops introducing the business as a smaller version of itself.
           </p>
         </div>
-      </div>
-    </div>
 
-    <ul
-      class="k-presenceIntro__promise"
-      aria-label="The shift this creates"
-      data-presence-reveal
-      style="--presence-delay: 220ms;"
-    >
-      {promisePoints.map((point) => (
-        <li>
-          <span class="k-presenceIntro__promiseNumber">{point.number}</span>
-          <div class="k-presenceIntro__promiseBody">
-            <p class="k-presenceIntro__promiseTitle">{point.label}</p>
-            <p class="k-presenceIntro__promiseText">{point.detail}</p>
-          </div>
-        </li>
-      ))}
-    </ul>
+        <div
+          class="k-arrival__states"
+          aria-label="How the business is perceived before and after the website catches up"
+        >
+          {perceptionStates.map((state) => (
+            <section class={`k-arrival__state k-arrival__state--${state.tone}`}>
+              <p class="k-arrival__stateLabel">{state.label}</p>
+              <p class="k-arrival__stateIntro">{state.intro}</p>
+
+              <ul class="k-arrival__stateList">
+                {state.points.map((point) => (
+                  <li>{point}</li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      </div>
+
+      <div class="k-arrival__outcomes" role="list" aria-label="Commercial outcomes of a stronger website">
+        {outcomes.map((item) => (
+          <article class="k-arrival__outcome" role="listitem">
+            <div class="k-arrival__outcomeMeta">
+              <span class="k-arrival__outcomeIndex">{item.index}</span>
+              <span class="k-arrival__outcomeLabel">{item.label}</span>
+            </div>
+
+            <p class="k-arrival__outcomeTitle">{item.title}</p>
+            <p class="k-arrival__outcomeText">{item.text}</p>
+          </article>
+        ))}
+      </div>
+    </article>
   </div>
 
   <script>
@@ -158,7 +165,7 @@ const sceneSignals = ["Clearer signal", "Calmer confidence", "Stronger intent"];
             io.unobserve(entry.target);
           });
         },
-        { threshold: 0.2 }
+        { threshold: 0.22 }
       );
 
       items.forEach((item, index) => {

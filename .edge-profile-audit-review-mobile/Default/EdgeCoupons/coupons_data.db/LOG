@@ -1,0 +1,5 @@
+2026/03/27-13:34:37.722 33f8 Reusing MANIFEST C:\dev\kersivo-agency\.edge-profile-audit-review-mobile\Default\EdgeCoupons/coupons_data.db/MANIFEST-000001
+2026/03/27-13:34:37.722 33f8 Recovering log #4
+2026/03/27-13:34:37.723 33f8 Reusing old log C:\dev\kersivo-agency\.edge-profile-audit-review-mobile\Default\EdgeCoupons/coupons_data.db/000004.log 
+2026/03/27-13:34:37.725 2230 Level-0 table #7: started
+2026/03/27-13:34:37.729 2230 Level-0 table #7: 682064 bytes OK

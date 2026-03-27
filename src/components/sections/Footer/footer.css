@@ -95,6 +95,10 @@
   overflow: hidden;
 }
 
+.k-footcard--flush{
+  margin-top: 0;
+}
+
 .k-footcard::before{
   content:"";
   position:absolute;

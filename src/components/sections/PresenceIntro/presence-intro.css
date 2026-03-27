@@ -1,304 +1,347 @@
-.k-presenceIntro {
-  --presence-line: rgba(255, 255, 255, 0.1);
-  --presence-line-soft: rgba(255, 255, 255, 0.06);
-  --presence-ink: rgba(255, 255, 255, 0.96);
-  --presence-copy: rgba(255, 255, 255, 0.74);
-  --presence-copy-soft: rgba(255, 255, 255, 0.58);
-  --presence-warm: rgba(244, 239, 229, 0.95);
-  --presence-steel: rgba(169, 195, 214, 0.9);
+.k-arrival {
+  --arrival-line: rgba(255, 255, 255, 0.09);
+  --arrival-line-strong: rgba(255, 255, 255, 0.14);
+  --arrival-copy: rgba(255, 255, 255, 0.74);
+  --arrival-copy-soft: rgba(255, 255, 255, 0.56);
+  --arrival-ink: rgba(255, 255, 255, 0.97);
+  --arrival-warm: rgba(242, 235, 222, 0.94);
+  --arrival-steel: rgba(176, 198, 216, 0.9);
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  padding-top: clamp(28px, 5vw, 74px);
+  padding-top: clamp(18px, 3vw, 38px);
 }
 
-.k-presenceIntro::before,
-.k-presenceIntro::after {
+.k-arrival::before,
+.k-arrival::after {
   content: "";
   position: absolute;
   pointer-events: none;
 }
 
-.k-presenceIntro::before {
-  inset: 6% auto auto -18%;
-  width: min(62vw, 720px);
-  height: min(54vw, 520px);
+.k-arrival::before {
+  inset: 0 auto auto -18%;
+  width: min(54vw, 720px);
+  height: min(46vw, 520px);
   background: radial-gradient(
-    circle at 50% 50%,
-    rgba(244, 239, 229, 0.12),
-    rgba(169, 195, 214, 0.08) 38%,
-    transparent 72%
+    circle at 52% 42%,
+    rgba(244, 239, 229, 0.11),
+    rgba(173, 198, 216, 0.06) 46%,
+    transparent 76%
   );
-  filter: blur(20px);
-  opacity: 0.96;
+  filter: blur(14px);
+  opacity: 0.76;
 }
 
-.k-presenceIntro::after {
-  inset: auto -10% 4% auto;
-  width: min(42vw, 460px);
-  height: min(42vw, 460px);
+.k-arrival::after {
+  inset: auto -8% 10% auto;
+  width: min(28vw, 320px);
+  height: min(28vw, 320px);
   border-radius: 999px;
-  background: radial-gradient(circle, rgba(169, 195, 214, 0.1), transparent 68%);
-  opacity: 0.6;
+  background: radial-gradient(circle, rgba(173, 198, 216, 0.08), transparent 72%);
+  opacity: 0.42;
 }
 
-.k-presenceIntro__shell {
+.k-arrival__container {
   position: relative;
   z-index: 1;
   display: grid;
-  gap: clamp(26px, 4vw, 56px);
+  gap: clamp(24px, 3.4vw, 38px);
 }
 
-.k-presenceIntro__copy {
+.k-arrival__intro {
   display: grid;
   gap: 18px;
-  align-content: start;
+  align-items: start;
 }
 
-.k-presenceIntro__eyebrow {
+.k-arrival__introMeta,
+.k-arrival__introMain {
+  display: grid;
+  gap: 12px;
+}
+
+.k-arrival__eyebrow {
   margin: 0;
   font-size: 12px;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.64);
+  color: rgba(255, 255, 255, 0.62);
   font-weight: var(--w-semibold, 650);
 }
 
-.k-presenceIntro__title {
+.k-arrival__micro {
   margin: 0;
-  max-width: 10.5ch;
-  color: var(--presence-ink);
-  font-size: clamp(38px, 5.8vw, 84px);
-  line-height: 0.94;
-  letter-spacing: -0.066em;
+  max-width: 26ch;
+  color: var(--arrival-copy-soft);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.k-arrival__title {
+  margin: 0;
+  max-width: 13.5ch;
+  color: var(--arrival-ink);
+  font-size: clamp(30px, 4.2vw, 58px);
+  line-height: 0.97;
+  letter-spacing: -0.055em;
   text-wrap: balance;
 }
 
-.k-presenceIntro__titleLine {
-  display: block;
-}
-
-.k-presenceIntro__titleLine--accent {
-  background: linear-gradient(90deg, rgba(244, 239, 229, 0.98), rgba(169, 195, 214, 0.92));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.k-presenceIntro__lead {
+.k-arrival__lead {
   margin: 0;
-  max-width: 34ch;
-  color: var(--presence-copy);
+  max-width: 60ch;
+  color: rgba(255, 255, 255, 0.78);
   font-size: clamp(16px, 1.16vw, 18px);
-  line-height: 1.68;
+  line-height: 1.66;
 }
 
-.k-presenceIntro__foot {
-  margin: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  color: var(--presence-copy-soft);
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.k-presenceIntro__foot::before {
-  content: "";
-  width: clamp(56px, 8vw, 92px);
-  height: 1px;
-  background: linear-gradient(90deg, rgba(244, 239, 229, 0.38), rgba(255, 255, 255, 0.06));
-}
-
-.k-presenceIntro__scene {
+.k-arrival__panel {
   position: relative;
-}
-
-.k-presenceIntro__frame {
-  position: relative;
-  min-height: clamp(380px, 94vw, 620px);
-  padding: clamp(22px, 5vw, 48px);
-  border-radius: clamp(30px, 5vw, 44px);
-  border: 1px solid var(--presence-line);
-  background: linear-gradient(180deg, rgba(16, 18, 24, 0.82), rgba(7, 9, 12, 0.96));
-  box-shadow: 0 36px 100px rgba(0, 0, 0, 0.42);
-  overflow: hidden;
-  isolation: isolate;
   display: grid;
-  align-items: end;
+  gap: clamp(24px, 3.2vw, 34px);
+  padding: clamp(22px, 3.4vw, 38px);
+  border-radius: clamp(26px, 4vw, 38px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.018) 18%, rgba(255, 255, 255, 0.01) 42%),
+    linear-gradient(145deg, rgba(20, 23, 28, 0.97), rgba(9, 11, 14, 0.99));
+  box-shadow:
+    0 34px 90px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  overflow: hidden;
 }
 
-.k-presenceIntro__frame::before,
-.k-presenceIntro__frame::after {
+.k-arrival__panel::before,
+.k-arrival__panel::after {
   content: "";
   position: absolute;
+  pointer-events: none;
+}
+
+.k-arrival__panel::before {
   inset: 0;
-  pointer-events: none;
-}
-
-.k-presenceIntro__frame::before {
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.07), transparent 44%),
-    radial-gradient(circle at 18% 18%, rgba(244, 239, 229, 0.1), transparent 34%);
-  opacity: 0.94;
+    linear-gradient(140deg, rgba(255, 255, 255, 0.06), transparent 34%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(5, 6, 8, 0.24) 82%);
+  opacity: 0.88;
 }
 
-.k-presenceIntro__frame::after {
-  background: linear-gradient(180deg, rgba(5, 7, 10, 0.04), rgba(5, 7, 10, 0.36) 78%);
-  opacity: 0.9;
-}
-
-.k-presenceIntro__sceneNote,
-.k-presenceIntro__statement {
-  position: relative;
-  z-index: 2;
-}
-
-.k-presenceIntro__sceneNote {
-  position: absolute;
-  top: clamp(22px, 5vw, 34px);
-  left: clamp(22px, 5vw, 34px);
-  margin: 0;
-  max-width: 22ch;
-  color: rgba(255, 255, 255, 0.52);
-  font-size: 11px;
-  line-height: 1.5;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-}
-
-.k-presenceIntro__wash,
-.k-presenceIntro__beam,
-.k-presenceIntro__aperture,
-.k-presenceIntro__horizon {
-  position: absolute;
-  pointer-events: none;
-}
-
-.k-presenceIntro__wash {
-  inset: -8% -12% 32% 26%;
-  background:
-    radial-gradient(circle at 18% 28%, rgba(244, 239, 229, 0.22), transparent 34%),
-    radial-gradient(circle at 68% 24%, rgba(169, 195, 214, 0.16), transparent 28%),
-    radial-gradient(circle at 52% 82%, rgba(244, 239, 229, 0.08), transparent 38%);
-  filter: blur(16px);
-  opacity: 0.92;
-}
-
-.k-presenceIntro__beam {
-  inset: 10% -18% 20% 18%;
+.k-arrival__panel::after {
+  inset: 0 auto 0 56%;
+  width: 1px;
   background: linear-gradient(
-    132deg,
-    transparent 20%,
-    rgba(255, 255, 255, 0.02) 36%,
-    rgba(244, 239, 229, 0.16) 48%,
-    rgba(169, 195, 214, 0.2) 56%,
-    transparent 76%
-  );
-  opacity: 0.6;
-  filter: blur(10px);
-  transform: rotate(-8deg);
-  mix-blend-mode: screen;
-}
-
-.k-presenceIntro__aperture {
-  right: -6%;
-  bottom: -16%;
-  width: min(60%, 420px);
-  aspect-ratio: 1;
-  border-radius: 999px;
-  background: radial-gradient(
-    circle,
-    rgba(244, 239, 229, 0.18),
-    rgba(169, 195, 214, 0.08) 42%,
-    transparent 70%
+    180deg,
+    transparent,
+    rgba(255, 255, 255, 0.14) 14%,
+    rgba(255, 255, 255, 0.06) 78%,
+    transparent
   );
   opacity: 0.86;
 }
 
-.k-presenceIntro__horizon {
-  inset: auto 10% 16% 10%;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(244, 239, 229, 0.52),
-    rgba(255, 255, 255, 0.18),
-    transparent
-  );
-  box-shadow: 0 0 24px rgba(244, 239, 229, 0.14);
-  opacity: 0.9;
+.k-arrival__panelTop,
+.k-arrival__panelBody,
+.k-arrival__outcomes {
+  position: relative;
+  z-index: 1;
 }
 
-.k-presenceIntro__statement {
-  display: grid;
-  gap: 14px;
-  max-width: min(100%, 31rem);
-  margin-top: auto;
+.k-arrival__panelTop {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.k-presenceIntro__statementEyebrow {
+.k-arrival__panelKicker,
+.k-arrival__panelMeta,
+.k-arrival__panelEyebrow,
+.k-arrival__stateLabel,
+.k-arrival__outcomeIndex,
+.k-arrival__outcomeLabel {
   margin: 0;
-  color: var(--presence-warm);
   font-size: 11px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   font-weight: var(--w-semibold, 650);
 }
 
-.k-presenceIntro__statementTitle {
+.k-arrival__panelKicker {
+  color: var(--arrival-warm);
+}
+
+.k-arrival__panelMeta {
+  color: rgba(255, 255, 255, 0.52);
+}
+
+.k-arrival__panelBody {
+  display: grid;
+  gap: clamp(20px, 2.8vw, 30px);
+}
+
+.k-arrival__panelMain {
+  display: grid;
+  gap: 16px;
+  align-content: start;
+}
+
+.k-arrival__panelEyebrow {
+  color: rgba(255, 255, 255, 0.48);
+}
+
+.k-arrival__statement {
   margin: 0;
-  max-width: 11ch;
-  color: rgba(255, 255, 255, 0.96);
-  font-size: clamp(28px, 4vw, 54px);
-  line-height: 0.98;
-  letter-spacing: -0.05em;
+  max-width: 8.6ch;
+  color: rgba(255, 255, 255, 0.98);
+  font-size: clamp(50px, 7vw, 92px);
+  line-height: 0.88;
+  letter-spacing: -0.075em;
   text-wrap: balance;
 }
 
-.k-presenceIntro__statementText {
+.k-arrival__statement span {
+  display: block;
+}
+
+.k-arrival__statementAccent {
+  color: rgba(233, 238, 244, 0.92);
+}
+
+.k-arrival__summary {
   margin: 0;
-  max-width: 31ch;
-  color: var(--presence-copy);
+  max-width: 34ch;
+  color: var(--arrival-copy);
   font-size: clamp(15px, 1.06vw, 17px);
-  line-height: 1.62;
+  line-height: 1.66;
 }
 
-.k-presenceIntro__promise {
-  margin: 0;
-  padding: clamp(18px, 2.8vw, 26px) 0;
-  list-style: none;
+.k-arrival__closing {
+  margin: 2px 0 0;
+  max-width: 34ch;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  line-height: 1.58;
+}
+
+.k-arrival__states {
   display: grid;
-  gap: 0;
-  border-top: 1px solid var(--presence-line-soft);
-  border-bottom: 1px solid var(--presence-line-soft);
+  gap: 14px;
+  align-content: start;
 }
 
-.k-presenceIntro__promise li {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-  padding: 16px 0;
-  color: rgba(255, 255, 255, 0.84);
-  font-size: clamp(14px, 1.1vw, 16px);
-  line-height: 1.5;
+.k-arrival__state {
+  display: grid;
+  gap: 10px;
+  padding: 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.k-arrival__state--after {
+  border-color: rgba(242, 235, 222, 0.18);
+  background:
+    linear-gradient(180deg, rgba(242, 235, 222, 0.05), rgba(255, 255, 255, 0.02) 70%),
+    rgba(255, 255, 255, 0.018);
+}
+
+.k-arrival__stateLabel {
+  color: var(--arrival-warm);
+}
+
+.k-arrival__stateIntro {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.k-arrival__stateList {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.k-arrival__stateList li {
+  position: relative;
+  padding-left: 16px;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 15px;
+  line-height: 1.52;
   letter-spacing: -0.01em;
 }
 
-.k-presenceIntro__promise li::before {
+.k-arrival__stateList li::before {
   content: "";
-  width: 7px;
-  height: 7px;
+  position: absolute;
+  left: 0;
+  top: 0.7em;
+  width: 6px;
+  height: 6px;
   border-radius: 999px;
-  flex: none;
-  background: linear-gradient(135deg, rgba(244, 239, 229, 0.95), rgba(169, 195, 214, 0.92));
-  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.48);
+  transform: translateY(-50%);
 }
 
-.k-presenceIntro__promise li + li {
-  margin-top: 0;
-  border-top: 1px solid var(--presence-line-soft);
+.k-arrival__state--after .k-arrival__stateList li::before {
+  background: rgba(242, 235, 222, 0.84);
+  box-shadow: 0 0 0 5px rgba(242, 235, 222, 0.08);
+}
+
+.k-arrival__outcomes {
+  display: grid;
+  gap: 0;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.k-arrival__outcome {
+  display: grid;
+  gap: 10px;
+  padding: 20px 0;
+}
+
+.k-arrival__outcome + .k-arrival__outcome {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.k-arrival__outcomeMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  align-items: center;
+}
+
+.k-arrival__outcomeIndex {
+  color: rgba(255, 255, 255, 0.38);
+}
+
+.k-arrival__outcomeLabel {
+  color: var(--arrival-warm);
+}
+
+.k-arrival__outcomeTitle {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.93);
+  font-size: clamp(19px, 1.48vw, 22px);
+  line-height: 1.18;
+  letter-spacing: -0.03em;
+  font-weight: var(--w-semibold, 650);
+}
+
+.k-arrival__outcomeText {
+  margin: 0;
+  max-width: 30ch;
+  color: var(--arrival-copy);
+  font-size: 14px;
+  line-height: 1.6;
 }
 
 [data-presence-reveal] {
@@ -306,152 +349,127 @@
   transform: translate3d(0, 0, 0);
 }
 
-.k-presenceIntro[data-presence-enhanced="true"] [data-presence-reveal] {
+.k-arrival[data-presence-enhanced="true"] [data-presence-reveal] {
   opacity: 0;
-  transform: translate3d(0, 24px, 0) scale(0.985);
+  transform: translate3d(0, 24px, 0) scale(0.988);
   transition:
     opacity 620ms cubic-bezier(0.22, 1, 0.36, 1),
     transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
   transition-delay: var(--presence-delay, 0ms);
 }
 
-.k-presenceIntro[data-presence-enhanced="true"] [data-presence-reveal].is-in {
+.k-arrival[data-presence-enhanced="true"] [data-presence-reveal].is-in {
   opacity: 1;
   transform: translate3d(0, 0, 0) scale(1);
 }
 
 @media (min-width: 980px) {
-  .k-presenceIntro__shell {
-    grid-template-columns: minmax(280px, 0.76fr) minmax(0, 1.24fr);
-    align-items: center;
-    column-gap: clamp(34px, 5vw, 84px);
+  .k-arrival__intro {
+    grid-template-columns: minmax(220px, 0.38fr) minmax(0, 1.62fr);
+    column-gap: clamp(28px, 4.6vw, 84px);
   }
 
-  .k-presenceIntro__copy {
-    padding-top: clamp(10px, 2.4vw, 28px);
+  .k-arrival__panelBody {
+    grid-template-columns: minmax(0, 1.06fr) minmax(320px, 0.94fr);
+    column-gap: clamp(26px, 3.8vw, 44px);
+    align-items: start;
   }
 
-  .k-presenceIntro__frame {
-    min-height: clamp(500px, 48vw, 640px);
-    padding: clamp(28px, 4vw, 54px);
-  }
-
-  .k-presenceIntro__sceneNote {
-    top: clamp(28px, 3vw, 38px);
-    left: clamp(28px, 3vw, 40px);
-    max-width: 30ch;
-  }
-
-  .k-presenceIntro__statement {
-    margin-left: clamp(8px, 1vw, 14px);
-    max-width: min(64%, 540px);
-  }
-
-  .k-presenceIntro__promise {
-    grid-column: 1 / -1;
+  .k-arrival__outcomes {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    align-items: center;
   }
 
-  .k-presenceIntro__promise li {
-    min-height: 58px;
-    padding: 0 clamp(18px, 2.2vw, 32px);
+  .k-arrival__outcome {
+    min-height: 154px;
+    padding: 0 clamp(18px, 2vw, 28px);
+    align-content: start;
   }
 
-  .k-presenceIntro__promise li:first-child {
+  .k-arrival__outcome + .k-arrival__outcome {
+    border-top: 0;
+    border-left: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .k-arrival__outcome:first-child {
     padding-left: 0;
   }
 
-  .k-presenceIntro__promise li:last-child {
+  .k-arrival__outcome:last-child {
     padding-right: 0;
-  }
-
-  .k-presenceIntro__promise li + li {
-    border-top: 0;
-    border-left: 1px solid var(--presence-line-soft);
   }
 }
 
 @media (max-width: 979px) {
-  .k-presenceIntro::before {
-    inset: 8% -28% auto -26%;
-    width: 92vw;
-    height: 360px;
+  .k-arrival::before {
+    inset: 4% -24% auto -18%;
+    width: 90vw;
+    height: 320px;
   }
 
-  .k-presenceIntro::after {
-    inset: auto -24% 10% auto;
-    width: 260px;
-    height: 260px;
+  .k-arrival::after {
+    width: 220px;
+    height: 220px;
   }
 
-  .k-presenceIntro__sceneNote {
-    max-width: 19ch;
+  .k-arrival__title {
+    max-width: 13ch;
   }
 
-  .k-presenceIntro__horizon {
-    inset: auto 8% 18% 8%;
-  }
-
-  .k-presenceIntro__statement {
-    max-width: min(100%, 28rem);
+  .k-arrival__panel::after {
+    inset: auto 0 38% 0;
+    width: auto;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.12) 18%,
+      rgba(255, 255, 255, 0.04) 82%,
+      transparent
+    );
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .k-presenceIntro__wash {
-    animation: presenceFloat 16s ease-in-out infinite alternate;
+@media (max-width: 639px) {
+  .k-arrival__panel {
+    padding: 20px;
+    border-radius: 24px;
+    gap: 20px;
   }
 
-  .k-presenceIntro__beam {
-    animation: presenceSweep 18s ease-in-out infinite alternate;
+  .k-arrival__panelTop {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-bottom: 14px;
   }
 
-  .k-presenceIntro__aperture {
-    animation: presencePulse 12s ease-in-out infinite alternate;
+  .k-arrival__statement {
+    font-size: clamp(44px, 13.5vw, 68px);
+    max-width: 8.4ch;
+  }
+
+  .k-arrival__summary,
+  .k-arrival__closing {
+    max-width: none;
+  }
+
+  .k-arrival__state {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .k-arrival__outcomes {
+    padding-top: 4px;
+  }
+
+  .k-arrival__outcome {
+    padding: 18px 0;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .k-presenceIntro[data-presence-enhanced="true"] [data-presence-reveal] {
+  .k-arrival[data-presence-enhanced="true"] [data-presence-reveal] {
     transition: none !important;
-  }
-
-  .k-presenceIntro__wash,
-  .k-presenceIntro__beam,
-  .k-presenceIntro__aperture {
-    animation: none !important;
+    transform: none !important;
   }
 }
 
-@keyframes presenceFloat {
-  from {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-
-  to {
-    transform: translate3d(0, -10px, 0) scale(1.03);
-  }
-}
-
-@keyframes presenceSweep {
-  from {
-    transform: rotate(-8deg) translate3d(-2%, 0, 0);
-  }
-
-  to {
-    transform: rotate(-5deg) translate3d(4%, -3%, 0);
-  }
-}
-
-@keyframes presencePulse {
-  from {
-    opacity: 0.72;
-    transform: scale(0.98);
-  }
-
-  to {
-    opacity: 0.9;
-    transform: scale(1.04);
-  }
-}

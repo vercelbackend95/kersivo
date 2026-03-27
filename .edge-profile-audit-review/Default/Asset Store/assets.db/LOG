@@ -1,0 +1,5 @@
+2026/03/27-13:34:12.677 4108 Reusing MANIFEST C:\dev\kersivo-agency\.edge-profile-audit-review\Default\Asset Store\assets.db/MANIFEST-000001
+2026/03/27-13:34:12.699 4108 Recovering log #3
+2026/03/27-13:34:12.706 4108 Level-0 table #3: started
+2026/03/27-13:34:12.720 4108 Level-0 table #3: 338946 bytes OK
+2026/03/27-13:34:12.725 4108 Delete type=0 #3
