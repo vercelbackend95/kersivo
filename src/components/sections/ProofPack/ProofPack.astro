@@ -13,43 +13,52 @@ import "./proof-pack.css";
   data-light-strength="0.68"
   data-light-focus="0.34"
 >
+  <div class="k-proofx__ambient" aria-hidden="true">
+    <span class="k-proofx__ambientGlow k-proofx__ambientGlow--north"></span>
+    <span class="k-proofx__ambientGlow k-proofx__ambientGlow--south"></span>
+    <span class="k-proofx__ambientBeam"></span>
+  </div>
+
   <div class="container k-proofx__wrap">
-    <!-- ===== ROW 1 (TOP) — NO TIMELINE ===== -->
     <div class="k-proofx__row k-proofx__row--hero">
       <div class="k-proofx__heroCopy">
         <div class="k-proofx__kicker">
           <span class="k-proofx__dot" aria-hidden="true"></span>
           <span>Project and long-term planning</span>
-          <span class="k-proofx__chev" aria-hidden="true">›</span>
+          <span class="k-proofx__chev" aria-hidden="true">&rsaquo;</span>
         </div>
 
-<h2 class="k-proofx__h2">
-  <span class="k-proofx__line">From idea to launch</span>
-  <span class="k-proofx__line k-proofx__grad">one line of sight.</span>
-</h2>
-
-
-
+        <h2 class="k-proofx__h2">
+          <span class="k-proofx__line">From idea to launch</span>
+          <span class="k-proofx__line k-proofx__grad">one line of sight.</span>
+        </h2>
 
         <p class="k-proofx__p">
-          A single source of truth for the build. We plan, manage, and refine each step — so decisions stay light, scope stays sharp, and delivery stays steady.
+          A single source of truth for the build. We plan, manage, and refine each step
+          so decisions stay light, scope stays sharp, and delivery stays steady.
         </p>
       </div>
     </div>
 
     <div class="k-proofx__hr" aria-hidden="true"></div>
 
-    <!-- ===== ROW 2 ===== -->
     <div class="k-proofx__row k-proofx__row--split">
       <div class="k-proofx__half">
-        <!-- ✅ UPDATED COPY (left column) -->
-        <h3 class="k-proofx__h3">Progress updates — without the chaos</h3>
+        <h3 class="k-proofx__h3">Progress updates without the chaos</h3>
         <p class="k-proofx__p2">
-          Short walkthrough videos paired with one shared doc for decisions and feedback. Clear next steps, calm delivery, zero scattered threads.
+          Short walkthrough videos paired with one shared doc for decisions and feedback.
+          Clear next steps, calm delivery, zero scattered threads.
         </p>
 
         <div class="k-proofx__card k-proofx__card--overview" aria-hidden="true">
-          <div class="k-proofx__cardTitle">Project Overview</div>
+          <div class="k-proofx__cardHead">
+            <div>
+              <div class="k-proofx__eyebrow">Shared command centre</div>
+              <div class="k-proofx__cardTitle">Project Overview</div>
+            </div>
+
+            <div class="k-proofx__cardStamp">Week 04</div>
+          </div>
 
           <div class="k-proofx__kv">
             <div class="k-proofx__kvRow">
@@ -57,7 +66,7 @@ import "./proof-pack.css";
               <div class="k-proofx__kvVal">
                 <span class="k-proofx__pill">
                   <span class="k-proofx__ring" aria-hidden="true"></span>
-                  In Progress
+                  In progress
                 </span>
                 <span class="k-proofx__pill">
                   <span class="k-proofx__square" aria-hidden="true"></span>
@@ -90,18 +99,61 @@ import "./proof-pack.css";
               <div class="k-proofx__kvVal k-proofx__kvVal--col">
                 <div class="k-proofx__mile">
                   <span class="k-proofx__mDot k-proofx__mDot--blue" aria-hidden="true"></span>
-                  <span>Design Review</span>
+                  <span>Design review</span>
                   <span class="k-proofx__muted">100%</span>
                 </div>
                 <div class="k-proofx__mile">
                   <span class="k-proofx__mDot k-proofx__mDot--blue" aria-hidden="true"></span>
-                  <span>Internal Alpha</span>
+                  <span>Internal alpha</span>
                   <span class="k-proofx__muted">100% of 10</span>
                 </div>
                 <div class="k-proofx__mile">
                   <span class="k-proofx__mDot k-proofx__mDot--amber" aria-hidden="true"></span>
                   <span>GA</span>
                   <span class="k-proofx__muted">25% of 53</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="k-proofx__previewDock" aria-hidden="true">
+            <div class="k-proofx__previewMeta">
+              <span class="k-proofx__previewLabel">Curated preview</span>
+              <span class="k-proofx__previewFile">barber-system.webp</span>
+            </div>
+
+            <div class="k-proofx__previewSurface">
+              <div class="k-proofx__previewChrome">
+                <span class="k-proofx__previewChromeDots">
+                  <span class="k-proofx__previewDot"></span>
+                  <span class="k-proofx__previewDot"></span>
+                  <span class="k-proofx__previewDot"></span>
+                </span>
+                <span class="k-proofx__previewUrl">Studio preview / launch surface</span>
+              </div>
+
+              <div class="k-proofx__previewViewport">
+                <div class="k-proofx__previewHero">
+                  <span class="k-proofx__previewEyebrow">Northline Barber</span>
+                  <span class="k-proofx__previewTitle">Booking that feels direct.</span>
+                  <span class="k-proofx__previewAction">Book appointment</span>
+                </div>
+
+                <div class="k-proofx__previewGrid">
+                  <div class="k-proofx__previewPanel">
+                    <strong>Beard sculpt</strong>
+                    <span>35 min service flow</span>
+                  </div>
+                  <div class="k-proofx__previewPanel">
+                    <strong>Desk view</strong>
+                    <span>Queue and openings</span>
+                  </div>
+                </div>
+
+                <div class="k-proofx__previewSlots">
+                  <span class="k-proofx__previewSlot is-active">Tue 11:30</span>
+                  <span class="k-proofx__previewSlot">Wed 14:00</span>
+                  <span class="k-proofx__previewSlot">Fri 09:15</span>
                 </div>
               </div>
             </div>
@@ -115,27 +167,47 @@ import "./proof-pack.css";
 
       <div class="k-proofx__half">
         <h3 class="k-proofx__h3">Project updates</h3>
-        <p class="k-proofx__p2">Communicate progress and project health with built-in project updates.</p>
+        <p class="k-proofx__p2">
+          Communicate progress and project health with built-in project updates.
+        </p>
 
         <div class="k-proofx__stack" aria-hidden="true">
           <div class="k-proofx__update k-proofx__update--back1">
-            <div class="k-proofx__uLine"></div><div class="k-proofx__uLine"></div><div class="k-proofx__uLine"></div>
+            <div class="k-proofx__uLine"></div>
+            <div class="k-proofx__uLine"></div>
+            <div class="k-proofx__uLine"></div>
           </div>
 
           <div class="k-proofx__update k-proofx__update--back2">
-            <div class="k-proofx__uLine"></div><div class="k-proofx__uLine"></div><div class="k-proofx__uLine"></div>
+            <div class="k-proofx__uLine"></div>
+            <div class="k-proofx__uLine"></div>
+            <div class="k-proofx__uLine"></div>
           </div>
 
           <div class="k-proofx__update k-proofx__update--front">
-            <div class="k-proofx__uTop"><span class="k-proofx__uBadge">At risk</span></div>
+            <div class="k-proofx__uTop">
+              <span class="k-proofx__uBadge">Launch watch</span>
+              <span class="k-proofx__uTiny">Weekly check-in</span>
+            </div>
 
             <div class="k-proofx__uStatus">
-              <span class="k-proofx__check" aria-hidden="true">✓</span>
+              <span class="k-proofx__check" aria-hidden="true">&#10003;</span>
               <span class="k-proofx__green">On track</span>
             </div>
 
             <div class="k-proofx__uTitle">We are ready to launch next Thursday</div>
-            <div class="k-proofx__uDate">Sep 8</div>
+            <div class="k-proofx__uBody">
+              Final QA is closed, approval notes are captured, and the handoff pack is
+              staged for Thursday morning.
+            </div>
+
+            <div class="k-proofx__uRoute">
+              <span>Plan</span>
+              <span>Build</span>
+              <span class="is-active">Launch</span>
+            </div>
+
+            <div class="k-proofx__uDate">Updated Sep 8</div>
           </div>
         </div>
       </div>
@@ -143,12 +215,12 @@ import "./proof-pack.css";
 
     <div class="k-proofx__hr" aria-hidden="true"></div>
 
-    <!-- ===== ROW 3 ===== -->
     <div class="k-proofx__row k-proofx__row--doc">
       <div class="k-proofx__copy2">
         <h3 class="k-proofx__h3 k-proofx__h3--big">Collaboration, kept simple</h3>
         <p class="k-proofx__p2">
-          One doc for scope, one place for feedback, one action list for changes — so nothing gets missed and delivery stays steady.
+          One doc for scope, one place for feedback, one action list for changes so
+          nothing gets missed and delivery stays steady.
         </p>
 
         <div class="k-proofx__list" data-proofx-tabs role="tablist" aria-label="Collaboration artefacts">
@@ -162,7 +234,10 @@ import "./proof-pack.css";
             data-proofx-tab="doc"
           >
             <span class="k-proofx__liBar" aria-hidden="true"></span>
-            <span>Scope &amp; milestones</span>
+            <span class="k-proofx__liCopy">
+              <span class="k-proofx__liTitle">Scope &amp; milestones</span>
+              <span class="k-proofx__liMeta">Shared outline and launch map</span>
+            </span>
           </button>
 
           <button
@@ -175,7 +250,10 @@ import "./proof-pack.css";
             data-proofx-tab="comments"
           >
             <span class="k-proofx__liBar" aria-hidden="true"></span>
-            <span>Feedback threads</span>
+            <span class="k-proofx__liCopy">
+              <span class="k-proofx__liTitle">Feedback threads</span>
+              <span class="k-proofx__liMeta">Inline review without the drift</span>
+            </span>
           </button>
 
           <button
@@ -188,13 +266,15 @@ import "./proof-pack.css";
             data-proofx-tab="commands"
           >
             <span class="k-proofx__liBar" aria-hidden="true"></span>
-            <span>Decisions → changes</span>
+            <span class="k-proofx__liCopy">
+              <span class="k-proofx__liTitle">Decisions to changes</span>
+              <span class="k-proofx__liMeta">Turn approved notes into action</span>
+            </span>
           </button>
         </div>
       </div>
 
       <div class="k-proofx__visual k-proofx__visual--doc" data-proofx-panels>
-        <!-- Panel 1: Documents -->
         <div
           class="k-proofx__panel is-active"
           id="proofx-panel-doc"
@@ -208,9 +288,10 @@ import "./proof-pack.css";
             <div class="k-proofx__docTop">
               <span class="k-proofx__crumbDot" aria-hidden="true"></span>
               <span>Spice harvester</span>
-              <span class="k-proofx__sep" aria-hidden="true">›</span>
+              <span class="k-proofx__sep" aria-hidden="true">&rsaquo;</span>
               <span>Project specs</span>
-              <span class="k-proofx__dots" aria-hidden="true">···</span>
+              <span class="k-proofx__docStatus">Live outline</span>
+              <span class="k-proofx__dots" aria-hidden="true">&bull;&bull;&bull;</span>
             </div>
 
             <div class="k-proofx__docBody">
@@ -222,15 +303,30 @@ import "./proof-pack.css";
               </div>
 
               <div class="k-proofx__docP">
-                Write down product ideas and work together on feature specs in realtime, multiplayer project documents.
-                Add <span class="k-proofx__mono">**style**</span> and <span class="k-proofx__mono">##structure</span> with
-                rich-text formatting options.
+                Write down product ideas and work together on feature specs in realtime,
+                multiplayer project documents. Add
+                <span class="k-proofx__mono">**style**</span> and
+                <span class="k-proofx__mono">##structure</span> with rich-text formatting
+                options.
                 <span class="k-proofx__tag k-proofx__tag--b">quinn</span>
               </div>
 
+              <div class="k-proofx__docMetaStrip">
+                <span>Scope sign-off</span>
+                <span>Owner visibility</span>
+                <span>Launch notes</span>
+              </div>
+
               <div class="k-proofx__lines">
-                <span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
               </div>
             </div>
 
@@ -238,7 +334,6 @@ import "./proof-pack.css";
           </div>
         </div>
 
-        <!-- Panel 2: Inline comments -->
         <div
           class="k-proofx__panel"
           id="proofx-panel-comments"
@@ -252,9 +347,10 @@ import "./proof-pack.css";
             <div class="k-proofx__docTop">
               <span class="k-proofx__crumbDot" aria-hidden="true"></span>
               <span>Launch notes</span>
-              <span class="k-proofx__sep" aria-hidden="true">›</span>
+              <span class="k-proofx__sep" aria-hidden="true">&rsaquo;</span>
               <span>Feedback</span>
-              <span class="k-proofx__dots" aria-hidden="true">···</span>
+              <span class="k-proofx__docStatus">Review lane</span>
+              <span class="k-proofx__dots" aria-hidden="true">&bull;&bull;&bull;</span>
             </div>
 
             <div class="k-proofx__docBody">
@@ -266,8 +362,9 @@ import "./proof-pack.css";
               </div>
 
               <div class="k-proofx__docP">
-                Keep feedback anchored to the exact sentence — no screenshots, no guessing.
-                Mention teammates with <span class="k-proofx__mono">@name</span>, resolve threads, and move on.
+                Keep feedback anchored to the exact sentence, no screenshots and no
+                guessing. Mention teammates with
+                <span class="k-proofx__mono">@name</span>, resolve threads, and move on.
               </div>
 
               <div class="k-proofx__cRow" aria-hidden="true">
@@ -282,7 +379,9 @@ import "./proof-pack.css";
                   <span class="k-proofx__commentName">Ava</span>
                   <span class="k-proofx__commentTime">just now</span>
                 </div>
-                <div class="k-proofx__commentBody">Let’s tighten this line — make the value pop in 7 words.</div>
+                <div class="k-proofx__commentBody">
+                  Let's tighten this line and make the value pop in 7 words.
+                </div>
                 <div class="k-proofx__commentMeta">
                   <span class="k-proofx__chip">Resolve</span>
                   <span class="k-proofx__chip">Reply</span>
@@ -294,7 +393,6 @@ import "./proof-pack.css";
           </div>
         </div>
 
-        <!-- Panel 3: Text → issue commands -->
         <div
           class="k-proofx__panel"
           id="proofx-panel-commands"
@@ -308,9 +406,10 @@ import "./proof-pack.css";
             <div class="k-proofx__docTop">
               <span class="k-proofx__crumbDot" aria-hidden="true"></span>
               <span>Spec draft</span>
-              <span class="k-proofx__sep" aria-hidden="true">›</span>
+              <span class="k-proofx__sep" aria-hidden="true">&rsaquo;</span>
               <span>Actionables</span>
-              <span class="k-proofx__dots" aria-hidden="true">···</span>
+              <span class="k-proofx__docStatus">Change queue</span>
+              <span class="k-proofx__dots" aria-hidden="true">&bull;&bull;&bull;</span>
             </div>
 
             <div class="k-proofx__docBody">
@@ -322,13 +421,19 @@ import "./proof-pack.css";
               </div>
 
               <div class="k-proofx__docP">
-                Highlight a sentence, type a command, and you’ve got an issue — linked back to the source.
-                No context lost, no copy-paste pain.
+                Highlight a sentence, type a command, and you have an issue linked back to
+                the source. No context lost and no copy-paste pain.
               </div>
 
               <div class="k-proofx__cmd" aria-hidden="true">
-                <div class="k-proofx__cmdLine"><span class="k-proofx__cmdK">Selected:</span> “Add FAQ accordion + schema”</div>
-                <div class="k-proofx__cmdLine"><span class="k-proofx__cmdK">Command:</span> <span class="k-proofx__mono">/issue</span> create</div>
+                <div class="k-proofx__cmdLine">
+                  <span class="k-proofx__cmdK">Selected:</span>
+                  "Add FAQ accordion + schema"
+                </div>
+                <div class="k-proofx__cmdLine">
+                  <span class="k-proofx__cmdK">Command:</span>
+                  <span class="k-proofx__mono">/issue</span> create
+                </div>
                 <div class="k-proofx__cmdPalette">
                   <span class="k-proofx__cmdPill">Create issue</span>
                   <span class="k-proofx__cmdPill">Assign</span>
@@ -342,7 +447,9 @@ import "./proof-pack.css";
                   <span class="k-proofx__issueTitle">FAQ accordion + schema</span>
                   <span class="k-proofx__issueTag">P1</span>
                 </div>
-                <div class="k-proofx__issueSub">Linked to spec draft · created from selection</div>
+                <div class="k-proofx__issueSub">
+                  Linked to spec draft and created from selection
+                </div>
               </div>
             </div>
 
@@ -354,61 +461,62 @@ import "./proof-pack.css";
   </div>
 
   <script type="module">
-    // ProofPack — Row 3 tabs (no framework, fast, keyboard-friendly)
-    const root = document.querySelector('#proof');
-    const list = root?.querySelector('.k-proofx__list[data-proofx-tabs]');
-    const panelsRoot = root?.querySelector('[data-proofx-panels]');
+    const root = document.querySelector("#proof");
+    const list = root?.querySelector(".k-proofx__list[data-proofx-tabs]");
+    const panelsRoot = root?.querySelector("[data-proofx-panels]");
 
     if (list && panelsRoot) {
-      const tabs = Array.from(list.querySelectorAll('[data-proofx-tab]'));
-      const panels = Array.from(panelsRoot.querySelectorAll('[data-proofx-panel]'));
+      const tabs = Array.from(list.querySelectorAll("[data-proofx-tab]"));
+      const panels = Array.from(panelsRoot.querySelectorAll("[data-proofx-panel]"));
 
       const setActive = (key) => {
-        tabs.forEach((t) => {
-          const on = t.getAttribute('data-proofx-tab') === key;
-          t.classList.toggle('is-active', on);
-          t.setAttribute('aria-selected', on ? 'true' : 'false');
-          t.setAttribute('tabindex', on ? '0' : '-1');
+        tabs.forEach((tab) => {
+          const isActive = tab.getAttribute("data-proofx-tab") === key;
+          tab.classList.toggle("is-active", isActive);
+          tab.setAttribute("aria-selected", isActive ? "true" : "false");
+          tab.setAttribute("tabindex", isActive ? "0" : "-1");
         });
 
-        panels.forEach((p) => {
-          const on = p.getAttribute('data-proofx-panel') === key;
-          p.classList.toggle('is-active', on);
-          p.setAttribute('aria-hidden', on ? 'false' : 'true');
-          p.setAttribute('tabindex', on ? '0' : '-1');
+        panels.forEach((panel) => {
+          const isActive = panel.getAttribute("data-proofx-panel") === key;
+          panel.classList.toggle("is-active", isActive);
+          panel.setAttribute("aria-hidden", isActive ? "false" : "true");
+          panel.setAttribute("tabindex", isActive ? "0" : "-1");
         });
       };
 
-      tabs.forEach((t) =>
-        t.addEventListener('click', () => setActive(t.getAttribute('data-proofx-tab')))
-      );
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => setActive(tab.getAttribute("data-proofx-tab")));
+      });
 
-      list.addEventListener('keydown', (e) => {
-        const k = e.key;
-        if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End', 'Enter', ' '].includes(k)) return;
-
-        const current = document.activeElement;
-        const i = tabs.indexOf(current);
-        if (i < 0) return;
-
-        if (k === 'Enter' || k === ' ') {
-          e.preventDefault();
-          setActive(tabs[i].getAttribute('data-proofx-tab'));
+      list.addEventListener("keydown", (event) => {
+        const key = event.key;
+        if (!["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Home", "End", "Enter", " "].includes(key)) {
           return;
         }
 
-        e.preventDefault();
-        const clamp = (idx) => tabs[Math.max(0, Math.min(tabs.length - 1, idx))];
+        const current = document.activeElement;
+        const index = tabs.indexOf(current);
+        if (index < 0) return;
 
-        if (k === 'Home') return clamp(0).focus();
-        if (k === 'End') return clamp(tabs.length - 1).focus();
+        if (key === "Enter" || key === " ") {
+          event.preventDefault();
+          setActive(tabs[index].getAttribute("data-proofx-tab"));
+          return;
+        }
 
-        const dir = k === 'ArrowDown' || k === 'ArrowRight' ? 1 : -1;
-        clamp(i + dir).focus();
+        event.preventDefault();
+        const clamp = (nextIndex) => tabs[Math.max(0, Math.min(tabs.length - 1, nextIndex))];
+
+        if (key === "Home") return clamp(0).focus();
+        if (key === "End") return clamp(tabs.length - 1).focus();
+
+        const direction = key === "ArrowDown" || key === "ArrowRight" ? 1 : -1;
+        clamp(index + direction).focus();
       });
 
       const initial =
-        tabs.find((t) => t.classList.contains('is-active'))?.getAttribute('data-proofx-tab') || 'doc';
+        tabs.find((tab) => tab.classList.contains("is-active"))?.getAttribute("data-proofx-tab") || "doc";
       setActive(initial);
     }
   </script>

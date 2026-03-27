@@ -1,0 +1,279 @@
+---
+import "./turning-point.css";
+
+import CtaButton from "../../ui/CtaButton/CtaButton.astro";
+
+const turningPoints = [
+  {
+    key: "impression",
+    label: "First impression",
+    index: "01",
+    accent: "232, 220, 196",
+    painTitle: "Still looks smaller than the business has become.",
+    painText:
+      "The work can be excellent and the first few seconds still feel too ordinary, too quiet, or not quite there.",
+    losses: ["Attention softens", "Quality feels less obvious"],
+    futureTitle: "Looks established before you say a word.",
+    futureText:
+      "A calmer, sharper presence helps people read the business as credible from the first glance, not halfway through the page.",
+    signals: [
+      "More serious at a glance",
+      "Premium perception",
+      "Better attention from the right people",
+    ],
+  },
+  {
+    key: "trust",
+    label: "Trust",
+    index: "02",
+    accent: "172, 197, 219",
+    painTitle: "People still need too much convincing.",
+    painText:
+      "If trust arrives late, hesitation stays high and the website starts working harder than it should.",
+    losses: ["Doubt lingers", "Enquiries feel colder"],
+    futureTitle: "Trust starts earlier.",
+    futureText:
+      "Considered design, cleaner structure, and better proof cues make the business feel safer to choose before the first call.",
+    signals: ["More confidence to enquire", "Less hesitation", "Higher perceived quality"],
+  },
+  {
+    key: "positioning",
+    label: "Positioning",
+    index: "03",
+    accent: "241, 227, 198",
+    painTitle: "The business feels better in real life than it looks online.",
+    painText:
+      "That gap quietly drags down how established, premium, or capable the brand seems.",
+    losses: ["Prices feel harder to hold", "The brand feels behind"],
+    futureTitle: "The business is finally presented at its level.",
+    futureText:
+      "When the online presence feels aligned, the quality of the work and the standard of the business make sense together.",
+    signals: ["Looks more established", "Supports better positioning", "Feels worth the next step"],
+  },
+  {
+    key: "momentum",
+    label: "Momentum",
+    index: "04",
+    accent: "186, 207, 224",
+    painTitle: "Interest lands, then stalls.",
+    painText:
+      "People notice the business, but the site does not give enough confidence to keep moving towards contact.",
+    losses: ["More drop-off", "Less forward motion"],
+    futureTitle: "Attention turns into momentum.",
+    futureText:
+      "Clearer intent and a more assured experience make calls, bookings, and serious enquiries feel like the natural next step.",
+    signals: ["More enquiries and calls", "Better-fit leads", "More energy behind the business"],
+  },
+];
+
+const introSignals = [
+  "Stronger first impression",
+  "More trust before the first call",
+  "More confidence to enquire",
+];
+---
+
+<section
+  class="k-turn section"
+  id="turning-point"
+  aria-label="What a stronger online presence changes for the business"
+  data-turn-active={turningPoints[0].key}
+  data-light-zone
+  data-light-x="58"
+  data-light-y="56"
+  data-light-size="1.08"
+  data-light-strength="0.74"
+  data-light-focus="0.42"
+>
+  <div class="container k-turn__wrap">
+    <header class="k-turn__intro" data-turn-reveal style="--turn-delay:0ms;">
+      <div class="k-turn__introMain">
+        <p class="k-turn__eyebrow">The turning point</p>
+        <h2 class="k-turn__title">
+          When the website feels right, the business starts getting treated differently.
+        </h2>
+      </div>
+
+      <div class="k-turn__introAside">
+        <p class="k-turn__lead">
+          Not a prettier website. A stronger first impression, earlier trust, and a more
+          serious presence that gives the right people more reason to enquire.
+        </p>
+
+        <div class="k-turn__introSignals" aria-label="Business outcomes this shift unlocks">
+          {introSignals.map((signal) => (
+            <p class="k-turn__introSignal">{signal}</p>
+          ))}
+        </div>
+      </div>
+    </header>
+
+    <div class="k-turn__frame" data-turn-reveal style="--turn-delay:120ms;">
+      <div class="k-turn__scene">
+        <div class="k-turn__stack k-turn__stack--current" aria-live="polite">
+          {turningPoints.map((item, index) => (
+            <article
+              class={`k-turn__card k-turn__card--current${index === 0 ? " is-active" : ""}`}
+              data-turn-current={item.key}
+              aria-hidden={index === 0 ? "false" : "true"}
+              style={`--turn-accent:${item.accent};`}
+            >
+              <div class="k-turn__cardTop">
+                <p class="k-turn__cardLabel">Held back online</p>
+                <span class="k-turn__cardState">{item.label}</span>
+              </div>
+
+              <div class="k-turn__cardBody">
+                <h3 class="k-turn__painTitle">{item.painTitle}</h3>
+                <p class="k-turn__painText">{item.painText}</p>
+              </div>
+
+              <div class="k-turn__losses" aria-label={`${item.label} friction`}>
+                {item.losses.map((loss) => (
+                  <span class="k-turn__loss">{loss}</span>
+                ))}
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div class="k-turn__rail" aria-label="What changes when the online presence catches up">
+          <div class="k-turn__railLine" aria-hidden="true"></div>
+
+          <div class="k-turn__controls">
+            {turningPoints.map((item, index) => (
+              <button
+                class={`k-turn__trigger${index === 0 ? " is-active" : ""}`}
+                type="button"
+                data-turn-trigger
+                data-turn-key={item.key}
+                aria-pressed={index === 0 ? "true" : "false"}
+                aria-label={`Show how ${item.label.toLowerCase()} changes`}
+                style={`--turn-accent:${item.accent}; --turn-index:${index};`}
+              >
+                <span class="k-turn__triggerIndex" aria-hidden="true">{item.index}</span>
+                <span class="k-turn__triggerLabel">{item.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div class="k-turn__stack k-turn__stack--future" aria-live="polite">
+          {turningPoints.map((item, index) => (
+            <article
+              class={`k-turn__card k-turn__card--future${index === 0 ? " is-active" : ""}`}
+              data-turn-future={item.key}
+              aria-hidden={index === 0 ? "false" : "true"}
+              style={`--turn-accent:${item.accent};`}
+            >
+              <div class="k-turn__futureHead">
+                <p class="k-turn__cardLabel">What opens up</p>
+                <span class="k-turn__futureAccent">{item.label}</span>
+              </div>
+
+              <div class="k-turn__futureMain">
+                <h3 class="k-turn__futureTitle">{item.futureTitle}</h3>
+                <p class="k-turn__futureText">{item.futureText}</p>
+              </div>
+
+              <div class="k-turn__futureSignals" aria-label={`${item.label} gains`}>
+                {item.signals.map((signal) => (
+                  <p class="k-turn__futureSignal">{signal}</p>
+                ))}
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+
+      <footer class="k-turn__foot">
+        <p class="k-turn__footText">
+          If the business is ready to move up a level, the website should not be the part still
+          making it look smaller.
+        </p>
+
+        <div class="k-turn__footActions">
+          <CtaButton href="/contact/#contact" label="Book a discovery call" variant="secondary" />
+          <a class="k-turn__footLink" href="#proof">
+            <span>See how Kersivo handles the work</span>
+            <span aria-hidden="true">&rarr;</span>
+          </a>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const root = document.querySelector("#turning-point");
+      if (!root) return;
+
+      const triggers = Array.from(root.querySelectorAll("[data-turn-trigger]"));
+      const currentCards = Array.from(root.querySelectorAll("[data-turn-current]"));
+      const futureCards = Array.from(root.querySelectorAll("[data-turn-future]"));
+      const revealItems = Array.from(root.querySelectorAll("[data-turn-reveal]"));
+      const reduced =
+        window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const finePointer =
+        window.matchMedia && window.matchMedia("(pointer: fine)").matches;
+
+      const setActive = (key) => {
+        if (!key) return;
+        root.dataset.turnActive = key;
+
+        triggers.forEach((trigger) => {
+          const on = trigger.dataset.turnKey === key;
+          trigger.classList.toggle("is-active", on);
+          trigger.setAttribute("aria-pressed", on ? "true" : "false");
+        });
+
+        currentCards.forEach((card) => {
+          const on = card.dataset.turnCurrent === key;
+          card.classList.toggle("is-active", on);
+          card.setAttribute("aria-hidden", on ? "false" : "true");
+        });
+
+        futureCards.forEach((card) => {
+          const on = card.dataset.turnFuture === key;
+          card.classList.toggle("is-active", on);
+          card.setAttribute("aria-hidden", on ? "false" : "true");
+        });
+      };
+
+      triggers.forEach((trigger) => {
+        const key = trigger.dataset.turnKey;
+        if (!key) return;
+
+        trigger.addEventListener("click", () => setActive(key));
+        trigger.addEventListener("focus", () => setActive(key));
+
+        if (finePointer) {
+          trigger.addEventListener("pointerenter", () => setActive(key));
+        }
+      });
+
+      if (reduced || !("IntersectionObserver" in window)) {
+        root.classList.add("is-revealed");
+      } else {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              root.classList.add("is-revealed");
+              observer.disconnect();
+            });
+          },
+          { threshold: 0.22 }
+        );
+
+        observer.observe(root);
+      }
+
+      revealItems.forEach((item, index) => {
+        item.style.setProperty("--turn-delay", `${index * 120}ms`);
+      });
+
+      setActive(root.dataset.turnActive || triggers[0]?.dataset.turnKey || "");
+    })();
+  </script>
+</section>

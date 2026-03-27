@@ -1,0 +1,173 @@
+﻿---
+import "./presence-intro.css";
+
+const promisePoints = [
+  {
+    number: "01",
+    label: "More trust on first contact",
+    detail: "A calmer first impression that feels established from the opening seconds.",
+  },
+  {
+    number: "02",
+    label: "A stronger sense of credibility",
+    detail: "The business starts reading as more considered, dependable, and ready.",
+  },
+  {
+    number: "03",
+    label: "Momentum that feels easier to sustain",
+    detail: "Better-fit enquiries arrive with less friction and more confidence behind them.",
+  },
+];
+
+const sceneSignals = ["Clearer signal", "Calmer confidence", "Stronger intent"];
+---
+
+<section
+  class="k-presenceIntro section"
+  id="next-stage"
+  aria-label="Invitation into a stronger business presence"
+  data-light-zone
+  data-light-x="66"
+  data-light-y="24"
+  data-light-size="1.18"
+  data-light-strength="0.96"
+  data-light-focus="0.44"
+  data-light-spread="0.9"
+>
+  <div class="container k-presenceIntro__shell">
+    <div class="k-presenceIntro__copy" data-presence-reveal style="--presence-delay: 0ms;">
+      <p class="k-presenceIntro__eyebrow">A stronger next chapter</p>
+
+      <h2 class="k-presenceIntro__title">
+        <span class="k-presenceIntro__titleLine">When the presence feels right,</span>
+        <span class="k-presenceIntro__titleLine k-presenceIntro__titleLine--accent">
+          the business starts moving differently.
+        </span>
+      </h2>
+
+      <p class="k-presenceIntro__lead">
+        A refined website changes more than appearance. It changes the way the business is
+        felt. Trust lands faster, enquiries come with more confidence, and the company
+        begins to read as more established, more considered, and more ready for what comes
+        next.
+      </p>
+
+      <p class="k-presenceIntro__foot">
+        Not louder. Just clearer, calmer, and further ahead.
+      </p>
+    </div>
+
+    <div class="k-presenceIntro__scene" data-presence-reveal style="--presence-delay: 120ms;">
+      <div class="k-presenceIntro__frame">
+        <span class="k-presenceIntro__wash" aria-hidden="true"></span>
+        <span class="k-presenceIntro__beam" aria-hidden="true"></span>
+        <span class="k-presenceIntro__aperture" aria-hidden="true"></span>
+        <span class="k-presenceIntro__horizon" aria-hidden="true"></span>
+        <span class="k-presenceIntro__grid" aria-hidden="true"></span>
+        <span class="k-presenceIntro__halo" aria-hidden="true"></span>
+        <span class="k-presenceIntro__strata" aria-hidden="true"></span>
+
+        <p class="k-presenceIntro__sceneNote">
+          Made for businesses ready to be taken more seriously.
+        </p>
+
+        <div class="k-presenceIntro__surface" aria-hidden="true">
+          <div class="k-presenceIntro__surfaceHead">
+            <span>Positioning</span>
+            <span>Next-stage presence</span>
+          </div>
+
+          <div class="k-presenceIntro__surfaceCore">
+            <span class="k-presenceIntro__surfacePlane k-presenceIntro__surfacePlane--rear"></span>
+            <span class="k-presenceIntro__surfacePlane k-presenceIntro__surfacePlane--front"></span>
+            <span class="k-presenceIntro__surfaceArc"></span>
+            <span class="k-presenceIntro__surfaceAxis k-presenceIntro__surfaceAxis--x"></span>
+            <span class="k-presenceIntro__surfaceAxis k-presenceIntro__surfaceAxis--y"></span>
+            <span
+              class="k-presenceIntro__surfaceMarker"
+              style="--presence-point-x: 18%; --presence-point-y: 66%;"
+            ></span>
+            <span
+              class="k-presenceIntro__surfaceMarker"
+              style="--presence-point-x: 47%; --presence-point-y: 44%;"
+            ></span>
+            <span
+              class="k-presenceIntro__surfaceMarker"
+              style="--presence-point-x: 78%; --presence-point-y: 22%;"
+            ></span>
+          </div>
+
+          <div class="k-presenceIntro__surfaceFoot">
+            {sceneSignals.map((signal) => <span>{signal}</span>)}
+          </div>
+        </div>
+
+        <div class="k-presenceIntro__statement">
+          <p class="k-presenceIntro__statementEyebrow">A more premium future</p>
+          <h3 class="k-presenceIntro__statementTitle">
+            Step into a version of the business that feels ready for more.
+          </h3>
+          <p class="k-presenceIntro__statementText">
+            The right website gives the business a calmer, stronger presence people can
+            trust without hesitation.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <ul
+      class="k-presenceIntro__promise"
+      aria-label="The shift this creates"
+      data-presence-reveal
+      style="--presence-delay: 220ms;"
+    >
+      {promisePoints.map((point) => (
+        <li>
+          <span class="k-presenceIntro__promiseNumber">{point.number}</span>
+          <div class="k-presenceIntro__promiseBody">
+            <p class="k-presenceIntro__promiseTitle">{point.label}</p>
+            <p class="k-presenceIntro__promiseText">{point.detail}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <script>
+    (() => {
+      const root = document.querySelector("#next-stage");
+      if (!root) return;
+
+      const reduced =
+        window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const items = Array.from(root.querySelectorAll("[data-presence-reveal]"));
+
+      if (!items.length) return;
+      root.dataset.presenceEnhanced = "true";
+
+      if (reduced || !("IntersectionObserver" in window)) {
+        items.forEach((item) => item.classList.add("is-in"));
+        return;
+      }
+
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add("is-in");
+            io.unobserve(entry.target);
+          });
+        },
+        { threshold: 0.2 }
+      );
+
+      items.forEach((item, index) => {
+        if (!item.style.getPropertyValue("--presence-delay")) {
+          item.style.setProperty("--presence-delay", `${index * 90}ms`);
+        }
+
+        io.observe(item);
+      });
+    })();
+  </script>
+</section>
