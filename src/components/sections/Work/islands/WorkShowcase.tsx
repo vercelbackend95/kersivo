@@ -39,7 +39,8 @@ function CtaLink({
   rel?: string;
 }) {
   const isMagnetic = typeof magnetic === "boolean" ? magnetic : variant === "primary";
-  const isContact = (href || "").trim() === "#contact";
+  const normalizedHref = (href || "").trim();
+  const isContact = normalizedHref === "#contact" || normalizedHref.endsWith("/#contact");
   const arrowClass = variant === "primary" ? "k-btn__arrow" : "k-btn__arrow2";
 
   return (
@@ -273,7 +274,7 @@ export default function WorkShowcase() {
                     <div className="k-timeline__meta">Call-first UX • local SEO framing</div>
 
                     <CtaLink
-                      href="/contact/#contact"
+                      href="/#contact"
                       label="Request this niche"
                       variant="ghost"
                       className="k-timeline__btn"
@@ -352,7 +353,7 @@ export default function WorkShowcase() {
           <div className="k-stage__ctaRow k-stage__ctaRow--right">
             <div className="k-stage__ctaBtns">
               <CtaLink href={DEMO_HREF} label="View live client site" variant="primary" ariaLabel="Open Sewing Ataga website" target="_blank" rel="noreferrer" />
-              <CtaLink href="/contact/#contact" label="Get a quote" variant="ghost" />
+              <CtaLink href="/#contact" label="Get a quote" variant="ghost" />
             </div>
           </div>
         </div>

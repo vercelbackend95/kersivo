@@ -1,0 +1,214 @@
+/* =========================================
+   Kersivo — WhyKersivo
+   3 differentiators with concrete proof
+   ========================================= */
+
+.ks-why {
+  --why-line: rgba(255, 255, 255, 0.09);
+  --why-line-strong: rgba(255, 255, 255, 0.14);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.ks-why__container {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: clamp(36px, 5vw, 60px);
+}
+
+/* --- Head --- */
+.ks-why__head {
+  display: grid;
+  gap: 14px;
+  max-width: 56ch;
+}
+
+.ks-why__kicker {
+  margin: 0;
+  font-size: 11px;
+  font-weight: var(--w-semibold, 650);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.ks-why__h2 {
+  margin: 0;
+  font-size: clamp(2rem, 4.2vw + 0.4rem, 3.5rem);
+  line-height: 1.04;
+  letter-spacing: -0.055em;
+  font-weight: var(--w-black, 880);
+  color: rgba(255, 255, 255, 0.96);
+}
+
+.ks-why__h2 em {
+  font-style: normal;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.ks-why__lead {
+  margin: 0;
+  max-width: 54ch;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: clamp(15px, 0.9vw + 0.6rem, 17px);
+  line-height: 1.65;
+}
+
+/* --- Ledger rows --- */
+.ks-why__ledger {
+  display: grid;
+  border-top: 1px solid var(--why-line-strong);
+}
+
+.ks-why__row {
+  position: relative;
+  display: grid;
+  gap: clamp(14px, 2vw, 20px);
+  padding: clamp(26px, 3.4vw, 40px) 0;
+  border-bottom: 1px solid var(--why-line);
+}
+
+/* subtle hover glow */
+.ks-why__row::before {
+  content: "";
+  position: absolute;
+  inset: 12px -2% 12px -2%;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0) 60%);
+  opacity: 0;
+  transform: translate3d(-6px, 0, 0);
+  transition:
+    opacity 280ms ease,
+    transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .ks-why__row:hover::before {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (min-width: 860px) {
+  .ks-why__row {
+    grid-template-columns: 80px minmax(0, 1.15fr) minmax(0, 0.85fr);
+    column-gap: clamp(20px, 3vw, 44px);
+    align-items: start;
+  }
+}
+
+.ks-why__rowIndex {
+  font-size: clamp(38px, 4.5vw, 72px);
+  line-height: 0.84;
+  letter-spacing: -0.09em;
+  font-weight: var(--w-black, 880);
+  color: rgba(255, 255, 255, 0.12);
+  position: relative;
+  z-index: 1;
+}
+
+.ks-why__rowMain {
+  display: grid;
+  gap: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.ks-why__rowTag {
+  margin: 0;
+  font-size: 11px;
+  font-weight: var(--w-semibold, 650);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(var(--scene-ivory-rgb), 0.72);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ks-why__rowTag::before {
+  content: "";
+  width: 20px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.65;
+}
+
+.ks-why__rowTitle {
+  margin: 0;
+  font-size: clamp(22px, 2.8vw + 0.5rem, 40px);
+  line-height: 1.04;
+  letter-spacing: -0.048em;
+  font-weight: var(--w-bold, 780);
+  color: rgba(255, 255, 255, 0.96);
+  max-width: 14ch;
+}
+
+.ks-why__rowAside {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+  position: relative;
+  z-index: 1;
+}
+
+.ks-why__rowText {
+  margin: 0;
+  font-size: clamp(14px, 0.9vw + 0.6rem, 16px);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.66);
+  max-width: 36ch;
+}
+
+/* proof cues */
+.ks-why__proof {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.ks-why__proofItem {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: var(--w-semibold, 650);
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.ks-why__proofItem::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(var(--scene-ivory-rgb), 0.5);
+  flex-shrink: 0;
+}
+
+/* --- Foot --- */
+.ks-why__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 28px;
+}
+
+.ks-why__footNote {
+  margin: 0;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+  max-width: 38ch;
+  line-height: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ks-why__row::before {
+    transition: none !important;
+    transform: none !important;
+  }
+}

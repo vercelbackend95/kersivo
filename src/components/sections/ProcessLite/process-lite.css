@@ -1,0 +1,184 @@
+/* =========================================
+   Kersivo — ProcessLite
+   3-step process · compact, no-theatre
+   ========================================= */
+
+.ks-process {
+  position: relative;
+}
+
+.ks-process__container {
+  display: grid;
+  gap: clamp(32px, 4.8vw, 52px);
+}
+
+/* --- Head --- */
+.ks-process__head {
+  display: grid;
+  gap: 12px;
+  max-width: 50ch;
+}
+
+.ks-process__kicker {
+  margin: 0;
+  font-size: 11px;
+  font-weight: var(--w-semibold, 650);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.ks-process__h2 {
+  margin: 0;
+  font-size: clamp(1.875rem, 3.6vw + 0.4rem, 3rem);
+  line-height: 1.04;
+  letter-spacing: -0.055em;
+  font-weight: var(--w-black, 880);
+  color: rgba(255, 255, 255, 0.96);
+  text-wrap: balance;
+}
+
+.ks-process__lead {
+  margin: 0;
+  font-size: clamp(14px, 0.9vw + 0.55rem, 16px);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+/* --- Steps --- */
+.ks-process__steps {
+  display: grid;
+  gap: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@media (min-width: 720px) {
+  .ks-process__steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-top: 0;
+  }
+}
+
+.ks-process__step {
+  display: grid;
+  gap: 14px;
+  padding: clamp(22px, 3vw, 32px) 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+  position: relative;
+}
+
+@media (min-width: 720px) {
+  .ks-process__step {
+    padding: clamp(26px, 3.4vw, 36px) clamp(18px, 2.2vw, 28px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 0;
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .ks-process__step:first-child {
+    border-left: 0;
+    padding-left: 0;
+  }
+
+  .ks-process__step:last-child {
+    padding-right: 0;
+  }
+}
+
+.ks-process__stepTop {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ks-process__stepNum {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 11px;
+  font-weight: var(--w-semibold, 650);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.52);
+  flex-shrink: 0;
+}
+
+.ks-process__stepTitle {
+  margin: 0;
+  font-size: clamp(17px, 1.4vw + 0.7rem, 22px);
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+  font-weight: var(--w-bold, 780);
+  color: rgba(255, 255, 255, 0.94);
+}
+
+.ks-process__stepText {
+  margin: 0;
+  font-size: clamp(13px, 0.8vw + 0.55rem, 15px);
+  line-height: 1.62;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.ks-process__stepItems {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  padding: 0;
+  list-style: none;
+  margin: 0;
+}
+
+.ks-process__stepItems li {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.48);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.ks-process__stepItems li::before {
+  content: "";
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.28);
+  flex-shrink: 0;
+}
+
+/* connector arrow on desktop */
+@media (min-width: 720px) {
+  .ks-process__step:not(:last-child)::after {
+    content: "→";
+    position: absolute;
+    top: clamp(26px, 3.4vw, 36px);
+    right: -0.75em;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.22);
+    z-index: 2;
+    pointer-events: none;
+  }
+}
+
+/* --- CTA row --- */
+.ks-process__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 28px;
+}
+
+.ks-process__footNote {
+  margin: 0;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+}

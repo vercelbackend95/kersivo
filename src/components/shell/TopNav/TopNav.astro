@@ -3,6 +3,7 @@
 import "./topnav.css";
 import CtaButton from "../../ui/CtaButton/CtaButton.astro";
 import MobileNav from "./MobileNav";
+import { NAV_LINKS } from "./nav-links";
 
 const rawPath = Astro.url.pathname || "/";
 const pathname = rawPath.replace(/\/+$/, "") || "/";
@@ -11,14 +12,6 @@ function navPath(href: string) {
   return href.split("#")[0].replace(/\/+$/, "") || "/";
 }
 
-const NAV_LINKS = [
-  { href: "/", label: "Home" },
-  { href: "/work/", label: "Work" },
-  { href: "/services/", label: "Services" },
-  { href: "/process/", label: "Process" },
-  { href: "/packages/", label: "Packages" },
-  { href: "/contact/", label: "Contact" },
-] as const;
 ---
 
 <header class="k-topnav" data-topnav>
@@ -44,11 +37,13 @@ const NAV_LINKS = [
         <nav class="k-topnav__links" aria-label="Primary">
           {
             NAV_LINKS.map(({ href, label }) => {
-              const active = navPath(href) === pathname;
+              const hasHash = href.includes("#");
+              const active = hasHash ? false : navPath(href) === pathname;
               return (
                 <a
                   class:list={["k-topnav__link", { "is-active": active }]}
                   href={href}
+                  data-nav-link={href}
                   aria-current={active ? "page" : undefined}
                 >
                   {label}
@@ -60,8 +55,8 @@ const NAV_LINKS = [
 
         <div class="k-topnav__actions">
           <CtaButton
-            href="/contact/#contact"
-            label="Ask for a quote"
+            href="/#contact"
+            label="Get a quote"
             variant="primary"
             class="k-topnav__cta"
           />
@@ -70,6 +65,7 @@ const NAV_LINKS = [
             id="kNavToggle"
             class="k-topnav__burger"
             type="button"
+            aria-controls="kMobileNavDialog"
             aria-label="Open menu"
             aria-expanded="false"
           >
@@ -86,6 +82,8 @@ const NAV_LINKS = [
   <MobileNav client:load />
 
   <script>
+    import { createActiveSectionScrollSpy } from "./active-section";
+
     (() => {
       const root = document.querySelector("[data-topnav]");
       if (!root) return;
@@ -94,6 +92,50 @@ const NAV_LINKS = [
         const y = window.scrollY > 10;
         root.classList.toggle("is-scrolled", y);
       };
+
+      const navLinks = Array.from(
+        root.querySelectorAll('[data-nav-link^="/#"]')
+      );
+
+      const sections = navLinks
+        .map((link) => {
+          const href = link.getAttribute("data-nav-link") || "";
+          const hash = href.split("#")[1];
+          if (!hash) return null;
+          const section = document.getElementById(hash);
+          if (!section) return null;
+          return { link, hash, section };
+        })
+        .filter(Boolean);
+
+      const setActive = (activeHash) => {
+        sections.forEach(({ link, hash }) => {
+          const active = hash === activeHash;
+          link.classList.toggle("is-active", active);
+          if (active) link.setAttribute("aria-current", "page");
+          else link.removeAttribute("aria-current");
+        });
+      };
+
+      if (sections.length > 0 && window.location.pathname === "/") {
+        const spy = createActiveSectionScrollSpy({
+          links: navLinks.map((link) => ({
+            href: link.getAttribute("data-nav-link") || "",
+          })),
+          topnavRoot: root,
+          onActiveChange: (hash) => {
+            const cleanHash = hash.replace(/^#/, "");
+            setActive(cleanHash);
+            window.dispatchEvent(
+              new CustomEvent("kersivo:active-section-change", {
+                detail: { hash },
+              })
+            );
+          },
+        });
+        spy.start();
+      }
+
       onScroll();
       window.addEventListener("scroll", onScroll, { passive: true });
     })();

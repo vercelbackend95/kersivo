@@ -1,0 +1,61 @@
+---
+import "./hero-sales.css";
+import CtaButton from "../../ui/CtaButton/CtaButton.astro";
+
+const trustPoints = [
+  "UK-based studio",
+  "Reply within 12 working hours",
+  "Clear, no-pressure advice first",
+] as const;
+---
+
+<section
+  class="ks-hero"
+  aria-label="Kersivo — hero"
+  data-light-zone
+  data-light-x="53"
+  data-light-y="17"
+  data-light-size="1.1"
+  data-light-strength="0.84"
+  data-light-focus="0.22"
+>
+  <div class="container ks-hero__contain">
+    <div class="ks-hero__shell">
+
+      <p class="ks-eyebrow">
+        <span class="ks-eyebrow__dot" aria-hidden="true"></span>
+        Web design &amp; development for UK small businesses
+      </p>
+
+      <h1 class="ks-h1">
+        <span class="ks-h1__line">Websites that make</span>
+        <span class="ks-h1__line">established businesses</span>
+        <span class="ks-h1__line"><span class="ks-h1__em">look as strong as they are.</span></span>
+      </h1>
+
+      <p class="ks-lead">
+        We design and build premium, performance-first websites that improve
+        trust, clarity, and enquiry quality for UK service businesses.
+      </p>
+
+      <div class="ks-actions">
+        <CtaButton
+          href="/#contact"
+          label="Ask for a quote"
+          variant="primary"
+          class="ks-cta-primary"
+          magnetic={false}
+          arrow={false}
+        />
+        <a class="ks-cta-secondary" href="/work/">See selected work</a>
+      </div>
+
+      <ul class="ks-trust" aria-label="Contact confidence signals" role="list">
+        {trustPoints.map((point) => (
+          <li class="ks-trust__item">{point}</li>
+        ))}
+      </ul>
+
+    </div>
+  </div>
+</section>

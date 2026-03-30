@@ -1,0 +1,38 @@
+---
+import "./trust-strip.css";
+
+const items = [
+  {
+    label: "Trusted by established UK service businesses",
+  },
+  {
+    label: "Live project references available on request",
+  },
+  {
+    label: "Clear scope and costs before build starts",
+  },
+] as const;
+---
+
+<div
+  class="ks-strip"
+  aria-label="Trust signals"
+  data-light-zone
+  data-light-x="50"
+  data-light-y="50"
+  data-light-size="0.9"
+  data-light-strength="0.4"
+  data-light-focus="0.5"
+>
+  <div class="container ks-strip__inner">
+    <p class="ks-strip__kicker">Why businesses choose Kersivo</p>
+    <ul class="ks-strip__list" role="list">
+    {items.map((item) => (
+        <li class="ks-strip__item" role="listitem">
+          <span class="ks-strip__marker" aria-hidden="true"></span>
+          <span class="ks-strip__label">{item.label}</span>
+        </li>
+    ))}
+    </ul>
+  </div>
+</div>

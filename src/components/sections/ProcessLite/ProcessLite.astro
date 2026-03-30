@@ -1,0 +1,79 @@
+---
+import "./process-lite.css";
+import CtaButton from "../../ui/CtaButton/CtaButton.astro";
+
+const steps = [
+  {
+    num: "01",
+    title: "Discover",
+    text: "We start by understanding your goals, audience, and the real barriers to contact — before a single pixel is placed.",
+    items: ["Goals and audience brief", "Positioning and offer clarity", "Conversion direction"],
+  },
+  {
+    num: "02",
+    title: "Design & build",
+    text: "A premium visual system shaped around your business intent. Designed mobile-first, built with Astro for lasting speed.",
+    items: ["Mobile-first UI design", "Astro-first development", "QA and performance pass"],
+  },
+  {
+    num: "03",
+    title: "Launch & handover",
+    text: "We launch with a clear checklist and hand over a site you can maintain — with documentation and practical support.",
+    items: ["Pre-launch QA", "Handover documentation", "Post-launch support"],
+  },
+] as const;
+---
+
+<section
+  class="ks-process section"
+  id="process-overview"
+  aria-labelledby="ks-process-heading"
+  data-light-zone
+  data-light-x="50"
+  data-light-y="46"
+  data-light-size="0.96"
+  data-light-strength="0.56"
+  data-light-focus="0.38"
+>
+  <div class="container ks-process__container">
+
+    <header class="ks-process__head">
+      <p class="ks-process__kicker">How we work</p>
+      <h2 class="ks-process__h2" id="ks-process-heading">
+        A clear process, without the agency theatre.
+      </h2>
+      <p class="ks-process__lead">
+        Three structured phases from brief to handover — each with a clear output and no hidden steps.
+      </p>
+    </header>
+
+    <ol class="ks-process__steps" aria-label="Our process steps">
+      {steps.map((step) => (
+        <li class="ks-process__step">
+          <div class="ks-process__stepTop">
+            <span class="ks-process__stepNum" aria-hidden="true">{step.num}</span>
+            <h3 class="ks-process__stepTitle">{step.title}</h3>
+          </div>
+          <p class="ks-process__stepText">{step.text}</p>
+          <ul class="ks-process__stepItems" aria-label={`${step.title} deliverables`}>
+            {step.items.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+        </li>
+      ))}
+    </ol>
+
+    <div class="ks-process__foot">
+      <CtaButton
+        href="/#contact"
+        label="Discuss your project"
+        variant="secondary"
+        arrow={true}
+        magnetic={false}
+      />
+      <p class="ks-process__footNote">Prefer to talk it through? We will walk you through the process in the first reply.</p>
+    </div>
+
+  </div>
+</section>

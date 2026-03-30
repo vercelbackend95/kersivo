@@ -1,0 +1,70 @@
+---
+import "./inline-contact-lead.css";
+import LeadForm from "./islands/LeadForm";
+
+const EMAIL = "hello@kersivo.co.uk";
+
+const bullets = [
+  "We reply within 12 hours",
+  "Clear fit and scope assessment — no pitch theatre",
+  "NDA available on request",
+] as const;
+---
+
+<section
+  class="ks-lead-section section"
+  id="contact"
+  aria-labelledby="ks-lead-heading"
+  data-light-zone
+  data-light-x="50"
+  data-light-y="48"
+  data-light-size="1.02"
+  data-light-strength="0.68"
+  data-light-focus="0.38"
+>
+  <div class="container ks-lead__container">
+
+    <header class="ks-lead__head">
+      <p class="ks-lead__kicker">When you're ready</p>
+      <h2 class="ks-lead__h2" id="ks-lead-heading">
+        Tell us about your current site and goals.
+      </h2>
+      <p class="ks-lead__subtitle">
+        We will reply within 12 hours with a clear view on fit, scope, and next steps — even if the honest answer is to wait.
+      </p>
+    </header>
+
+    <div class="ks-lead__frame" data-contact-frame>
+      <div class="ks-lead__frameInner">
+
+        <!-- Left: trust copy -->
+        <div class="ks-lead__copy">
+          <h3 class="ks-lead__copyTitle">One short note is enough for a straight answer.</h3>
+          <p class="ks-lead__copyText">
+            Send your live site, what is holding trust back, and any timing that matters. No forms to fill out in advance — just tell us what you need.
+          </p>
+          <ul class="ks-lead__bullets" aria-label="What you get">
+            {bullets.map((b) => (
+              <li class="ks-lead__bullet">
+                <span class="ks-lead__bulletCheck" aria-hidden="true">
+                  <svg viewBox="0 0 16 16" fill="none">
+                    <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.4" opacity=".9"/>
+                    <path d="M5.2 8.2l1.8 1.8 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+                {b}
+              </li>
+            ))}
+          </ul>
+          <p style="margin:8px 0 0; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.4); font-weight:650;">Or write directly</p>
+          <a class="ks-lead__email" href={`mailto:${EMAIL}`}>{EMAIL}</a>
+        </div>
+
+        <!-- Right: form -->
+        <LeadForm client:load />
+
+      </div>
+    </div>
+
+  </div>
+</section>

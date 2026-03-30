@@ -1,76 +1,112 @@
 ---
 import "./testimonials.css";
+import CtaButton from "../../ui/CtaButton/CtaButton.astro";
 
-type ClientNote = {
+type ClientProof = {
   quote: string;
   name: string;
   role: string;
-  context?: string;
+  context: string;
 };
 
-type TrustSignal = {
+type SnapshotItem = {
   label: string;
+  value: string;
+};
+
+type ExpectationItem = {
+  title: string;
+  text: string;
+};
+
+type ProcessStep = {
   title: string;
   text: string;
 };
 
 interface Props {
-  kicker?: string;
+  label?: string;
   title?: string;
   subtitle?: string;
-  reference?: string;
-  noteLabel?: string;
-  note?: ClientNote;
-  standardsEyebrow?: string;
-  standardsTitle?: string;
-  standardsIntro?: string;
-  signals?: TrustSignal[];
+  quoteLabel?: string;
+  clientProof?: ClientProof;
+  snapshotTitle?: string;
+  snapshot?: SnapshotItem[];
+  expectationsTitle?: string;
+  expectations?: ExpectationItem[];
+  processTitle?: string;
+  process?: ProcessStep[];
+  ctaLabel?: string;
+  ctaHref?: string;
+  ctaNote?: string;
 }
 
 const {
-  kicker = "WORKING STANDARD",
-  title = "The studio is early. The standard is not.",
+  label = "Client Proof",
+  title = "Proof, not promises.",
   subtitle =
-    "Selected feedback, backed by the things that actually build trust: fast mobile performance, conversion-aware structure, clean implementation, and a calm delivery process.",
-  reference = "Live reference: sewingataga.co.uk",
-  noteLabel = "Selected client note",
-  note = {
+    "Real feedback from a real client, plus the exact standards used on every project. Clear process, senior execution, and measurable business intent.",
+  quoteLabel = "Verified client feedback",
+  clientProof = {
     quote:
-      "Kersivo organised everything clearly, moved fast, and delivered a website that feels premium while still being practical for day-to-day enquiries.",
+      "Kersivo helped us turn a confusing website into a clear sales asset. The process was structured, communication was excellent, and the final result felt premium from both a design and performance perspective.",
     name: "Sewing Ataga",
-    role: "Tailoring business, UK",
-    context: "Live client website",
+    role: "Founder",
+    context: "Tailoring business, UK",
   },
-  standardsEyebrow = "Trust signals",
-  standardsTitle = "How the work earns confidence.",
-  standardsIntro =
-    "This is the layer beneath the visual finish: build quality, page logic, and a delivery process that stays clear from scope to launch.",
-  signals = [
+  snapshotTitle = "Project snapshot",
+  snapshot = [
     {
-      label: "Performance-first",
-      title: "Fast where it matters.",
-      text:
-        "Astro-first builds, lean assets, and restrained motion keep the site feeling sharp on mobile and on slower connections.",
+      label: "Industry",
+      value: "Local tailoring service, UK",
     },
     {
-      label: "Mobile-first thinking",
-      title: "The primary journey starts on a phone.",
-      text:
-        "Layout, hierarchy, and contact prompts are designed around the screen most service-business visitors actually use.",
+      label: "Scope",
+      value: "Offer clarity, UX/UI design, and Astro development",
     },
     {
-      label: "Conversion-aware structure",
-      title: "Each section has a job to do.",
-      text:
-        "Offer clarity, proof, and next steps are placed deliberately so the site helps the right visitor move to enquiry faster.",
-    },
-    {
-      label: "Clean implementation",
-      title: "Premium finish without future mess.",
-      text:
-        "Readable code, tidy handover, and a straightforward feedback rhythm keep the site easy to maintain after launch.",
+      label: "Outcome",
+      value:
+        "Clearer service communication, stronger enquiry intent, and a faster launch with less delivery friction",
     },
   ],
+  expectationsTitle = "What clients can expect every time",
+  expectations = [
+    {
+      title: "Founder-led delivery",
+      text:
+        "Direct involvement from strategy through final QA keeps quality and ownership consistent.",
+    },
+    {
+      title: "Mobile-first, performance-conscious builds",
+      text:
+        "The primary user journey is designed for phone screens, then refined for larger devices.",
+    },
+    {
+      title: "Transparent scope and timelines",
+      text:
+        "No hidden steps, no vague handoffs, and clear checkpoints from discovery to launch.",
+    },
+  ],
+  processTitle = "How we deliver",
+  process = [
+    {
+      title: "Discover",
+      text: "Define goals, audience priorities, and conversion direction before design starts.",
+    },
+    {
+      title: "Design",
+      text: "Shape a premium visual system and page structure around real business intent.",
+    },
+    {
+      title: "Build and refine",
+      text:
+        "Develop for speed, polish, and maintainability with practical handover-ready output.",
+    },
+  ],
+  ctaLabel = "Book a 30-minute discovery call",
+  ctaHref = "/#contact",
+  ctaNote = "No pressure, no hard sell. You leave with a clear next-step direction.",
 } = Astro.props as Props;
 ---
 
@@ -88,62 +124,91 @@ const {
   <div class="container">
     <header class="k-reviews__head sectionTitle">
       <div class="k-reviews__titles">
-        <h6>{kicker}</h6>
+        <h6>{label}</h6>
         <h2>{title}</h2>
         <p class="k-reviews__sub measure">{subtitle}</p>
-      </div>
-
-      <div class="k-reviews__note" aria-label="Live project reference">
-        <span class="k-reviews__noteDot"></span>
-        <span>{reference}</span>
       </div>
     </header>
 
     <div class="k-reviews__grid">
-      <article class="k-reviews__card k-reviews__card--note" aria-labelledby="client-note-heading">
-        <div class="k-reviews__cardMeta">
-          <p class="k-reviews__eyebrow">{noteLabel}</p>
-          {note.context && <span class="k-reviews__pill">{note.context}</span>}
+      <article class="k-reviews__card k-reviews__card--quote" aria-labelledby="client-proof-heading">
+        <div class="k-reviews__cardHead">
+          <p class="k-reviews__eyebrow">{quoteLabel}</p>
+          <span class="k-reviews__pill">{clientProof.context}</span>
         </div>
 
         <blockquote class="k-reviews__quote">
           <span class="k-reviews__quoteMark" aria-hidden="true">"</span>
-          <p id="client-note-heading">{note.quote}</p>
+          <p id="client-proof-heading">{clientProof.quote}</p>
         </blockquote>
 
         <footer class="k-reviews__client">
           <div class="k-reviews__clientIdentity">
-            <span class="k-reviews__clientName">{note.name}</span>
-            <span class="k-reviews__clientRole">{note.role}</span>
+            <span class="k-reviews__clientName">{clientProof.name}</span>
+            <span class="k-reviews__clientRole">{clientProof.role}</span>
           </div>
-
-          <span class="k-reviews__clientSeal">Selected feedback</span>
+          <span class="k-reviews__clientSeal">Verified project feedback</span>
         </footer>
       </article>
 
-      <article class="k-reviews__card k-reviews__card--standards" aria-labelledby="trust-signals-heading">
-        <div class="k-reviews__standardsHead">
-          <p class="k-reviews__eyebrow">{standardsEyebrow}</p>
-          <h3 id="trust-signals-heading">{standardsTitle}</h3>
-          <p>{standardsIntro}</p>
+      <article class="k-reviews__card k-reviews__card--snapshot" aria-labelledby="project-snapshot-heading">
+        <div class="k-reviews__snapshotHead">
+          <p class="k-reviews__eyebrow">Evidence context</p>
+          <h3 id="project-snapshot-heading">{snapshotTitle}</h3>
+        </div>
+        <dl class="k-reviews__snapshotList">
+          {snapshot.map((item) => (
+            <div class="k-reviews__snapshotRow">
+              <dt>{item.label}</dt>
+              <dd>{item.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </article>
+    </div>
+
+    <div class="k-reviews__lower">
+      <article class="k-reviews__card k-reviews__card--expectations" aria-labelledby="expectations-heading">
+        <div class="k-reviews__expectationsHead">
+          <p class="k-reviews__eyebrow">Delivery standards</p>
+          <h3 id="expectations-heading">{expectationsTitle}</h3>
         </div>
 
-        <div class="k-reviews__signals" role="list" aria-label="Trust signals">
-          {signals.map((signal, index) => (
-            <article class="k-reviews__signal" role="listitem">
-              <div class="k-reviews__signalIndex" aria-hidden="true">
+        <div class="k-reviews__expectations" role="list" aria-label="Delivery standards">
+          {expectations.map((item, index) => (
+            <article class="k-reviews__expectation" role="listitem">
+              <div class="k-reviews__expectationIndex" aria-hidden="true">
                 {String(index + 1).padStart(2, "0")}
               </div>
-
-              <div class="k-reviews__signalBody">
-                <p class="k-reviews__signalLabel">{signal.label}</p>
-                <h4 class="k-reviews__signalTitle">{signal.title}</h4>
-                <p class="k-reviews__signalText">{signal.text}</p>
+              <div class="k-reviews__expectationBody">
+                <h4>{item.title}</h4>
+                <p>{item.text}</p>
               </div>
             </article>
           ))}
         </div>
       </article>
+
+      <article class="k-reviews__card k-reviews__card--process" aria-labelledby="delivery-process-heading">
+        <div class="k-reviews__processHead">
+          <p class="k-reviews__eyebrow">Execution clarity</p>
+          <h3 id="delivery-process-heading">{processTitle}</h3>
+        </div>
+
+        <ol class="k-reviews__processList">
+          {process.map((step) => (
+            <li class="k-reviews__processStep">
+              <h4>{step.title}</h4>
+              <p>{step.text}</p>
+            </li>
+          ))}
+        </ol>
+      </article>
+    </div>
+
+    <div class="k-reviews__ctaWrap">
+      <CtaButton href={ctaHref} label={ctaLabel} variant="primary" />
+      <p class="k-reviews__ctaNote">{ctaNote}</p>
     </div>
   </div>
 </section>

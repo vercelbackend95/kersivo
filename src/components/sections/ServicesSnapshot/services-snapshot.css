@@ -1,0 +1,182 @@
+/* =========================================
+   Kersivo — ServicesSnapshot
+   3 clear service cards · decision-ready
+   ========================================= */
+
+.ks-services {
+  position: relative;
+}
+
+.ks-services__container {
+  display: grid;
+  gap: clamp(32px, 4.8vw, 56px);
+}
+
+/* --- Head --- */
+.ks-services__head {
+  display: grid;
+  gap: 12px;
+  max-width: 52ch;
+}
+
+.ks-services__kicker {
+  margin: 0;
+  font-size: 11px;
+  font-weight: var(--w-semibold, 650);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.ks-services__h2 {
+  margin: 0;
+  font-size: clamp(1.875rem, 3.8vw + 0.4rem, 3.25rem);
+  line-height: 1.04;
+  letter-spacing: -0.055em;
+  font-weight: var(--w-black, 880);
+  color: rgba(255, 255, 255, 0.96);
+  text-wrap: balance;
+}
+
+.ks-services__lead {
+  margin: 0;
+  font-size: clamp(15px, 0.9vw + 0.6rem, 17px);
+  line-height: 1.62;
+  color: rgba(255, 255, 255, 0.68);
+}
+
+/* --- Cards grid --- */
+.ks-services__grid {
+  display: grid;
+  gap: 16px;
+}
+
+@media (min-width: 680px) {
+  .ks-services__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.ks-services__card {
+  position: relative;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.025));
+  overflow: hidden;
+  isolation: isolate;
+  padding: clamp(22px, 2.8vw, 30px);
+  display: grid;
+  gap: 18px;
+  align-content: start;
+  transition: border-color 240ms ease, transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ks-services__card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1) 40%, rgba(255, 255, 255, 0.1) 60%, transparent);
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .ks-services__card:hover {
+    border-color: rgba(255, 255, 255, 0.16);
+    transform: translateY(-2px);
+  }
+}
+
+.ks-services__cardNum {
+  font-size: 11px;
+  font-weight: var(--w-semibold, 650);
+  letter-spacing: 0.18em;
+  color: rgba(255, 255, 255, 0.36);
+}
+
+.ks-services__cardIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.ks-services__cardIcon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.ks-services__cardBody {
+  display: grid;
+  gap: 8px;
+}
+
+.ks-services__cardTitle {
+  margin: 0;
+  font-size: clamp(17px, 1.4vw + 0.7rem, 22px);
+  line-height: 1.14;
+  letter-spacing: -0.035em;
+  font-weight: var(--w-bold, 780);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.ks-services__cardText {
+  margin: 0;
+  font-size: clamp(13px, 0.8vw + 0.55rem, 15px);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.ks-services__cardIncludes {
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 6px;
+}
+
+.ks-services__cardIncludes li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.56);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.ks-services__cardIncludes li::before {
+  content: "";
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+  margin-top: 0.45em;
+}
+
+/* --- CTA row --- */
+.ks-services__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 28px;
+}
+
+.ks-services__footNote {
+  margin: 0;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ks-services__card {
+    transition: none !important;
+    transform: none !important;
+  }
+}

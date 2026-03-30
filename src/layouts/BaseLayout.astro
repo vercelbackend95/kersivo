@@ -161,7 +161,7 @@ const {
         const highlight = () => {
           const frame =
             document.querySelector("#contact [data-contact-frame]") ||
-            document.querySelector("#contact .k-contact2__frame");
+            document.querySelector("#contact .ks-lead__frame");
           if (!frame) return;
 
           frame.classList.remove("is-highlight");
@@ -188,7 +188,7 @@ const {
           const target = document.querySelector("#contact");
 
           if (!target) {
-            window.location.href = "/contact/#contact";
+            window.location.href = "/#contact";
             return;
           }
 

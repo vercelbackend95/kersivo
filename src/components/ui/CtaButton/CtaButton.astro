@@ -25,7 +25,8 @@ const magnetic =
 
 const classes = `k-btn k-btn--${variant} ${magnetic ? "k-btn--magnetic" : ""} ${extraClass}`.trim();
 const hasShine = variant === "primary";
-const isContact = (href || "").trim() === "#contact";
+const contactHref = (href || "").trim();
+const isContact = contactHref === "#contact" || contactHref.endsWith("/#contact");
 ---
 
 <a
@@ -40,7 +41,9 @@ const isContact = (href || "").trim() === "#contact";
 
   {arrow && (
     <span class={variant === "primary" ? "k-btn__arrow" : "k-btn__arrow2"} aria-hidden="true">
-      →
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 7H11M8 4L11 7L8 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
     </span>
   )}
 </a>

@@ -1,0 +1,154 @@
+---
+import "./faq-sales.css";
+import CtaButton from "../../ui/CtaButton/CtaButton.astro";
+
+const faqs = [
+  {
+    id: "faq-cost",
+    question: "How much does a typical project cost?",
+    answer: "Most website redesign and new build projects range from <strong>£2,500 to £8,000</strong>, depending on scope, number of pages, and complexity. A single-service or portfolio site sits at the lower end; a full multi-service redesign with conversion structure at the upper. We share a clear, itemised scope before any work begins — so there are no surprises.",
+  },
+  {
+    id: "faq-timeline",
+    question: "How long does a website project usually take?",
+    answer: "From approved brief to launch: typically <strong>4 to 8 weeks</strong>. Smaller projects or performance optimisation work can be faster. Timeline is driven mainly by decision speed on your side — we keep our delivery cadence steady and documented throughout.",
+  },
+  {
+    id: "faq-copy",
+    question: "Do you write the website copy as well?",
+    answer: "We do not write full copy by default, but we provide <strong>messaging direction, structure, and guidance</strong> as part of the offer clarity work. If you need full copywriting, we can discuss adding it to scope or recommend a trusted specialist.",
+  },
+  {
+    id: "faq-cms",
+    question: "Will the website be easy to edit after launch?",
+    answer: "Yes. We build with a clear content layer so you can update text, images, and standard content without needing a developer. For sites that need frequent structural changes, we can discuss a headless CMS integration. Either way, you will receive a handover document that explains how the site works.",
+  },
+  {
+    id: "faq-existing",
+    question: "Can you improve our existing site instead of rebuilding it?",
+    answer: "Yes — if a full rebuild is not the right move, we can scope a <strong>conversion and performance improvement pass</strong> on your existing site. We assess page speed, mobile UX, messaging structure, and contact flow and fix what matters most. We will advise honestly on whether a partial improvement or a full rebuild better serves your goals.",
+  },
+] as const;
+---
+
+<section
+  class="ks-faq section"
+  id="faq"
+  aria-labelledby="ks-faq-heading"
+  data-light-zone
+  data-light-x="50"
+  data-light-y="44"
+  data-light-size="0.94"
+  data-light-strength="0.54"
+  data-light-focus="0.36"
+>
+  <div class="container ks-faq__container">
+
+    <header class="ks-faq__head">
+      <p class="ks-faq__kicker">Before you ask</p>
+      <h2 class="ks-faq__h2" id="ks-faq-heading">
+        Common questions, answered directly.
+      </h2>
+      <p class="ks-faq__lead">
+        No vague answers, no soft deflections — just what you actually need to know before getting in touch.
+      </p>
+    </header>
+
+    <ul class="ks-faq__list" aria-label="Frequently asked questions">
+      {faqs.map((faq, i) => (
+        <li class="ks-faq__item">
+          <button
+            class="ks-faq__trigger"
+            type="button"
+            aria-expanded={i === 0 ? "true" : "false"}
+            aria-controls={`${faq.id}-panel`}
+            id={`${faq.id}-btn`}
+          >
+            <span>{faq.question}</span>
+            <span class="ks-faq__icon" aria-hidden="true">
+              <svg viewBox="0 0 12 12" fill="none">
+                <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+            </span>
+          </button>
+
+          <div
+            class="ks-faq__panel"
+            id={`${faq.id}-panel`}
+            role="region"
+            aria-labelledby={`${faq.id}-btn`}
+            aria-hidden={i === 0 ? "false" : "true"}
+          >
+            <div class="ks-faq__panelInner">
+              <p class="ks-faq__answer" set:html={faq.answer} />
+            </div>
+          </div>
+        </li>
+      ))}
+    </ul>
+
+    <div class="ks-faq__foot">
+      <CtaButton
+        href="/faq/"
+        label="See all FAQ"
+        variant="secondary"
+        arrow={true}
+        magnetic={false}
+      />
+      <p class="ks-faq__footNote">Still have a question? Just ask in the message below.</p>
+    </div>
+
+  </div>
+
+  <script>
+    (() => {
+      const root = document.querySelector("#faq");
+      if (!root) return;
+
+      const triggers = Array.from(root.querySelectorAll<HTMLButtonElement>(".ks-faq__trigger"));
+      const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+
+      const open = (btn: HTMLButtonElement) => {
+        const panelId = btn.getAttribute("aria-controls") as string;
+        const panel = root.querySelector<HTMLElement>(`#${panelId}`);
+        if (!panel) return;
+        btn.setAttribute("aria-expanded", "true");
+        panel.setAttribute("aria-hidden", "false");
+        panel.style.gridTemplateRows = "1fr";
+      };
+
+      const close = (btn: HTMLButtonElement) => {
+        const panelId = btn.getAttribute("aria-controls") as string;
+        const panel = root.querySelector<HTMLElement>(`#${panelId}`);
+        if (!panel) return;
+        btn.setAttribute("aria-expanded", "false");
+        panel.setAttribute("aria-hidden", "true");
+        panel.style.gridTemplateRows = "0fr";
+      };
+
+      // Init: apply inline grid-template-rows to match aria state
+      triggers.forEach((btn) => {
+        const isExpanded = btn.getAttribute("aria-expanded") === "true";
+        const panelId = btn.getAttribute("aria-controls") as string;
+        const panel = root.querySelector<HTMLElement>(`#${panelId}`);
+        if (panel) {
+          panel.style.gridTemplateRows = isExpanded ? "1fr" : "0fr";
+          if (reduced) {
+            panel.style.transition = "none";
+          }
+        }
+      });
+
+      triggers.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const isExpanded = btn.getAttribute("aria-expanded") === "true";
+          if (isExpanded) {
+            close(btn);
+          } else {
+            open(btn);
+          }
+        });
+      });
+    })();
+  </script>
+</section>

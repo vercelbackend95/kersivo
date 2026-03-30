@@ -1,0 +1,82 @@
+---
+import "./fit-section.css";
+
+const fitPoints = [
+  {
+    title: "You want better enquiries, not just a prettier site.",
+    text: "If the goal is to improve how the business is perceived and increase the quality of incoming work — we are the right fit.",
+  },
+  {
+    title: "You can make decisions promptly and keep momentum.",
+    text: "The key decision-maker is available to review direction and give feedback at natural checkpoints.",
+  },
+  {
+    title: "You value quality and long-term maintainability.",
+    text: "You care about a considered build — one that performs well, ages well, and does not need constant patching.",
+  },
+  {
+    title: "You prefer focused collaboration over agency noise.",
+    text: "Structured feedback rounds, clear communication, and no unnecessary back-and-forth or process theatre.",
+  },
+] as const;
+
+const nonFitPoints = [
+  "If the lowest possible price is the only priority — we are probably not the right partner.",
+  "If you need a rushed launch with no room for structure or quality review — the outcome will suffer.",
+] as const;
+---
+
+<section
+  class="ks-fit section"
+  id="who-its-for"
+  aria-labelledby="ks-fit-heading"
+  data-light-zone
+  data-light-x="56"
+  data-light-y="46"
+  data-light-size="0.96"
+  data-light-strength="0.58"
+  data-light-focus="0.32"
+>
+  <div class="container ks-fit__container">
+
+    <!-- Intro col (sticky on desktop) -->
+    <header class="ks-fit__intro">
+      <p class="ks-fit__kicker">Clarity and standards</p>
+      <h2 class="ks-fit__h2" id="ks-fit-heading">
+        Who we work best with.
+      </h2>
+      <p class="ks-fit__lead">
+        We do our best work with service businesses that value clear positioning, calm delivery, and websites built to convert — not just impress.
+      </p>
+      <a class="ks-fit__cta" href="/#contact">
+        <span>See if we are a fit</span>
+        <span aria-hidden="true">→</span>
+      </a>
+    </header>
+
+    <!-- Content col -->
+    <div class="ks-fit__content">
+      <div class="ks-fit__list" role="list" aria-label="Who we work best with">
+        {fitPoints.map((point, index) => (
+          <article class="ks-fit__item" role="listitem">
+            <p class="ks-fit__itemNum" aria-hidden="true">{String(index + 1).padStart(2, "0")}</p>
+            <div class="ks-fit__itemBody">
+              <h3 class="ks-fit__itemTitle">{point.title}</h3>
+              <p class="ks-fit__itemText">{point.text}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <aside class="ks-fit__note" aria-label="When we may not be the best fit">
+        <p class="ks-fit__noteTitle">We may not be the best fit if:</p>
+        <ul class="ks-fit__noteList">
+          {nonFitPoints.map((point) => (
+            <li>{point}</li>
+          ))}
+        </ul>
+      </aside>
+    </div>
+
+  </div>
+</section>

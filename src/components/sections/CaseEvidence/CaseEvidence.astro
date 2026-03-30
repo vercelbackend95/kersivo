@@ -1,0 +1,75 @@
+---
+import "./case-evidence.css";
+import CtaButton from "../../ui/CtaButton/CtaButton.astro";
+
+const steps = [
+  {
+    key: "problem",
+    label: "The problem",
+    badge: "01",
+    title: "An outdated site that eroded trust before contact.",
+    text: "The existing website looked dated, explained services poorly, and caused hesitation at the most critical moment — when a potential client decided whether to get in touch.",
+  },
+  {
+    key: "change",
+    label: "What we changed",
+    badge: "02",
+    title: "Clarity-first structure with a performance build.",
+    text: "We rebuilt the page structure around the actual decision journey, sharpened the service messaging, designed a premium mobile-first UI, and delivered a fast, maintainable Astro build.",
+  },
+  {
+    key: "outcome",
+    label: "The outcome",
+    badge: "03",
+    title: "Better positioning, stronger enquiry intent.",
+    text: "The business now communicates its value clearly and consistently. First impressions match the quality of the work — and the quality of enquiries reflects that.",
+  },
+] as const;
+---
+
+<section
+  class="ks-case section"
+  id="case-evidence"
+  aria-labelledby="ks-case-heading"
+  data-light-zone
+  data-light-x="44"
+  data-light-y="42"
+  data-light-size="1.02"
+  data-light-strength="0.62"
+  data-light-focus="0.36"
+>
+  <div class="container ks-case__container">
+
+    <header class="ks-case__head">
+      <p class="ks-case__kicker">Case evidence</p>
+      <h2 class="ks-case__h2" id="ks-case-heading">
+        From unclear website to confident enquiries.
+      </h2>
+    </header>
+
+    <div class="ks-case__steps" role="list" aria-label="Case study stages">
+      {steps.map((step) => (
+        <article class={`ks-case__step ks-case__step--${step.key}`} role="listitem">
+          <p class="ks-case__stepLabel">
+            <span class="ks-case__stepBadge" aria-hidden="true">{step.badge}</span>
+            {step.label}
+          </p>
+          <h3 class="ks-case__stepTitle">{step.title}</h3>
+          <p class="ks-case__stepText">{step.text}</p>
+        </article>
+      ))}
+    </div>
+
+    <div class="ks-case__foot">
+      <CtaButton
+        href="/work/"
+        label="See full case study"
+        variant="secondary"
+        arrow={true}
+        magnetic={false}
+      />
+      <p class="ks-case__footNote">More projects available on request.</p>
+    </div>
+
+  </div>
+</section>

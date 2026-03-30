@@ -1,27 +1,56 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import Hero from "../components/sections/Hero/Hero.astro";
-import PresenceIntro from "../components/sections/PresenceIntro/PresenceIntro.astro";
-import About from "../components/sections/About/About.astro";
-import WhoFor from "../components/sections/WhoFor/WhoFor.astro";
-import FinalBridge from "../components/sections/FinalBridge/FinalBridge.astro";
-import ProofPack from "../components/sections/ProofPack/ProofPack.astro";
-import Testimonials from "../components/sections/Testimonials/Testimonials.astro";
+
+// New sales-first sections
+import HeroSales from "../components/sections/HeroSales/HeroSales.astro";
+import TrustStrip from "../components/sections/TrustStrip/TrustStrip.astro";
+import CaseEvidence from "../components/sections/CaseEvidence/CaseEvidence.astro";
+import TestimonialsNew from "../components/sections/Testimonials/TestimonialsNew.astro";
+import ServicesSnapshot from "../components/sections/ServicesSnapshot/ServicesSnapshot.astro";
+import WhyKersivo from "../components/sections/WhyKersivo/WhyKersivo.astro";
+import ProcessLite from "../components/sections/ProcessLite/ProcessLite.astro";
+import FitSection from "../components/sections/FitSection/FitSection.astro";
+import FAQSales from "../components/sections/FAQSales/FAQSales.astro";
+import InlineContactLead from "../components/sections/InlineContactLead/InlineContactLead.astro";
 import Footer from "../components/sections/Footer/Footer.astro";
 ---
 
-<BaseLayout>
+<BaseLayout
+  title="Kersivo — Web Design & Development for UK Small Businesses"
+  description="We design and build premium, performance-first websites for established UK small businesses. Astro-first builds, mobile-first design, and a clear process from brief to launch."
+>
   <main id="main">
-    <Hero />
-    <PresenceIntro />
+    <!-- 1. Hero: value proposition + CTAs -->
+    <HeroSales />
 
-    <About />
-    <ProofPack />
-    <Testimonials />
-    <WhoFor />
-    <FinalBridge />
+    <!-- 2. Trust strip: instant credibility signals -->
+    <TrustStrip />
 
+    <!-- 3. Case evidence: proof of real business outcome -->
+    <CaseEvidence />
+
+    <!-- 4. Testimonial + project showcase -->
+    <TestimonialsNew />
+
+    <!-- 5. Services: what exactly can I buy -->
+    <ServicesSnapshot />
+
+    <!-- 6. Why Kersivo: differentiators with proof -->
+    <WhyKersivo />
+
+    <!-- 7. Process: reduce perceived risk -->
+    <ProcessLite />
+
+    <!-- 8. Fit / Not-fit: lead qualification -->
+    <FitSection />
+
+    <!-- 9. FAQ: close pre-contact objections -->
+    <FAQSales />
+
+    <!-- 9. Inline contact form: zero-friction lead capture -->
+    <InlineContactLead />
+
+    <!-- 10. Footer: simplified, trustworthy close -->
     <Footer showTopCta={false} />
   </main>
 </BaseLayout>
-

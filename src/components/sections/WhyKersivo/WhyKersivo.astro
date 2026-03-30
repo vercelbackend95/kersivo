@@ -1,0 +1,89 @@
+---
+import "./why-kersivo.css";
+import CtaButton from "../../ui/CtaButton/CtaButton.astro";
+
+const differentiators = [
+  {
+    num: "01",
+    tag: "Commercial clarity",
+    title: "Pages that earn trust faster.",
+    text: "We structure every section around the actual decision journey — not decoration. Offer, proof, and next step are built in from the start so visitors can move to contact with confidence.",
+    proof: ["Offer-first structure", "Proof at every decision point", "Mobile contact logic"],
+  },
+  {
+    num: "02",
+    tag: "Senior, founder-led delivery",
+    title: "Direct execution, no handoffs.",
+    text: "Strategy, design, and build are handled by the same senior person throughout. No account managers, no junior handoffs, no quality drift between brief and launch.",
+    proof: ["One point of contact", "Consistent quality and ownership", "Calm, accountable process"],
+  },
+  {
+    num: "03",
+    tag: "Performance built in",
+    title: "Fast by architecture, not by accident.",
+    text: "We build with Astro — which ships minimal JavaScript by default. The result is a site that loads fast, scores well on Core Web Vitals, and stays that way without maintenance overhead.",
+    proof: ["Astro-first architecture", "Core Web Vitals conscious", "Maintainable, clean output"],
+  },
+] as const;
+---
+
+<section
+  class="ks-why section"
+  id="why-kersivo"
+  aria-labelledby="ks-why-heading"
+  data-light-zone
+  data-light-x="42"
+  data-light-y="44"
+  data-light-size="0.98"
+  data-light-strength="0.7"
+  data-light-focus="0.34"
+>
+  <div class="container ks-why__container">
+
+    <header class="ks-why__head">
+      <p class="ks-why__kicker">Why clients choose Kersivo</p>
+      <h2 class="ks-why__h2" id="ks-why-heading">
+        Premium by feel. <em>Commercial by design.</em>
+      </h2>
+      <p class="ks-why__lead">
+        Most agencies make sites that look good. We make sites that also do the commercial job — earning trust faster and turning the right visitors into enquiries.
+      </p>
+    </header>
+
+    <div class="ks-why__ledger" role="list" aria-label="Why clients choose Kersivo">
+      {differentiators.map((item) => (
+        <article class="ks-why__row" role="listitem">
+          <p class="ks-why__rowIndex" aria-hidden="true">{item.num}</p>
+
+          <div class="ks-why__rowMain">
+            <p class="ks-why__rowTag">{item.tag}</p>
+            <h3 class="ks-why__rowTitle">{item.title}</h3>
+          </div>
+
+          <div class="ks-why__rowAside">
+            <p class="ks-why__rowText">{item.text}</p>
+            <div class="ks-why__proof" aria-label={`${item.tag} proof points`}>
+              {item.proof.map((p) => (
+                <span class="ks-why__proofItem">{p}</span>
+              ))}
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <div class="ks-why__foot">
+      <CtaButton
+        href="/#contact"
+        label="Ask for a quote"
+        variant="primary"
+        magnetic={false}
+        arrow={false}
+      />
+      <p class="ks-why__footNote">
+        Usually chosen when the business is already strong and the website needs to catch up.
+      </p>
+    </div>
+
+  </div>
+</section>

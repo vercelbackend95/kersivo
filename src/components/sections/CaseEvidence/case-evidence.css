@@ -1,0 +1,151 @@
+/* =========================================
+   Kersivo — CaseEvidence
+   Problem → Change → Outcome · 3-col
+   ========================================= */
+
+.ks-case {
+  position: relative;
+}
+
+.ks-case__container {
+  display: grid;
+  gap: clamp(36px, 5vw, 60px);
+}
+
+/* --- Head --- */
+.ks-case__head {
+  display: grid;
+  gap: 12px;
+}
+
+.ks-case__kicker {
+  margin: 0;
+  font-size: 11px;
+  font-weight: var(--w-semibold, 650);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.ks-case__h2 {
+  margin: 0;
+  font-size: clamp(2rem, 4.2vw + 0.4rem, 3.5rem);
+  line-height: 1.04;
+  letter-spacing: -0.055em;
+  font-weight: var(--w-black, 880);
+  color: rgba(255, 255, 255, 0.96);
+  max-width: 22ch;
+  text-wrap: balance;
+}
+
+/* --- Steps: horizontal on desktop --- */
+.ks-case__steps {
+  display: grid;
+  gap: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+@media (min-width: 800px) {
+  .ks-case__steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.ks-case__step {
+  padding: clamp(24px, 3.2vw, 38px) 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+@media (min-width: 800px) {
+  .ks-case__step {
+    padding: clamp(28px, 3.6vw, 44px) clamp(16px, 2.4vw, 32px);
+    border-bottom: 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.09);
+  }
+
+  .ks-case__step:first-child {
+    padding-left: 0;
+  }
+
+  .ks-case__step:last-child {
+    border-right: 0;
+    padding-right: 0;
+  }
+}
+
+.ks-case__stepLabel {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  font-weight: var(--w-semibold, 650);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.48);
+}
+
+.ks-case__stepBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.5);
+  flex-shrink: 0;
+}
+
+.ks-case__stepTitle {
+  margin: 0;
+  font-size: clamp(19px, 1.5vw + 0.9rem, 26px);
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  font-weight: var(--w-bold, 780);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.ks-case__stepText {
+  margin: 0;
+  font-size: clamp(14px, 0.9vw + 0.55rem, 15.5px);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.64);
+  max-width: 30ch;
+}
+
+/* outcome highlight */
+.ks-case__step--outcome .ks-case__stepLabel {
+  color: rgba(102, 255, 170, 0.7);
+}
+
+.ks-case__step--outcome .ks-case__stepBadge {
+  background: rgba(102, 255, 170, 0.1);
+  border-color: rgba(102, 255, 170, 0.22);
+  color: rgba(102, 255, 170, 0.7);
+}
+
+.ks-case__step--outcome .ks-case__stepTitle {
+  color: rgba(255, 255, 255, 0.97);
+}
+
+/* --- Foot --- */
+.ks-case__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 24px;
+}
+
+.ks-case__footNote {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.45;
+}

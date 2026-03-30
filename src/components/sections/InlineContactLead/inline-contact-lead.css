@@ -1,0 +1,321 @@
+/* =========================================
+   Kersivo — InlineContactLead
+   Lightweight home contact form
+   ========================================= */
+
+.ks-lead-section {
+  position: relative;
+}
+
+.ks-lead__container {
+  display: grid;
+  gap: clamp(32px, 4.8vw, 56px);
+}
+
+/* --- Head --- */
+.ks-lead__head {
+  display: grid;
+  gap: 14px;
+  max-width: 56ch;
+}
+
+.ks-lead__kicker {
+  margin: 0;
+  font-size: 11px;
+  font-weight: var(--w-semibold, 650);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.ks-lead__h2 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw + 0.4rem, 3.25rem);
+  line-height: 1.04;
+  letter-spacing: -0.055em;
+  font-weight: var(--w-black, 880);
+  color: rgba(255, 255, 255, 0.96);
+  text-wrap: balance;
+}
+
+.ks-lead__subtitle {
+  margin: 0;
+  font-size: clamp(15px, 0.9vw + 0.6rem, 17px);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.68);
+}
+
+/* --- Card frame --- */
+.ks-lead__frame {
+  position: relative;
+  border-radius: 28px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    radial-gradient(1100px 520px at 18% 0%, rgba(var(--scene-ivory-rgb), 0.07), transparent 60%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.018));
+  box-shadow: 0 36px 120px rgba(0, 0, 0, 0.46);
+}
+
+.ks-lead__frame::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12) 40%, rgba(255, 255, 255, 0.12) 60%, transparent);
+  pointer-events: none;
+}
+
+.ks-lead__frameInner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: clamp(24px, 3.4vw, 36px);
+  padding: clamp(24px, 3.6vw, 40px);
+}
+
+@media (min-width: 860px) {
+  .ks-lead__frameInner {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+    gap: clamp(28px, 4.2vw, 52px);
+  }
+}
+
+/* --- Left side copy --- */
+.ks-lead__copy {
+  display: grid;
+  gap: 16px;
+  align-content: start;
+}
+
+.ks-lead__copyTitle {
+  margin: 0;
+  font-size: clamp(22px, 2.4vw + 0.6rem, 34px);
+  line-height: 1.1;
+  letter-spacing: -0.048em;
+  font-weight: var(--w-bold, 780);
+  color: rgba(255, 255, 255, 0.95);
+  text-wrap: balance;
+}
+
+.ks-lead__copyText {
+  margin: 0;
+  font-size: clamp(14px, 0.9vw + 0.55rem, 16px);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.66);
+}
+
+.ks-lead__bullets {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.ks-lead__bullet {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+}
+
+.ks-lead__bulletCheck {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: rgba(102, 255, 170, 0.8);
+}
+
+.ks-lead__bulletCheck svg {
+  width: 16px;
+  height: 16px;
+}
+
+.ks-lead__email {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: var(--w-semibold, 650);
+  color: rgba(255, 255, 255, 0.82);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 3px;
+  transition: color 180ms ease, border-color 180ms ease;
+}
+
+.ks-lead__email:hover {
+  color: rgba(255, 255, 255, 1);
+  border-color: rgba(var(--scene-ivory-rgb), 0.4);
+}
+
+/* --- Form --- */
+.ks-lead__form {
+  display: grid;
+  gap: 18px;
+}
+
+.ks-lead__row {
+  display: grid;
+  gap: 16px;
+}
+
+@media (min-width: 500px) {
+  .ks-lead__row--split {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.ks-lead__field {
+  display: grid;
+  gap: 8px;
+}
+
+.ks-lead__label {
+  font-size: 11px;
+  font-weight: var(--w-semibold, 650);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.56);
+}
+
+.ks-lead__input,
+.ks-lead__textarea {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 12px 14px;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  font-family: var(--font-sans);
+  outline: none;
+  transition: border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
+}
+
+.ks-lead__input::placeholder,
+.ks-lead__textarea::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.ks-lead__input:focus,
+.ks-lead__textarea:focus {
+  border-color: rgba(190, 145, 255, 0.38);
+  background: rgba(255, 255, 255, 0.055);
+  box-shadow: 0 0 0 4px rgba(190, 145, 255, 0.1);
+}
+
+.ks-lead__input:focus-visible,
+.ks-lead__textarea:focus-visible {
+  outline: none;
+}
+
+.ks-lead__textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.ks-lead__submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 54px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: linear-gradient(135deg, rgba(245, 243, 236, 0.98), rgba(218, 225, 231, 0.94));
+  color: #091015;
+  font-size: 15px;
+  font-weight: var(--w-semibold, 650);
+  letter-spacing: -0.015em;
+  cursor: pointer;
+  box-shadow:
+    0 18px 44px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  transition:
+    box-shadow 200ms ease,
+    transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
+    background 200ms ease;
+}
+
+.ks-lead__submit:hover:not(:disabled) {
+  box-shadow:
+    0 24px 52px rgba(0, 0, 0, 0.27),
+    inset 0 1px 0 rgba(255, 255, 255, 0.56);
+  transform: translateY(-1px);
+}
+
+.ks-lead__submit:active {
+  transform: translateY(0);
+}
+
+.ks-lead__submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.ks-lead__submit--sent {
+  background: linear-gradient(135deg, rgba(64, 232, 162, 0.92), rgba(32, 184, 120, 0.92));
+  border-color: rgba(80, 255, 190, 0.3);
+  color: rgba(7, 17, 12, 0.92);
+  box-shadow: 0 18px 60px rgba(32, 184, 120, 0.18);
+}
+
+.ks-lead__notice {
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.84);
+  margin: 0;
+}
+
+.ks-lead__notice--ok {
+  border-color: rgba(80, 255, 190, 0.22);
+  background: rgba(80, 255, 190, 0.08);
+}
+
+.ks-lead__notice--err {
+  border-color: rgba(255, 120, 120, 0.24);
+  background: rgba(255, 120, 120, 0.07);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.ks-lead__formNote {
+  margin: 0;
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.46);
+  line-height: 1.5;
+  text-align: center;
+}
+
+/* HP honeypot */
+.ks-lead__hp {
+  position: absolute;
+  left: -9999px;
+  opacity: 0;
+  pointer-events: none;
+  tab-index: -1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ks-lead__submit,
+  .ks-lead__input,
+  .ks-lead__textarea,
+  .ks-lead__email {
+    transition: none !important;
+    transform: none !important;
+  }
+}

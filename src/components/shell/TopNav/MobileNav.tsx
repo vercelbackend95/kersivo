@@ -1,29 +1,21 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import {
-  AnimatePresence,
-  motion,
-  useReducedMotion,
-  useDragControls,
-} from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import "./mobile-nav.css";
-
-type LinkItem = { href: string; label: string };
-
-const LINKS: LinkItem[] = [
-  { href: "/", label: "Home" },
-  { href: "/work/", label: "Work" },
-  { href: "/services/", label: "Services" },
-  { href: "/process/", label: "Process" },
-  { href: "/packages/", label: "Packages" },
-  { href: "/contact/", label: "Contact" },
-];
+import { NAV_LINKS } from "./nav-links";
+import { createActiveSectionScrollSpy } from "./active-section";
 
 function normPath(p: string) {
   const s = (p || "/").trim();
   const base = s.split("#")[0];
   const noTrail = base.replace(/\/+$/, "") || "/";
   return noTrail;
+}
+
+function normHash(h: string) {
+  const raw = (h || "").trim();
+  if (!raw) return "";
+  return raw.startsWith("#") ? raw : `#${raw}`;
 }
 
 function getFocusable(container: HTMLElement | null): HTMLElement[] {
@@ -43,16 +35,14 @@ function getFocusable(container: HTMLElement | null): HTMLElement[] {
 
 export default function MobileNav() {
   const reduced = useReducedMotion();
-  const dragControls = useDragControls();
 
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [activeHref, setActiveHref] = useState<string>("/");
-  const [sweepOn, setSweepOn] = useState(false);
-  const [vh, setVh] = useState(900);
+  const [activeHash, setActiveHash] = useState<string>("#services");
 
   const sheetRef = useRef<HTMLDivElement | null>(null);
   const lastActiveElRef = useRef<HTMLElement | null>(null);
+  const scrollYRef = useRef(0);
 
   const burgerId = "kNavToggle";
 
@@ -64,7 +54,27 @@ export default function MobileNav() {
   };
 
   const lockScroll = (isLocked: boolean) => {
-    document.documentElement.classList.toggle("k-navOpen", isLocked);
+    const html = document.documentElement;
+    const body = document.body;
+    html.classList.toggle("k-navOpen", isLocked);
+
+    if (isLocked) {
+      scrollYRef.current = window.scrollY || window.pageYOffset || 0;
+      body.style.position = "fixed";
+      body.style.top = `-${scrollYRef.current}px`;
+      body.style.left = "0";
+      body.style.right = "0";
+      body.style.width = "100%";
+      return;
+    }
+
+    const top = body.style.top || "0";
+    body.style.position = "";
+    body.style.top = "";
+    body.style.left = "";
+    body.style.right = "";
+    body.style.width = "";
+    window.scrollTo(0, Math.abs(parseInt(top, 10)) || scrollYRef.current || 0);
   };
 
   const doOpen = () => {
@@ -80,23 +90,45 @@ export default function MobileNav() {
 
   useEffect(() => {
     setMounted(true);
-    const update = () => setVh(Math.max(520, window.innerHeight || 900));
-    update();
-    window.addEventListener("resize", update, { passive: true });
-    return () => window.removeEventListener("resize", update);
+    return undefined;
   }, []);
 
   useEffect(() => {
     if (!mounted) return;
     try {
-      const here = normPath(window.location.pathname || "/");
-      const best =
-        LINKS.find((l) => normPath(l.href) === here)?.href ||
-        (here === "/" ? "/" : "/");
-      setActiveHref(best);
+      const fromHash = normHash(window.location.hash || "#services");
+      setActiveHash(fromHash || "#services");
     } catch {
-      setActiveHref("/");
+      setActiveHash("#services");
     }
+  }, [mounted]);
+
+  useEffect(() => {
+    if (!mounted) return;
+    if (normPath(window.location.pathname) !== "/") return;
+
+    const topnavRoot = document.querySelector("[data-topnav]") as HTMLElement | null;
+    const spy = createActiveSectionScrollSpy({
+      links: NAV_LINKS,
+      topnavRoot,
+      onActiveChange: (hash) => setActiveHash(normHash(hash)),
+    });
+    spy.start();
+
+    const onExternalChange = (event: Event) => {
+      const customEvent = event as CustomEvent<{ hash?: string }>;
+      const nextHash = normHash(customEvent.detail?.hash || "");
+      if (nextHash) setActiveHash(nextHash);
+    };
+
+    window.addEventListener("kersivo:active-section-change", onExternalChange as EventListener);
+    return () => {
+      spy.stop();
+      window.removeEventListener(
+        "kersivo:active-section-change",
+        onExternalChange as EventListener
+      );
+    };
   }, [mounted]);
 
   useEffect(() => {
@@ -126,16 +158,6 @@ export default function MobileNav() {
       (btn ?? lastActiveElRef.current)?.focus?.();
     }
 
-    if (open && !reduced) {
-      setSweepOn(false);
-      const t1 = window.setTimeout(() => setSweepOn(true), 320);
-      const t2 = window.setTimeout(() => setSweepOn(false), 960);
-      return () => {
-        window.clearTimeout(t1);
-        window.clearTimeout(t2);
-      };
-    }
-
     return () => {
       if (!open) lockScroll(false);
     };
@@ -150,15 +172,12 @@ export default function MobileNav() {
         doClose();
         return;
       }
-
       if (e.key === "Tab") {
         const focusables = getFocusable(sheetRef.current);
         if (focusables.length === 0) return;
-
         const first = focusables[0];
         const last = focusables[focusables.length - 1];
         const active = document.activeElement as HTMLElement | null;
-
         if (!e.shiftKey && active === last) {
           e.preventDefault();
           first.focus();
@@ -174,14 +193,14 @@ export default function MobileNav() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [open]);
 
-  const sheetTransition = useMemo(() => {
-    if (reduced) return { duration: 0.18 };
-    return { type: "spring", stiffness: 520, damping: 52, mass: 0.92 };
+  const panelTransition = useMemo(() => {
+    if (reduced) return { duration: 0.15 };
+    return { duration: 0.3, ease: [0.22, 1, 0.36, 1] as const };
   }, [reduced]);
 
   const backdropTransition = useMemo(() => {
     if (reduced) return { duration: 0.12 };
-    return { duration: 0.2, ease: [0.22, 0.9, 0.22, 1] };
+    return { duration: 0.24, ease: [0.22, 0.9, 0.22, 1] as const };
   }, [reduced]);
 
   if (!mounted) return null;
@@ -196,6 +215,7 @@ export default function MobileNav() {
           exit={{ opacity: 0 }}
           transition={backdropTransition}
         >
+          {/* Backdrop scrim (tap to close) */}
           <motion.button
             className="k-mobileNav__backdrop"
             type="button"
@@ -208,60 +228,85 @@ export default function MobileNav() {
             onTouchEnd={doClose}
           />
 
+          {/* Panel */}
           <motion.div
             className="k-mobileNav__sheet"
-            data-sweep={sweepOn ? "1" : "0"}
+            id="kMobileNavDialog"
             ref={sheetRef}
             role="dialog"
             aria-modal="true"
             aria-label="Navigation"
             tabIndex={-1}
-            initial={{ y: -vh, opacity: 0.98, scaleY: reduced ? 1 : 0.988 }}
-            animate={{ y: 0, opacity: 1, scaleY: 1 }}
-            exit={{ y: -vh, opacity: 0.98, scaleY: reduced ? 1 : 0.988 }}
-            transition={sheetTransition}
-            drag={reduced ? false : "y"}
-            dragControls={dragControls}
-            dragListener={false}
-            dragConstraints={{ top: -Math.max(240, vh * 0.35), bottom: 0 }}
-            dragElastic={0.08}
-            onDragEnd={(_, info) => {
-              const shouldClose = info.offset.y < -70 || info.velocity.y < -700;
-              if (shouldClose) doClose();
+            initial={{
+              opacity: 0,
+              y: reduced ? 0 : -24,
+              scale: reduced ? 1 : 0.97,
             }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{
+              opacity: 0,
+              y: reduced ? 0 : -10,
+              scale: reduced ? 1 : 0.99,
+            }}
+            transition={panelTransition}
           >
-            <button
-              className="k-mobileNav__close"
-              type="button"
-              aria-label="Close menu"
-              onClick={doClose}
-              onTouchEnd={doClose}
-              onPointerDown={(e) => e.stopPropagation()}
-            >
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
+            {/* ─── Header: brand + close ─── */}
+            <div className="k-mn__header">
+              <a
+                href="/"
+                className="k-mn__brand"
+                onClick={doClose}
+                aria-label="Kersivo home"
               >
-                <path
-                  d="M6.2253 4.81108C5.83477 4.42056 5.20161 4.42056 4.81108 4.81108C4.42056 5.20161 4.42056 5.83477 4.81108 6.2253L10.5858 12L4.81114 17.7747C4.42062 18.1652 4.42062 18.7984 4.81114 19.1889C5.20167 19.5794 5.83483 19.5794 6.22535 19.1889L12 13.4142L17.7747 19.1889C18.1652 19.5794 18.7984 19.5794 19.1889 19.1889C19.5794 18.7984 19.5794 18.1652 19.1889 17.7747L13.4142 12L19.189 6.2253C19.5795 5.83477 19.5795 5.20161 19.189 4.81108C18.7985 4.42056 18.1653 4.42056 17.7748 4.81108L12 10.5858L6.2253 4.81108Z"
-                  fill="currentColor"
-                />
-              </svg>
-            </button>
+                <span className="k-mn__mark" aria-hidden="true">
+                  <svg
+                    width="15"
+                    height="15"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M12 3.2 13.1 7.6 17.8 8.5 14.2 10.5 12 14.2 9.8 10.5 6.2 8.5 10.9 7.6 12 3.2Z"
+                      stroke="currentColor"
+                      strokeWidth="1.2"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </span>
+                <span className="k-mn__name">Kersivo</span>
+              </a>
 
-            <div className="k-mobileNav__content">
-              <div className="k-mobileNav__masthead">
-                <p className="k-mobileNav__brand">Kersivo</p>
-                <p className="k-mobileNav__tagline">Web design &amp; development for UK small businesses</p>
-              </div>
+              <button
+                className="k-mn__close"
+                type="button"
+                aria-label="Close menu"
+                onClick={doClose}
+                onTouchEnd={doClose}
+                onPointerDown={(e) => e.stopPropagation()}
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M12.5 3.5 3.5 12.5M3.5 3.5l9 9"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </button>
+            </div>
 
-              <nav className="k-mobileNav__nav" aria-label="Mobile">
+            {/* ─── Navigation ─── */}
+            <div className="k-mn__body">
+              <nav className="k-mn__nav" aria-label="Mobile navigation">
                 <motion.ul
-                  className="k-mobileNav__list"
+                  className="k-mn__list"
                   initial="hidden"
                   animate="show"
                   exit="hidden"
@@ -269,67 +314,93 @@ export default function MobileNav() {
                     hidden: {},
                     show: {
                       transition: {
-                        staggerChildren: reduced ? 0 : 0.04,
-                        delayChildren: reduced ? 0 : 0.04,
+                        staggerChildren: reduced ? 0 : 0.048,
+                        delayChildren: reduced ? 0 : 0.08,
                       },
                     },
                   }}
                 >
-                  {LINKS.map((l) => {
-                    const isActive = normPath(l.href) === normPath(activeHref);
+                  {NAV_LINKS.map((l, i) => {
+                    const sectionHash = normHash(l.href.split("#")[1] || "");
+                    const isActive =
+                      normPath(window.location.pathname) === "/" &&
+                      sectionHash === activeHash;
                     return (
                       <motion.li
                         key={l.href}
-                        className="k-mobileNav__item"
+                        className="k-mn__item"
                         data-active={isActive ? "1" : "0"}
                         variants={{
-                          hidden: { opacity: 0, y: -5 },
+                          hidden: { opacity: 0, y: reduced ? 0 : 14 },
                           show: { opacity: 1, y: 0 },
                         }}
                         transition={
                           reduced
                             ? { duration: 0.01 }
-                            : { duration: 0.2, ease: [0.22, 0.9, 0.22, 1] }
+                            : { duration: 0.26, ease: [0.22, 0.9, 0.22, 1] }
                         }
                       >
                         <motion.a
-                          className="k-mobileNav__row"
+                          className="k-mn__row"
                           href={l.href}
-                          onClick={doClose}
+                          onClick={() => {
+                            setActiveHash(sectionHash);
+                            doClose();
+                          }}
                           aria-current={isActive ? "page" : undefined}
-                          whileTap={reduced ? undefined : { scale: 0.992 }}
+                          whileTap={reduced ? undefined : { opacity: 0.82 }}
                         >
-                          <span className="k-mobileNav__label">{l.label}</span>
+                          <span className="k-mn__num" aria-hidden="true">
+                            {String(i + 1).padStart(2, "0")}
+                          </span>
+
+                          <span className="k-mn__copy">
+                            <span className="k-mn__label">{l.label}</span>
+                            <span className="k-mn__meta">{l.description}</span>
+                          </span>
+
+                          <span className="k-mn__arrow" aria-hidden="true">
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 16 16"
+                              fill="none"
+                              aria-hidden="true"
+                            >
+                              <path
+                                d="M3 8h10M9 4l4 4-4 4"
+                                stroke="currentColor"
+                                strokeWidth="1.4"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                          </span>
                         </motion.a>
                       </motion.li>
                     );
                   })}
                 </motion.ul>
               </nav>
-
-              <div className="k-mobileNav__footer">
-                <a
-                  href="/contact/#contact"
-                  className="k-mobileNav__quote k-btn k-btn--primary"
-                  onClick={doClose}
-                >
-                  <span className="k-btn__label">Ask for a quote</span>
-                  <span className="k-btn__shine" aria-hidden="true" />
-                  <span className="k-btn__arrow" aria-hidden="true">
-                    →
-                  </span>
-                </a>
-              </div>
             </div>
 
-            <button
-              className="k-mobileNav__handle"
-              type="button"
-              aria-label="Drag up to close"
-              onPointerDown={(e) => dragControls.start(e)}
-            >
-              <span className="k-mobileNav__handleBar" />
-            </button>
+            {/* ─── Footer CTA ─── */}
+            <div className="k-mn__foot">
+              <p className="k-mn__footLine">Start your project</p>
+              <a
+                href="/#contact"
+                className="k-mn__quote k-btn k-btn--primary"
+                onClick={doClose}
+              >
+                <span className="k-btn__label">Get a quote</span>
+                <span className="k-btn__shine" aria-hidden="true" />
+                <span className="k-btn__arrow" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 7H11M8 4L11 7L8 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </span>
+              </a>
+            </div>
           </motion.div>
         </motion.div>
       )}

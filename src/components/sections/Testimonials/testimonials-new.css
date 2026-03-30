@@ -1,0 +1,442 @@
+/* =========================================
+   Kersivo — Testimonials (Sales)
+   Quote + project showcase
+   ========================================= */
+
+.ks-testi {
+  position: relative;
+}
+
+.ks-testi__container {
+  display: grid;
+  gap: clamp(36px, 5vw, 60px);
+}
+
+/* --- Head --- */
+.ks-testi__kicker {
+  margin: 0;
+  font-size: 11px;
+  font-weight: var(--w-semibold, 650);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* --- Split layout --- */
+.ks-testi__body {
+  display: grid;
+  gap: clamp(24px, 4vw, 48px);
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .ks-testi__body {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  }
+}
+
+/* ===========================
+   LEFT — quote side
+   =========================== */
+.ks-testi__quoteCol {
+  display: grid;
+  gap: clamp(24px, 3.2vw, 36px);
+  align-content: start;
+}
+
+/* big quotemark */
+.ks-testi__mark {
+  font-size: clamp(64px, 9vw, 120px);
+  line-height: 0.6;
+  font-family: Georgia, "Times New Roman", serif;
+  color: rgba(255, 255, 255, 0.1);
+  user-select: none;
+  pointer-events: none;
+  margin-bottom: -0.2em;
+}
+
+.ks-testi__quote {
+  margin: 0;
+  font-size: clamp(1.25rem, 2.4vw + 0.5rem, 2rem);
+  line-height: 1.42;
+  letter-spacing: -0.03em;
+  font-weight: var(--w-semibold, 650);
+  color: rgba(255, 255, 255, 0.92);
+  font-style: normal;
+  text-wrap: pretty;
+}
+
+.ks-testi__quote em {
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* attribution */
+.ks-testi__attr {
+  display: grid;
+  gap: 10px;
+  padding-top: clamp(18px, 2.4vw, 26px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ks-testi__attrRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.ks-testi__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+}
+
+.ks-testi__avatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 999px;
+}
+
+.ks-testi__avatarInitials {
+  font-size: 15px;
+  font-weight: var(--w-bold, 780);
+  color: rgba(255, 255, 255, 0.72);
+  letter-spacing: -0.02em;
+}
+
+.ks-testi__name {
+  display: grid;
+  gap: 1px;
+}
+
+.ks-testi__who {
+  margin: 0;
+  font-size: 15px;
+  font-weight: var(--w-semibold, 650);
+  letter-spacing: -0.02em;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.ks-testi__role {
+  margin: 0;
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.52);
+  letter-spacing: 0.01em;
+}
+
+.ks-testi__projectLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  font-size: 13px;
+  font-weight: var(--w-semibold, 650);
+  letter-spacing: -0.01em;
+  color: rgba(255, 255, 255, 0.7);
+  padding-bottom: 3px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  text-decoration: none;
+  transition: color 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+.ks-testi__projectLink:hover {
+  color: rgba(255, 255, 255, 0.95);
+  border-color: rgba(var(--scene-ivory-rgb), 0.38);
+  transform: translateX(2px);
+}
+
+.ks-testi__projectLink svg {
+  width: 12px;
+  height: 12px;
+  opacity: 0.6;
+  transition: opacity 180ms ease;
+}
+
+.ks-testi__projectLink:hover svg {
+  opacity: 1;
+}
+
+/* ===========================
+   RIGHT — browser mockup
+   =========================== */
+.ks-testi__mockupCol {
+  position: relative;
+}
+
+.ks-testi__mockupWrap {
+  position: relative;
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(6, 9, 18, 0.9);
+  box-shadow:
+    0 48px 120px rgba(0, 0, 0, 0.54),
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+  isolation: isolate;
+}
+
+.ks-testi__mockupWrap::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.14) 38%, rgba(255, 255, 255, 0.14) 62%, transparent);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ambient glow behind mockup */
+.ks-testi__mockupWrap::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background:
+    radial-gradient(80% 60% at 50% -10%,
+      rgba(var(--scene-ivory-rgb), 0.1),
+      transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* browser chrome bar */
+.ks-testi__bar {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 11px 16px;
+  background: rgba(8, 11, 22, 0.88);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.ks-testi__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.ks-testi__dot:nth-child(1) { background: rgba(255, 92, 86, 0.6); }
+.ks-testi__dot:nth-child(2) { background: rgba(255, 188, 44, 0.6); }
+.ks-testi__dot:nth-child(3) { background: rgba(40, 200, 64, 0.6); }
+
+.ks-testi__urlbar {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 26px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 6px;
+  padding: 0 10px;
+  margin: 0 8px;
+}
+
+.ks-testi__lock {
+  width: 10px;
+  height: 10px;
+  opacity: 0.5;
+  color: rgba(102, 255, 170, 0.9);
+  flex-shrink: 0;
+}
+
+.ks-testi__url {
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.46);
+  letter-spacing: 0.005em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* content area */
+.ks-testi__content {
+  position: relative;
+  z-index: 1;
+  padding: clamp(20px, 3vw, 32px);
+  display: grid;
+  gap: 20px;
+  background:
+    radial-gradient(900px 500px at 70% 0%, rgba(var(--scene-ivory-rgb), 0.055), transparent 60%),
+    linear-gradient(180deg, rgba(12, 16, 28, 0.98), rgba(7, 10, 20, 1));
+}
+
+/* hero block */
+.ks-testi__contentHero {
+  display: grid;
+  gap: 14px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ks-testi__contentLabel {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.36);
+  font-weight: 650;
+}
+
+.ks-testi__contentH {
+  font-size: clamp(22px, 3.2vw, 38px);
+  font-weight: var(--w-black, 880);
+  letter-spacing: -0.055em;
+  line-height: 1.0;
+  color: rgba(255, 255, 255, 0.96);
+  max-width: 14ch;
+  margin: 0;
+}
+
+.ks-testi__contentSub {
+  font-size: clamp(12px, 1vw, 14px);
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.55;
+  max-width: 28ch;
+  margin: 0;
+}
+
+.ks-testi__contentCtaRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.ks-testi__contentCta {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: rgba(8, 10, 18, 0.92);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.ks-testi__contentCtaGhost {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+/* nav-like strip */
+.ks-testi__contentNav {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.ks-testi__contentNavItem {
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.42);
+  white-space: nowrap;
+  font-weight: 550;
+}
+
+.ks-testi__contentNavItem:first-child {
+  color: rgba(255, 255, 255, 0.82);
+  font-weight: 650;
+}
+
+/* score badges */
+.ks-testi__scores {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ks-testi__score {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.ks-testi__scoreNum {
+  font-size: 14px;
+  font-weight: 780;
+  letter-spacing: -0.04em;
+  color: rgba(102, 255, 170, 0.9);
+}
+
+.ks-testi__scoreLabel {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.44);
+  font-weight: 600;
+}
+
+/* project badge */
+.ks-testi__badge {
+  position: absolute;
+  bottom: -14px;
+  right: clamp(16px, 3vw, 28px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(8, 11, 22, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 18px 56px rgba(0, 0, 0, 0.4);
+  white-space: nowrap;
+  z-index: 4;
+}
+
+.ks-testi__badgeDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(102, 255, 170, 0.9);
+  box-shadow: 0 0 0 3px rgba(102, 255, 170, 0.16);
+  flex-shrink: 0;
+}
+
+.ks-testi__badgeText {
+  font-size: 12px;
+  font-weight: var(--w-semibold, 650);
+  letter-spacing: -0.01em;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+/* bottom padding to account for badge overflow */
+.ks-testi__mockupCol {
+  padding-bottom: 20px;
+}
+
+@media (max-width: 899px) {
+  .ks-testi__badge {
+    bottom: -12px;
+    right: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ks-testi__projectLink {
+    transition: none !important;
+    transform: none !important;
+  }
+}

@@ -1,316 +1,381 @@
-/* Kersivo — Mobile navigation overlay (premium minimal) */
+/* =========================================
+   Kersivo — Mobile Nav  v2 · premium studio panel
+   ========================================= */
 
-.k-mobileNav{
+/* ── Outer wrapper (fixed, pointer-events off so backdrop clicks work) ── */
+.k-mobileNav {
   position: fixed;
   inset: 0;
   z-index: 220;
-  pointer-events: auto;
+  pointer-events: none;
 }
 
-.k-mobileNav *{
+.k-mobileNav * {
   box-sizing: border-box;
 }
 
-/* Backdrop */
-.k-mobileNav__backdrop{
+/* ── Backdrop scrim ── */
+.k-mobileNav__backdrop {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   border: 0;
   padding: 0;
-  background: rgba(4, 5, 8, 0.62);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(2, 3, 7, 0.82);
+  backdrop-filter: blur(10px) saturate(0.86);
+  -webkit-backdrop-filter: blur(10px) saturate(0.86);
   z-index: 0;
+  pointer-events: auto;
+  cursor: default;
 }
 
-/* Sheet */
-.k-mobileNav__sheet{
+/* ── Sheet: full-screen columnar panel ── */
+.k-mobileNav__sheet {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  transform-origin: top center;
-
-  padding-top: env(safe-area-inset-top);
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
-  padding-bottom: env(safe-area-inset-bottom);
-
-  overflow: hidden;
+  z-index: 1;
+  pointer-events: auto;
   isolation: isolate;
+  overflow: hidden;
 
+  display: flex;
+  flex-direction: column;
+
+  /* Deep, slightly warm dark */
   background: linear-gradient(
-    165deg,
-    rgba(12, 13, 18, 0.985) 0%,
-    rgba(7, 8, 11, 0.995) 48%,
-    rgba(6, 7, 10, 1) 100%
+    175deg,
+    rgba(13, 14, 20, 0.99) 0%,
+    rgba(8, 9, 13, 1) 52%,
+    rgba(5, 6, 9, 1) 100%
   );
 
-  z-index: 1;
+  /* Top glass edge */
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.065);
 }
 
-.k-mobileNav__sheet::before{
+/* Ambient atmosphere top */
+.k-mobileNav__sheet::before {
   content: "";
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 320px;
   pointer-events: none;
-  z-index: 1;
-  opacity: 0.55;
+  z-index: 0;
   background:
-    radial-gradient(720px 280px at 18% 0%, rgba(255, 255, 255, 0.06), transparent 62%),
-    radial-gradient(520px 220px at 92% 8%, rgba(168, 194, 212, 0.05), transparent 58%);
+    radial-gradient(ellipse 60% 260px at 18% -10%, rgba(255, 255, 255, 0.036) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 200px at 90% -5%, rgba(168, 194, 212, 0.026) 0%, transparent 65%);
 }
 
-/* Specular sweep (subtle) */
-.k-mobileNav__sheet::after{
-  content: "";
-  position: absolute;
-  top: -40%;
-  left: -65%;
-  width: 58%;
-  height: 160%;
-  pointer-events: none;
+/* ── Header: brand row + close ── */
+.k-mn__header {
+  flex: 0 0 auto;
+  position: relative;
   z-index: 2;
 
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0),
-    rgba(255, 255, 255, 0.02),
-    rgba(255, 255, 255, 0.05),
-    rgba(255, 255, 255, 0.02),
-    rgba(255, 255, 255, 0)
-  );
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 
-  filter: blur(12px);
-  mix-blend-mode: screen;
-  transform: skewX(-16deg) translateX(0);
-  opacity: 0;
+  padding: calc(env(safe-area-inset-top) + 15px) 24px 17px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.065);
 }
 
-.k-mobileNav__sheet[data-sweep="1"]::after{
-  animation: kSpecSweep 620ms cubic-bezier(0.2, 0.9, 0.2, 1) 1;
+/* Brand link */
+.k-mn__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.94);
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity 160ms ease;
 }
 
-@keyframes kSpecSweep{
-  0%{
-    opacity: 0;
-    transform: skewX(-16deg) translateX(0);
-  }
-  22%{
-    opacity: 0.12;
-  }
-  100%{
-    opacity: 0;
-    transform: skewX(-16deg) translateX(320%);
-  }
+.k-mn__brand:hover {
+  opacity: 0.86;
 }
 
-/* Close */
-.k-mobileNav__close{
-  position: absolute;
-  top: calc(env(safe-area-inset-top) + 8px);
-  right: calc(env(safe-area-inset-right) + 12px);
+/* Logo mark */
+.k-mn__mark {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.042);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
 
-  width: 44px;
-  height: 44px;
+/* Brand name — matches desktop navbar size */
+.k-mn__name {
+  font-size: 17px;
+  font-weight: var(--w-semibold, 650);
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+}
+
+/* Close button — integrated into header, not floating */
+.k-mn__close {
+  flex: 0 0 auto;
+
+  width: 36px;
+  height: 36px;
 
   display: grid;
   place-items: center;
 
-  background: transparent;
-  border: 0;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 9px;
   padding: 0;
-  margin: 0;
 
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.62);
   cursor: pointer;
-  z-index: 4;
-  border-radius: 10px;
-
-  outline: none;
-  box-shadow: none;
   -webkit-tap-highlight-color: transparent;
+
+  transition:
+    background 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease;
 }
 
-.k-mobileNav__close:focus-visible{
+.k-mn__close:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.k-mn__close:focus-visible {
   outline: 2px solid rgba(168, 194, 212, 0.78);
   outline-offset: 3px;
 }
 
-.k-mobileNav__close:active{
-  opacity: 0.85;
+.k-mn__close:active {
+  opacity: 0.78;
 }
 
-/* Content column */
-.k-mobileNav__content{
-  position: relative;
-  z-index: 3;
-
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  width: 100%;
-  max-width: 100%;
-
-  padding: calc(56px + env(safe-area-inset-top)) 22px calc(22px + env(safe-area-inset-bottom));
-
-  overflow: hidden;
-}
-
-/* Masthead */
-.k-mobileNav__masthead{
-  flex: 0 0 auto;
-  margin-bottom: 26px;
-  padding-bottom: 22px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-}
-
-.k-mobileNav__brand{
-  margin: 0;
-  font-size: 15px;
-  font-weight: var(--w-semibold, 650);
-  letter-spacing: -0.038em;
-  text-transform: none;
-  color: rgba(255, 255, 255, 0.94);
-}
-
-.k-mobileNav__tagline{
-  margin: 9px 0 0;
-  max-width: 36ch;
-  font-size: 13px;
-  font-weight: var(--w-regular, 450);
-  letter-spacing: -0.012em;
-  color: rgba(255, 255, 255, 0.44);
-  line-height: 1.5;
-}
-
-/* Nav (scrolls if needed on tiny viewports) */
-.k-mobileNav__nav{
+/* ── Scrollable nav body ── */
+.k-mn__body {
   flex: 1 1 auto;
   min-height: 0;
+  position: relative;
+  z-index: 2;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-.k-mobileNav__list{
+.k-mn__nav {
+  /* No horizontal padding here — padding lives on the rows */
+}
+
+/* ── Navigation list ── */
+.k-mn__list {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.k-mobileNav__item + .k-mobileNav__item{
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+.k-mn__item + .k-mn__item {
+  border-top: 1px solid rgba(255, 255, 255, 0.055);
 }
 
-.k-mobileNav__row{
+/* ── Nav row ── */
+.k-mn__row {
   position: relative;
   display: flex;
   align-items: center;
+  gap: 15px;
 
   width: 100%;
-  padding: 17px 4px 17px 2px;
+  padding: 21px 24px;
 
   text-decoration: none;
-  color: rgba(255, 255, 255, 0.82);
+  color: rgba(255, 255, 255, 0.62);
 
-  font-size: clamp(16px, 4.2vw, 18px);
-  font-weight: var(--w-medium, 560);
-  letter-spacing: -0.018em;
-
-  background: transparent;
   -webkit-tap-highlight-color: transparent;
 
-  transition: color 180ms cubic-bezier(0.22, 1, 0.36, 1), background 180ms ease;
+  transition:
+    color 160ms ease,
+    background 160ms ease;
 }
 
-.k-mobileNav__row:active{
-  background: rgba(255, 255, 255, 0.04);
+.k-mn__row:hover {
+  color: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.016);
 }
 
-.k-mobileNav__label{
-  position: relative;
-  z-index: 1;
+.k-mn__row:active {
+  background: rgba(255, 255, 255, 0.028);
 }
 
-/* Active: refined rail */
-.k-mobileNav__item[data-active="1"] .k-mobileNav__row{
-  color: rgba(255, 255, 255, 0.98);
+.k-mn__row:focus-visible {
+  outline: 2px solid rgba(168, 194, 212, 0.72);
+  outline-offset: -2px;
+  border-radius: 4px;
+}
+
+/* ── Item number (01 02 03 04) ── */
+.k-mn__num {
+  flex: 0 0 auto;
+  align-self: flex-start;
+  margin-top: 7px; /* optical alignment with first line of label */
+
+  font-size: 10px;
+  font-weight: var(--w-medium, 560);
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.2);
+  font-variant-numeric: tabular-nums;
+
+  transition: color 160ms ease;
+}
+
+.k-mn__row:hover .k-mn__num {
+  color: rgba(255, 255, 255, 0.38);
+}
+
+/* ── Text block ── */
+.k-mn__copy {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+}
+
+/* Big editorial label — the premium upgrade */
+.k-mn__label {
+  display: block;
+  font-size: clamp(22px, 5.6vw, 26px);
   font-weight: var(--w-semibold, 650);
+  letter-spacing: -0.03em;
+  line-height: 1.06;
+  color: inherit;
 }
 
-.k-mobileNav__item[data-active="1"] .k-mobileNav__row::before{
+/* Descriptive sub-copy */
+.k-mn__meta {
+  display: block;
+  font-size: 13px;
+  font-weight: var(--w-regular, 450);
+  letter-spacing: -0.008em;
+  line-height: 1.42;
+  color: rgba(255, 255, 255, 0.36);
+
+  transition: color 160ms ease;
+}
+
+.k-mn__row:hover .k-mn__meta {
+  color: rgba(255, 255, 255, 0.54);
+}
+
+/* ── Arrow icon (SVG, not text) ── */
+.k-mn__arrow {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.24);
+
+  transition: transform 160ms ease, color 160ms ease;
+}
+
+.k-mn__row:hover .k-mn__arrow {
+  transform: translateX(4px);
+  color: rgba(255, 255, 255, 0.56);
+}
+
+/* ── Active item ── */
+/* Left-edge rail via inset box-shadow (no absolute positioning needed) */
+.k-mn__item[data-active="1"] .k-mn__row {
+  color: rgba(255, 255, 255, 0.97);
+  box-shadow: inset 2px 0 0 rgba(255, 255, 255, 0.4);
+}
+
+.k-mn__item[data-active="1"] .k-mn__num {
+  color: rgba(255, 255, 255, 0.46);
+}
+
+.k-mn__item[data-active="1"] .k-mn__meta {
+  color: rgba(255, 255, 255, 0.64);
+}
+
+.k-mn__item[data-active="1"] .k-mn__arrow {
+  color: rgba(255, 255, 255, 0.48);
+}
+
+/* ── CTA Footer ── */
+.k-mn__foot {
+  flex: 0 0 auto;
+  position: relative;
+  z-index: 2;
+
+  padding: 20px 24px calc(env(safe-area-inset-bottom) + 28px);
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* Gradient fade above footer */
+.k-mn__foot::before {
   content: "";
   position: absolute;
+  top: -32px;
   left: 0;
-  top: 24%;
-  bottom: 24%;
-  width: 2px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.72);
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2);
+  right: 0;
+  height: 32px;
+  background: linear-gradient(to bottom, transparent, rgba(5, 6, 9, 0.55));
+  pointer-events: none;
+  z-index: 0;
 }
 
-/* Footer CTA */
-.k-mobileNav__footer{
-  flex: 0 0 auto;
-  margin-top: 22px;
-  padding-top: 4px;
+/* Section label before CTA — light editorial line */
+.k-mn__footLine {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 13px;
+  font-size: 12px;
+  font-weight: var(--w-medium, 560);
+  letter-spacing: -0.005em;
+  color: rgba(255, 255, 255, 0.34);
 }
 
-.k-mobileNav__quote{
+/* CTA button */
+.k-mn__quote {
+  position: relative;
+  z-index: 1;
   width: 100%;
   justify-content: center;
-  --btn-h: 50px;
+  --btn-h: 52px;
   --btn-pad: 22px;
   font-size: 14px;
+  font-weight: var(--w-semibold, 650);
+  letter-spacing: -0.02em;
 }
 
-.k-mobileNav__quote .k-btn__arrow{
-  opacity: 0.92;
+.k-mn__quote .k-btn__arrow {
+  opacity: 0.9;
 }
 
-/* Bottom handle */
-.k-mobileNav__handle{
-  position: absolute;
-  left: 50%;
-  bottom: calc(10px + env(safe-area-inset-bottom));
-  transform: translateX(-50%);
-
-  border: 0;
-  background: transparent;
-  padding: 10px 14px;
-
-  display: grid;
-  place-items: center;
-
-  cursor: grab;
-  -webkit-tap-highlight-color: transparent;
-  z-index: 5;
-}
-
-.k-mobileNav__handle:active{
-  cursor: grabbing;
-}
-
-.k-mobileNav__handleBar{
-  width: 40px;
-  height: 3px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25) inset;
-}
-
-@media (min-width: 861px){
-  .k-mobileNav{
+/* ── Desktop: hidden ── */
+@media (min-width: 861px) {
+  .k-mobileNav {
     display: none;
   }
 }
 
-@media (prefers-reduced-motion: reduce){
-  .k-mobileNav__sheet[data-sweep="1"]::after{
-    animation: none !important;
-    opacity: 0 !important;
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .k-mn__row,
+  .k-mn__num,
+  .k-mn__meta,
+  .k-mn__arrow,
+  .k-mn__close,
+  .k-mn__brand {
+    transition: none !important;
   }
 }

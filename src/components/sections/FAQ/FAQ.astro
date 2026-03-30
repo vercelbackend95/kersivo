@@ -126,7 +126,7 @@ const titleId = asPage ? "faq-page-title" : "faq-title";
           const reduced =
             window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-          // Submit -> scroll to contact (or go to /contact if contact isn't on this page)
+          // Submit -> scroll to contact (or go to home contact section if unavailable)
           const submit = root.querySelector("[data-faq-submit]");
           if (submit) {
             submit.addEventListener("click", () => {
@@ -135,7 +135,7 @@ const titleId = asPage ? "faq-page-title" : "faq-title";
                 target.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
                 if (location.hash !== "#contact") history.pushState(null, "", "#contact");
               } else {
-                window.location.href = "/contact/#contact";
+                window.location.href = "/#contact";
               }
             });
           }
