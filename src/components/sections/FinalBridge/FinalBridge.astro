@@ -5,99 +5,92 @@ import CtaButton from "../../ui/CtaButton/CtaButton.astro";
 
 const contactEmail = "hello@kersivo.co.uk";
 
-const enquiryOutcomes = [
+const replyShape = [
   {
+    idx: "01",
     label: "Fit",
-    text: "Whether Kersivo is the right fit for the business, the timing, and the stage you are at.",
+    text: "A direct read on whether the timing, chemistry, and commercial shape line up — for you and for us.",
   },
   {
+    idx: "02",
     label: "Scope",
-    text: "What the website likely needs to do properly, without padding the project beyond what is useful.",
+    text: "A grounded view of what the site likely needs so value lands earlier — without padding the build.",
   },
   {
-    label: "Next step",
-    text: "A clear route into a quote, a call, or a straightforward answer if now is not the right moment.",
+    idx: "03",
+    label: "Route",
+    text: "A clear next move: quote, a short call, or permission to pause if the moment is not right yet.",
   },
-];
-
-const reassurancePoints = [
-  "Reply within 12 hours.",
-  "No-pressure first fit check.",
 ];
 ---
 
 <section
   class="k-turn section"
   id="turning-point"
-  aria-label="Final invitation to start an enquiry with Kersivo"
+  aria-label="How to begin an enquiry with Kersivo"
   data-light-zone
-  data-light-x="58"
-  data-light-y="54"
-  data-light-size="1.02"
-  data-light-strength="0.68"
-  data-light-focus="0.38"
+  data-light-x="56"
+  data-light-y="48"
+  data-light-size="1"
+  data-light-strength="0.64"
+  data-light-focus="0.36"
 >
-  <div class="container">
-    <div class="k-turn__shell">
-      <header class="k-turn__intro" data-turn-reveal style="--turn-delay:0ms;">
-        <p class="k-turn__eyebrow">Start the conversation</p>
+  <div class="container k-turn__container">
+    <div class="k-turn__rail" aria-hidden="true"></div>
+
+    <div class="k-turn__stack">
+      <header class="k-turn__mast" data-turn-reveal style="--turn-delay: 0ms;">
+        <p class="k-turn__eyebrow">When you're ready</p>
 
         <h2 class="k-turn__title">
-          A short message is enough to get clear on fit, scope, and the right next step.
+          One short note is enough for a straight answer on fit, scope, and what follows.
         </h2>
 
         <p class="k-turn__lead">
-          Send your current site, what needs to improve, and any rough timing. We'll
-          reply within 12 hours with a clear view on fit, likely scope, and how best to
-          move forward from here.
+          Send your live site, what is holding trust back, and any timing that matters. We reply
+          within 12 hours with a clear take — even when the honest answer is to wait.
         </p>
       </header>
 
-      <div class="k-turn__main" data-turn-reveal style="--turn-delay:120ms;">
-        <div class="k-turn__offer">
-          <p class="k-turn__label">What the first message gives you</p>
+      <ol class="k-turn__matrix" aria-label="What the first reply includes">
+        {
+          replyShape.map((row, i) => (
+            <li class="k-turn__row" data-turn-reveal style={`--turn-delay: ${80 + i * 72}ms;`}>
+              <span class="k-turn__idx" aria-hidden="true">
+                {row.idx}
+              </span>
+              <div class="k-turn__rowBody">
+                <p class="k-turn__rowLabel">{row.label}</p>
+                <p class="k-turn__rowText">{row.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
 
-          <ul class="k-turn__assurances" aria-label="What the first message gives you">
-            {enquiryOutcomes.map((item) => (
-              <li class="k-turn__assurance">
-                <p class="k-turn__assuranceLabel">{item.label}</p>
-                <p class="k-turn__assuranceText">{item.text}</p>
-              </li>
-            ))}
-          </ul>
+      <div class="k-turn__ctaBand" data-turn-reveal style="--turn-delay: 320ms;">
+        <div class="k-turn__ctaTop">
+          <p class="k-turn__promise">No pitch theatre. No follow-up spam.</p>
+          <p class="k-turn__micro">
+            The contact form keeps context in one place — or write directly if you prefer.
+          </p>
         </div>
 
-        <aside class="k-turn__actionPane" aria-label="How to begin">
-          <p class="k-turn__label">How to begin</p>
-          <p class="k-turn__promise">
-            A short email with your current site, goals, and rough timing is usually
-            enough to begin.
-          </p>
-          <p class="k-turn__plain">
-            No drawn-out sales theatre. Just a straightforward first look at fit, likely
-            scope, and the best next step, even if the answer is "not yet".
-          </p>
+        <div class="k-turn__ctaActions">
+          <CtaButton
+            href="/contact/#contact"
+            label="Continue to the contact page"
+            variant="primary"
+            magnetic={false}
+            arrow={false}
+            class="k-turn__cta"
+          />
 
-          <ul class="k-turn__reassuranceList" aria-label="First contact reassurances">
-            {reassurancePoints.map((item) => (
-              <li>{item}</li>
-            ))}
-          </ul>
-
-          <div class="k-turn__actions">
-            <CtaButton
-              href="/contact/#contact"
-              label="Start with a short message"
-              variant="primary"
-              magnetic={false}
-              class="k-turn__cta"
-            />
-
-            <p class="k-turn__emailNote">
-              Prefer email? <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
-            </p>
-          </div>
-        </aside>
+          <a class="k-turn__mail" href={`mailto:${contactEmail}`}>
+            <span class="k-turn__mailK">Direct email</span>
+            <span class="k-turn__mailV">{contactEmail}</span>
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -115,7 +108,7 @@ const reassurancePoints = [
 
       revealItems.forEach((item, index) => {
         if (!item.style.getPropertyValue("--turn-delay")) {
-          item.style.setProperty("--turn-delay", `${index * 120}ms`);
+          item.style.setProperty("--turn-delay", `${index * 100}ms`);
         }
       });
 
@@ -132,7 +125,7 @@ const reassurancePoints = [
             observer.disconnect();
           });
         },
-        { threshold: 0.22 }
+        { threshold: 0.18, rootMargin: "0px 0px -6% 0px" }
       );
 
       observer.observe(root);

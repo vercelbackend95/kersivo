@@ -1,14 +1,15 @@
-/* FULLSCREEN MobileNav — fixed, NO vertical scroll, links always fit */
+/* Kersivo — Mobile navigation overlay (premium minimal) */
 
 .k-mobileNav{
   position: fixed;
   inset: 0;
   z-index: 220;
   pointer-events: auto;
-  overflow: hidden;
 }
 
-.k-mobileNav *{ box-sizing: border-box; }
+.k-mobileNav *{
+  box-sizing: border-box;
+}
 
 /* Backdrop */
 .k-mobileNav__backdrop{
@@ -18,7 +19,9 @@
   height: 100%;
   border: 0;
   padding: 0;
-  background: rgba(6, 6, 10, 0.86);
+  background: rgba(4, 5, 8, 0.62);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   z-index: 0;
 }
 
@@ -28,82 +31,86 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  transform-origin: top;
+  transform-origin: top center;
 
   padding-top: env(safe-area-inset-top);
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
   padding-bottom: env(safe-area-inset-bottom);
 
-  overflow: hidden !important;
-  overflow-x: hidden !important;
-  overflow-y: hidden !important;
-
+  overflow: hidden;
   isolation: isolate;
 
   background: linear-gradient(
-    180deg,
-    rgba(14,14,20,0.99),
-    rgba(10,10,16,0.99)
+    165deg,
+    rgba(12, 13, 18, 0.985) 0%,
+    rgba(7, 8, 11, 0.995) 48%,
+    rgba(6, 7, 10, 1) 100%
   );
 
   z-index: 1;
 }
 
-/* Internal glow */
 .k-mobileNav__sheet::before{
-  content:"";
-  position:absolute;
+  content: "";
+  position: absolute;
   inset: 0;
-  pointer-events:none;
+  pointer-events: none;
   z-index: 1;
+  opacity: 0.55;
   background:
-    radial-gradient(900px 320px at 20% 0%, rgba(190,145,255,0.13), transparent 62%),
-    radial-gradient(800px 320px at 80% 0%, rgba(255,190,245,0.08), transparent 60%);
-  opacity: .85;
+    radial-gradient(720px 280px at 18% 0%, rgba(255, 255, 255, 0.06), transparent 62%),
+    radial-gradient(520px 220px at 92% 8%, rgba(168, 194, 212, 0.05), transparent 58%);
 }
 
 /* Specular sweep (subtle) */
 .k-mobileNav__sheet::after{
-  content:"";
-  position:absolute;
-  top: -35%;
-  left: -70%;
-  width: 65%;
-  height: 170%;
-  pointer-events:none;
+  content: "";
+  position: absolute;
+  top: -40%;
+  left: -65%;
+  width: 58%;
+  height: 160%;
+  pointer-events: none;
   z-index: 2;
 
   background: linear-gradient(
     90deg,
-    rgba(255,255,255,0),
-    rgba(255,255,255,0.016),
-    rgba(255,255,255,0.040),
-    rgba(255,255,255,0.016),
-    rgba(255,255,255,0)
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0.02),
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0.02),
+    rgba(255, 255, 255, 0)
   );
 
-  filter: blur(10px);
+  filter: blur(12px);
   mix-blend-mode: screen;
-  transform: skewX(-18deg) translateX(0);
+  transform: skewX(-16deg) translateX(0);
   opacity: 0;
 }
 
 .k-mobileNav__sheet[data-sweep="1"]::after{
-  animation: kSpecSweep 640ms cubic-bezier(.2,.9,.2,1) 1;
+  animation: kSpecSweep 620ms cubic-bezier(0.2, 0.9, 0.2, 1) 1;
 }
 
 @keyframes kSpecSweep{
-  0%   { opacity: 0; transform: skewX(-18deg) translateX(0); }
-  20%  { opacity: .14; }
-  60%  { opacity: .06; }
-  100% { opacity: 0; transform: skewX(-18deg) translateX(340%); }
+  0%{
+    opacity: 0;
+    transform: skewX(-16deg) translateX(0);
+  }
+  22%{
+    opacity: 0.12;
+  }
+  100%{
+    opacity: 0;
+    transform: skewX(-16deg) translateX(320%);
+  }
 }
 
-/* Close (no border/ring) */
+/* Close */
 .k-mobileNav__close{
   position: absolute;
-  top: calc(env(safe-area-inset-top) + 10px);
+  top: calc(env(safe-area-inset-top) + 8px);
   right: calc(env(safe-area-inset-right) + 12px);
 
   width: 44px;
@@ -117,117 +124,154 @@
   padding: 0;
   margin: 0;
 
-  color: rgba(255,255,255,0.92);
+  color: rgba(255, 255, 255, 0.9);
   cursor: pointer;
   z-index: 4;
+  border-radius: 10px;
 
-  outline: none !important;
-  box-shadow: none !important;
-
+  outline: none;
+  box-shadow: none;
   -webkit-tap-highlight-color: transparent;
 }
 
-.k-mobileNav__close:focus,
 .k-mobileNav__close:focus-visible{
-  outline: none !important;
-  box-shadow: none !important;
+  outline: 2px solid rgba(168, 194, 212, 0.78);
+  outline-offset: 3px;
 }
 
-.k-mobileNav__close:active{ transform: translateY(1px); }
+.k-mobileNav__close:active{
+  opacity: 0.85;
+}
 
-/* Content: NO scrolling, layout must fit */
+/* Content column */
 .k-mobileNav__content{
   position: relative;
   z-index: 3;
 
+  display: flex;
+  flex-direction: column;
   height: 100%;
   width: 100%;
   max-width: 100%;
 
-  /* space for close button + bottom handle */
-  padding: 74px 16px calc(22px + env(safe-area-inset-bottom));
+  padding: calc(56px + env(safe-area-inset-top)) 22px calc(22px + env(safe-area-inset-bottom));
 
-  overflow: hidden !important;
+  overflow: hidden;
 }
 
-/* Nav: no inner “card”, just rows + dividers */
+/* Masthead */
+.k-mobileNav__masthead{
+  flex: 0 0 auto;
+  margin-bottom: 26px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.k-mobileNav__brand{
+  margin: 0;
+  font-size: 15px;
+  font-weight: var(--w-semibold, 650);
+  letter-spacing: -0.038em;
+  text-transform: none;
+  color: rgba(255, 255, 255, 0.94);
+}
+
+.k-mobileNav__tagline{
+  margin: 9px 0 0;
+  max-width: 36ch;
+  font-size: 13px;
+  font-weight: var(--w-regular, 450);
+  letter-spacing: -0.012em;
+  color: rgba(255, 255, 255, 0.44);
+  line-height: 1.5;
+}
+
+/* Nav (scrolls if needed on tiny viewports) */
 .k-mobileNav__nav{
-  height: 100%;
-  width: 100%;
-  overflow: hidden !important;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-/* List: 6 equal rows = always fits, no vertical scroll */
 .k-mobileNav__list{
   list-style: none;
   margin: 0;
   padding: 0;
-
-  height: 100%;
-  display: grid;
-  grid-template-rows: repeat(6, 1fr);
-
-  /* subtle top/bottom edge lines */
-  border-top: 1px solid rgba(255,255,255,0.08);
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-}
-
-.k-mobileNav__item{
-  min-height: 0;
 }
 
 .k-mobileNav__item + .k-mobileNav__item{
-  border-top: 1px solid rgba(255,255,255,0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* Row: responsive padding/font so it fits even on short screens */
 .k-mobileNav__row{
   position: relative;
   display: flex;
   align-items: center;
 
   width: 100%;
-  max-width: 100%;
-  height: 100%;
-
-  padding: clamp(14px, 2.0vh, 20px) 16px clamp(14px, 2.0vh, 20px) 18px;
+  padding: 17px 4px 17px 2px;
 
   text-decoration: none;
-  color: rgba(255,255,255,0.94);
+  color: rgba(255, 255, 255, 0.82);
 
-  font-size: clamp(20px, 2.7vh, 28px);
-  font-weight: 740;
-  letter-spacing: -0.02em;
+  font-size: clamp(16px, 4.2vw, 18px);
+  font-weight: var(--w-medium, 560);
+  letter-spacing: -0.018em;
 
   background: transparent;
   -webkit-tap-highlight-color: transparent;
 
-  overflow: hidden;
-  white-space: normal;
-  overflow-wrap: anywhere;
+  transition: color 180ms cubic-bezier(0.22, 1, 0.36, 1), background 180ms ease;
 }
 
 .k-mobileNav__row:active{
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.04);
 }
 
-/* Active rail */
+.k-mobileNav__label{
+  position: relative;
+  z-index: 1;
+}
+
+/* Active: refined rail */
+.k-mobileNav__item[data-active="1"] .k-mobileNav__row{
+  color: rgba(255, 255, 255, 0.98);
+  font-weight: var(--w-semibold, 650);
+}
+
 .k-mobileNav__item[data-active="1"] .k-mobileNav__row::before{
-  content:"";
-  position:absolute;
-  left: 10px;
-  top: 18%;
-  bottom: 18%;
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 24%;
+  bottom: 24%;
   width: 2px;
   border-radius: 999px;
-
-  background: rgba(190,145,255,0.85);
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,0.10),
-    0 0 14px rgba(190,145,255,0.14);
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2);
 }
 
-/* Bottom handle: absolute overlay (no layout cost) */
+/* Footer CTA */
+.k-mobileNav__footer{
+  flex: 0 0 auto;
+  margin-top: 22px;
+  padding-top: 4px;
+}
+
+.k-mobileNav__quote{
+  width: 100%;
+  justify-content: center;
+  --btn-h: 50px;
+  --btn-pad: 22px;
+  font-size: 14px;
+}
+
+.k-mobileNav__quote .k-btn__arrow{
+  opacity: 0.92;
+}
+
+/* Bottom handle */
 .k-mobileNav__handle{
   position: absolute;
   left: 50%;
@@ -243,25 +287,27 @@
 
   cursor: grab;
   -webkit-tap-highlight-color: transparent;
-
   z-index: 5;
 }
-.k-mobileNav__handle:active{ cursor: grabbing; }
+
+.k-mobileNav__handle:active{
+  cursor: grabbing;
+}
 
 .k-mobileNav__handleBar{
-  width: 44px;
-  height: 4px;
+  width: 40px;
+  height: 3px;
   border-radius: 999px;
-  background: rgba(255,255,255,0.14);
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.20) inset;
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25) inset;
 }
 
-/* Desktop off */
 @media (min-width: 861px){
-  .k-mobileNav{ display: none; }
+  .k-mobileNav{
+    display: none;
+  }
 }
 
-/* Reduced motion: no sweep */
 @media (prefers-reduced-motion: reduce){
   .k-mobileNav__sheet[data-sweep="1"]::after{
     animation: none !important;

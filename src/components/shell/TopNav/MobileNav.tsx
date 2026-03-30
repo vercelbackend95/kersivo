@@ -22,8 +22,8 @@ const LINKS: LinkItem[] = [
 function normPath(p: string) {
   const s = (p || "/").trim();
   const base = s.split("#")[0];
-  const noTrail = base.replace(/\/+$/, "");
-  return noTrail === "" ? "/" : noTrail;
+  const noTrail = base.replace(/\/+$/, "") || "/";
+  return noTrail;
 }
 
 function getFocusable(container: HTMLElement | null): HTMLElement[] {
@@ -54,7 +54,6 @@ export default function MobileNav() {
   const sheetRef = useRef<HTMLDivElement | null>(null);
   const lastActiveElRef = useRef<HTMLElement | null>(null);
 
-  // Burger in TopNav.astro
   const burgerId = "kNavToggle";
 
   const setBurgerA11y = (isOpen: boolean) => {
@@ -100,7 +99,6 @@ export default function MobileNav() {
     }
   }, [mounted]);
 
-  // Wire burger click
   useEffect(() => {
     if (!mounted) return;
     const btn = document.getElementById(burgerId) as HTMLButtonElement | null;
@@ -112,7 +110,6 @@ export default function MobileNav() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mounted, open]);
 
-  // A11y + scroll lock + focus + sweep
   useEffect(() => {
     if (!mounted) return;
 
@@ -131,8 +128,8 @@ export default function MobileNav() {
 
     if (open && !reduced) {
       setSweepOn(false);
-      const t1 = window.setTimeout(() => setSweepOn(true), 340);
-      const t2 = window.setTimeout(() => setSweepOn(false), 980);
+      const t1 = window.setTimeout(() => setSweepOn(true), 320);
+      const t2 = window.setTimeout(() => setSweepOn(false), 960);
       return () => {
         window.clearTimeout(t1);
         window.clearTimeout(t2);
@@ -144,7 +141,6 @@ export default function MobileNav() {
     };
   }, [open, mounted, reduced]);
 
-  // ESC + focus trap
   useEffect(() => {
     if (!open) return;
 
@@ -180,12 +176,12 @@ export default function MobileNav() {
 
   const sheetTransition = useMemo(() => {
     if (reduced) return { duration: 0.18 };
-    return { type: "spring", stiffness: 560, damping: 48, mass: 0.9 };
+    return { type: "spring", stiffness: 520, damping: 52, mass: 0.92 };
   }, [reduced]);
 
   const backdropTransition = useMemo(() => {
     if (reduced) return { duration: 0.12 };
-    return { duration: 0.18, ease: [0.22, 0.9, 0.22, 1] };
+    return { duration: 0.2, ease: [0.22, 0.9, 0.22, 1] };
   }, [reduced]);
 
   if (!mounted) return null;
@@ -220,9 +216,9 @@ export default function MobileNav() {
             aria-modal="true"
             aria-label="Navigation"
             tabIndex={-1}
-            initial={{ y: -vh, opacity: 0.98, scaleY: reduced ? 1 : 0.985 }}
+            initial={{ y: -vh, opacity: 0.98, scaleY: reduced ? 1 : 0.988 }}
             animate={{ y: 0, opacity: 1, scaleY: 1 }}
-            exit={{ y: -vh, opacity: 0.98, scaleY: reduced ? 1 : 0.985 }}
+            exit={{ y: -vh, opacity: 0.98, scaleY: reduced ? 1 : 0.988 }}
             transition={sheetTransition}
             drag={reduced ? false : "y"}
             dragControls={dragControls}
@@ -234,7 +230,6 @@ export default function MobileNav() {
               if (shouldClose) doClose();
             }}
           >
-            {/* Close (pure icon, no border, no ring) */}
             <button
               className="k-mobileNav__close"
               type="button"
@@ -244,8 +239,8 @@ export default function MobileNav() {
               onPointerDown={(e) => e.stopPropagation()}
             >
               <svg
-                width="24"
-                height="24"
+                width="22"
+                height="22"
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -258,8 +253,12 @@ export default function MobileNav() {
               </svg>
             </button>
 
-            {/* One fullscreen sheet, no scroll. Links always fit (6 equal rows). */}
             <div className="k-mobileNav__content">
+              <div className="k-mobileNav__masthead">
+                <p className="k-mobileNav__brand">Kersivo</p>
+                <p className="k-mobileNav__tagline">Web design &amp; development for UK small businesses</p>
+              </div>
+
               <nav className="k-mobileNav__nav" aria-label="Mobile">
                 <motion.ul
                   className="k-mobileNav__list"
@@ -270,8 +269,8 @@ export default function MobileNav() {
                     hidden: {},
                     show: {
                       transition: {
-                        staggerChildren: reduced ? 0 : 0.05,
-                        delayChildren: reduced ? 0 : 0.05,
+                        staggerChildren: reduced ? 0 : 0.04,
+                        delayChildren: reduced ? 0 : 0.04,
                       },
                     },
                   }}
@@ -284,13 +283,13 @@ export default function MobileNav() {
                         className="k-mobileNav__item"
                         data-active={isActive ? "1" : "0"}
                         variants={{
-                          hidden: { opacity: 0, y: -6 },
+                          hidden: { opacity: 0, y: -5 },
                           show: { opacity: 1, y: 0 },
                         }}
                         transition={
                           reduced
                             ? { duration: 0.01 }
-                            : { duration: 0.22, ease: [0.22, 0.9, 0.22, 1] }
+                            : { duration: 0.2, ease: [0.22, 0.9, 0.22, 1] }
                         }
                       >
                         <motion.a
@@ -298,7 +297,7 @@ export default function MobileNav() {
                           href={l.href}
                           onClick={doClose}
                           aria-current={isActive ? "page" : undefined}
-                          whileTap={reduced ? undefined : { scale: 0.985 }}
+                          whileTap={reduced ? undefined : { scale: 0.992 }}
                         >
                           <span className="k-mobileNav__label">{l.label}</span>
                         </motion.a>
@@ -307,9 +306,22 @@ export default function MobileNav() {
                   })}
                 </motion.ul>
               </nav>
+
+              <div className="k-mobileNav__footer">
+                <a
+                  href="/contact/#contact"
+                  className="k-mobileNav__quote k-btn k-btn--primary"
+                  onClick={doClose}
+                >
+                  <span className="k-btn__label">Ask for a quote</span>
+                  <span className="k-btn__shine" aria-hidden="true" />
+                  <span className="k-btn__arrow" aria-hidden="true">
+                    →
+                  </span>
+                </a>
+              </div>
             </div>
 
-            {/* Bottom grab handle (doesn't affect layout height) */}
             <button
               className="k-mobileNav__handle"
               type="button"

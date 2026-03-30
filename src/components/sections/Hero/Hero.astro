@@ -14,15 +14,17 @@ import CtaButton from "../../ui/CtaButton/CtaButton.astro";
   data-light-strength="0.84"
   data-light-focus="0.22"
 >
-  <div class="container">
+  <div class="container k3-hero__contain">
     <div class="k3-shell">
-      <p class="k3-eyebrow">For established UK businesses</p>
+      <header class="k3-hero__head">
+        <p class="k3-eyebrow">For established UK businesses</p>
 
-      <h1 class="k3-h1">
-        <span class="k3-line">Your website should look</span>
-        <span class="k3-line"><span class="k3-em">as established</span></span>
-        <span class="k3-line">as your business.</span>
-      </h1>
+        <h1 class="k3-h1">
+          <span class="k3-line">Your website should look</span>
+          <span class="k3-line"><span class="k3-em">as established</span></span>
+          <span class="k3-line">as your business.</span>
+        </h1>
+      </header>
 
       <p class="k3-lead">
         Kersivo designs and builds websites for established UK businesses that need
@@ -42,23 +44,25 @@ import CtaButton from "../../ui/CtaButton/CtaButton.astro";
         <a class="k3-secondary" href="/work/">See selected work</a>
       </div>
 
-      <div class="k3-proof" aria-label="Selected live proof">
-        <span class="k3-proof__label">Selected live site</span>
-        <a
-          class="k3-proof__link"
-          href="https://sewingataga.co.uk"
-          target="_blank"
-          rel="noreferrer"
-        >
-          Sewing Ataga
-        </a>
-      </div>
+      <footer class="k3-hero__foot">
+        <div class="k3-proof" aria-label="Selected live proof">
+          <span class="k3-proof__label">Selected live site</span>
+          <a
+            class="k3-proof__link"
+            href="https://sewingataga.co.uk"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Sewing Ataga
+          </a>
+        </div>
 
-      <p class="k3-meta">
-        <span>Booking April-May 2026</span>
-        <span aria-hidden="true">&middot;</span>
-        <span>Replies within 12 hours</span>
-      </p>
+        <p class="k3-meta">
+          <span>Booking April-May 2026</span>
+          <span class="k3-meta__dot" aria-hidden="true">&middot;</span>
+          <span>Replies within 12 hours</span>
+        </p>
+      </footer>
     </div>
   </div>
 </section>

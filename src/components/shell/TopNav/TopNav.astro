@@ -1,97 +1,88 @@
 ---
 // src/components/shell/TopNav/TopNav.astro
 import "./topnav.css";
-import "./neon-nav.css";
 import CtaButton from "../../ui/CtaButton/CtaButton.astro";
 import MobileNav from "./MobileNav";
+
+const rawPath = Astro.url.pathname || "/";
+const pathname = rawPath.replace(/\/+$/, "") || "/";
+
+function navPath(href: string) {
+  return href.split("#")[0].replace(/\/+$/, "") || "/";
+}
+
+const NAV_LINKS = [
+  { href: "/", label: "Home" },
+  { href: "/work/", label: "Work" },
+  { href: "/services/", label: "Services" },
+  { href: "/process/", label: "Process" },
+  { href: "/packages/", label: "Packages" },
+  { href: "/contact/", label: "Contact" },
+] as const;
 ---
 
 <header class="k-topnav" data-topnav>
   <a class="k-skip" href="#main">Skip to content</a>
 
-  <div class="k-topnav__inner">
-    <a class="k-topnav__brand" href="/" aria-label="Kersivo home">
-      <span class="k-topnav__mark" aria-hidden="true">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-          <path
-            d="M12 2l1.2 5.1L18 8.3l-4.4 2.4L12 16l-1.6-5.3L6 8.3l4.8-1.2L12 2Z"
-            stroke="currentColor"
-            stroke-width="1.6"
-            stroke-linejoin="round"
+  <div class="k-topnav__shell">
+    <div class="k-topnav__surface">
+      <div class="k-topnav__inner">
+        <a class="k-topnav__brand" href="/" aria-label="Kersivo home">
+          <span class="k-topnav__mark" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M12 3.2 13.1 7.6 17.8 8.5 14.2 10.5 12 14.2 9.8 10.5 6.2 8.5 10.9 7.6 12 3.2Z"
+                stroke="currentColor"
+                stroke-width="1.2"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </span>
+          <span class="k-topnav__name">Kersivo</span>
+        </a>
+
+        <nav class="k-topnav__links" aria-label="Primary">
+          {
+            NAV_LINKS.map(({ href, label }) => {
+              const active = navPath(href) === pathname;
+              return (
+                <a
+                  class:list={["k-topnav__link", { "is-active": active }]}
+                  href={href}
+                  aria-current={active ? "page" : undefined}
+                >
+                  {label}
+                </a>
+              );
+            })
+          }
+        </nav>
+
+        <div class="k-topnav__actions">
+          <CtaButton
+            href="/contact/#contact"
+            label="Ask for a quote"
+            variant="primary"
+            class="k-topnav__cta"
           />
-          <path
-            d="M19.5 13l.6 2.3 2.4.6-2.4.6-.6 2.3-.6-2.3-2.4-.6 2.4-.6.6-2.3Z"
-            stroke="currentColor"
-            stroke-width="1.6"
-            stroke-linejoin="round"
-          />
-        </svg>
-      </span>
-      <span class="k-topnav__name">Kersivo</span>
-    </a>
 
-    <nav class="k-topnav__links" aria-label="Primary" data-nav-links>
-      <span class="k-navNeon" aria-hidden="true" data-nav-neon></span>
-
-      <a class="k-topnav__link" href="/" data-nav-link>Home</a>
-      <a class="k-topnav__link" href="/work/" data-nav-link>Work</a>
-      <a class="k-topnav__link" href="/services/" data-nav-link>Services</a>
-      <a class="k-topnav__link" href="/process/" data-nav-link>Process</a>
-      <a class="k-topnav__link" href="/packages/" data-nav-link>Packages</a>
-      <a class="k-topnav__link" href="/contact/" data-nav-link>Contact</a>
-    </nav>
-
-    <div class="k-topnav__actions">
-      <a class="k-topnav__mini" href="/work/">View work</a>
-
-      <CtaButton
-        href="/contact/#contact"
-        label="Ask for a quote"
-        variant="primary"
-        class="k-topnav__cta"
-      />
-
-      <!-- React island MobileNav przejmuje klik i a11y przez id="kNavToggle" -->
-      <button
-        id="kNavToggle"
-        class="k-topnav__burger"
-        type="button"
-        aria-label="Open menu"
-        aria-expanded="false"
-      >
-        <!-- MENU ICON -->
-        <span class="k-topnav__burgerIcon k-topnav__burgerIcon--menu" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M5 17H13M5 12H19M11 7H19"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </span>
-
-        <!-- CLOSE ICON (menu-close.svg inline, currentColor) -->
-        <span class="k-topnav__burgerIcon k-topnav__burgerIcon--close" aria-hidden="true">
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+          <button
+            id="kNavToggle"
+            class="k-topnav__burger"
+            type="button"
+            aria-label="Open menu"
+            aria-expanded="false"
           >
-            <path
-              d="M6.2253 4.81108C5.83477 4.42056 5.20161 4.42056 4.81108 4.81108C4.42056 5.20161 4.42056 5.83477 4.81108 6.2253L10.5858 12L4.81114 17.7747C4.42062 18.1652 4.42062 18.7984 4.81114 19.1889C5.20167 19.5794 5.83483 19.5794 6.22535 19.1889L12 13.4142L17.7747 19.1889C18.1652 19.5794 18.7984 19.5794 19.1889 19.1889C19.5794 18.7984 19.5794 18.1652 19.1889 17.7747L13.4142 12L19.189 6.2253C19.5795 5.83477 19.5795 5.20161 19.189 4.81108C18.7985 4.42056 18.1653 4.42056 17.7748 4.81108L12 10.5858L6.2253 4.81108Z"
-              fill="currentColor"
-            />
-          </svg>
-        </span>
-      </button>
+            <span class="k-topnav__burgerLines" aria-hidden="true">
+              <span class="k-topnav__burgerLine" />
+              <span class="k-topnav__burgerLine" />
+            </span>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- New Mobile Menu (Framer Motion) -->
   <MobileNav client:load />
 
   <script>
@@ -99,51 +90,12 @@ import MobileNav from "./MobileNav";
       const root = document.querySelector("[data-topnav]");
       if (!root) return;
 
-      const reduced =
-        window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-      // Scroll state
       const onScroll = () => {
-        if (window.scrollY > 6) root.classList.add("is-scrolled");
-        else root.classList.remove("is-scrolled");
+        const y = window.scrollY > 10;
+        root.classList.toggle("is-scrolled", y);
       };
       onScroll();
       window.addEventListener("scroll", onScroll, { passive: true });
-
-      // Neon pill highlight (desktop)
-      const linksWrap = root.querySelector("[data-nav-links]");
-      const neon = root.querySelector("[data-nav-neon]");
-      const navLinks = Array.from(root.querySelectorAll("[data-nav-link]"));
-
-      const moveNeonTo = (el) => {
-        if (!neon || !linksWrap || !el) return;
-        const wrapRect = linksWrap.getBoundingClientRect();
-        const r = el.getBoundingClientRect();
-        const left = r.left - wrapRect.left;
-        neon.style.transform = `translate3d(${left}px,0,0)`;
-        neon.style.width = `${r.width}px`;
-        neon.style.opacity = "1";
-      };
-
-      const currentPath = (location.pathname || "/").replace(/\/+$/, "") || "/";
-      const best = navLinks.find((a) => {
-        const href = (a.getAttribute("href") || "").split("#")[0].replace(/\/+$/, "") || "/";
-        return href === currentPath;
-      });
-
-      if (best) moveNeonTo(best);
-
-      navLinks.forEach((a) => {
-        a.addEventListener("mouseenter", () => {
-          if (reduced) return;
-          moveNeonTo(a);
-        });
-        a.addEventListener("focus", () => moveNeonTo(a));
-      });
-
-      linksWrap?.addEventListener("mouseleave", () => {
-        if (best) moveNeonTo(best);
-      });
     })();
   </script>
 </header>
