@@ -3,7 +3,7 @@ import "./site-bg.css";
 ---
 
 
-<div class="site-bg" aria-hidden="true">
+<div class="site-bg" aria-hidden="true" transition:persist="kersivo-site-bg">
   <div class="site-bg__base"></div>
   <div class="site-bg__lamp"></div>
   <div class="site-bg__beam"></div>
@@ -185,6 +185,7 @@ import "./site-bg.css";
 
     refresh();
     document.addEventListener("DOMContentLoaded", refresh, { once: true });
+    document.addEventListener("astro:page-load", refresh);
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", refresh, { passive: true });
     window.addEventListener("load", refresh, { once: true });

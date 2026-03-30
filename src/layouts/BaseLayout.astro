@@ -1,8 +1,13 @@
 ---
 import "../styles/global.css";
 
+import { ClientRouter, fade } from "astro:transitions";
+
 import SiteBg from "../components/shell/SiteBg/SiteBg.astro";
 import TopNav from "../components/shell/TopNav/TopNav.astro";
+
+/** Premium-quiet route crossfade: short, no theatre (ClientRouter + prefers-reduced-motion handled by Astro). */
+const pageCrossfade = fade({ duration: "170ms" });
 
 const SITE_URL = "https://kersivo.co.uk";
 const OG_IMAGE = `${SITE_URL}/og/kersivo-og.jpg`;
@@ -23,10 +28,12 @@ const {
 ---
 
 <!doctype html>
-<html lang="en-GB">
+<html lang="en-GB" transition:animate={pageCrossfade}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+
+    <ClientRouter />
 
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -112,6 +119,13 @@ const {
 
         if (shouldReset) {
           window.addEventListener("load", toTop, { once: true });
+
+          /* Client-side route changes (no full document load): match full-reload scroll reset */
+          document.addEventListener("astro:page-load", () => {
+            const h = location.hash;
+            const hasHash = !!h && h !== "#top";
+            if (!hasHash) toTop();
+          });
 
           const onPageShow = (e) => {
             if (e && e.persisted) toTop();
