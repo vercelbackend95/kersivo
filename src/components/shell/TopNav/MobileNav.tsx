@@ -2,13 +2,10 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import "./mobile-nav.css";
-import { NAV_LINKS } from "./nav-links";
+import { NAV_LINKS, isNavLinkActive, normalisePathname } from "./nav-links";
 
 function normPath(p: string) {
-  const s = (p || "/").trim();
-  const base = s.split("#")[0];
-  const noTrail = base.replace(/\/+$/, "") || "/";
-  return noTrail;
+  return normalisePathname((p || "/").trim().split("#")[0] || "/");
 }
 
 function normHash(h: string) {
@@ -42,6 +39,7 @@ export default function MobileNav() {
   const sheetRef = useRef<HTMLDivElement | null>(null);
   const lastActiveElRef = useRef<HTMLElement | null>(null);
   const scrollYRef = useRef(0);
+  const skipScrollRestoreRef = useRef(false);
 
   const burgerId = "kNavToggle";
 
@@ -68,12 +66,16 @@ export default function MobileNav() {
     }
 
     const top = body.style.top || "0";
+    const shouldRestore = !skipScrollRestoreRef.current;
     body.style.position = "";
     body.style.top = "";
     body.style.left = "";
     body.style.right = "";
     body.style.width = "";
-    window.scrollTo(0, Math.abs(parseInt(top, 10)) || scrollYRef.current || 0);
+    if (shouldRestore) {
+      window.scrollTo(0, Math.abs(parseInt(top, 10)) || scrollYRef.current || 0);
+    }
+    skipScrollRestoreRef.current = false;
   };
 
   const doOpen = () => {
@@ -191,6 +193,27 @@ export default function MobileNav() {
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [open]);
+
+  const navigateFromMenu = (href: string, sectionHash?: string) => {
+    if (!href) return;
+    skipScrollRestoreRef.current = true;
+    if (sectionHash) setActiveHash(sectionHash);
+    doClose();
+
+    window.setTimeout(() => {
+      try {
+        const url = new URL(href, window.location.href);
+        const sameOrigin = url.origin === window.location.origin;
+        if (sameOrigin) {
+          window.location.assign(`${url.pathname}${url.hash}`);
+          return;
+        }
+      } catch {
+        // Fallback below.
+      }
+      window.location.assign(href);
+    }, 0);
+  };
 
   const panelTransition = useMemo(() => {
     if (reduced) return { duration: 0.15 };
@@ -322,10 +345,9 @@ export default function MobileNav() {
                   {NAV_LINKS.map((l, i) => {
                     const sectionHash = normHash(l.href.split("#")[1] || "");
                     const pathHere = normPath(window.location.pathname);
-                    const linkPath = normPath(l.href);
                     const isActive = sectionHash
                       ? pathHere === "/" && sectionHash === activeHash
-                      : linkPath === pathHere;
+                      : isNavLinkActive(l.href, pathHere);
                     return (
                       <motion.li
                         key={l.href}
@@ -344,9 +366,9 @@ export default function MobileNav() {
                         <motion.a
                           className="k-mn__row"
                           href={l.href}
-                          onClick={() => {
-                            if (sectionHash) setActiveHash(sectionHash);
-                            doClose();
+                          onClick={(event) => {
+                            event.preventDefault();
+                            navigateFromMenu(l.href, sectionHash);
                           }}
                           aria-current={isActive ? "page" : undefined}
                           whileTap={reduced ? undefined : { opacity: 0.82 }}
@@ -390,13 +412,17 @@ export default function MobileNav() {
               <p className="k-mn__footLine">Start your project</p>
               <a
                 href="/#contact"
-                className="k-mn__quote"
-                onClick={doClose}
+                className="k-btn k-btn--primary k-mn__quote"
+                onClick={(event) => {
+                  event.preventDefault();
+                  navigateFromMenu("/#contact", "#contact");
+                }}
               >
-                <span className="k-mn__quoteText">Get a quote</span>
-                <span className="k-mn__quoteArrow" aria-hidden="true">
+                <span className="k-btn__label">Get a quote</span>
+                <span className="k-btn__shine" aria-hidden="true" />
+                <span className="k-btn__arrow" aria-hidden="true">
                   <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                    <path d="M3 7H11M8 4L11 7L8 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M3 7H11M8 4L11 7L8 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </span>
               </a>

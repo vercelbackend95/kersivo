@@ -96,7 +96,7 @@ export function createActiveSectionScrollSpy({
   const evaluate = () => {
     rafId = 0;
     const next = pickActiveHash(targets, topnavRoot);
-    if (!next || next === currentHash) return;
+    if (next === currentHash) return;
     currentHash = next;
     onActiveChange(next);
   };

@@ -1,582 +1,652 @@
-/* =========================================
-   KERSIVO — PACKAGES
-   One-grid table so sticky labels align perfectly
-   Tabs removed. Truth lives in the table.
-   ========================================= */
+/* Kersivo packages: premium editorial comparison */
 
-.k-pack{
-  position: relative;
-  overflow: hidden;
-}
-
-/* -------------------------
-   Section heading
-   ------------------------- */
-.k-pack__head{
+.k-pack__head {
+  max-width: 72rem;
+  margin: 0 auto clamp(1.4rem, 3vw, 2.2rem);
   text-align: center;
-  margin: 0 auto 16px;
-  max-width: 86ch;
 }
 
-.k-pack__kicker{
-  font-size: 12px;
-  letter-spacing: .18em;
+.k-pack__kicker {
+  margin-bottom: 0.8rem;
+  font-size: 0.74rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(255,255,255,.60);
-  margin-bottom: 10px;
+  color: rgba(255, 255, 255, 0.62);
 }
 
-.k-pack__title{
+.k-pack__title {
   margin: 0;
-  font-size: var(--h2);
+  max-width: 22ch;
+  margin-inline: auto;
+  font-size: clamp(2rem, 4vw, 3.25rem);
   line-height: 1.06;
-  letter-spacing: var(--track-tight);
+  letter-spacing: -0.02em;
+  text-wrap: balance;
 }
 
-.k-pack__grad{
+.k-pack__grad {
   display: block;
-  margin-top: 6px;
-  background: linear-gradient(90deg, rgba(140,170,255,1), rgba(210,150,255,1));
+  margin-top: 0.2em;
+  background: linear-gradient(90deg, #f7f1df 0%, #d8c5ff 48%, #9bb3ff 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
-.k-pack__lead{
-  margin: 12px auto 0;
-  max-width: var(--measure);
-  color: rgba(255,255,255,.74);
-  font-size: var(--p);
-  line-height: 1.55;
+.k-pack__lead {
+  max-width: 62ch;
+  margin: 1rem auto 0;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: clamp(1rem, 1.1vw, 1.12rem);
+  line-height: 1.65;
 }
 
-/* -------------------------
-   Table shell
-   ------------------------- */
-.k-packCard{
-  position: relative;
-  border-radius: 28px;
+.k-pack__meta {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+  margin: 1.2rem 0 0;
   padding: 0;
-  border: 1px solid rgba(255,255,255,.10);
-  background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(0,0,0,.18));
-  box-shadow:
-    0 40px 140px rgba(0,0,0,.55),
-    0 1px 0 rgba(255,255,255,.06) inset;
-  overflow: hidden;
-  margin-top: 14px;
 }
 
-.k-packStage{
-  position: relative;
-  border-radius: 28px;
+.k-pack__meta li {
+  padding: 0.44rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.02);
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 0.76rem;
+  letter-spacing: 0.01em;
+}
+
+.k-packCard {
+  margin-top: 0.8rem;
+  border-radius: 26px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.042), rgba(8, 10, 14, 0.58));
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
   overflow: hidden;
 }
 
-.k-packScroll{
+.k-packStage {
+  border-radius: inherit;
+}
+
+/* ─── Comparison matrix (tablet landscape / desktop) ─── */
+.k-packStage--matrix {
+  display: block;
+}
+
+.k-packStage--cards {
+  display: none;
+}
+
+/* Subtle cue when the matrix may overflow horizontally (narrow desktop / large tablet landscape) */
+.k-packMatrixHint {
+  display: none;
+  margin: 0;
+  padding: 0.55rem 1rem 0.4rem;
+  font-size: 0.65rem;
+  font-weight: var(--w-semibold, 650);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.44);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+@media (min-width: 900px) and (max-width: 1024px) {
+  .k-packMatrixHint {
+    display: block;
+  }
+}
+
+.k-packScroll {
   overflow-x: auto;
   overflow-y: hidden;
+  border-radius: inherit;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.16) rgba(255, 255, 255, 0.04);
   -webkit-overflow-scrolling: touch;
-  overscroll-behavior-x: contain;
-  border-radius: 28px;
-  box-shadow: 0 0 0 1px rgba(255,255,255,.05) inset;
 }
 
-/* Optional nicer scroll bar */
-.k-packScroll::-webkit-scrollbar{ height: 10px; }
-.k-packScroll::-webkit-scrollbar-track{ background: rgba(255,255,255,.04); }
-.k-packScroll::-webkit-scrollbar-thumb{
-  background: rgba(255,255,255,.10);
+.k-packScroll:focus-visible {
+  outline: 2px solid var(--focus, rgba(168, 194, 212, 0.78));
+  outline-offset: 2px;
+}
+
+.k-packScroll::-webkit-scrollbar {
+  height: 8px;
+}
+
+.k-packScroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.k-packScroll::-webkit-scrollbar-thumb {
   border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
 }
-.k-packScroll::-webkit-scrollbar-thumb:hover{ background: rgba(255,255,255,.14); }
 
-/* -------------------------
-   ✅ One-grid table
-   4 columns: labels + 3 tiers
-   ------------------------- */
-.k-packMatrix{
+.k-packMatrix {
   display: grid;
-  grid-template-columns: 320px repeat(3, minmax(260px, 1fr));
-  min-width: 1060px;
+  width: 100%;
+  min-width: 0;
+  grid-template-columns: minmax(200px, 1.12fr) repeat(3, minmax(152px, 1fr));
 }
 
-/* shared vertical separators */
-.k-packMatrix > *{
-  border-right: 1px solid rgba(255,255,255,.08);
-}
-.k-packMatrix > *:nth-child(4n){
-  border-right: 0;
+.k-packMatrix > * {
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
 }
 
-/* header cells */
-.k-packHeadCell{
-  padding: 14px 14px 12px;
-  min-height: 104px;
-  display: grid;
-  align-content: center;
-  gap: 6px;
-  border-bottom: 1px solid rgba(255,255,255,.08);
-  background: rgba(0,0,0,.10);
-  position: relative;
-}
-
-.k-packHeadCell--label{
-  position: sticky;
-  left: 0;
-  z-index: 20;
-  background: rgba(0,0,0,.16);
-}
-
-/* clean seam for sticky column */
-.k-packHeadCell--label::after,
-.k-packStickyCell::after{
-  content:"";
-  position:absolute;
-  top:0;
-  right:-1px;
-  width:1px;
-  height:100%;
-  background: rgba(255,255,255,.08);
-  pointer-events:none;
-}
-
-/* tier headings */
-.k-packTierName{
-  color: rgba(255,255,255,.92);
-  font-weight: 900;
-  letter-spacing: -0.02em;
-}
-
-.k-packTierPrice{
-  color: rgba(255,255,255,.74);
-  font-size: 13px;
-  font-weight: 750;
-}
-
-/* CTA wrapper spacing */
-.k-packCtaWrap{
-  margin-top: 8px;
-}
-
-/* Make global .k-btn fit table cells */
-.k-packCta{
-  --btn-h: 42px;
-  --btn-pad: 16px;
-  font-size: 12px;
-}
-
-/* data cells */
-.k-packCell{
-  padding: 12px 14px;
-  border-bottom: 1px solid rgba(255,255,255,.07);
-  color: rgba(255,255,255,.82);
-  font-size: 13px;
-  line-height: 1.35;
-  background: rgba(0,0,0,.10);
-  position: relative;
-}
-
-/* sticky label cells */
-.k-packStickyCell{
-  position: sticky;
-  left: 0;
-  z-index: 18;
-  background: rgba(0,0,0,.16);
-}
-
-/* remove border-right on sticky cells (we draw it with ::after) */
-.k-packHeadCell--label,
-.k-packStickyCell{
+.k-packColEnd {
   border-right: 0 !important;
 }
 
-/* label styling */
-.k-packCell--label{
-  color: rgba(255,255,255,.66);
-  font-weight: 750;
-}
-.k-packLabelText{ display: inline-block; }
-
-.k-packCellHint{
-  display: block;
-  margin-top: 6px;
-  font-size: 12px;
-  color: rgba(255,255,255,.45);
-}
-
-/* Dust sparkle */
-.k-packDust{
-  position: absolute;
-  inset: -1px;
-  pointer-events: none;
-  mix-blend-mode: screen;
-  opacity: .75;
-  background:
-    radial-gradient(2px 2px at 12% 24%, rgba(255,255,255,.22), transparent 60%),
-    radial-gradient(2px 2px at 18% 62%, rgba(255,255,255,.16), transparent 60%),
-    radial-gradient(2px 2px at 74% 30%, rgba(255,255,255,.18), transparent 60%),
-    radial-gradient(2px 2px at 82% 66%, rgba(255,255,255,.14), transparent 60%),
-    radial-gradient(2px 2px at 46% 78%, rgba(255,255,255,.12), transparent 60%);
-}
-
-/* -------------------------
-   Ghost link below section
-   ------------------------- */
-.k-pack__below{
-  margin-top: 14px;
+.k-packHeadCell {
+  position: relative;
   display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 1rem 0.9rem 1rem;
+  min-height: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(12, 14, 19, 0.72);
+}
+
+.k-packHeadCell--label {
+  position: sticky;
+  left: 0;
+  z-index: 20;
   justify-content: flex-end;
+  padding-bottom: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.88);
+  background: rgba(10, 12, 17, 0.96);
 }
 
-.k-packGhost{
-  color: rgba(255,255,255,.72);
-  text-decoration: none;
-  font-weight: 800;
-  font-size: 13px;
-  padding: 10px 12px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.10);
-  background: rgba(0,0,0,.18);
-  transition:
-    transform 180ms cubic-bezier(.2,.8,.2,1),
-    border-color 180ms ease,
-    background 180ms ease;
-}
-.k-packGhost:hover{
-  transform: translateY(-1px);
-  border-color: rgba(190,145,255,.20);
-  background: rgba(255,255,255,.03);
+.k-packHeadCell--featured {
+  background: linear-gradient(180deg, rgba(167, 142, 255, 0.09), rgba(12, 14, 19, 0.78));
+  box-shadow: inset 1px 0 0 rgba(216, 197, 255, 0.22);
 }
 
-/* -------------------------
-   Responsive + motion safety
-   ------------------------- */
-@media (max-width: 720px){
-  .k-pack__below{ justify-content: flex-start; }
-  .k-packMatrix{
-    grid-template-columns: 260px repeat(3, minmax(240px, 1fr));
-    min-width: 980px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce){
-  .k-packGhost{ transition: none !important; transform: none !important; }
-}
-/* -------------------------
-   Add-ons (under table) — short & premium
-   ------------------------- */
-.k-packAddons{
-  margin-top: 14px;
-  display: flex;
-  justify-content: center;
-}
-
-.k-packAddons__inner{
-  width: min(980px, 100%);
-  border-radius: 22px;
-  border: 1px solid rgba(255,255,255,.10);
-  background: rgba(0,0,0,.14);
-  box-shadow:
-    0 22px 90px rgba(0,0,0,.22),
-    0 1px 0 rgba(255,255,255,.06) inset;
-  padding: clamp(14px, 2vw, 18px);
-}
-
-.k-packAddons__title{
-  font-weight: 900;
-  letter-spacing: -0.02em;
-  color: rgba(255,255,255,.88);
-  margin-bottom: 10px;
-}
-
-.k-packAddons__chips{
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.k-packAddons__chip{
+.k-packBadge {
   display: inline-flex;
   align-items: center;
-  padding: 9px 12px;
+  align-self: flex-start;
+  margin-bottom: 0.5rem;
+  padding: 0.26rem 0.5rem;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.10);
-  background: rgba(255,255,255,.03);
-  color: rgba(255,255,255,.78);
-  font-size: 12px;
-  line-height: 1;
+  border: 1px solid rgba(216, 197, 255, 0.32);
+  background: rgba(216, 197, 255, 0.08);
+  color: rgba(245, 237, 255, 0.94);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.k-packTierName {
+  color: rgba(255, 255, 255, 0.97);
+  font-size: 1.06rem;
+  font-weight: var(--w-bold, 780);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.k-packTierPrice {
+  margin-top: 0.35rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+  font-weight: 700;
   letter-spacing: -0.01em;
 }
 
-.k-packAddons__note{
-  margin-top: 12px;
-  color: rgba(255,255,255,.56);
-  font-size: 12px;
-}
-/* =========================================
-   PACKAGES — Mobile polish (no frames on label column)
-   - label column stays aligned + sticky
-   - but looks "frameless" on mobile
-   - reduces iOS sticky/scroll ghosting
-   ========================================= */
-
-@media (max-width: 720px){
-  /* a touch less "empty space" on the left */
-  .k-packMatrix{
-    grid-template-columns: 220px repeat(3, minmax(240px, 1fr));
-    min-width: 940px;
-  }
-
-  /* ===== Frameless label column (header + rows) ===== */
-  .k-packHeadCell--label,
-  .k-packStickyCell{
-    /* keep sticky, but remove all “cell box” visuals */
-    border-bottom: 0 !important;
-    background: linear-gradient(
-      90deg,
-      rgba(7,7,10,.92) 0%,
-      rgba(7,7,10,.86) 78%,
-      rgba(7,7,10,0) 100%
-    ) !important;
-
-    /* iOS compositing stability (kills text smear/ghosting) */
-    isolation: isolate;
-    contain: paint;
-    transform: translateZ(0);
-  }
-
-  /* kill the seam line that we draw for sticky column */
-  .k-packHeadCell--label::after,
-  .k-packStickyCell::after{
-    display: none !important;
-  }
-
-  /* kill the “grid row lines” inside the label column only */
-  .k-packCell.k-packCell--label{
-    border-bottom: 0 !important;
-  }
-
-  /* optional: make dust calmer on mobile so it doesn't fight readability */
-  .k-packDust{ opacity: .45; }
+.k-packTierNote {
+  margin-top: 0.3rem;
+  margin-bottom: auto;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.74rem;
+  line-height: 1.45;
+  max-width: 26ch;
 }
 
-/* tighter phones */
-@media (max-width: 420px){
-  .k-packMatrix{
-    grid-template-columns: 200px repeat(3, minmax(230px, 1fr));
-    min-width: 900px;
-  }
-}
-/* =========================================
-   PACKAGES — Mobile cleanup
-   - hide hints on mobile
-   - NO visible borders/lines in the 1st (label) column
-   ========================================= */
-
-@media (max-width: 720px){
-
-  /* 1) Na mobile: nie pokazuj podpowiedzi (k-packCellHint) */
-  .k-packCellHint{ display: none !important; }
-
-  /* 2) Zabij “ramki”/linie w 1. kolumnie (labels) */
-  .k-packHeadCell--label,
-  .k-packStickyCell,
-  .k-packCell.k-packCell--label{
-    border-bottom: 0 !important;        /* brak poziomych linii w labelach */
-    box-shadow: none !important;
-  }
-
-  /* 3) Usuń pionową “szwę” sticky (to robi tę kreskę przy granicy) */
-  .k-packHeadCell--label::after,
-  .k-packStickyCell::after{
-    display: none !important;
-  }
-
-  /* 4) Usuń separator pionowy należący do 1. kolumny (grid border-right) */
-  .k-packMatrix > *:nth-child(4n + 1){
-    border-right: 0 !important;
-  }
-}
-/* =========================================
-   PACKAGES — Mobile: narrower label column + wider table
-   (drop this at the VERY BOTTOM of packages.css)
-   ========================================= */
-
-@media (max-width: 720px){
-  /* widen the section on mobile by shrinking container gutters (scoped to #packages only) */
-  .k-pack{
-    --gutter: 10px;
-  }
-
-  /* narrower labels + wider tier columns */
-  .k-packMatrix{
-    grid-template-columns: 170px repeat(3, minmax(270px, 1fr));
-    min-width: 980px;
-  }
-
-  /* a touch tighter padding so text gets more room */
-  .k-packHeadCell,
-  .k-packCell{
-    padding-left: 12px;
-    padding-right: 12px;
-  }
-
-  /* label column: slightly tighter still */
-  .k-packHeadCell--label,
-  .k-packStickyCell{
-    padding-left: 12px;
-    padding-right: 10px;
-  }
+/* Matrix: CTA hugs content (no full-column bars); cards: responsive width below */
+.k-packStage--matrix .k-packCtaWrap {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  margin-top: clamp(0.45rem, 1.2vw, 0.65rem);
 }
 
-@media (max-width: 420px){
-  .k-pack{
-    --gutter: 8px;
-  }
-
-  .k-packMatrix{
-    grid-template-columns: 160px repeat(3, minmax(260px, 1fr));
-    min-width: 940px;
-  }
+/* Slim CTA — scales with viewport; matrix uses intrinsic width */
+.k-packCta {
+  --btn-h: clamp(28px, 1.6vw + 22px, 32px);
+  --btn-pad: clamp(9px, 1vw + 7px, 13px);
+  --btn-size: clamp(0.625rem, 0.22vw + 0.58rem, 0.7rem);
+  --btn-primary-radius: clamp(8px, 0.6vw + 6px, 10px);
+  --btn-track: 0.045em;
+  width: auto;
+  max-width: 100%;
+  justify-content: center;
+  gap: clamp(5px, 0.8vw, 7px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.46),
+    0 1px 2px rgba(0, 0, 0, 0.08),
+    0 6px 16px rgba(0, 0, 0, 0.12);
 }
-/* =========================================
-   PACKAGES — Mobile FULL-BLEED (option B)
-   Make the table card go nearly edge-to-edge
-   ========================================= */
 
-@media (max-width: 720px){
-  /* Card goes wider than container by exactly the container gutters */
-  .k-packCard{
-    width: calc(100% + (var(--gutter, 16px) * 2));
-    margin-left: calc(var(--gutter, 16px) * -1);
-    margin-right: calc(var(--gutter, 16px) * -1);
-    border-radius: 24px;
-  }
+.k-packStage--matrix .k-packCta {
+  width: auto;
+  min-width: 0;
+  flex-shrink: 1;
+}
 
-  /* Keep radii consistent inside */
-  .k-packStage,
-  .k-packScroll{
-    border-radius: 24px;
+.k-packCta:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.52),
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    0 10px 22px rgba(0, 0, 0, 0.15);
+}
+
+.k-packCta--compact {
+  --btn-h: clamp(30px, 1.8vw + 24px, 34px);
+  --btn-pad: clamp(10px, 1.1vw + 7px, 13px);
+  --btn-size: clamp(0.625rem, 0.25vw + 0.56rem, 0.69rem);
+}
+
+/* Full-width section bands: editorial divider (no implied empty tier cells) */
+.k-packGroupBand {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: clamp(1rem, 2.2vw, 1.35rem) clamp(0.85rem, 2vw, 1.1rem) clamp(0.62rem, 1.2vw, 0.78rem);
+  border-right: 0 !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.056);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.028) 0%,
+    rgba(255, 255, 255, 0.04) 45%,
+    rgba(255, 255, 255, 0.028) 100%
+  );
+}
+
+.k-packGroupBand--first {
+  border-top-color: rgba(255, 255, 255, 0.05);
+  padding-top: clamp(0.72rem, 1.6vw, 0.95rem);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.022) 0%,
+    rgba(255, 255, 255, 0.034) 48%,
+    rgba(255, 255, 255, 0.022) 100%
+  );
+}
+
+.k-packGroupBand__title {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.65rem, 2vw, 1.15rem);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  font: inherit;
+}
+
+.k-packGroupBand__rule {
+  flex: 1 1 0;
+  min-width: 1.25rem;
+  height: 1px;
+  border: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.11) 22%,
+    rgba(255, 255, 255, 0.16) 50%,
+    rgba(255, 255, 255, 0.11) 78%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  opacity: 0.95;
+  pointer-events: none;
+}
+
+.k-packGroupBand__label {
+  flex: 0 0 auto;
+  max-width: min(92vw, 100%);
+  text-align: center;
+  text-wrap: balance;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.58);
+  line-height: 1.35;
+}
+
+@media (min-width: 1200px) {
+  .k-packGroupBand__label {
+    font-size: 0.64rem;
+    letter-spacing: 0.19em;
   }
 }
 
-@media (max-width: 420px){
-  .k-packCard{ border-radius: 22px; }
-  .k-packStage,
-  .k-packScroll{ border-radius: 22px; }
+.k-packCell {
+  padding: 0.72rem 0.9rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(10, 12, 17, 0.52);
+  color: rgba(255, 255, 255, 0.84);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  hyphens: auto;
 }
-/* =========================================
-   PACKAGES — TRUE edge-to-edge on mobile
-   + tiers (Base/Plus/Bespoke) ~20% narrower
-   Paste at the VERY BOTTOM of packages.css
-   ========================================= */
 
-@media (max-width: 720px){
-  /* TRUE full-bleed regardless of container/gutter */
-  .k-packCard{
+.k-packCell--featured {
+  background: rgba(149, 123, 255, 0.045);
+  box-shadow: inset 1px 0 0 rgba(216, 197, 255, 0.14);
+}
+
+.k-packStickyCell {
+  position: sticky;
+  left: 0;
+  z-index: 18;
+  background: rgba(10, 12, 17, 0.96);
+}
+
+.k-packHeadCell--label::after,
+.k-packStickyCell::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -1px;
+  width: 1px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+}
+
+.k-packHeadCell--label,
+.k-packStickyCell {
+  border-right: 0 !important;
+}
+
+.k-packCell--label {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: var(--w-semibold, 650);
+}
+
+.k-packLabelText {
+  display: inline-block;
+}
+
+.k-packCellHint {
+  display: block;
+  margin-top: 0.28rem;
+  color: rgba(255, 255, 255, 0.48);
+  font-size: 0.72rem;
+  line-height: 1.42;
+  font-weight: 500;
+}
+
+/* ─── Mobile / narrow: stacked tier cards (primary layout) ─── */
+@media (max-width: 899px) {
+  .k-packStage--matrix {
+    display: none;
+  }
+
+  .k-packStage--cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 0.95rem 1.15rem;
+  }
+
+  .k-packMobCard {
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(10, 12, 17, 0.42);
+    overflow: hidden;
+  }
+
+  .k-packMobCard--featured {
+    border-color: rgba(216, 197, 255, 0.28);
+    background: linear-gradient(180deg, rgba(167, 142, 255, 0.07), rgba(10, 12, 17, 0.48));
+    box-shadow: 0 0 0 1px rgba(216, 197, 255, 0.08);
+  }
+
+  .k-packMobCard__head {
+    padding: 1rem 1rem 0.95rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  }
+
+  .k-packMobCard__spacerBadge {
+    height: 1.55rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .k-packBadge--mob {
+    margin-bottom: 0.35rem;
+  }
+
+  .k-packMobCard__title {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: var(--w-bold, 780);
+    letter-spacing: -0.02em;
+    line-height: 1.12;
+    color: rgba(255, 255, 255, 0.97);
+  }
+
+  .k-packMobCard__price {
+    margin: 0.45rem 0 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .k-packMobCard__note {
+    margin: 0.35rem 0 0;
+    font-size: 0.8rem;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.62);
+  }
+
+  .k-packMobCard__cta {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 0.75rem;
+  }
+
+  .k-packMobCard__cta .k-packCta {
+    width: auto;
+    max-width: min(100%, 16.5rem);
+  }
+
+  .k-packMobCard__body {
+    padding: 0.15rem 1rem 1rem;
+  }
+
+  .k-packMobCard__group {
+    margin-top: 1rem;
+  }
+
+  .k-packMobCard__group:first-child {
+    margin-top: 0.85rem;
+  }
+
+  .k-packMobCard__groupTitle {
+    margin: 0 0 0.45rem;
+    padding-bottom: 0.35rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.52);
+  }
+
+  .k-packMobDl {
+    margin: 0;
+  }
+
+  .k-packMobDl__row {
+    display: grid;
+    gap: 0.3rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .k-packMobDl__row:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .k-packMobDl__dt {
+    margin: 0;
+    font-size: 0.74rem;
+    font-weight: var(--w-semibold, 650);
+    color: rgba(255, 255, 255, 0.78);
+    line-height: 1.4;
+  }
+
+  .k-packMobDl__hint {
+    display: block;
+    margin-top: 0.2rem;
+    font-size: 0.68rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.46);
+    line-height: 1.4;
+  }
+
+  .k-packMobDl__dd {
+    margin: 0;
+    font-size: 0.84rem;
+    line-height: 1.52;
+    color: rgba(255, 255, 255, 0.86);
+  }
+}
+
+@media (max-width: 860px) {
+  .k-pack__head {
+    text-align: left;
+  }
+
+  .k-pack__title,
+  .k-pack__lead {
+    margin-inline: 0;
+  }
+
+  .k-pack__meta {
+    justify-content: flex-start;
+  }
+
+  .k-packCard {
+    border-radius: 20px;
+  }
+}
+
+@media (max-width: 899px) and (min-width: 561px) {
+  .k-packStage--cards {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .k-packMobCard {
+    border-radius: 20px;
+  }
+
+  .k-packMobCard__head {
+    padding-inline: 1.1rem;
+  }
+
+  .k-packMobCard__body {
+    padding-inline: 1.1rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .k-packCard {
     width: 100vw;
     margin-left: calc(50% - 50vw);
     margin-right: calc(50% - 50vw);
-
-    border-radius: 0 !important;
-    border-left: 0;
-    border-right: 0;
+    border-radius: 0;
+    border-inline: 0;
   }
 
   .k-packStage,
-  .k-packScroll{
-    border-radius: 0 !important;
+  .k-packScroll {
+    border-radius: 0;
   }
 
-  /* Make tier columns ~20% narrower */
-  .k-packMatrix{
-    /* was: 220px + 3 * 240px = 940px */
-    grid-template-columns: 220px repeat(3, minmax(190px, 1fr));
-    min-width: 790px;
+  .k-packStage--cards {
+    padding-inline: 0.85rem;
   }
 }
 
-@media (max-width: 420px){
-  .k-packMatrix{
-    /* was: 200px + 3 * 230px = 900px */
-    grid-template-columns: 200px repeat(3, minmax(180px, 1fr));
-    min-width: 740px;
-  }
-}
-/* PACKAGES — Mobile: narrower first (label) column */
-@media (max-width: 720px){
-  .k-packMatrix{
-    grid-template-columns: 170px repeat(3, minmax(190px, 1fr));
-    min-width: 640px; /* 170 + 3*190 */
+@media (min-width: 900px) and (max-width: 1099px) {
+  .k-packMatrix {
+    grid-template-columns: minmax(188px, 1.1fr) repeat(3, minmax(148px, 1fr));
   }
 
-  /* trochę ciaśniej w labelach, żeby nie marnować px */
-  .k-packHeadCell--label,
-  .k-packStickyCell{
-    padding-left: 12px;
-    padding-right: 10px;
+  .k-packHeadCell {
+    padding-inline: 0.8rem;
   }
 
-  .k-packHeadCell,
-  .k-packCell{
-    padding-left: 12px;
-    padding-right: 12px;
+  .k-packCell {
+    padding-inline: 0.8rem;
+  }
+
+  .k-packCellHint {
+    font-size: 0.68rem;
+  }
+
+  .k-packStage--matrix .k-packCta {
+    --btn-h: clamp(27px, 1.4vw + 22px, 30px);
+    --btn-pad: clamp(8px, 0.9vw + 6px, 11px);
+    --btn-size: clamp(0.6rem, 0.2vw + 0.55rem, 0.66rem);
   }
 }
 
-@media (max-width: 420px){
-  .k-packMatrix{
-    grid-template-columns: 155px repeat(3, minmax(180px, 1fr));
-    min-width: 595px; /* 155 + 3*180 */
+@media (min-width: 1200px) {
+  .k-packMatrix {
+    grid-template-columns: minmax(232px, 1fr) repeat(3, minmax(176px, 1fr));
+  }
+
+  .k-packHeadCell {
+    padding: 1.05rem 1.05rem 1.05rem;
+  }
+
+  .k-packCell {
+    padding: 0.78rem 1.05rem;
+  }
+
+  .k-packTierName {
+    font-size: 1.12rem;
+  }
+
+  .k-packStage--matrix .k-packCta {
+    --btn-pad: clamp(11px, 0.55vw + 8px, 14px);
   }
 }
-/* =========================================
-   PACKAGES — Mobile: “calm wall” (Option A)
-   Stable overlay (NO blur / NO glow)
-   - prevents eye-noise while scrolling
-   - keeps the left column readable
-   ========================================= */
 
-@media (max-width: 720px){
-
-  /* 1) Kill glassmorphism (the moving blur causes shimmer) */
-  .k-packHeadCell--label,
-  .k-packStickyCell{
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-
-    /* stable, premium wall */
-    background:
-      linear-gradient(180deg,
-        rgba(10,10,14,.94) 0%,
-        rgba(10,10,14,.90) 55%,
-        rgba(10,10,14,.86) 100%
-      ) !important;
-
-    box-shadow: 0 1px 0 rgba(255,255,255,.06) inset;
+/* Very small phones: full-width CTA for touch, still capped height via clamp */
+@media (max-width: 420px) {
+  .k-packMobCard__cta {
+    justify-content: stretch;
   }
 
-  /* 2) Soft edge scrim (no purple glow) */
-  .k-packHeadCell--label::after,
-  .k-packStickyCell::after{
-    content:"";
-    position:absolute;
-    top:0;
-    right:-24px;
-    width:24px;
-    height:100%;
-    pointer-events:none;
-
-    background: linear-gradient(90deg,
-      rgba(10,10,14,.92) 0%,
-      rgba(10,10,14,.55) 45%,
-      rgba(10,10,14,0) 100%
-    );
-
-    display:block !important;
+  .k-packMobCard__cta .k-packCta {
+    width: 100%;
+    max-width: none;
   }
+}
 
-  /* keep stack order predictable */
-  .k-packHeadCell--label{ z-index: 30; }
-  .k-packStickyCell{ z-index: 28; }
+@media (prefers-reduced-motion: reduce) {
+  .k-packCta {
+    transition: none !important;
+  }
 }

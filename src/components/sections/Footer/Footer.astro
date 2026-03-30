@@ -11,11 +11,15 @@ interface Props {
 const { showTopCta = true } = Astro.props as Props;
 const footCardClasses = `k-footcard${showTopCta ? "" : " k-footcard--flush"}`;
 
+/** Pages that render InlineContactLead with `id="contact"` (same-origin anchor). */
+const path = Astro.url.pathname.replace(/\/+$/, "") || "/";
+const contactHref = path === "/packages" ? "/packages/#contact" : "/#contact";
+
 const nav = [
   {
-    title: "Work",
+    title: "Selected work",
     links: [
-      { label: "Selected work", href: "/work/" },
+      { label: "Overview", href: "/work/" },
       { label: "What we build", href: "/#services" },
       { label: "Packages & pricing", href: "/packages/" },
     ],
@@ -25,8 +29,8 @@ const nav = [
     links: [
       { label: "Meet the founder", href: "/studio/" },
       { label: "How we work", href: "/#process-overview" },
-      { label: "FAQ", href: "/faq/" },
-      { label: "Contact", href: "/#contact" },
+      { label: "FAQ", href: "/#faq" },
+      { label: "Contact", href: contactHref },
     ],
   },
 ];

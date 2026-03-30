@@ -1,32 +1,34 @@
 /* =========================================
-   Kersivo CTA Button System v2
-   Premium redesign — April 2026
+   Kersivo CTA Button System v3
+   Premium neutral palette (no purple)
    Variants: primary / secondary / ghost
-   Effects: magnetic + specular sweep (primary)
    ========================================= */
 
 :root{
-  --btn-h: 56px;
-  --btn-pad: 28px;
+  --btn-h: 54px;
+  --btn-pad: 24px;
   --btn-radius: 999px;
   --btn-primary-radius: 12px;
 
   --btn-font: var(--font-sans, ui-sans-serif);
   --btn-size: 15px;
   --btn-w: var(--w-semibold, 650);
-  --btn-track: 0.01em;
+  --btn-track: 0.005em;
 
-  /* primary — rich deep violet */
-  --btn-g1: #6735EE;
-  --btn-g2: #A44BF5;
+  --btn-primary-text: #0b0e11;
+  --btn-primary-bg-1: rgba(248, 244, 236, 0.98);
+  --btn-primary-bg-2: rgba(225, 232, 238, 0.95);
+  --btn-primary-border: rgba(255, 255, 255, 0.34);
 
-  /* surfaces */
-  --btn-surface: rgba(255,255,255,.06);
-  --btn-border: rgba(255,255,255,.14);
-  --btn-border-hover: rgba(255,255,255,.18);
+  --btn-secondary-text: rgba(255, 255, 255, 0.93);
+  --btn-secondary-bg: rgba(255, 255, 255, 0.045);
+  --btn-secondary-border: rgba(255, 255, 255, 0.18);
+  --btn-secondary-border-hover: rgba(255, 255, 255, 0.3);
 
-  /* focus */
-  --btn-focus: rgba(167,75,245,.80);
+  --btn-ghost-text: rgba(255, 255, 255, 0.74);
+  --btn-ghost-bg: rgba(255, 255, 255, 0.02);
+  --btn-ghost-border: rgba(255, 255, 255, 0.12);
+  --btn-ghost-bg-hover: rgba(255, 255, 255, 0.045);
 }
 
 .k-btn{
@@ -45,13 +47,16 @@
   letter-spacing: var(--btn-track);
   text-decoration: none;
   user-select: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
 
   transform: translate3d(var(--tx, 0px), calc(var(--ty, 0px) + var(--press, 0px)), 0);
   will-change: transform;
 
   transition:
     transform 200ms cubic-bezier(.2,.9,.2,1),
-    background 200ms ease,
+    background 220ms ease,
     border-color 180ms ease,
     box-shadow 200ms ease,
     color 200ms ease;
@@ -65,7 +70,7 @@
 }
 
 .k-btn:focus-visible{
-  outline: 2px solid var(--btn-focus);
+  outline: 2px solid var(--focus, rgba(168, 194, 212, .78));
   outline-offset: 4px;
 }
 
@@ -98,24 +103,22 @@
    Primary
    ───────────────────────────────────────── */
 .k-btn--primary{
-  color: rgba(255,255,255,.95);
-  background: linear-gradient(120deg, var(--btn-g1) 0%, var(--btn-g2) 100%);
+  color: var(--btn-primary-text);
+  background: linear-gradient(150deg, var(--btn-primary-bg-1) 0%, var(--btn-primary-bg-2) 100%);
   border-radius: var(--btn-primary-radius);
-  border-color: rgba(255,255,255,.08);
+  border-color: var(--btn-primary-border);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.22),
-    0 1px 2px rgba(0,0,0,.28),
-    0 4px 16px rgba(103,53,238,.26),
-    0 10px 36px rgba(103,53,238,.14);
+    inset 0 1px 0 rgba(255,255,255,.58),
+    0 2px 5px rgba(0,0,0,.12),
+    0 12px 32px rgba(0,0,0,.2);
   overflow: hidden;
 }
 
 .k-btn--primary:hover{
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.30),
-    0 1px 3px rgba(0,0,0,.30),
-    0 4px 20px rgba(103,53,238,.38),
-    0 12px 44px rgba(103,53,238,.20);
+    inset 0 1px 0 rgba(255,255,255,.65),
+    0 3px 8px rgba(0,0,0,.16),
+    0 16px 40px rgba(0,0,0,.24);
 }
 
 /* specular sweep — sharp, no blur, fast */
@@ -126,9 +129,9 @@
   background: linear-gradient(
     100deg,
     transparent 20%,
-    rgba(255,255,255,.11) 43%,
-    rgba(255,255,255,.18) 50%,
-    rgba(255,255,255,.11) 57%,
+    rgba(255,255,255,.05) 43%,
+    rgba(255,255,255,.26) 50%,
+    rgba(255,255,255,.05) 57%,
     transparent 80%
   );
   transform: translateX(-130%);
@@ -145,21 +148,21 @@
    Secondary
    ───────────────────────────────────────── */
 .k-btn--secondary{
-  color: rgba(255,255,255,.92);
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
-  border-color: rgba(255,255,255,.16);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 22px 90px rgba(0,0,0,.26);
+  color: var(--btn-secondary-text);
+  background: var(--btn-secondary-bg);
+  border-color: var(--btn-secondary-border);
+  backdrop-filter: blur(10px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.11),
+    0 8px 22px rgba(0,0,0,.18);
 }
 
 .k-btn--secondary:hover{
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.04));
-  border-color: rgba(164,75,245,.28);
+  background: rgba(255,255,255,.07);
+  border-color: var(--btn-secondary-border-hover);
   box-shadow:
-    0 26px 110px rgba(0,0,0,.32),
-    0 0 0 1px rgba(164,75,245,.10) inset;
+    inset 0 1px 0 rgba(255,255,255,.14),
+    0 12px 28px rgba(0,0,0,.23);
 }
 
 /* subtle inner gloss line */
@@ -169,23 +172,23 @@
   inset: 1px;
   border-radius: inherit;
   pointer-events:none;
-  background: linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,0));
-  opacity: .22;
+  background: linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,0));
+  opacity: .28;
 }
 
 /* ─────────────────────────────────────────
    Ghost
    ───────────────────────────────────────── */
 .k-btn--ghost{
-  color: rgba(255,255,255,.92);
-  background: var(--btn-surface);
-  border-color: var(--btn-border);
-  backdrop-filter: blur(10px);
+  color: var(--btn-ghost-text);
+  background: var(--btn-ghost-bg);
+  border-color: var(--btn-ghost-border);
 }
 
 .k-btn--ghost:hover{
-  background: rgba(255,255,255,.08);
-  border-color: var(--btn-border-hover);
+  color: rgba(255,255,255,.9);
+  background: var(--btn-ghost-bg-hover);
+  border-color: rgba(255,255,255,.2);
 }
 
 /* ─────────────────────────────────────────

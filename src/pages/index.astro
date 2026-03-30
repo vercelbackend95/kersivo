@@ -3,7 +3,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
 // New sales-first sections
 import HeroSales from "../components/sections/HeroSales/HeroSales.astro";
-import TrustStrip from "../components/sections/TrustStrip/TrustStrip.astro";
 import CaseEvidence from "../components/sections/CaseEvidence/CaseEvidence.astro";
 import TestimonialsNew from "../components/sections/Testimonials/TestimonialsNew.astro";
 import ServicesSnapshot from "../components/sections/ServicesSnapshot/ServicesSnapshot.astro";
@@ -22,32 +21,29 @@ import Footer from "../components/sections/Footer/Footer.astro";
   <!-- 1. Hero: value proposition + CTAs -->
   <HeroSales />
 
-  <!-- 2. Trust strip: instant credibility signals -->
-  <TrustStrip />
-
-  <!-- 3. Case evidence: proof of real business outcome -->
+  <!-- 2. Case evidence: proof of real business outcome -->
   <CaseEvidence />
 
-  <!-- 4. Testimonial + project showcase -->
+  <!-- 3. Testimonial + project showcase -->
   <TestimonialsNew />
 
-  <!-- 5. Services: what exactly can I buy -->
+  <!-- 4. Services: what exactly can I buy -->
   <ServicesSnapshot />
 
-  <!-- 6. Why Kersivo: differentiators with proof -->
+  <!-- 5. Why Kersivo: differentiators with proof -->
   <WhyKersivo />
 
-  <!-- 7. Process: reduce perceived risk -->
+  <!-- 6. Process: reduce perceived risk -->
   <ProcessLite />
 
-  <!-- 8. Fit / Not-fit: lead qualification -->
+  <!-- 7. Fit / Not-fit: lead qualification -->
   <FitSection />
 
-  <!-- 9. FAQ: close pre-contact objections -->
+  <!-- 8. FAQ: close pre-contact objections -->
   <FAQSales />
 
   <!-- 9. Inline contact form: zero-friction lead capture -->
-  <InlineContactLead />
+  <InlineContactLead leadSource="/" />
 
   <!-- 10. Footer: simplified, trustworthy close -->
   <Footer showTopCta={false} />

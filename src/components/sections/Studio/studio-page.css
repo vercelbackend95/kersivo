@@ -420,23 +420,6 @@
   margin-bottom: clamp(20px, 2.5vw, 28px);
 }
 
-.ks-studio-cta__secondary {
-  font-size: var(--small);
-  font-weight: var(--w-semibold);
-  letter-spacing: var(--track-wide);
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.46);
-  text-decoration: none;
-  padding: 4px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
-  transition: color 0.22s ease, border-color 0.22s ease;
-}
-
-.ks-studio-cta__secondary:hover {
-  color: rgba(255, 255, 255, 0.8);
-  border-color: rgba(255, 255, 255, 0.38);
-}
-
 .ks-studio-cta__note {
   font-size: var(--small);
   color: rgba(255, 255, 255, 0.3);

@@ -1,4 +1,5 @@
 ---
+import "../../ui/CtaButton/cta-button.css";
 import "./packages.css";
 import PackagesTable from "./islands/PackagesTable";
 
@@ -14,15 +15,21 @@ const titleId = asPage ? "packages-page-title" : "packages-title";
       <div class="k-pack__kicker">PACKAGES</div>
 
       <TitleTag class="k-pack__title" id={titleId}>
-        Packages & pricing — clear scope,
-        <span class="k-pack__grad">defined outcome.</span>
+        Website packages designed to
+        <span class="k-pack__grad">win better clients.</span>
       </TitleTag>
 
       <p class="k-pack__lead">
-        Clear scope, clean build, and a site that’s ready to earn — without fluffy promises.
+        Clear scope, premium execution, and delivery you can trust. Choose the level that matches your growth stage, then we shape it around your business.
       </p>
+
+      <ul class="k-pack__meta" aria-label="Package standards">
+        <li>UK small business focused</li>
+        <li>Conversion-first structure</li>
+        <li>Fast, SEO-ready build quality</li>
+      </ul>
     </header>
 
-    <PackagesTable client:visible />
+    <PackagesTable client:visible groupHeadingLevel={asPage ? 2 : 3} />
   </div>
 </section>

@@ -15,10 +15,24 @@ type LeadPayload = {
   name?: string;
   email?: string;
   message?: string;
-  website?: string; // honeypot
+  /** Optional URL from the contact form (not a honeypot). */
+  website?: string;
+  /** Honeypot; must stay in sync with LeadForm (`_hp`). */
+  _hp?: string;
+  /** Page path for attribution; must stay in sync with LeadForm (`_source`). */
+  _source?: string;
   startedAt?: number;
   attachments?: AttachmentIn[] | null;
 };
+
+const ALLOWED_LEAD_SOURCES = new Set(["/", "/packages", "/work"]);
+
+function normalizeLeadSource(raw: unknown): string {
+  const s = typeof raw === "string" ? raw.trim() : "";
+  if (!s) return "/";
+  if (ALLOWED_LEAD_SOURCES.has(s)) return s;
+  return "—";
+}
 
 const MAX_FILES = 5;
 const MAX_FILE_BYTES = 3 * 1024 * 1024;
@@ -81,7 +95,9 @@ export const POST: APIRoute = async ({ request }) => {
     const name = (raw.name || "").trim();
     const email = (raw.email || "").trim();
     const message = (raw.message || "").trim();
-    const hp = (raw.website || "").trim();
+    const website = (raw.website || "").trim();
+    const leadSource = normalizeLeadSource(raw._source);
+    const hp = (raw._hp || "").trim();
     const startedAt = typeof raw.startedAt === "number" ? raw.startedAt : undefined;
 
     // Honeypot: bot? udaj sukces i milcz.
@@ -112,7 +128,7 @@ export const POST: APIRoute = async ({ request }) => {
     // Jeśli nie — użyj onboarding@resend.dev (działa zawsze, ale mniej premium).
     const from = process.env.CONTACT_FROM || "Kersivo <onboarding@resend.dev>";
 
-    const subject = `New inquiry — ${name} (${service || "Service"})`;
+    const subject = `New inquiry — ${name} (${service || "Service"}) [${leadSource}]`;
 
     const html = `
       <div style="font-family: ui-sans-serif, -apple-system, Segoe UI, Roboto, Arial; line-height:1.5">
@@ -120,7 +136,9 @@ export const POST: APIRoute = async ({ request }) => {
         <p style="margin:0 0 10px"><b>Name:</b> ${esc(name)}<br/>
         <b>Email:</b> ${esc(email)}<br/>
         <b>Service:</b> ${esc(service || "-")}<br/>
-        <b>Budget:</b> ${esc(budget || "-")}</p>
+        <b>Budget:</b> ${esc(budget || "-")}<br/>
+        <b>Website:</b> ${esc(website || "-")}<br/>
+        <b>Lead source:</b> ${esc(leadSource)}</p>
 
         <p style="margin:14px 0 6px"><b>Message:</b></p>
         <pre style="white-space:pre-wrap;margin:0;padding:12px;border-radius:10px;background:#f6f6f7;border:1px solid #e6e6ea">${esc(
@@ -128,7 +146,7 @@ export const POST: APIRoute = async ({ request }) => {
         )}</pre>
 
         <p style="margin:14px 0 0;color:#666;font-size:12px">
-          Source: kersivo.co.uk contact form
+          Form · kersivo.co.uk · _source: ${esc(leadSource)}
         </p>
       </div>
     `;

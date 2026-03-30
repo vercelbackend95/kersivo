@@ -1,7 +1,61 @@
 /* =====================================================
-   Kersivo — Case Study: Sewing Ataga
-   /work/ premium case study layout
+   Kersivo — Case study pages (shared)
    ===================================================== */
+
+/* ── Back link ────────────────────────────────────── */
+.cs-back {
+  margin: 0 0 clamp(20px, 3vw, 32px);
+  padding: 0;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.cs-back__list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cs-back__list li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.cs-back a {
+  color: rgba(233, 240, 246, 0.88);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(168, 194, 212, 0.28);
+  transition: color 160ms ease, border-color 160ms ease;
+}
+
+.cs-back a:hover {
+  color: rgba(210, 185, 255, 0.95);
+  border-color: rgba(168, 194, 212, 0.52);
+}
+
+.cs-back a:focus-visible {
+  outline: 2px solid rgba(168, 194, 212, 0.7);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.cs-back__sep {
+  color: rgba(255, 255, 255, 0.22);
+  font-weight: 400;
+  user-select: none;
+}
+
+.cs-back__here {
+  color: rgba(255, 255, 255, 0.42);
+  font-weight: 500;
+}
 
 /* ── Page wrapper ─────────────────────────────────── */
 .cs-page {
@@ -69,21 +123,21 @@
 }
 
 .cs-tag--url {
-  color: rgba(185, 155, 255, 0.90);
-  border-color: rgba(160, 120, 255, 0.24);
-  background: rgba(160, 120, 255, 0.06);
+  color: rgba(233, 240, 246, 0.9);
+  border-color: rgba(168, 194, 212, 0.28);
+  background: rgba(168, 194, 212, 0.09);
   text-decoration: none;
   transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
 }
 
 .cs-tag--url:hover {
-  border-color: rgba(160, 120, 255, 0.42);
-  background: rgba(160, 120, 255, 0.12);
-  color: rgba(200, 175, 255, 0.95);
+  border-color: rgba(168, 194, 212, 0.5);
+  background: rgba(168, 194, 212, 0.16);
+  color: rgba(244, 248, 251, 0.96);
 }
 
 .cs-tag--url:focus-visible {
-  outline: 2px solid rgba(160, 120, 255, 0.60);
+  outline: 2px solid rgba(168, 194, 212, 0.72);
   outline-offset: 3px;
 }
 
@@ -179,7 +233,7 @@
   letter-spacing: -0.032em;
   font-weight: 780;
   color: rgba(255, 255, 255, 0.90);
-  border-left: 2px solid rgba(160, 120, 255, 0.55);
+  border-left: 2px solid rgba(168, 194, 212, 0.62);
   padding-left: 24px;
   margin: 0;
 }
@@ -345,14 +399,14 @@
 }
 
 .cs-browser__live:hover {
-  border-color: rgba(160, 120, 255, 0.34);
+  border-color: rgba(168, 194, 212, 0.38);
   transform: translate3d(0, -2px, 0);
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.30);
 }
 
 .cs-browser__live:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(160, 120, 255, 0.40);
+  box-shadow: 0 0 0 3px rgba(168, 194, 212, 0.5);
 }
 
 .cs-browser__caption {
@@ -467,7 +521,7 @@
   font-size: 11px;
   font-weight: 650;
   letter-spacing: 0.10em;
-  color: rgba(160, 120, 255, 0.60);
+  color: rgba(168, 194, 212, 0.7);
   padding-top: 5px;
   font-variant-numeric: tabular-nums;
 }
@@ -495,7 +549,7 @@
   border: 1px solid rgba(255, 255, 255, 0.09);
   background: linear-gradient(
     150deg,
-    rgba(160, 120, 255, 0.055) 0%,
+    rgba(168, 194, 212, 0.08) 0%,
     rgba(0, 0, 0, 0.03) 60%,
     rgba(120, 160, 255, 0.04) 100%
   );
@@ -513,7 +567,7 @@
   height: 360px;
   background: radial-gradient(
     circle,
-    rgba(160, 120, 255, 0.10) 0%,
+    rgba(168, 194, 212, 0.14) 0%,
     transparent 65%
   );
   pointer-events: none;

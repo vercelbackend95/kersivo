@@ -1,0 +1,98 @@
+---
+import "./work-index.css";
+
+type Entry = {
+  kind: string;
+  href: string;
+  imageSrc: string;
+  imageAlt: string;
+  title: string;
+  meta: string;
+  summary: string;
+  cta: string;
+};
+
+const entries: Entry[] = [
+  {
+    kind: "Client project",
+    href: "/work/sewing-ataga/",
+    imageSrc: "/screenshots/sewing-ataga-desktop.jpg",
+    imageAlt: "Sewing Ataga website preview showing premium tailoring service homepage",
+    title: "Sewing Ataga",
+    meta: "Tailoring & alterations — London, UK",
+    summary:
+      "Full website design and build for an established studio: service-led structure, local SEO foundations, and a mobile-first experience tied to real enquiry behaviour.",
+    cta: "Read case study",
+  },
+  {
+    kind: "Studio product · Live demo",
+    href: "/work/barber-website-system/",
+    imageSrc: "/screenshots/barber-system-desktop.jpg",
+    imageAlt: "Barber website system preview with booking and retail interface",
+    title: "Barber website system",
+    meta: "Bookings, retail & admin — UK barbershops",
+    summary:
+      "A live, branded demonstration of a vertical product: one connected system for bookings, shop/pickup, and day-to-day updates — built to show how we ship polished, operational sites at speed.",
+    cta: "Explore product demo",
+  },
+];
+---
+
+<section class="wk-index section" aria-labelledby="wk-index-title">
+  <div class="container">
+    <header class="wk-index__head">
+      <p class="wk-index__eyebrow">Selected work</p>
+      <h1 class="wk-index__title" id="wk-index-title">Evidence, curated.</h1>
+      <p class="wk-index__lead">
+        A focused set of what we have shipped publicly — one live client engagement and one
+        studio product demo. We keep the portfolio small on purpose; further references and
+        situational examples are available on request.
+      </p>
+    </header>
+
+    <ul class="wk-index__list" role="list">
+      {
+        entries.map((item, i) => (
+          <li class="wk-index__item">
+            <a class="wk-card" href={item.href}>
+              <figure class="wk-card__media">
+                <img
+                  class="wk-card__img"
+                  src={item.imageSrc}
+                  alt={item.imageAlt}
+                  width="1200"
+                  height="760"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </figure>
+              <div class="wk-card__body">
+                <span class="wk-card__row">
+                  <span class="wk-card__index" aria-hidden="true">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span class="wk-card__kind">{item.kind}</span>
+                </span>
+                <h2 class="wk-card__title">{item.title}</h2>
+                <p class="wk-card__meta">{item.meta}</p>
+                <p class="wk-card__summary">{item.summary}</p>
+                <span class="wk-card__cta">
+                  <span class="wk-card__ctaLabel">{item.cta}</span>
+                  <span class="wk-card__ctaArrow" aria-hidden="true">
+                    &#8594;
+                  </span>
+                </span>
+              </div>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="wk-index__note" role="note">
+      Commissioned work and confidential builds are not always listed here. If you need
+      category-specific proof (e.g. hospitality, professional services, e-commerce), ask when
+      you enquire — we will share what is appropriate.
+    </p>
+  </div>
+</section>

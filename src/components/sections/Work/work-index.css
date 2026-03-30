@@ -1,0 +1,305 @@
+/* =====================================================
+   Kersivo — /work/ index (selected work hub)
+   ===================================================== */
+
+.wk-index {
+  padding: clamp(56px, 7vw, 96px) 0 clamp(72px, 9vw, 120px);
+}
+
+.wk-index__head {
+  max-width: 720px;
+  padding-top: clamp(12px, 2vw, 28px);
+  margin-bottom: clamp(40px, 5vw, 64px);
+}
+
+.wk-index__eyebrow {
+  margin: 0 0 16px;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.42);
+  font-weight: 600;
+}
+
+.wk-index__title {
+  margin: 0 0 20px;
+  font-size: clamp(44px, 8vw, 96px);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+  color: rgba(255, 255, 255, 0.96);
+  font-weight: 880;
+}
+
+.wk-index__lead {
+  margin: 0;
+  font-size: clamp(16px, 1.35vw, 19px);
+  line-height: 1.62;
+  color: rgba(255, 255, 255, 0.58);
+  letter-spacing: -0.012em;
+  max-width: 56ch;
+}
+
+.wk-index__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: clamp(18px, 2.6vw, 28px);
+}
+
+@media (min-width: 1080px) {
+  .wk-index__list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: clamp(20px, 2vw, 26px);
+  }
+}
+
+.wk-index__item {
+  margin: 0;
+  min-height: 100%;
+}
+
+.wk-card {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100%;
+  min-height: clamp(420px, 46vw, 560px);
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.035) 0%, rgba(255, 255, 255, 0.02) 100%);
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+  transition:
+    border-color 220ms ease,
+    background 220ms ease,
+    transform 260ms cubic-bezier(0.2, 0.9, 0.2, 1),
+    box-shadow 260ms ease;
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+}
+
+.wk-card:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 3px rgba(168, 194, 212, 0.58),
+    0 18px 48px rgba(0, 0, 0, 0.22);
+}
+
+.wk-card__media {
+  position: relative;
+  margin: 0;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(8, 8, 16, 0.65);
+}
+
+.wk-card__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent 56%, rgba(0, 0, 0, 0.38) 100%);
+}
+
+.wk-card__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  transform: scale(1.01);
+  transition: transform 340ms cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+
+.wk-card__body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  padding: clamp(20px, 2.2vw, 30px);
+}
+
+.wk-card__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: clamp(14px, 1.8vw, 18px);
+}
+
+.wk-card__index {
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.12em;
+  color: rgba(168, 194, 212, 0.68);
+  font-variant-numeric: tabular-nums;
+}
+
+.wk-card__kind {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 650;
+  color: rgba(255, 255, 255, 0.46);
+  text-align: right;
+  max-width: min(260px, 58%);
+  line-height: 1.35;
+}
+
+.wk-card__title {
+  margin: 0 0 10px;
+  font-size: clamp(24px, 2.4vw, 34px);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  font-weight: 820;
+  color: rgba(255, 255, 255, 0.94);
+  text-wrap: balance;
+}
+
+.wk-card__meta {
+  margin: 0 0 14px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.44);
+  letter-spacing: -0.01em;
+}
+
+.wk-card__summary {
+  margin: 0;
+  flex: 1;
+  font-size: clamp(14px, 1.08vw, 15px);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.56);
+  letter-spacing: -0.01em;
+  max-width: 52ch;
+  text-wrap: pretty;
+}
+
+.wk-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: clamp(20px, 2.2vw, 26px);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(233, 240, 246, 0.9);
+}
+
+.wk-card__ctaArrow {
+  transition: transform 200ms cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+
+.wk-index__note {
+  margin: clamp(40px, 5vw, 56px) 0 0;
+  max-width: 62ch;
+  font-size: 13px;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.36);
+  letter-spacing: -0.005em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wk-card,
+  .wk-card__ctaArrow,
+  .wk-card__img {
+    transition: none !important;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .wk-card:hover {
+    border-color: rgba(255, 255, 255, 0.22);
+    background: linear-gradient(165deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
+    transform: translate3d(0, -4px, 0);
+    box-shadow:
+      0 22px 52px rgba(0, 0, 0, 0.3),
+      0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+  }
+
+  .wk-card:hover .wk-card__ctaArrow {
+    transform: translate3d(4px, 0, 0);
+  }
+
+  .wk-card:hover .wk-card__img {
+    transform: scale(1.03);
+  }
+}
+
+@media (max-width: 1079px) {
+  .wk-card {
+    min-height: 0;
+  }
+
+  .wk-card__media {
+    aspect-ratio: 16 / 9;
+  }
+}
+
+@media (max-width: 860px) {
+  .wk-index {
+    padding: clamp(48px, 10vw, 72px) 0 clamp(64px, 12vw, 92px);
+  }
+
+  .wk-index__head {
+    margin-bottom: clamp(28px, 7vw, 40px);
+  }
+
+  .wk-index__title {
+    font-size: clamp(36px, 13vw, 56px);
+    line-height: 0.96;
+  }
+
+  .wk-index__lead {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  .wk-card__body {
+    padding: 20px 18px 18px;
+  }
+
+  .wk-card__title {
+    font-size: clamp(24px, 7.2vw, 31px);
+  }
+
+  .wk-card__meta {
+    margin-bottom: 12px;
+  }
+
+  .wk-card__summary {
+    max-width: 60ch;
+  }
+}
+
+@media (max-width: 540px) {
+  .wk-index__list {
+    gap: 16px;
+  }
+
+  .wk-card {
+    border-radius: 18px;
+  }
+
+  .wk-card__media {
+    aspect-ratio: 6 / 4;
+  }
+
+  .wk-card__row {
+    align-items: flex-start;
+  }
+
+  .wk-card__kind {
+    max-width: 62%;
+  }
+
+  .wk-card__summary {
+    font-size: 14px;
+    line-height: 1.62;
+  }
+
+  .wk-card__cta {
+    margin-top: 18px;
+  }
+}

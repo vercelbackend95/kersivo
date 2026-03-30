@@ -3,14 +3,10 @@
 import "./topnav.css";
 import CtaButton from "../../ui/CtaButton/CtaButton.astro";
 import MobileNav from "./MobileNav";
-import { NAV_LINKS } from "./nav-links";
+import { NAV_LINKS, isNavLinkActive, normalisePathname } from "./nav-links";
 
 const rawPath = Astro.url.pathname || "/";
-const pathname = rawPath.replace(/\/+$/, "") || "/";
-
-function navPath(href: string) {
-  return href.split("#")[0].replace(/\/+$/, "") || "/";
-}
+const pathname = normalisePathname(rawPath);
 
 ---
 
@@ -38,7 +34,7 @@ function navPath(href: string) {
           {
             NAV_LINKS.map(({ href, label }) => {
               const hasHash = href.includes("#");
-              const active = hasHash ? false : navPath(href) === pathname;
+              const active = hasHash ? false : isNavLinkActive(href, pathname);
               return (
                 <a
                   class:list={["k-topnav__link", { "is-active": active }]}

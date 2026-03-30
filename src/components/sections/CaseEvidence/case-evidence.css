@@ -7,6 +7,11 @@
   position: relative;
 }
 
+/* Tighter top when stacked after hero (matches former strip adjacency) */
+.ks-case.section {
+  padding-top: clamp(44px, 6vw, 80px);
+}
+
 .ks-case__container {
   display: grid;
   gap: clamp(36px, 5vw, 60px);

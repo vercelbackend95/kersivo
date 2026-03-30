@@ -2,6 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 
 import Packages from "../../components/sections/Packages/Packages.astro";
+import InlineContactLead from "../../components/sections/InlineContactLead/InlineContactLead.astro";
 import Footer from "../../components/sections/Footer/Footer.astro";
 
 const title = "Packages & Pricing — Kersivo";
@@ -11,5 +12,6 @@ const description =
 
 <BaseLayout title={title} description={description}>
   <Packages asPage />
+  <InlineContactLead leadSource="/packages" />
   <Footer />
 </BaseLayout>

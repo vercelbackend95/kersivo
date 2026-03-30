@@ -10,7 +10,12 @@ function cx(...parts: Array<string | false | null | undefined>) {
   return parts.filter(Boolean).join(" ");
 }
 
-export default function LeadForm() {
+export type LeadFormProps = {
+  /** Page path for CRM/email attribution (e.g. /packages). */
+  source?: string;
+};
+
+export default function LeadForm({ source = "/" }: LeadFormProps) {
   const startedAtRef = useRef<number>(Date.now());
   const inFlightRef = useRef(false);
 
@@ -46,7 +51,8 @@ export default function LeadForm() {
         message: message.trim(),
         service: "Website",
         budget: "",
-        _source: "home-inline",
+        _hp: hpField,
+        _source: source,
       };
 
       const res = await fetch(API_ENDPOINT, {
@@ -161,11 +167,21 @@ export default function LeadForm() {
 
       <button
         type="submit"
-        className={cx("ks-lead__submit", sent && "ks-lead__submit--sent")}
+        className={cx("ks-lead__submit", "k-btn", "k-btn--primary", sent && "ks-lead__submit--sent")}
         disabled={!valid || loading}
         aria-busy={loading}
       >
-        {loading ? "Sending…" : "Get a clear next step →"}
+        <span className="k-btn__label">{loading ? "Sending..." : "Get a clear next step"}</span>
+        {!loading && (
+          <>
+            <span className="k-btn__shine" aria-hidden="true" />
+            <span className="k-btn__arrow" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path d="M3 7H11M8 4L11 7L8 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+          </>
+        )}
       </button>
 
       <p className="ks-lead__formNote">

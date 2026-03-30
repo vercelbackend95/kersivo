@@ -1,0 +1,25 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import CaseStudySewingAtaga from "../../../components/sections/Work/CaseStudySewingAtaga.astro";
+import Footer from "../../../components/sections/Footer/Footer.astro";
+
+const title = "Sewing Ataga — Case study · Kersivo";
+const description =
+  "How we designed and built Sewing Ataga's website — mobile-first, service-led, and built for local discovery. Full case study.";
+---
+
+<BaseLayout title={title} description={description}>
+  <CaseStudySewingAtaga />
+  <Footer showTopCta={false} />
+</BaseLayout>
+
+<script>
+  const img = document.querySelector<HTMLImageElement>(".cs-browser__img");
+  if (img) {
+    if (img.complete && img.naturalWidth > 0) {
+      img.classList.add("is-loaded");
+    } else {
+      img.addEventListener("load", () => img.classList.add("is-loaded"), { once: true });
+    }
+  }
+</script>

@@ -4,6 +4,25 @@ export type NavLink = {
   description: string;
 };
 
+/** Normalised pathname: no trailing slash except root is "/". */
+export function normalisePathname(pathname: string): string {
+  const p = (pathname || "/").trim();
+  return p.replace(/\/+$/, "") || "/";
+}
+
+/**
+ * True when this nav href is the current page. `/work/*` child routes highlight "Selected work".
+ */
+export function isNavLinkActive(href: string, pathname: string): boolean {
+  const hasHash = href.includes("#");
+  if (hasHash) return false;
+  const linkPath = normalisePathname(href.split("#")[0] || "/");
+  const path = normalisePathname(pathname);
+  if (linkPath === path) return true;
+  if (linkPath === "/work" && path.startsWith("/work/")) return true;
+  return false;
+}
+
 // Sales-focused IA for the landing flow:
 // orient -> proof -> process -> objections.
 export const NAV_LINKS: NavLink[] = [
@@ -14,8 +33,8 @@ export const NAV_LINKS: NavLink[] = [
   },
   {
     href: "/work/",
-    label: "Work",
-    description: "Selected launches and outcomes",
+    label: "Selected work",
+    description: "Client projects and studio products",
   },
   {
     href: "/packages/",

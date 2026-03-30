@@ -1,0 +1,25 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import CaseStudyBarberWebsiteSystem from "../../../components/sections/Work/CaseStudyBarberWebsiteSystem.astro";
+import Footer from "../../../components/sections/Footer/Footer.astro";
+
+const title = "Barber website system — Studio product demo · Kersivo";
+const description =
+  "Live demonstration of Kersivo's barber vertical website system: integrated bookings, retail and pickup, and admin workflows. Honest product case study.";
+---
+
+<BaseLayout title={title} description={description}>
+  <CaseStudyBarberWebsiteSystem />
+  <Footer showTopCta={false} />
+</BaseLayout>
+
+<script>
+  const img = document.querySelector<HTMLImageElement>(".cs-browser__img");
+  if (img) {
+    if (img.complete && img.naturalWidth > 0) {
+      img.classList.add("is-loaded");
+    } else {
+      img.addEventListener("load", () => img.classList.add("is-loaded"), { once: true });
+    }
+  }
+</script>

@@ -2,6 +2,13 @@
 import "./inline-contact-lead.css";
 import LeadForm from "./islands/LeadForm";
 
+interface Props {
+  /** Sent as `_source` on lead submit; use the page path (e.g. /packages). */
+  leadSource?: string;
+}
+
+const { leadSource = "/" } = Astro.props;
+
 const EMAIL = "hello@kersivo.co.uk";
 
 const bullets = [
@@ -61,7 +68,7 @@ const bullets = [
         </div>
 
         <!-- Right: form -->
-        <LeadForm client:load />
+        <LeadForm client:load source={leadSource} />
 
       </div>
     </div>
