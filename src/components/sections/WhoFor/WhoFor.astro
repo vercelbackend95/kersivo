@@ -1,31 +1,28 @@
 ---
 import "./who-for.css";
 
-const recognitionLines = [
+const fitPoints = [
   {
-    key: "reposition",
-    label: "Reposition",
-    statement: "The business has moved on. The website hasn't.",
-    note: "Often the point where structure, tone, and perceived quality need catching up.",
+    title: "Clear growth intent",
+    text: "You want the website to support better enquiries, not just look newer.",
   },
   {
-    key: "enquiries",
-    label: "Enquiries",
-    statement: "You need fewer vague enquiries and more serious ones.",
-    note: "Usually a clarity problem first: offer, proof, and the next step.",
+    title: "Decision-ready team",
+    text: "The key decision-maker can review direction promptly and keep momentum.",
   },
   {
-    key: "launch",
-    label: "Launch",
-    statement: "You want the launch to feel credible from day one.",
-    note: "A new business still needs a site that looks considered, not improvised.",
+    title: "Quality over shortcuts",
+    text: "You care about a considered build, performance, and long-term maintainability.",
   },
   {
-    key: "process",
-    label: "Process",
-    statement: "You want a clean build, not layers of agency theatre.",
-    note: "Defined scope, calm delivery, and a handover your team can actually use.",
+    title: "Practical collaboration",
+    text: "You prefer focused feedback rounds and straightforward communication over noise.",
   },
+];
+
+const nonFitPoints = [
+  "If lowest price is the only priority, we may not be the right partner.",
+  "If you need a rushed launch without room for structure, quality will suffer.",
 ];
 ---
 
@@ -33,161 +30,54 @@ const recognitionLines = [
   class="k-fit section"
   id="who-its-for"
   aria-label="Who we work best with"
-  data-fit-active={recognitionLines[0].key}
   data-light-zone
-  data-light-x="64"
-  data-light-y="47"
-  data-light-size="1.02"
-  data-light-strength="0.72"
-  data-light-focus="0.4"
+  data-light-x="56"
+  data-light-y="46"
+  data-light-size="0.98"
+  data-light-strength="0.6"
+  data-light-focus="0.3"
 >
-  <div class="container k-fit__container">
-    <div class="k-fit__shell" data-fit-shell>
-      <header class="k-fit__intro" data-fit-intro>
-        <p class="k-fit__kicker">When it clicks</p>
-        <h2 class="k-fit__title">For service businesses that need trust before the first call.</h2>
+  <div class="container">
+    <div class="k-fit__grid">
+      <header class="k-fit__intro">
+        <p class="k-fit__eyebrow">Clarity and standards</p>
+        <h2 class="k-fit__title">Who we work best with.</h2>
         <p class="k-fit__lead">
-          Usually a strong fit when the work is good, the site is lagging behind, and enquiry quality
-          matters more than vanity traffic.
+          We do our best work with service businesses that value clear positioning, calm delivery,
+          and websites built to convert, not just impress.
         </p>
-        <p class="k-fit__micro">If one or two of these feel familiar, the fit is usually strong.</p>
-
-        <div class="k-fit__actions">
-          <a class="k-fit__link" href="/contact/#contact">
-            <span>Book a discovery call</span>
-            <span aria-hidden="true">&rarr;</span>
-          </a>
-          <p class="k-fit__note">No hard sell. Just a clear view on fit.</p>
-        </div>
-
-        <div class="k-fit__bridge" aria-hidden="true">
-          <span class="k-fit__bridgeLine"></span>
-          <span class="k-fit__bridgeDot"></span>
-        </div>
+        <p class="k-fit__support">
+          This helps keep projects focused and outcomes stronger for both sides.
+        </p>
       </header>
 
-      <div class="k-fit__railWrap" data-fit-rail-wrap>
-        <div
-          class="k-fit__rail"
-          role="list"
-          aria-label="Fit signals that usually point to a strong project match"
-          data-fit-rail
-        >
-          {recognitionLines.map((item, index) => (
-            <article
-              class={`k-fit__item k-fit__item--${item.key}${index === 0 ? " is-active" : ""}`}
-              role="listitem"
-              data-fit-item
-              data-fit-key={item.key}
-              style={`--fit-delay:${index * 72}ms;`}
-            >
-              <button
-                class="k-fit__trigger"
-                type="button"
-                data-fit-trigger
-                aria-pressed={index === 0 ? "true" : "false"}
-              >
-                <span class="k-fit__meta">{item.label}</span>
-                <span class="k-fit__statement">{item.statement}</span>
-                <span class="k-fit__support">{item.note}</span>
-              </button>
+      <div class="k-fit__content">
+        <div class="k-fit__standards" role="list" aria-label="Who we work best with">
+          {fitPoints.map((point, index) => (
+            <article class="k-fit__standard" role="listitem">
+              <p class="k-fit__index" aria-hidden="true">{String(index + 1).padStart(2, "0")}</p>
+              <div class="k-fit__body">
+                <h3>{point.title}</h3>
+                <p>{point.text}</p>
+              </div>
             </article>
           ))}
         </div>
+
+        <aside class="k-fit__note" aria-label="When we may not be the best fit">
+          <p class="k-fit__noteTitle">We may not be the best fit if:</p>
+          <ul>
+            {nonFitPoints.map((point) => (
+              <li>{point}</li>
+            ))}
+          </ul>
+        </aside>
+
+        <a class="k-fit__cta" href="/contact/#contact">
+          <span>See if we are a fit</span>
+          <span aria-hidden="true">&rarr;</span>
+        </a>
       </div>
     </div>
   </div>
-
-  <script>
-    (() => {
-      const root = document.querySelector("#who-its-for");
-      if (!root) return;
-
-      const shell = root.querySelector("[data-fit-shell]");
-      const rail = root.querySelector("[data-fit-rail]");
-      const railWrap = root.querySelector("[data-fit-rail-wrap]");
-      const items = Array.from(root.querySelectorAll("[data-fit-item]"));
-      if (!items.length) return;
-
-      const reduced =
-        window.matchMedia &&
-        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const finePointer =
-        window.matchMedia && window.matchMedia("(pointer: fine)").matches;
-      let activeItem = items.find((item) => item.classList.contains("is-active")) || items[0];
-
-      root.dataset.fitEnhanced = "true";
-
-      const updateRailState = (target) => {
-        if (!rail || !railWrap || !target) return;
-
-        const railRect = rail.getBoundingClientRect();
-        const itemRect = target.getBoundingClientRect();
-        const top = Math.max(0, itemRect.top - railRect.top);
-        const height = itemRect.height;
-        const center = top + height / 2;
-
-        rail.style.setProperty("--fit-highlight-top", `${top}px`);
-        rail.style.setProperty("--fit-highlight-height", `${height}px`);
-        railWrap.style.setProperty("--fit-ambient-y", `${center}px`);
-      };
-
-      const setActive = (target) => {
-        if (!target) return;
-        activeItem = target;
-        root.dataset.fitActive = target.dataset.fitKey || "";
-
-        items.forEach((item) => {
-          const on = item === target;
-          item.classList.toggle("is-active", on);
-
-          const trigger = item.querySelector("[data-fit-trigger]");
-          if (trigger) trigger.setAttribute("aria-pressed", on ? "true" : "false");
-        });
-
-        updateRailState(target);
-      };
-
-      items.forEach((item) => {
-        const trigger = item.querySelector("[data-fit-trigger]");
-        if (!trigger) return;
-
-        trigger.addEventListener("click", () => setActive(item));
-        trigger.addEventListener("focus", () => setActive(item));
-
-        if (finePointer) {
-          item.addEventListener("pointerenter", () => setActive(item));
-        }
-      });
-
-      const reveal = () => root.classList.add("is-revealed");
-
-      if (reduced || !("IntersectionObserver" in window)) {
-        reveal();
-      } else {
-        const io = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (!entry.isIntersecting) return;
-              reveal();
-              io.disconnect();
-            });
-          },
-          { threshold: 0.24 }
-        );
-
-        io.observe(shell || root);
-      }
-
-      const syncActiveState = () => updateRailState(activeItem);
-      window.addEventListener("resize", syncActiveState, { passive: true });
-
-      requestAnimationFrame(() => {
-        setActive(activeItem);
-        if (!reduced) {
-          setTimeout(syncActiveState, 140);
-        }
-      });
-    })();
-  </script>
 </section>

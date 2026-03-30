@@ -3,48 +3,25 @@ import "./presence-intro.css";
 
 import CtaButton from "../../ui/CtaButton/CtaButton.astro";
 
-const signals = [
+const blocks = [
   {
-    idx: "01",
-    title: "Who it is for",
-    text:
-      "Established, service-led UK businesses — trades, clinics, studios, and local specialists whose reputation already exists, but the site still undersells it.",
+    number: "01",
+    label: "Who we help",
+    title: "Established UK small businesses",
+    text: "Service-led teams with a strong reputation whose website no longer reflects their quality.",
   },
   {
-    idx: "02",
-    title: "What you receive",
-    text:
-      "Design direction, disciplined front-end, and performance-led engineering — production-ready, maintainable, and built to stay credible as you grow.",
+    number: "02",
+    label: "What you get",
+    title: "A site built to earn trust fast",
+    text: "Premium design, disciplined development, and performance-first foundations shaped for better enquiries.",
   },
   {
-    idx: "03",
-    title: "How we earn trust",
-    text:
-      "Astro-first builds with measured speed, clean structure for search, and a contact path shaped for serious enquiries — not endless funnel noise.",
+    number: "03",
+    label: "What happens next",
+    title: "One clear next step",
+    text: "Share your current site and goals; we reply within 12 hours with fit, scope, and a realistic route.",
   },
-] as const;
-
-const delivery = [
-  {
-    lead: "Direct ownership",
-    rest: "You work with the people actually designing and building — not a rotating cast.",
-  },
-  {
-    lead: "Performance in scope",
-    rest: "Speed and technical hygiene are part of the engagement — not a late upsell.",
-  },
-  {
-    lead: "Calm milestones",
-    rest: "Plain-English checkpoints so you always know what happens next.",
-  },
-] as const;
-
-const manifest =
-  "UK-focused delivery · Astro-first builds · Mobile-first contact paths";
-
-const trustMeta = [
-  { text: "Replies within 12 hours" },
-  { text: "Same team from brief to launch" },
 ] as const;
 ---
 
@@ -59,69 +36,27 @@ const trustMeta = [
   data-light-strength="0.52"
   data-light-focus="0.38"
 >
-  <div class="k-bridge__atmosphere" aria-hidden="true"></div>
-
   <div class="container k-bridge__container">
-    <header class="k-bridge__masthead">
-      <div class="k-bridge__mastheadTop">
-        <span class="k-bridge__rule k-bridge__rule--short" aria-hidden="true"></span>
-        <p class="k-bridge__kicker">Right after the first glance</p>
-      </div>
-
-      <h2 class="k-bridge__title" id="k-bridge-heading">
-        <span class="k-bridge__titleLine">The decision happens</span>
-        <span class="k-bridge__titleLine k-bridge__titleLine--emph">before they scroll.</span>
-      </h2>
-
-      <p class="k-bridge__manifest">{manifest}</p>
-
-      <p class="k-bridge__lead">
-        Trust lands in seconds — usually on a phone. For established UK businesses, we engineer
-        positioning, proof, and contact as one fast, coherent system — aligned with how you work,
-        not how a template expects you to sound.
-      </p>
+    <header class="k-bridge__head">
+      <p class="k-bridge__kicker">Clarity at a glance</p>
     </header>
 
-    <div class="k-bridge__split">
-      <div class="k-bridge__column k-bridge__column--body">
-        <dl class="k-bridge__signals">
-          {signals.map((row) => (
-            <div class="k-bridge__signal">
-              <dt class="k-bridge__signalHead">
-                <span class="k-bridge__signalIdx" aria-hidden="true">{row.idx}</span>
-                <span class="k-bridge__signalTitle">{row.title}</span>
-              </dt>
-              <dd class="k-bridge__signalCopy">{row.text}</dd>
-            </div>
-          ))}
-        </dl>
-      </div>
-
-      <aside class="k-bridge__column k-bridge__column--aside" aria-labelledby="k-bridge-aside-heading">
-        <div class="k-bridge__asideInterior">
-          <h3 class="k-bridge__asideHeading" id="k-bridge-aside-heading">
-            Inside the engagement
-          </h3>
-          <ul class="k-bridge__asideList">
-            {delivery.map((item) => (
-              <li class="k-bridge__asideItem">
-                <span class="k-bridge__asideLead">{item.lead}</span>
-                <span class="k-bridge__asideRest">{item.rest}</span>
-              </li>
-            ))}
-          </ul>
-          <p class="k-bridge__asideFoot">
-            Below: the three reasons teams appoint us — clarity, disciplined delivery, and
-            pages built for better enquiries.
+    <div class="k-bridge__panel" role="list" aria-labelledby="k-bridge-heading">
+      <h2 class="k-bridge__srOnly" id="k-bridge-heading">Who we help, what you get, and what happens next</h2>
+      {blocks.map((block) => (
+        <article class="k-bridge__block" role="listitem">
+          <p class="k-bridge__meta">
+            <span class="k-bridge__number" aria-hidden="true">{block.number}</span>
+            <span class="k-bridge__label">{block.label}</span>
           </p>
-        </div>
-      </aside>
+          <h3 class="k-bridge__title">{block.title}</h3>
+          <p class="k-bridge__copy">{block.text}</p>
+        </article>
+      ))}
     </div>
 
-    <footer class="k-bridge__foot">
-      <div class="k-bridge__footRule" aria-hidden="true"></div>
-      <div class="k-bridge__footInner">
-        <div class="k-bridge__actions">
+    <footer class="k-bridge__ctaRow">
+      <div class="k-bridge__actions">
           <CtaButton
             href="/contact/#contact"
             label="Ask for a quote"
@@ -130,24 +65,8 @@ const trustMeta = [
             magnetic={false}
             arrow={false}
           />
-          <CtaButton
-            href="/process/"
-            label="How we work"
-            variant="ghost"
-            class="k-bridge__ctaGhost"
-            magnetic={false}
-            arrow={true}
-          />
-        </div>
-        <p class="k-bridge__trust">
-          {trustMeta.map((item, i) => (
-            <span class="k-bridge__trustChunk">
-              {i > 0 ? <span class="k-bridge__trustSep" aria-hidden="true">&middot;</span> : null}
-              {item.text}
-            </span>
-          ))}
-        </p>
       </div>
+      <p class="k-bridge__micro">No hard sell. Clear fit-first reply.</p>
     </footer>
   </div>
 </section>
