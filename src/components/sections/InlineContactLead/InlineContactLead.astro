@@ -3,7 +3,7 @@ import "./inline-contact-lead.css";
 import LeadForm from "./islands/LeadForm";
 
 interface Props {
-  /** Sent as `_source` on lead submit; use the page path (e.g. /packages). */
+  /** Sent as `_source` on lead submit; home also honours `?source=` / `?_source=` for deep-page CTAs. */
   leadSource?: string;
 }
 
@@ -32,7 +32,7 @@ const bullets = [
   <div class="container ks-lead__container">
 
     <header class="ks-lead__head">
-      <p class="ks-lead__kicker">When you're ready</p>
+      <p class="k-kicker">When you're ready</p>
       <h2 class="ks-lead__h2" id="ks-lead-heading">
         Tell us about your current site and goals.
       </h2>

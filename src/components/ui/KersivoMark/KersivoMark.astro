@@ -1,0 +1,27 @@
+---
+import { KERSIVO_MARK_PATH } from "../../../site/brand-mark";
+
+interface Props {
+  size?: number;
+  strokeWidth?: number;
+  class?: string;
+}
+
+const { size = 16, strokeWidth = 1.2, class: className = "" } = Astro.props as Props;
+---
+
+<svg
+  class={className}
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  aria-hidden="true"
+>
+  <path
+    d={KERSIVO_MARK_PATH}
+    stroke="currentColor"
+    stroke-width={strokeWidth}
+    stroke-linejoin="round"
+  />
+</svg>

@@ -1,6 +1,7 @@
 export const prerender = false;
 
 import type { APIRoute } from "astro";
+import { normalizeLeadSourceForApi } from "../../../lib/leadSource";
 
 type AttachmentIn = {
   filename: string;
@@ -24,15 +25,6 @@ type LeadPayload = {
   startedAt?: number;
   attachments?: AttachmentIn[] | null;
 };
-
-const ALLOWED_LEAD_SOURCES = new Set(["/", "/packages", "/work"]);
-
-function normalizeLeadSource(raw: unknown): string {
-  const s = typeof raw === "string" ? raw.trim() : "";
-  if (!s) return "/";
-  if (ALLOWED_LEAD_SOURCES.has(s)) return s;
-  return "—";
-}
 
 const MAX_FILES = 5;
 const MAX_FILE_BYTES = 3 * 1024 * 1024;
@@ -96,7 +88,7 @@ export const POST: APIRoute = async ({ request }) => {
     const email = (raw.email || "").trim();
     const message = (raw.message || "").trim();
     const website = (raw.website || "").trim();
-    const leadSource = normalizeLeadSource(raw._source);
+    const leadSource = normalizeLeadSourceForApi(raw._source);
     const hp = (raw._hp || "").trim();
     const startedAt = typeof raw.startedAt === "number" ? raw.startedAt : undefined;
 

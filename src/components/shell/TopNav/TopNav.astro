@@ -2,11 +2,15 @@
 // src/components/shell/TopNav/TopNav.astro
 import "./topnav.css";
 import CtaButton from "../../ui/CtaButton/CtaButton.astro";
+import KersivoMark from "../../ui/KersivoMark/KersivoMark.astro";
+import { CTA_PRIMARY_CONTACT } from "../../../site/cta";
 import MobileNav from "./MobileNav";
+import { homeContactHrefFromPagePath } from "../../../lib/leadSource";
 import { NAV_LINKS, isNavLinkActive, normalisePathname } from "./nav-links";
 
 const rawPath = Astro.url.pathname || "/";
 const pathname = normalisePathname(rawPath);
+const contactCtaHref = homeContactHrefFromPagePath(pathname);
 
 ---
 
@@ -18,14 +22,7 @@ const pathname = normalisePathname(rawPath);
       <div class="k-topnav__inner">
         <a class="k-topnav__brand" href="/" aria-label="Kersivo home">
           <span class="k-topnav__mark" aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path
-                d="M12 3.2 13.1 7.6 17.8 8.5 14.2 10.5 12 14.2 9.8 10.5 6.2 8.5 10.9 7.6 12 3.2Z"
-                stroke="currentColor"
-                stroke-width="1.2"
-                stroke-linejoin="round"
-              />
-            </svg>
+            <KersivoMark size={16} />
           </span>
           <span class="k-topnav__name">Kersivo</span>
         </a>
@@ -51,8 +48,8 @@ const pathname = normalisePathname(rawPath);
 
         <div class="k-topnav__actions">
           <CtaButton
-            href="/#contact"
-            label="Get a quote"
+            href={contactCtaHref}
+            label={CTA_PRIMARY_CONTACT}
             variant="primary"
             class="k-topnav__cta"
           />
@@ -75,7 +72,7 @@ const pathname = normalisePathname(rawPath);
     </div>
   </div>
 
-  <MobileNav client:load />
+  <MobileNav client:load contactHref={contactCtaHref} />
 
   <script>
     import { createActiveSectionScrollSpy } from "./active-section";

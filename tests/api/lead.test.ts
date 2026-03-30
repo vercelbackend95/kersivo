@@ -78,6 +78,47 @@ describe("POST /api/lead", () => {
     expect(payload.html).toContain("/packages");
   });
 
+  it("reflects nested paths such as /studio in the email", async () => {
+    const res = await POST({
+      request: makeLeadRequest({
+        name: "Jane",
+        email: "jane@example.com",
+        message: "Need help with redesign and migration, at least ten chars.",
+        _source: "/studio",
+        service: "Website",
+        budget: "",
+        _hp: "",
+        startedAt: Date.now() - 10_000,
+      }),
+    } as Parameters<typeof POST>[0]);
+
+    expect(res.status).toBe(200);
+    const [, init] = vi.mocked(globalThis.fetch).mock.calls[0];
+    const payload = JSON.parse(String(init?.body));
+    expect(payload.subject).toContain("[/studio]");
+    expect(payload.html).toContain("Lead source:</b> /studio");
+  });
+
+  it("maps invalid _source to an em dash in the email", async () => {
+    const res = await POST({
+      request: makeLeadRequest({
+        name: "Jane",
+        email: "jane@example.com",
+        message: "Need help with redesign and migration, at least ten chars.",
+        _source: "https://evil.example/phish",
+        service: "Website",
+        budget: "",
+        _hp: "",
+        startedAt: Date.now() - 10_000,
+      }),
+    } as Parameters<typeof POST>[0]);
+
+    expect(res.status).toBe(200);
+    const [, init] = vi.mocked(globalThis.fetch).mock.calls[0];
+    const payload = JSON.parse(String(init?.body));
+    expect(payload.html).toContain("Lead source:</b> —");
+  });
+
   it("does not call Resend when honeypot _hp is filled", async () => {
     const res = await POST({
       request: makeLeadRequest({

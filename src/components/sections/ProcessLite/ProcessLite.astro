@@ -1,6 +1,7 @@
 ---
 import "./process-lite.css";
 import CtaButton from "../../ui/CtaButton/CtaButton.astro";
+import { CTA_PRIMARY_CONTACT } from "../../../site/cta";
 
 const steps = [
   {
@@ -38,7 +39,7 @@ const steps = [
   <div class="container ks-process__container">
 
     <header class="ks-process__head">
-      <p class="ks-process__kicker">How we work</p>
+      <p class="k-kicker">How we work</p>
       <h2 class="ks-process__h2" id="ks-process-heading">
         A clear process, without the agency theatre.
       </h2>
@@ -67,7 +68,7 @@ const steps = [
     <div class="ks-process__foot">
       <CtaButton
         href="/#contact"
-        label="Get a quote"
+        label={CTA_PRIMARY_CONTACT}
         variant="secondary"
         arrow={true}
         magnetic={false}

@@ -1,0 +1,36 @@
+---
+import "./home-decision.css";
+import CtaButton from "../../ui/CtaButton/CtaButton.astro";
+import { CTA_PRIMARY_CONTACT, CTA_SECONDARY_PACKAGES } from "../../../site/cta";
+
+interface Props {
+  hint?: string;
+}
+
+const { hint = "" } = Astro.props as Props;
+---
+
+<aside class="k-nextband" aria-label="What you can do next">
+  <div class="container k-nextband__inner">
+    <div class="k-nextband__copy">
+      <p class="k-nextband__title">What next?</p>
+      {hint ? <p class="k-nextband__hint">{hint}</p> : null}
+    </div>
+    <div class="k-nextband__actions">
+      <CtaButton
+        href="/#contact"
+        label={CTA_PRIMARY_CONTACT}
+        variant="primary"
+        magnetic={false}
+        arrow={true}
+      />
+      <CtaButton
+        href="/packages/"
+        label={CTA_SECONDARY_PACKAGES}
+        variant="secondary"
+        magnetic={false}
+        arrow={true}
+      />
+    </div>
+  </div>
+</aside>

@@ -1,6 +1,12 @@
 ---
 import "./studio-page.css";
 import CtaButton from "../../ui/CtaButton/CtaButton.astro";
+import { CTA_PRIMARY_CONTACT, CTA_SECONDARY_WORK } from "../../../site/cta";
+import { homeContactHrefFromPagePath } from "../../../lib/leadSource";
+import { studioAvailability } from "../../../site/studio";
+
+const pagePath = Astro.url.pathname.replace(/\/+$/, "") || "/";
+const homeContactHref = homeContactHrefFromPagePath(pagePath);
 ---
 
 <!-- ============================================================
@@ -254,8 +260,8 @@ import CtaButton from "../../ui/CtaButton/CtaButton.astro";
         <span class="ks-cred-value">United Kingdom</span>
       </li>
       <li class="ks-cred-item">
-        <span class="ks-cred-label">Current availability</span>
-        <span class="ks-cred-value">April – May 2026</span>
+        <span class="ks-cred-label">{studioAvailability.credibilityLabel}</span>
+        <span class="ks-cred-value">{studioAvailability.credibilityValue}</span>
       </li>
       <li class="ks-cred-item">
         <span class="ks-cred-label">Response time</span>
@@ -296,12 +302,12 @@ import CtaButton from "../../ui/CtaButton/CtaButton.astro";
     </p>
 
     <div class="ks-studio-cta__actions">
-      <CtaButton href="/#contact" label="Ask for a quote" variant="primary" />
-      <CtaButton href="/work/" label="See selected work" variant="secondary" magnetic={false} />
+      <CtaButton href={homeContactHref} label={CTA_PRIMARY_CONTACT} variant="primary" />
+      <CtaButton href="/work/" label={CTA_SECONDARY_WORK} variant="secondary" magnetic={false} />
     </div>
 
     <p class="ks-studio-cta__note">
-      Currently accepting projects for April – May 2026
+      {studioAvailability.ctaNote}
     </p>
   </div>
 

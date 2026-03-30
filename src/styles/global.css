@@ -265,10 +265,26 @@ li + li{ margin-top: 8px; }
   gap: 10px;
 }
 
+/* Section kicker — one rule: sentence case in markup, no forced casing */
+.k-kicker{
+  margin: 0;
+  font-size: 11px;
+  font-weight: var(--w-semibold, 650);
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: rgba(255, 255, 255, 0.52);
+}
+
+.k-kicker--md{
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  color: rgba(255, 255, 255, 0.48);
+}
+
 .sectionKicker{
   font-size: 13px;
   letter-spacing: var(--track-wide);
-  text-transform: uppercase;
+  text-transform: none;
   color: var(--muted2);
   font-weight: var(--w-semibold);
 }
@@ -299,8 +315,8 @@ li + li{ margin-top: 8px; }
 
 .k-sectionHead__kicker{
   font-size: 12px;
-  letter-spacing: .18em;
-  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-transform: none;
   color: rgba(255,255,255,.60);
   margin-bottom: 10px;
 }

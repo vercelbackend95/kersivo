@@ -22,11 +22,6 @@
 
 .k-legal__kicker {
   display: inline-block;
-  font-size: 11px;
-  letter-spacing: 0.20em;
-  text-transform: uppercase;
-  font-weight: var(--w-semibold);
-  color: rgba(255, 255, 255, 0.45);
   margin-bottom: 16px;
 }
 

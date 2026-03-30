@@ -1,7 +1,11 @@
 ---
 import "./work.css";
+import { homeContactHrefFromPagePath } from "../../../lib/leadSource";
+import { CTA_PRIMARY_CONTACT } from "../../../site/cta";
 
 const PROJECT_URL = "https://sewingataga.co.uk";
+const pagePath = Astro.url.pathname.replace(/\/+$/, "") || "/";
+const homeContactHref = homeContactHrefFromPagePath(pagePath);
 ---
 
 <article class="cs-page section" aria-labelledby="cs-title">
@@ -21,7 +25,7 @@ const PROJECT_URL = "https://sewingataga.co.uk";
     <!-- ─── 1. HEADER ─────────────────────────────────────── -->
     <header class="cs-header">
       <div class="cs-header__eyebrow">
-        <span class="cs-eyebrow">Case study</span>
+        <span class="k-kicker k-kicker--md">Case study</span>
       </div>
 
       <h1 class="cs-title" id="cs-title">Sewing Ataga</h1>
@@ -254,12 +258,12 @@ const PROJECT_URL = "https://sewingataga.co.uk";
         </p>
         <div class="cs-cta__actions">
           <a
-            href="/#contact"
+            href={homeContactHref}
             class="k-btn k-btn--primary k-btn--magnetic"
             data-magnetic="true"
             data-cta="contact"
           >
-            <span class="k-btn__label">Get in touch</span>
+            <span class="k-btn__label">{CTA_PRIMARY_CONTACT}</span>
             <span class="k-btn__shine" aria-hidden="true"></span>
             <span class="k-btn__arrow" aria-hidden="true">&#8594;</span>
           </a>

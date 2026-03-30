@@ -8,9 +8,10 @@
   overflow: hidden;
   color: rgba(255, 255, 255, 0.94);
 
-  --ks-shell-max: 68rem;
-  --ks-h1-max: 18.8ch;
-  --ks-lead-max: 42ch;
+  --ks-shell-max: 70rem;
+  /* Headline measure: wide enough for longest line at nowrap, still display-tight */
+  --ks-h1-max: min(36ch, calc(100vw - var(--gutter) * 2 - 12px));
+  --ks-lead-max: 44ch;
   --ks-stack-eyebrow-h1: clamp(0.72rem, 1.6vw, 1.1rem);
   --ks-stack-h1-lead: clamp(1.1rem, 2.4vw, 1.9rem);
   --ks-stack-lead-actions: clamp(1.4rem, 2.9vw, 2.25rem);
@@ -59,7 +60,7 @@
   align-items: center;
   text-align: center;
   max-width: min(100%, var(--ks-shell-max));
-  padding-inline: clamp(0px, 1.2vw, 8px);
+  padding-inline: clamp(0px, 1.4vw, 14px);
 }
 
 /* --- Eyebrow --- */
@@ -73,8 +74,8 @@
 
   font-size: clamp(10.5px, 0.66rem + 0.2vw, 12.5px);
   font-weight: var(--w-semibold, 650);
-  letter-spacing: 0.17em;
-  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-transform: none;
   color: rgba(255, 255, 255, 0.56);
   line-height: 1.34;
 }
@@ -144,9 +145,9 @@
   width: 100%;
   max-width: var(--ks-h1-max);
   color: rgba(255, 255, 255, 0.97);
-  font-size: clamp(2rem, 5.15vw + 0.92rem, 5.1rem);
+  font-size: clamp(2.12rem, 5.35vw + 0.88rem, 5.4rem);
   font-weight: var(--w-black, 880);
-  line-height: 0.94;
+  line-height: 0.95;
   letter-spacing: -0.04em;
   text-wrap: balance;
 }
@@ -242,24 +243,24 @@
       env(safe-area-inset-top, 0px) + var(--nav-h, 64px) + clamp(14px, 4.8vw, 24px)
     );
     padding-bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(26px, 4.6vw, 40px));
+    --ks-h1-max: min(30ch, calc(100vw - var(--gutter) * 2 - 8px));
   }
 
   .ks-eyebrow {
-    max-width: 29ch;
+    max-width: min(36ch, calc(100vw - var(--gutter) * 2));
     font-size: clamp(10px, 2.8vw, 11.5px);
-    letter-spacing: 0.13em;
+    letter-spacing: 0.04em;
     line-height: 1.36;
   }
 
   .ks-h1 {
-    max-width: 12.8ch;
-    font-size: clamp(1.8rem, 7vw + 0.26rem, 2.65rem);
-    line-height: 1;
-    letter-spacing: -0.028em;
+    font-size: clamp(1.92rem, 7.5vw + 0.2rem, 2.85rem);
+    line-height: 1.02;
+    letter-spacing: -0.032em;
   }
 
   .ks-lead {
-    max-width: 33ch;
+    max-width: min(40ch, calc(100vw - var(--gutter) * 2 - 16px));
     margin-top: clamp(14px, 4.2vw, 20px);
     font-size: clamp(0.95rem, 0.8vw + 0.78rem, 1rem);
     line-height: 1.6;
@@ -302,12 +303,12 @@
 /* === Small tablet === */
 @media (min-width: 600px) {
   .ks-hero {
-    --ks-h1-max: 15.4ch;
-    --ks-lead-max: 44ch;
+    --ks-h1-max: min(34ch, calc(100vw - var(--gutter) * 2 - 24px));
+    --ks-lead-max: 46ch;
   }
 
   .ks-h1 {
-    font-size: clamp(2.35rem, 4.8vw + 0.8rem, 3.45rem);
+    font-size: clamp(2.48rem, 4.95vw + 0.76rem, 3.65rem);
     line-height: 0.94;
     letter-spacing: -0.037em;
   }
@@ -369,9 +370,9 @@
 /* === Tablet === */
 @media (min-width: 768px) {
   .ks-hero {
-    --ks-shell-max: 62rem;
-    --ks-h1-max: 16.5ch;
-    --ks-lead-max: 46ch;
+    --ks-shell-max: 64rem;
+    --ks-h1-max: min(36ch, calc(100vw - var(--gutter) * 2 - 32px));
+    --ks-lead-max: 48ch;
     --ks-stack-h1-lead: clamp(1.2rem, 2vw, 1.6rem);
     --ks-stack-lead-actions: clamp(1.55rem, 2.4vw, 2rem);
     --ks-stack-actions-trust: clamp(0.85rem, 1.6vw, 1.2rem);
@@ -383,8 +384,8 @@
   }
 
   .ks-h1 {
-    font-size: clamp(2.85rem, 3.5vw + 0.95rem, 4rem);
-    line-height: 0.92;
+    font-size: clamp(2.98rem, 3.65vw + 0.9rem, 4.2rem);
+    line-height: 0.93;
     letter-spacing: -0.045em;
   }
 
@@ -415,9 +416,9 @@
 /* === Laptop / desktop === */
 @media (min-width: 900px) {
   .ks-hero {
-    --ks-shell-max: 66rem;
-    --ks-h1-max: 17.5ch;
-    --ks-lead-max: 47ch;
+    --ks-shell-max: 68rem;
+    --ks-h1-max: min(38ch, calc(100vw - var(--gutter) * 2 - 40px));
+    --ks-lead-max: 49ch;
     min-height: clamp(640px, 87svh, 820px);
     padding-top: calc(
       env(safe-area-inset-top, 0px) + var(--nav-h, 64px) + clamp(46px, 6vw, 82px)
@@ -426,7 +427,7 @@
   }
 
   .ks-h1 {
-    font-size: clamp(3.55rem, 4.4vw + 1.08rem, 5.5rem);
+    font-size: clamp(3.68rem, 4.55vw + 1.02rem, 5.75rem);
     letter-spacing: -0.056em;
   }
 
@@ -456,9 +457,13 @@
 
 @media (min-width: 1200px) {
   .ks-hero {
-    --ks-shell-max: 69rem;
-    --ks-h1-max: 18.8ch;
-    --ks-lead-max: 48ch;
+    --ks-shell-max: 72rem;
+    --ks-h1-max: min(40ch, calc(100vw - var(--gutter) * 2 - 48px));
+    --ks-lead-max: 50ch;
+  }
+
+  .ks-h1 {
+    font-size: clamp(3.68rem, 4.2vw + 1.25rem, 5.85rem);
   }
 }
 

@@ -1,4 +1,6 @@
 ---
+export const prerender = true;
+
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 // New sales-first sections
@@ -12,6 +14,8 @@ import FitSection from "../components/sections/FitSection/FitSection.astro";
 import FAQSales from "../components/sections/FAQSales/FAQSales.astro";
 import InlineContactLead from "../components/sections/InlineContactLead/InlineContactLead.astro";
 import Footer from "../components/sections/Footer/Footer.astro";
+import HomeDecisionBar from "../components/shell/HomeDecisionLayer/HomeDecisionBar.astro";
+import NextStepBand from "../components/shell/HomeDecisionLayer/NextStepBand.astro";
 ---
 
 <BaseLayout
@@ -30,11 +34,19 @@ import Footer from "../components/sections/Footer/Footer.astro";
   <!-- 4. Services: what exactly can I buy -->
   <ServicesSnapshot />
 
+  <NextStepBand
+    hint="Tell us what you need — we reply with fit, scope, and a clear next step."
+  />
+
   <!-- 5. Why Kersivo: differentiators with proof -->
   <WhyKersivo />
 
   <!-- 6. Process: reduce perceived risk -->
   <ProcessLite />
+
+  <NextStepBand
+    hint="If the process fits, the next move is a short brief — then a straight answer on scope."
+  />
 
   <!-- 7. Fit / Not-fit: lead qualification -->
   <FitSection />
@@ -47,4 +59,6 @@ import Footer from "../components/sections/Footer/Footer.astro";
 
   <!-- 10. Footer: simplified, trustworthy close -->
   <Footer showTopCta={false} />
+
+  <HomeDecisionBar />
 </BaseLayout>

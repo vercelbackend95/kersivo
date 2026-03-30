@@ -1,0 +1,89 @@
+---
+import "./home-decision.css";
+import CtaButton from "../../ui/CtaButton/CtaButton.astro";
+import { CTA_PRIMARY_CONTACT, CTA_SECONDARY_PACKAGES } from "../../../site/cta";
+---
+
+<div
+  class="k-homebar"
+  data-home-decision-bar
+  role="region"
+  aria-label="What you can do next"
+  aria-hidden="true"
+>
+  <div class="k-homebar__panel">
+    <div class="k-homebar__text">
+      <p class="k-homebar__label">What next?</p>
+      <p class="k-homebar__line">Get a clear quote — or compare fixed packages first.</p>
+    </div>
+    <div class="k-homebar__actions">
+      <CtaButton
+        href="/#contact"
+        label={CTA_PRIMARY_CONTACT}
+        variant="primary"
+        magnetic={false}
+        arrow={true}
+      />
+      <CtaButton
+        href="/packages/"
+        label={CTA_SECONDARY_PACKAGES}
+        variant="secondary"
+        magnetic={false}
+        arrow={true}
+      />
+    </div>
+  </div>
+</div>
+
+<script>
+  (() => {
+    const root = document.querySelector("[data-home-decision-bar]");
+    if (!(root instanceof HTMLElement)) return;
+
+    const hero = document.querySelector(".ks-hero");
+    const contact = document.querySelector("#contact");
+    if (!hero || !contact) return;
+
+    const reduced =
+      window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const setVisible = (on) => {
+      root.classList.toggle("is-visible", on);
+      root.setAttribute("aria-hidden", on ? "false" : "true");
+      if (on) document.documentElement.setAttribute("data-home-decision-bar", "1");
+      else document.documentElement.removeAttribute("data-home-decision-bar");
+    };
+
+    const compute = () => {
+      const hr = hero.getBoundingClientRect();
+      const cr = contact.getBoundingClientRect();
+      const vh = window.innerHeight;
+
+      const pastHero = hr.bottom < vh * 0.22;
+      const contactNear = cr.top < vh * 0.7;
+
+      setVisible(pastHero && !contactNear);
+    };
+
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        ticking = false;
+        compute();
+      });
+    };
+
+    const thresholds = [0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.45, 0.6, 0.8, 1];
+    const io = new IntersectionObserver(onScroll, { threshold: thresholds });
+    io.observe(hero);
+    io.observe(contact);
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+
+    compute();
+
+  })();
+</script>

@@ -1,7 +1,11 @@
 ---
 import "./work.css";
+import { homeContactHrefFromPagePath } from "../../../lib/leadSource";
+import { CTA_PRIMARY_CONTACT } from "../../../site/cta";
 
 const DEMO_URL = "https://barberdemo.kersivo.co.uk/";
+const pagePath = Astro.url.pathname.replace(/\/+$/, "") || "/";
+const homeContactHref = homeContactHrefFromPagePath(pagePath);
 ---
 
 <article class="cs-page section" aria-labelledby="cs-barber-title">
@@ -20,7 +24,7 @@ const DEMO_URL = "https://barberdemo.kersivo.co.uk/";
 
     <header class="cs-header">
       <div class="cs-header__eyebrow">
-        <span class="cs-eyebrow">Studio product · Live demo</span>
+        <span class="k-kicker k-kicker--md">Studio product · live demo</span>
       </div>
 
       <h1 class="cs-title" id="cs-barber-title">Barber website system</h1>
@@ -248,12 +252,12 @@ const DEMO_URL = "https://barberdemo.kersivo.co.uk/";
         </p>
         <div class="cs-cta__actions">
           <a
-            href="/#contact"
+            href={homeContactHref}
             class="k-btn k-btn--primary k-btn--magnetic"
             data-magnetic="true"
             data-cta="contact"
           >
-            <span class="k-btn__label">Get in touch</span>
+            <span class="k-btn__label">{CTA_PRIMARY_CONTACT}</span>
             <span class="k-btn__shine" aria-hidden="true"></span>
             <span class="k-btn__arrow" aria-hidden="true">&#8594;</span>
           </a>

@@ -1,6 +1,7 @@
 ---
 import "./faq-sales.css";
 import CtaButton from "../../ui/CtaButton/CtaButton.astro";
+import { CTA_PRIMARY_CONTACT } from "../../../site/cta";
 
 const faqs = [
   {
@@ -45,7 +46,7 @@ const faqs = [
   <div class="container ks-faq__container">
 
     <header class="ks-faq__head">
-      <p class="ks-faq__kicker">Before you ask</p>
+      <p class="k-kicker">Before you ask</p>
       <h2 class="ks-faq__h2" id="ks-faq-heading">
         Common questions, answered directly.
       </h2>
@@ -90,8 +91,8 @@ const faqs = [
     <div class="ks-faq__foot">
       <CtaButton
         href="/#contact"
-        label="Get in touch"
-        variant="secondary"
+        label={CTA_PRIMARY_CONTACT}
+        variant="primary"
         arrow={true}
         magnetic={false}
       />

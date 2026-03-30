@@ -12,7 +12,7 @@ const titleId = asPage ? "packages-page-title" : "packages-title";
 <section id="packages" class="section k-packages" aria-labelledby={titleId} data-packages>
   <div class="container">
     <header class="k-pack__head">
-      <div class="k-pack__kicker">PACKAGES</div>
+      <p class="k-kicker k-pack__kicker">Packages</p>
 
       <TitleTag class="k-pack__title" id={titleId}>
         Website packages designed to
@@ -30,6 +30,10 @@ const titleId = asPage ? "packages-page-title" : "packages-title";
       </ul>
     </header>
 
-    <PackagesTable client:visible groupHeadingLevel={asPage ? 2 : 3} />
+    <PackagesTable
+      client:visible
+      groupHeadingLevel={asPage ? 2 : 3}
+      contactCtaHref={asPage ? "/packages/#contact" : "/#contact"}
+    />
   </div>
 </section>

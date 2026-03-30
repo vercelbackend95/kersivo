@@ -2,7 +2,9 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import "./mobile-nav.css";
+import { KersivoMarkIcon } from "../../ui/KersivoMark/KersivoMarkIcon";
 import { NAV_LINKS, isNavLinkActive, normalisePathname } from "./nav-links";
+import { CTA_PRIMARY_CONTACT } from "../../../site/cta";
 
 function normPath(p: string) {
   return normalisePathname((p || "/").trim().split("#")[0] || "/");
@@ -29,7 +31,11 @@ function getFocusable(container: HTMLElement | null): HTMLElement[] {
   );
 }
 
-export default function MobileNav() {
+type MobileNavProps = {
+  contactHref?: string;
+};
+
+export default function MobileNav({ contactHref = "/#contact" }: MobileNavProps) {
   const reduced = useReducedMotion();
 
   const [open, setOpen] = useState(false);
@@ -205,7 +211,7 @@ export default function MobileNav() {
         const url = new URL(href, window.location.href);
         const sameOrigin = url.origin === window.location.origin;
         if (sameOrigin) {
-          window.location.assign(`${url.pathname}${url.hash}`);
+          window.location.assign(`${url.pathname}${url.search}${url.hash}`);
           return;
         }
       } catch {
@@ -281,20 +287,7 @@ export default function MobileNav() {
                 aria-label="Kersivo home"
               >
                 <span className="k-mn__mark" aria-hidden="true">
-                  <svg
-                    width="15"
-                    height="15"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M12 3.2 13.1 7.6 17.8 8.5 14.2 10.5 12 14.2 9.8 10.5 6.2 8.5 10.9 7.6 12 3.2Z"
-                      stroke="currentColor"
-                      strokeWidth="1.2"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
+                  <KersivoMarkIcon size={15} />
                 </span>
                 <span className="k-mn__name">Kersivo</span>
               </a>
@@ -411,14 +404,15 @@ export default function MobileNav() {
             <div className="k-mn__foot">
               <p className="k-mn__footLine">Start your project</p>
               <a
-                href="/#contact"
+                href={contactHref}
                 className="k-btn k-btn--primary k-mn__quote"
+                data-cta="contact"
                 onClick={(event) => {
                   event.preventDefault();
-                  navigateFromMenu("/#contact", "#contact");
+                  navigateFromMenu(contactHref, "#contact");
                 }}
               >
-                <span className="k-btn__label">Get a quote</span>
+                <span className="k-btn__label">{CTA_PRIMARY_CONTACT}</span>
                 <span className="k-btn__shine" aria-hidden="true" />
                 <span className="k-btn__arrow" aria-hidden="true">
                   <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">

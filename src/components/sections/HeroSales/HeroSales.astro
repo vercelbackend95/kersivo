@@ -1,6 +1,7 @@
 ---
 import "./hero-sales.css";
 import CtaButton from "../../ui/CtaButton/CtaButton.astro";
+import { CTA_PRIMARY_CONTACT, CTA_SECONDARY_WORK } from "../../../site/cta";
 
 const trustPoints = [
   "UK-based studio",
@@ -41,7 +42,7 @@ const trustPoints = [
       <div class="ks-actions">
         <CtaButton
           href="/#contact"
-          label="Get a quote"
+          label={CTA_PRIMARY_CONTACT}
           variant="primary"
           class="ks-cta-primary"
           magnetic={false}
@@ -49,7 +50,7 @@ const trustPoints = [
         />
         <CtaButton
           href="/work/"
-          label="See selected work"
+          label={CTA_SECONDARY_WORK}
           variant="secondary"
           class="ks-cta-secondary"
           magnetic={false}

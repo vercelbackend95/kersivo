@@ -26,7 +26,10 @@ const magnetic =
 const classes = `k-btn k-btn--${variant} ${magnetic ? "k-btn--magnetic" : ""} ${extraClass}`.trim();
 const hasShine = variant === "primary";
 const contactHref = (href || "").trim();
-const isContact = contactHref === "#contact" || contactHref.endsWith("/#contact");
+const isContact =
+  contactHref === "#contact" ||
+  contactHref.endsWith("/#contact") ||
+  (/[?&](?:source|_source)=/.test(contactHref) && contactHref.includes("#contact"));
 ---
 
 <a

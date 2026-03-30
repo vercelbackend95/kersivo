@@ -30,28 +30,32 @@ import "./site-bg.css";
     let zones = [];
     let raf = 0;
 
+    /** B2B-quiet: softer base lamp; scroll drives most change in first ~38% of page */
+    const SCROLL_SCENE_RANGE = 0.38;
+
     const defaults = {
-      x: 56,
-      y: 18,
-      size: 1.04,
-      strength: 0.74,
-      spread: 0.78,
+      x: 55,
+      y: 17,
+      size: 1.02,
+      strength: 0.58,
+      spread: 0.74,
     };
 
     let current = { ...defaults };
     let target = { ...defaults };
     let progress = 0;
+    let sceneProgress = 0;
 
     const collectZones = () => {
       zones = Array.from(document.querySelectorAll("[data-light-zone]"));
     };
 
-    const getFallback = (scrollProgress) => ({
-      x: mix(54, 60, scrollProgress),
-      y: mix(16, 30, scrollProgress),
-      size: mix(1.03, 1.12, Math.min(scrollProgress * 1.08, 1)),
-      strength: mix(0.8, 0.62, scrollProgress),
-      spread: mix(0.72, 0.92, scrollProgress),
+    const getFallback = (t) => ({
+      x: mix(55, 58, t),
+      y: mix(17, 24, t),
+      size: mix(1.02, 1.06, Math.min(t * 1.04, 1)),
+      strength: mix(0.58, 0.48, t),
+      spread: mix(0.74, 0.8, t),
     });
 
     const setVars = (state, scrollProgress) => {
@@ -77,9 +81,10 @@ import "./site-bg.css";
         1
       );
 
-      const fallback = getFallback(progress);
+      sceneProgress = clamp(progress / SCROLL_SCENE_RANGE, 0, 1);
+      const fallback = getFallback(sceneProgress);
       const focusLine = viewportHeight * 0.38;
-      const baseWeight = 0.8;
+      const baseWeight = 1.2;
 
       const accum = {
         x: fallback.x * baseWeight,
@@ -109,7 +114,7 @@ import "./site-bg.css";
           1
         );
         const weight =
-          Math.pow(visibility, 1.85) *
+          Math.pow(visibility, 2.35) *
           (0.5 + overlap * 0.5) *
           read(zone, "data-light-weight", 1);
 
@@ -145,7 +150,7 @@ import "./site-bg.css";
         spread: mix(current.spread, target.spread, ease),
       };
 
-      setVars(current, progress);
+      setVars(current, sceneProgress);
 
       const delta =
         Math.abs(current.x - target.x) +
@@ -163,7 +168,7 @@ import "./site-bg.css";
 
       if (!reduced) {
         current = { ...target };
-        setVars(current, progress);
+        setVars(current, sceneProgress);
       }
     };
 

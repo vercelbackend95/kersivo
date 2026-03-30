@@ -7,8 +7,8 @@
 .ks-eyebrow {
   font-size: var(--small);
   font-weight: var(--w-semibold);
-  letter-spacing: var(--track-wide);
-  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-transform: none;
   color: rgba(152, 178, 196, 0.68);
   margin: 0 0 var(--space-4);
 }

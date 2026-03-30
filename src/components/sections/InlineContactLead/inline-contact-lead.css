@@ -19,15 +19,6 @@
   max-width: 56ch;
 }
 
-.ks-lead__kicker {
-  margin: 0;
-  font-size: 11px;
-  font-weight: var(--w-semibold, 650);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.5);
-}
-
 .ks-lead__h2 {
   margin: 0;
   font-size: clamp(2rem, 4vw + 0.4rem, 3.25rem);
@@ -274,6 +265,12 @@
   border-color: rgba(255, 120, 120, 0.24);
   background: rgba(255, 120, 120, 0.07);
   color: rgba(255, 255, 255, 0.9);
+}
+
+.ks-lead__notice--wait {
+  border-color: rgba(200, 210, 255, 0.2);
+  background: rgba(140, 170, 255, 0.07);
+  color: rgba(255, 255, 255, 0.88);
 }
 
 .ks-lead__formNote {

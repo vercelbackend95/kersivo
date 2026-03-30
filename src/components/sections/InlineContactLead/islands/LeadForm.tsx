@@ -1,6 +1,10 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { parseLeadSourceFromSearch } from "../../../../lib/leadSource";
+import { CTA_PRIMARY_CONTACT } from "../../../../site/cta";
 
 const API_ENDPOINT = "/api/lead";
+/** Min time on page before submit (ms); blocks instant bot posts. */
+const MIN_SUBMIT_MS = 1400;
 
 function isEmail(v: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
@@ -19,6 +23,8 @@ export default function LeadForm({ source = "/" }: LeadFormProps) {
   const startedAtRef = useRef<number>(Date.now());
   const inFlightRef = useRef(false);
 
+  const [resolvedSource, setResolvedSource] = useState(source);
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [website, setWebsite] = useState("");
@@ -28,8 +34,34 @@ export default function LeadForm({ source = "/" }: LeadFormProps) {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
+  const [paceNotice, setPaceNotice] = useState("");
+  const [submitBlockedUntil, setSubmitBlockedUntil] = useState(0);
+  const [, setCooldownTick] = useState(0);
 
   const valid = name.trim().length > 0 && isEmail(email) && message.trim().length > 0;
+
+  const cooldownRemainingMs =
+    submitBlockedUntil > Date.now() ? submitBlockedUntil - Date.now() : 0;
+  const onSubmitCooldown = cooldownRemainingMs > 0;
+  const cooldownLabelSec = onSubmitCooldown ? Math.max(1, Math.ceil(cooldownRemainingMs / 1000)) : 0;
+
+  useEffect(() => {
+    const fromUrl = parseLeadSourceFromSearch(window.location.search);
+    setResolvedSource(fromUrl !== null ? fromUrl : source);
+  }, [source]);
+
+  useEffect(() => {
+    if (!onSubmitCooldown) return;
+    const id = window.setInterval(() => {
+      setCooldownTick((n) => n + 1);
+      if (Date.now() >= submitBlockedUntil) {
+        window.clearInterval(id);
+        setSubmitBlockedUntil(0);
+        setPaceNotice("");
+      }
+    }, 200);
+    return () => window.clearInterval(id);
+  }, [onSubmitCooldown, submitBlockedUntil]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,11 +69,19 @@ export default function LeadForm({ source = "/" }: LeadFormProps) {
     if (hpField) return; // honeypot
 
     const elapsed = Date.now() - startedAtRef.current;
-    if (elapsed < 1400) return; // bot guard
+    if (elapsed < MIN_SUBMIT_MS) {
+      setPaceNotice(
+        "Please wait a moment before sending. This short pause helps us block automated submissions."
+      );
+      setSubmitBlockedUntil(Date.now() + (MIN_SUBMIT_MS - elapsed));
+      return;
+    }
 
     inFlightRef.current = true;
     setLoading(true);
     setError("");
+    setPaceNotice("");
+    setSubmitBlockedUntil(0);
 
     try {
       const body = {
@@ -52,7 +92,7 @@ export default function LeadForm({ source = "/" }: LeadFormProps) {
         service: "Website",
         budget: "",
         _hp: hpField,
-        _source: source,
+        _source: resolvedSource,
       };
 
       const res = await fetch(API_ENDPOINT, {
@@ -161,6 +201,12 @@ export default function LeadForm({ source = "/" }: LeadFormProps) {
         />
       </div>
 
+      {paceNotice && (
+        <p className="ks-lead__notice ks-lead__notice--wait" role="status" aria-live="polite">
+          {paceNotice}
+        </p>
+      )}
+
       {error && (
         <p className="ks-lead__notice ks-lead__notice--err" role="alert">{error}</p>
       )}
@@ -168,10 +214,16 @@ export default function LeadForm({ source = "/" }: LeadFormProps) {
       <button
         type="submit"
         className={cx("ks-lead__submit", "k-btn", "k-btn--primary", sent && "ks-lead__submit--sent")}
-        disabled={!valid || loading}
+        disabled={!valid || loading || onSubmitCooldown}
         aria-busy={loading}
       >
-        <span className="k-btn__label">{loading ? "Sending..." : "Get a clear next step"}</span>
+        <span className="k-btn__label">
+          {loading
+            ? "Sending..."
+            : onSubmitCooldown
+              ? `Wait ${cooldownLabelSec}s…`
+              : CTA_PRIMARY_CONTACT}
+        </span>
         {!loading && (
           <>
             <span className="k-btn__shine" aria-hidden="true" />

@@ -72,15 +72,6 @@
   margin-bottom: 18px;
 }
 
-.cs-eyebrow {
-  display: inline-block;
-  font-size: 12px;
-  letter-spacing: 0.20em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.42);
-  font-weight: 600;
-}
-
 .cs-title {
   margin: 0;
   font-size: clamp(56px, 9.5vw, 124px);

@@ -146,8 +146,12 @@ const {
             const here = new URL(location.href);
             const sameOrigin = u.origin === here.origin;
             const samePath = normPath(u.pathname) === normPath(here.pathname);
+            if (!sameOrigin || !samePath) return false;
 
-            return sameOrigin && samePath;
+            const q = new URLSearchParams(u.search || "");
+            if (q.has("source") || q.has("_source")) return false;
+
+            return true;
           } catch {
             return false;
           }

@@ -1,9 +1,9 @@
 :root{
-  --lamp-x: 56%;
-  --lamp-y: 18%;
-  --lamp-size: 1.04;
-  --lamp-strength: 0.74;
-  --lamp-spread: 0.78;
+  --lamp-x: 55%;
+  --lamp-y: 17%;
+  --lamp-size: 1.02;
+  --lamp-strength: 0.58;
+  --lamp-spread: 0.74;
   --scene-progress: 0;
 }
 
@@ -15,7 +15,7 @@
   overflow: hidden;
   isolation: isolate;
   background:
-    radial-gradient(120% 92% at 50% -10%, rgba(255,255,255,.05), transparent 62%),
+    radial-gradient(120% 92% at 50% -10%, rgba(255,255,255,.028), transparent 62%),
     linear-gradient(180deg, #090a0d 0%, #06070a 42%, #050608 100%);
 }
 
@@ -31,9 +31,9 @@
 
 .site-bg__base{
   background:
-    linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0) 28%),
-    radial-gradient(88% 64% at 50% 14%, rgba(255,255,255,.03), transparent 76%);
-  opacity: .9;
+    linear-gradient(180deg, rgba(255,255,255,.026), rgba(255,255,255,0) 28%),
+    radial-gradient(88% 64% at 50% 14%, rgba(255,255,255,.02), transparent 76%);
+  opacity: .82;
 }
 
 .site-bg__lamp{
@@ -42,13 +42,13 @@
     radial-gradient(
       calc(88vw * var(--lamp-size)) calc(62vw * var(--lamp-size))
       at var(--lamp-x) var(--lamp-y),
-      rgba(var(--scene-ivory-rgb), calc(0.16 * var(--lamp-strength))) 0%,
-      rgba(var(--scene-steel-rgb), calc(0.11 * var(--lamp-strength))) 24%,
-      rgba(var(--scene-ivory-rgb), calc(0.04 * var(--lamp-strength))) 44%,
+      rgba(var(--scene-ivory-rgb), calc(0.1 * var(--lamp-strength))) 0%,
+      rgba(var(--scene-steel-rgb), calc(0.07 * var(--lamp-strength))) 24%,
+      rgba(var(--scene-ivory-rgb), calc(0.028 * var(--lamp-strength))) 44%,
       rgba(255,255,255,0) 70%
     );
   mix-blend-mode: screen;
-  opacity: .96;
+  opacity: .72;
   transform: translateZ(0);
 }
 
@@ -58,17 +58,17 @@
     radial-gradient(
       calc(54vw * var(--lamp-spread)) calc(26vw * var(--lamp-spread))
       at var(--lamp-x) calc(var(--lamp-y) - 10%),
-      rgba(var(--scene-ivory-rgb), calc(0.18 * var(--lamp-strength))) 0%,
-      rgba(var(--scene-ivory-rgb), calc(0.08 * var(--lamp-strength))) 34%,
+      rgba(var(--scene-ivory-rgb), calc(0.1 * var(--lamp-strength))) 0%,
+      rgba(var(--scene-ivory-rgb), calc(0.048 * var(--lamp-strength))) 34%,
       rgba(255,255,255,0) 78%
     ),
     radial-gradient(
       calc(112vw * var(--lamp-spread)) calc(62vw * var(--lamp-spread))
       at var(--lamp-x) calc(var(--lamp-y) + 16%),
-      rgba(var(--scene-steel-rgb), calc(0.1 * var(--lamp-strength))) 0%,
+      rgba(var(--scene-steel-rgb), calc(0.06 * var(--lamp-strength))) 0%,
       rgba(var(--scene-shadow-rgb), 0) 72%
     );
-  opacity: .82;
+  opacity: .58;
   mask-image: linear-gradient(180deg, rgba(0,0,0,.98), rgba(0,0,0,.66) 44%, transparent 100%);
   -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,.98), rgba(0,0,0,.66) 44%, transparent 100%);
 }
@@ -76,21 +76,21 @@
 .site-bg__architecture{
   inset: 0;
   background-image:
-    linear-gradient(90deg, rgba(255,255,255,.028) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(255,255,255,.016) 1px, transparent 1px);
+    linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255,255,255,.01) 1px, transparent 1px);
   background-size:
     15vw 100%,
     100% 18vh;
   background-position:
     center top,
     center top;
-  opacity: calc(.16 + (var(--lamp-strength) * .08));
-  mask-image: radial-gradient(120% 70% at var(--lamp-x) 12%, #000 0%, rgba(0,0,0,.78) 44%, transparent 86%);
-  -webkit-mask-image: radial-gradient(120% 70% at var(--lamp-x) 12%, #000 0%, rgba(0,0,0,.78) 44%, transparent 86%);
+  opacity: calc(.09 + (var(--lamp-strength) * .05));
+  mask-image: radial-gradient(120% 70% at var(--lamp-x) 12%, #000 0%, rgba(0,0,0,.62) 44%, transparent 86%);
+  -webkit-mask-image: radial-gradient(120% 70% at var(--lamp-x) 12%, #000 0%, rgba(0,0,0,.62) 44%, transparent 86%);
 }
 
 .site-bg__grain{
-  opacity: .08;
+  opacity: .055;
   background-image:
     linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0) 28%),
     repeating-linear-gradient(180deg, rgba(255,255,255,.012) 0 1px, transparent 1px 3px);
@@ -102,9 +102,9 @@
 .site-bg__vignette{
   inset: -12%;
   background:
-    radial-gradient(82% 64% at 50% 18%, transparent 52%, rgba(0,0,0,.7) 100%),
-    linear-gradient(180deg, rgba(0,0,0,.02), rgba(0,0,0,.22) 68%, rgba(0,0,0,.34) 100%);
-  opacity: .96;
+    radial-gradient(82% 64% at 50% 18%, transparent 52%, rgba(0,0,0,.58) 100%),
+    linear-gradient(180deg, rgba(0,0,0,.015), rgba(0,0,0,.16) 68%, rgba(0,0,0,.26) 100%);
+  opacity: .9;
 }
 
 @media (max-width: 900px){
@@ -112,7 +112,7 @@
     background-size:
       22vw 100%,
       100% 20vh;
-    opacity: calc(.12 + (var(--lamp-strength) * .06));
+    opacity: calc(.07 + (var(--lamp-strength) * .04));
   }
 
   .site-bg__beam{

@@ -1,6 +1,9 @@
 ---
 import "./footer.css";
 import CtaButton from "../../ui/CtaButton/CtaButton.astro";
+import KersivoMark from "../../ui/KersivoMark/KersivoMark.astro";
+import { homeContactHrefFromPagePath } from "../../../lib/leadSource";
+import { CTA_PRIMARY_CONTACT } from "../../../site/cta";
 
 const year = new Date().getFullYear();
 
@@ -13,7 +16,7 @@ const footCardClasses = `k-footcard${showTopCta ? "" : " k-footcard--flush"}`;
 
 /** Pages that render InlineContactLead with `id="contact"` (same-origin anchor). */
 const path = Astro.url.pathname.replace(/\/+$/, "") || "/";
-const contactHref = path === "/packages" ? "/packages/#contact" : "/#contact";
+const contactHref = homeContactHrefFromPagePath(path);
 
 const nav = [
   {
@@ -62,7 +65,7 @@ const legal = [
         </p>
 
         <div class="k-footcta__actions">
-          <CtaButton href="/#contact" label="Get a quote" variant="primary" />
+          <CtaButton href={contactHref} label={CTA_PRIMARY_CONTACT} variant="primary" />
         </div>
       </div>
     </div>
@@ -73,20 +76,7 @@ const legal = [
         <div class="k-footcard__brand">
           <a class="k-footcard__logo" href="/" aria-label="Kersivo home">
             <span class="k-footcard__mark" aria-hidden="true">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M12 2l1.2 5.1L18 8.3l-4.4 2.4L12 16l-1.6-5.3L6 8.3l4.8-1.2L12 2Z"
-                  stroke="currentColor"
-                  stroke-width="1.6"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M19.5 13l.6 2.3 2.4.6-2.4.6-.6 2.3-.6-2.3-2.4-.6 2.4-.6.6-2.3Z"
-                  stroke="currentColor"
-                  stroke-width="1.6"
-                  stroke-linejoin="round"
-                />
-              </svg>
+              <KersivoMark size={18} />
             </span>
             <span class="k-footcard__name">Kersivo</span>
           </a>

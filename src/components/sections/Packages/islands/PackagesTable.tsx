@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { CTA_PRIMARY_CONTACT } from "../../../../site/cta";
 
 type TierKey = "base" | "plus" | "bespoke";
 
@@ -49,9 +50,14 @@ function QuoteCta({ href, label, compact }: { href: string; label: string; compa
 type PackagesTableProps = {
   /** Section title is h1 on /packages → groups should be h2; on landing, section is h2 → groups as h3. */
   groupHeadingLevel?: 2 | 3;
+  /** Contact form anchor; on /packages use same-path hash so tier context is not lost. */
+  contactCtaHref?: string;
 };
 
-export default function PackagesTable({ groupHeadingLevel = 3 }: PackagesTableProps) {
+export default function PackagesTable({
+  groupHeadingLevel = 3,
+  contactCtaHref = "/#contact",
+}: PackagesTableProps) {
   const GroupHeadingTag: "h2" | "h3" = groupHeadingLevel === 2 ? "h2" : "h3";
   const tiers: Tier[] = useMemo(
     () => [
@@ -60,16 +66,16 @@ export default function PackagesTable({ groupHeadingLevel = 3 }: PackagesTablePr
         name: "Base",
         price: "From £750",
         note: "Professional starter package",
-        cta: "Get a quote",
-        ctaHref: "/#contact",
+        cta: CTA_PRIMARY_CONTACT,
+        ctaHref: contactCtaHref,
       },
       {
         key: "plus",
         name: "Plus",
         price: "From £1,350",
         note: "Most chosen for growth",
-        cta: "Get a quote",
-        ctaHref: "/#contact",
+        cta: CTA_PRIMARY_CONTACT,
+        ctaHref: contactCtaHref,
         featured: true,
       },
       {
@@ -77,11 +83,11 @@ export default function PackagesTable({ groupHeadingLevel = 3 }: PackagesTablePr
         name: "Bespoke",
         price: "From £2,450",
         note: "Tailored for advanced scope",
-        cta: "Get a quote",
-        ctaHref: "/#contact",
+        cta: CTA_PRIMARY_CONTACT,
+        ctaHref: contactCtaHref,
       },
     ],
-    []
+    [contactCtaHref]
   );
 
   const rows: Row[] = useMemo(

@@ -25,15 +25,6 @@
   max-width: 56ch;
 }
 
-.ks-why__kicker {
-  margin: 0;
-  font-size: 11px;
-  font-weight: var(--w-semibold, 650);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.5);
-}
-
 .ks-why__h2 {
   margin: 0;
   font-size: clamp(2rem, 4.2vw + 0.4rem, 3.5rem);
