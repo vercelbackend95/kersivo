@@ -1,0 +1,14 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import StudioPage from "../../components/sections/Studio/StudioPage.astro";
+import Footer from "../../components/sections/Footer/Footer.astro";
+
+const title = "Studio — Kersivo";
+const description =
+  "Kersivo is a founder-led web design studio built on strategy, precision, and a commitment to quality. Meet the person behind the work.";
+---
+
+<BaseLayout title={title} description={description}>
+  <StudioPage />
+  <Footer showTopCta={false} />
+</BaseLayout>

@@ -13,14 +13,24 @@ export const NAV_LINKS: NavLink[] = [
     description: "What we can build for your business",
   },
   {
-    href: "/#case-evidence",
-    label: "Case evidence",
-    description: "Real outcomes from recent projects",
+    href: "/work/",
+    label: "Work",
+    description: "Selected launches and outcomes",
+  },
+  {
+    href: "/packages/",
+    label: "Packages",
+    description: "Scope, pricing, and delivery",
   },
   {
     href: "/#process-overview",
     label: "Process",
     description: "How we move from brief to launch",
+  },
+  {
+    href: "/studio/",
+    label: "Studio",
+    description: "The person and principles behind Kersivo",
   },
   {
     href: "/#faq",

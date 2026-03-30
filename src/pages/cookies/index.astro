@@ -1,0 +1,97 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import LegalPage from "../../components/sections/Legal/LegalPage.astro";
+import Footer from "../../components/sections/Footer/Footer.astro";
+---
+
+<BaseLayout
+  title="Cookie Policy — Kersivo"
+  description="How Kersivo uses cookies and similar technologies on this website. Simple, transparent, and UK-compliant."
+>
+  <LegalPage
+    kicker="Legal"
+    title="Cookie Policy"
+    lead="A clear explanation of what cookies this website uses and why — kept short and honest."
+    updated="March 2026"
+  >
+
+    <h2>What are cookies?</h2>
+    <p>
+      Cookies are small text files stored on your device when you visit a website. They help the site
+      function correctly, remember your preferences, and — where used — understand how people are
+      using the site.
+    </p>
+    <p>
+      We keep our use of cookies minimal. We do not use advertising cookies, social media tracking
+      pixels, or third-party retargeting.
+    </p>
+
+    <h2>Essential cookies</h2>
+    <p>
+      These cookies are necessary for the website to function and cannot be disabled. They do not
+      store any personally identifiable information.
+    </p>
+    <ul>
+      <li><strong>Session management</strong> — used to maintain basic functionality during your visit</li>
+      <li><strong>Form security</strong> — used to protect our contact form from automated abuse</li>
+    </ul>
+
+    <h2>Analytics cookies</h2>
+    <p>
+      We may use privacy-respecting analytics tools to understand how visitors interact with this
+      website — such as which pages are most viewed or where traffic originates. These tools are
+      configured to:
+    </p>
+    <ul>
+      <li>Anonymise IP addresses before processing</li>
+      <li>Not build personal profiles of individual visitors</li>
+      <li>Not share data with advertising platforms</li>
+    </ul>
+    <p>
+      Analytics data is used solely to improve the website and better serve our visitors.
+    </p>
+
+    <h2>What we do not use</h2>
+    <p>To be explicit, this website does not use:</p>
+    <ul>
+      <li>Advertising or retargeting cookies</li>
+      <li>Social media tracking pixels (Facebook, Instagram, TikTok, etc.)</li>
+      <li>Third-party data brokers or audience tools</li>
+    </ul>
+
+    <h2>Your choices</h2>
+    <p>
+      You can manage or disable cookies at any time through your browser settings. Please note that
+      disabling essential cookies may affect how the website functions.
+    </p>
+    <p>
+      Most modern browsers allow you to view, delete, and block cookies. For guidance, visit your
+      browser's help documentation or <a href="https://www.aboutcookies.org" target="_blank" rel="noopener noreferrer">aboutcookies.org</a>.
+    </p>
+
+    <h2>Changes to this policy</h2>
+    <p>
+      If we make changes to how we use cookies, this page will be updated. The date at the top reflects
+      the most recent revision.
+    </p>
+
+    <div class="k-legal__contact">
+      <div class="k-legal__contact-icon" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.7"/>
+          <path d="M3 7l9 7 9-7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="k-legal__contact-body">
+        <span class="k-legal__contact-label">Questions about cookies?</span>
+        <p class="k-legal__contact-text">
+          Email us at <a href="mailto:hello@kersivo.co.uk">hello@kersivo.co.uk</a> —
+          we reply within 12 hours on business days.
+        </p>
+      </div>
+    </div>
+
+  </LegalPage>
+
+  <Footer showTopCta={false} />
+</BaseLayout>

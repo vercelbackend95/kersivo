@@ -189,29 +189,51 @@
 
 .ks-cta-primary {
   --btn-h: clamp(50px, 6.2vw, 56px);
-  --btn-pad: clamp(18px, 2.6vw, 24px);
-  --btn-primary-radius: 11px;
-  color: #091015;
+  --btn-pad: clamp(20px, 2.8vw, 26px);
+  --btn-primary-radius: 12px;
+  --btn-track: 0.022em;
+
+  color: #0a1014;
   background: linear-gradient(
-    135deg,
-    rgba(245, 243, 236, 0.98),
-    rgba(218, 225, 231, 0.94)
+    150deg,
+    rgba(253, 251, 245, 1.0) 0%,
+    rgba(239, 235, 225, 0.98) 100%
   );
-  border: 1px solid rgba(255, 255, 255, 0.24);
+  border: 1px solid rgba(255, 251, 240, 0.40);
   box-shadow:
-    0 18px 44px rgba(0, 0, 0, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    inset 0 1px 0 rgba(255, 255, 255, 0.60),
+    0 1px 3px rgba(0, 0, 0, 0.07),
+    0 5px 16px rgba(0, 0, 0, 0.13),
+    0 16px 40px rgba(0, 0, 0, 0.12);
+
+  /* extend base transition with filter */
+  transition:
+    transform 200ms cubic-bezier(.2, .9, .2, 1),
+    background 220ms ease,
+    border-color 180ms ease,
+    box-shadow 220ms ease,
+    filter 200ms ease;
 }
 
 .ks-cta-primary:hover {
-  filter: none;
+  filter: brightness(1.038);
   box-shadow:
-    0 22px 52px rgba(0, 0, 0, 0.27),
-    inset 0 1px 0 rgba(255, 255, 255, 0.56);
+    inset 0 1px 0 rgba(255, 255, 255, 0.66),
+    0 2px 6px rgba(0, 0, 0, 0.09),
+    0 8px 22px rgba(0, 0, 0, 0.17),
+    0 20px 48px rgba(0, 0, 0, 0.15);
 }
 
+/* Adapt specular sweep for warm ivory surface */
 .ks-cta-primary .k-btn__shine {
-  display: none;
+  background: linear-gradient(
+    102deg,
+    transparent 18%,
+    rgba(255, 255, 255, 0.06) 38%,
+    rgba(255, 255, 255, 0.38) 50%,
+    rgba(255, 255, 255, 0.06) 62%,
+    transparent 82%
+  );
 }
 
 .ks-actions .k-btn {
@@ -321,7 +343,7 @@
 
   .ks-cta-primary {
     --btn-h: 50px;
-    --btn-pad: clamp(15px, 3.4vw, 18px);
+    --btn-pad: clamp(17px, 3.8vw, 21px);
   }
 
   .ks-cta-secondary {

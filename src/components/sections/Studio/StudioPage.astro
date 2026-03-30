@@ -1,0 +1,309 @@
+---
+import "./studio-page.css";
+import CtaButton from "../../ui/CtaButton/CtaButton.astro";
+---
+
+<!-- ============================================================
+     SECTION 1 — Opening Statement
+     ============================================================ -->
+<section
+  class="ks-intro"
+  aria-label="Studio introduction"
+  data-light-zone
+  data-light-x="46"
+  data-light-y="12"
+  data-light-size="1.2"
+  data-light-strength="0.78"
+  data-light-focus="0.18"
+>
+  <div class="container ks-intro__contain">
+    <p class="ks-eyebrow">Kersivo Studio</p>
+
+    <h1 class="ks-intro__headline">
+      <span class="ks-line">Good design is</span>
+      <span class="ks-line">a business decision,</span>
+      <span class="ks-line"><em class="ks-em">not an aesthetic one.</em></span>
+    </h1>
+
+    <p class="ks-intro__sub">
+      A founder-led web studio built on strategy, precision, and a stubborn
+      commitment to quality — for established UK small businesses.
+    </p>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 2 — Founder
+     ============================================================ -->
+<section
+  class="ks-founder"
+  aria-labelledby="founder-heading"
+  data-light-zone
+  data-light-x="74"
+  data-light-y="52"
+  data-light-size="0.88"
+  data-light-strength="0.62"
+  data-light-focus="0.24"
+>
+  <div class="container ks-founder__contain">
+
+    <!-- Portrait — sticky on desktop, static on tablet/mobile -->
+    <div class="ks-portrait-wrap">
+      <!-- Replace /studio/founder.jpg with your actual portrait (3:4 recommended) -->
+      <div class="ks-portrait">
+        <span class="ks-portrait__fallback" aria-hidden="true">AK</span>
+        <img
+          class="ks-portrait__img"
+          src="/studio/founder.jpg"
+          alt="Alex Kerr — Founder, Kersivo"
+          width="480"
+          height="640"
+          loading="eager"
+          decoding="async"
+          onerror="this.style.visibility='hidden'"
+        />
+      </div>
+    </div>
+
+    <!-- Bio -->
+    <div class="ks-founder__bio">
+      <header class="ks-founder__header">
+        <p class="ks-eyebrow">The person behind the work</p>
+
+        <!-- Replace "Alex Kerr" with your name -->
+        <h2 id="founder-heading" class="ks-founder__name">Alex Kerr</h2>
+        <p class="ks-founder__role">Founder · Designer · Developer</p>
+      </header>
+
+      <div class="ks-founder__prose">
+        <p>
+          I started Kersivo because too many small UK businesses settle for
+          websites that look like templates — passable enough, but disconnected
+          from the quality of the business behind them. A strong company
+          deserves a website that reflects it.
+        </p>
+        <p>
+          I've spent several years working at the intersection of design,
+          front-end engineering, and conversion strategy. Every project I take
+          on is handled by me personally, from the initial brief through to
+          launch. No handoffs, no juniors, no surprises.
+        </p>
+        <p>
+          The studios I admire most are ruthlessly focused. They do fewer
+          things, but do them extremely well. That's the same principle I apply
+          to every project that comes through Kersivo.
+        </p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 3 — How This Studio Works (4 Principles)
+     ============================================================ -->
+<section
+  class="ks-principles"
+  aria-labelledby="principles-heading"
+  data-light-zone
+  data-light-x="28"
+  data-light-y="50"
+  data-light-size="1.0"
+  data-light-strength="0.52"
+  data-light-focus="0.26"
+>
+  <div class="container">
+    <header class="ks-principles__head">
+      <p class="ks-eyebrow">How this studio works</p>
+      <h2 id="principles-heading" class="ks-principles__title">
+        Four things that don't change.
+      </h2>
+    </header>
+
+    <ol class="ks-principles__list" role="list">
+      <li class="ks-principle">
+        <span class="ks-principle__num" aria-hidden="true">01</span>
+        <div class="ks-principle__body">
+          <h3 class="ks-principle__title">One relationship, start to finish</h3>
+          <p class="ks-principle__desc">
+            You work directly with me — not an account manager, not a junior.
+            The senior-level thinking you're paying for is what you receive,
+            throughout every stage of the project.
+          </p>
+        </div>
+      </li>
+
+      <li class="ks-principle">
+        <span class="ks-principle__num" aria-hidden="true">02</span>
+        <div class="ks-principle__body">
+          <h3 class="ks-principle__title">Strategy before aesthetics</h3>
+          <p class="ks-principle__desc">
+            Before any design decision is made, we align on what the website
+            actually needs to do. Looking good isn't enough — it needs to be
+            good-converting, clear, and trusted within seconds.
+          </p>
+        </div>
+      </li>
+
+      <li class="ks-principle">
+        <span class="ks-principle__num" aria-hidden="true">03</span>
+        <div class="ks-principle__body">
+          <h3 class="ks-principle__title">Performance built in from day one</h3>
+          <p class="ks-principle__desc">
+            Speed, accessibility, and clean code aren't afterthoughts. They're
+            design constraints treated with the same rigour as the visual layer
+            — because a slow or inaccessible website is a broken one.
+          </p>
+        </div>
+      </li>
+
+      <li class="ks-principle">
+        <span class="ks-principle__num" aria-hidden="true">04</span>
+        <div class="ks-principle__body">
+          <h3 class="ks-principle__title">Fewer clients, deeper work</h3>
+          <p class="ks-principle__desc">
+            I deliberately limit the number of projects I take on at any one
+            time. It's how I protect quality — and how I ensure your project
+            receives the attention and care it deserves.
+          </p>
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 4 — What You Actually Receive
+     ============================================================ -->
+<section
+  class="ks-deliverables"
+  aria-labelledby="deliverables-heading"
+>
+  <div class="container">
+    <header class="ks-deliverables__head">
+      <p class="ks-eyebrow">What you actually receive</p>
+      <h2 id="deliverables-heading" class="ks-deliverables__title">
+        A complete website,<br aria-hidden="true" /> built to last.
+      </h2>
+    </header>
+
+    <ul class="ks-deliverables__list" role="list">
+      <li class="ks-deliv">
+        <svg class="ks-deliv__icon" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M8 9h8M8 12h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <h3 class="ks-deliv__title">Custom design</h3>
+        <p class="ks-deliv__desc">
+          Built around your brand, your audience, and your business goals.
+          Not a template. Not a theme. A considered design that looks like
+          no one else.
+        </p>
+      </li>
+
+      <li class="ks-deliv">
+        <svg class="ks-deliv__icon" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+        </svg>
+        <h3 class="ks-deliv__title">Performance-first code</h3>
+        <p class="ks-deliv__desc">
+          Astro-built, edge-ready, and optimised for Core Web Vitals. Fast
+          loading that earns trust before a word is read — and keeps Google
+          happy.
+        </p>
+      </li>
+
+      <li class="ks-deliv">
+        <svg class="ks-deliv__icon" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 2l1.2 5.1L18 8.3l-4.4 2.4L12 16l-1.6-5.3L6 8.3l4.8-1.2L12 2Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+        </svg>
+        <h3 class="ks-deliv__title">Conversion structure</h3>
+        <p class="ks-deliv__desc">
+          Every page is laid out to move visitors towards a decision. Clear
+          hierarchy, intentional calls-to-action, and a structure that
+          reduces friction and builds confidence.
+        </p>
+      </li>
+
+      <li class="ks-deliv">
+        <svg class="ks-deliv__icon" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M20 20l-3-3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <h3 class="ks-deliv__title">SEO foundations</h3>
+        <p class="ks-deliv__desc">
+          Semantic markup, structured data, and technical SEO baked in from
+          the start. A solid base for visibility from the moment you go live.
+        </p>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 5 — Credibility Strip
+     ============================================================ -->
+<section
+  class="ks-credibility"
+  aria-label="Studio at a glance"
+>
+  <div class="container">
+    <ul class="ks-cred-list" role="list">
+      <li class="ks-cred-item">
+        <span class="ks-cred-label">Based in</span>
+        <span class="ks-cred-value">United Kingdom</span>
+      </li>
+      <li class="ks-cred-item">
+        <span class="ks-cred-label">Current availability</span>
+        <span class="ks-cred-value">April – May 2026</span>
+      </li>
+      <li class="ks-cred-item">
+        <span class="ks-cred-label">Response time</span>
+        <span class="ks-cred-value">Within 12 hours</span>
+      </li>
+      <li class="ks-cred-item">
+        <span class="ks-cred-label">Project model</span>
+        <span class="ks-cred-value">Bespoke. One client at a time.</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 6 — Closing CTA
+     ============================================================ -->
+<section
+  class="ks-studio-cta"
+  aria-label="Start a project"
+  data-light-zone
+  data-light-x="50"
+  data-light-y="50"
+  data-light-size="1.1"
+  data-light-strength="0.82"
+  data-light-focus="0.2"
+>
+  <div class="container ks-studio-cta__contain">
+    <p class="ks-eyebrow">Start the conversation</p>
+
+    <h2 class="ks-studio-cta__title">
+      Let's build something<br aria-hidden="true" />
+      worth being proud of.
+    </h2>
+
+    <p class="ks-studio-cta__sub">
+      Tell me about your project. I'll reply within 12 hours with honest
+      thoughts on whether — and how — Kersivo can help.
+    </p>
+
+    <div class="ks-studio-cta__actions">
+      <CtaButton href="/#contact" label="Ask for a quote" variant="primary" />
+      <a class="ks-studio-cta__secondary" href="/work/">See selected work</a>
+    </div>
+
+    <p class="ks-studio-cta__note">
+      Currently accepting projects for April – May 2026
+    </p>
+  </div>
+
+  <div class="ks-studio-cta__ghost" aria-hidden="true">Studio</div>
+</section>

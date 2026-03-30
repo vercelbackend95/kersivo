@@ -110,25 +110,29 @@ function navPath(href: string) {
 
       const setActive = (activeHash) => {
         sections.forEach(({ link, hash }) => {
-          const active = hash === activeHash;
+          const active = Boolean(activeHash) && hash === activeHash;
           link.classList.toggle("is-active", active);
           if (active) link.setAttribute("aria-current", "page");
           else link.removeAttribute("aria-current");
         });
       };
 
-      if (sections.length > 0 && window.location.pathname === "/") {
+      const path =
+        (window.location.pathname || "/").replace(/\/+$/, "") || "/";
+      const isHome = path === "/";
+
+      if (sections.length > 0 && isHome) {
         const spy = createActiveSectionScrollSpy({
           links: navLinks.map((link) => ({
             href: link.getAttribute("data-nav-link") || "",
           })),
           topnavRoot: root,
           onActiveChange: (hash) => {
-            const cleanHash = hash.replace(/^#/, "");
+            const cleanHash = (hash || "").replace(/^#/, "");
             setActive(cleanHash);
             window.dispatchEvent(
               new CustomEvent("kersivo:active-section-change", {
-                detail: { hash },
+                detail: { hash: hash || "" },
               })
             );
           },

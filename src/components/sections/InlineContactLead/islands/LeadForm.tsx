@@ -148,7 +148,7 @@ export default function LeadForm() {
           id="lead-message"
           className="ks-lead__textarea"
           name="message"
-          placeholder="Briefly describe what you need — a redesign, a new build, or a specific improvement. Any context on your timeline or goals helps."
+          placeholder="Briefly describe your project."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           required

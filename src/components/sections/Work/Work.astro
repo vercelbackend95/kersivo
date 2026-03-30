@@ -1,30 +1,265 @@
 ---
 import "./work.css";
-import WorkShowcase from "./islands/WorkShowcase";
 
-const { asPage = false } = Astro.props;
-
-// h2 na landing, h1 na /work
-const TitleTag = asPage ? "h1" : "h2";
-const titleId = asPage ? "work-page-title" : "work-title";
+const PROJECT_URL = "https://sewingataga.co.uk";
 ---
 
-<section id="work" class="k-work section" aria-labelledby={titleId}>
+<article class="cs-page section" aria-labelledby="cs-title">
   <div class="container">
-    <header class="k-workHead">
-      <div class="k-workHead__kicker">WORK</div>
 
-      <TitleTag class="k-workHead__title" id={titleId}>
-        One live client site.
-        <span class="k-workHead__grad">Real business context.</span>
+    <!-- ─── 1. HEADER ─────────────────────────────────────── -->
+    <header class="cs-header">
+      <div class="cs-header__eyebrow">
+        <span class="cs-eyebrow">Case Study</span>
+      </div>
 
-      </TitleTag>
+      <h1 class="cs-title" id="cs-title">Sewing Ataga</h1>
+      <p class="cs-client-line">Tailoring &amp; Alterations &mdash; London, UK</p>
 
-      <p class="k-workHead__lead">
-        Currently one live client project: Sewing Ataga. We are building focused niche demos next, grounded in real service-business needs.
-      </p>
+      <div class="cs-tags" aria-label="Project scope">
+        <span class="cs-tag">2025</span>
+        <span class="cs-tag">Web Design</span>
+        <span class="cs-tag">Development</span>
+        <span class="cs-tag">Local SEO</span>
+        <a
+          class="cs-tag cs-tag--url"
+          href={PROJECT_URL}
+          target="_blank"
+          rel="noreferrer noopener"
+          aria-label="Visit Sewing Ataga live website"
+        >
+          sewingataga.co.uk <span aria-hidden="true">&#8599;</span>
+        </a>
+      </div>
     </header>
 
-    <WorkShowcase client:visible />
+    <div class="cs-rule" aria-hidden="true"></div>
+
+    <!-- ─── 2. INTRO + SCOPE ──────────────────────────────── -->
+    <div class="cs-intro">
+      <div class="cs-intro__body">
+        <p>
+          Sewing Ataga is a London-based tailoring and alterations studio. The business had built
+          a loyal local clientele through word of mouth and referrals &mdash; but lacked a web
+          presence that matched the quality of their craft.
+        </p>
+        <p>
+          We designed and developed their website from scratch: clear service pages, a
+          mobile-first layout structured around customer intent, and a solid local SEO
+          foundation &mdash; delivered fast, without unnecessary complexity.
+        </p>
+      </div>
+
+      <aside class="cs-scope" aria-label="Project scope of work">
+        <h2 class="cs-scope__heading">Scope of work</h2>
+        <ul class="cs-scope__list" role="list">
+          <li>Web design (UI / UX)</li>
+          <li>Web development</li>
+          <li>Mobile-first layout</li>
+          <li>Service page architecture</li>
+          <li>Local SEO foundations</li>
+          <li>Contact flow optimisation</li>
+          <li>Performance optimisation</li>
+        </ul>
+      </aside>
+    </div>
+
+    <!-- ─── 3. THE CHALLENGE ──────────────────────────────── -->
+    <div class="cs-challenge">
+      <span class="cs-section-label" aria-hidden="true">The Challenge</span>
+      <blockquote class="cs-challenge__pull">
+        <p>
+          When someone searches for a local tailor, the website is the first handshake.
+          Without it, even a brilliant business loses the room before the conversation starts.
+        </p>
+      </blockquote>
+      <p class="cs-challenge__body">
+        Sewing Ataga had built genuine trust with existing customers, but had no professional
+        web presence to support new customer discovery. With no site to land on, potential
+        customers had only social media to judge credibility &mdash; an inherent gap in a market
+        where presentation signals quality.
+      </p>
+    </div>
+
+    <!-- ─── 4. BROWSER PREVIEW ───────────────────────────── -->
+    <div class="cs-preview-wrap">
+      <figure class="cs-browser" aria-label="Sewing Ataga website preview">
+        <div class="cs-browser__bar" aria-hidden="true">
+          <div class="cs-browser__dots">
+            <span class="cs-dot cs-dot--red"></span>
+            <span class="cs-dot cs-dot--yellow"></span>
+            <span class="cs-dot cs-dot--green"></span>
+          </div>
+          <div class="cs-browser__address">sewingataga.co.uk</div>
+          <div class="cs-browser__spacer"></div>
+        </div>
+
+        <div class="cs-browser__viewport">
+          <!-- Real screenshot: place at /public/screenshots/sewing-ataga-desktop.jpg -->
+          <img
+            class="cs-browser__img"
+            src="/screenshots/sewing-ataga-desktop.jpg"
+            alt="Sewing Ataga — homepage on desktop, showing service pages and contact CTA"
+            width="1200"
+            height="760"
+            loading="lazy"
+            decoding="async"
+          />
+
+          <!-- Fallback shown when image is absent -->
+          <div class="cs-browser__fallback" aria-hidden="true">
+            <div class="cs-browser__fallback-inner">
+              <span class="cs-browser__fallback-url">sewingataga.co.uk</span>
+              <span class="cs-browser__fallback-hint">Tailoring &amp; Alterations &mdash; London</span>
+            </div>
+          </div>
+
+          <div class="cs-browser__shade" aria-hidden="true"></div>
+
+          <a
+            class="cs-browser__live"
+            href={PROJECT_URL}
+            target="_blank"
+            rel="noreferrer noopener"
+            aria-label="Open Sewing Ataga live website in new tab"
+          >
+            View live site <span aria-hidden="true">&#8599;</span>
+          </a>
+        </div>
+
+        <figcaption class="cs-browser__caption">
+          Sewing Ataga &mdash; homepage, desktop view
+        </figcaption>
+      </figure>
+    </div>
+
+    <!-- ─── 5. WHAT WAS BUILT ─────────────────────────────── -->
+    <div class="cs-built">
+      <header class="cs-built__header">
+        <span class="cs-section-label">What was built</span>
+        <h2 class="cs-built__title">
+          Designed for discovery.<br />Built for trust.
+        </h2>
+      </header>
+
+      <div class="cs-built__grid">
+        <div class="cs-built__card">
+          <h3>Service-led structure</h3>
+          <p>
+            Pages organised around how customers actually search &mdash; not internal business
+            labels. Clear, easy to scan on a phone, and logical from first visit to enquiry.
+          </p>
+        </div>
+
+        <div class="cs-built__card">
+          <h3>Mobile-first layout</h3>
+          <p>
+            Most local service searches happen on a phone. The layout was designed for mobile
+            from the first wireframe &mdash; not an afterthought adaptation of a desktop design.
+          </p>
+        </div>
+
+        <div class="cs-built__card">
+          <h3>Frictionless contact flow</h3>
+          <p>
+            Every page routes naturally toward getting in touch. No unnecessary friction,
+            no form barriers &mdash; just a clear path from customer intent to enquiry.
+          </p>
+        </div>
+
+        <div class="cs-built__card">
+          <h3>Local SEO foundations</h3>
+          <p>
+            Structured metadata, location-intent content, clean URL structure, and basic
+            schema markup &mdash; the technical base for local visibility done properly from day one.
+          </p>
+        </div>
+
+        <div class="cs-built__card">
+          <h3>Brand-aligned visual system</h3>
+          <p>
+            Clean, warm, professional &mdash; a visual language that reflects the quality of the
+            craft, without overdesigning or losing the approachable feel of a local business.
+          </p>
+        </div>
+
+        <div class="cs-built__card">
+          <h3>Performance-first build</h3>
+          <p>
+            Fast load times, optimised assets, lean code. Built to perform well above average
+            Lighthouse scores across both mobile and desktop.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── 6. OUTCOMES ──────────────────────────────────── -->
+    <div class="cs-outcomes">
+      <span class="cs-section-label">Outcomes</span>
+      <h2 class="cs-outcomes__title">A site that holds its own.</h2>
+
+      <ul class="cs-outcomes__list" role="list">
+        <li class="cs-outcome">
+          <span class="cs-outcome__num" aria-hidden="true">01</span>
+          <p>
+            Professional online presence that reflects the quality of the work &mdash;
+            the gap between reputation and visibility, closed.
+          </p>
+        </li>
+        <li class="cs-outcome">
+          <span class="cs-outcome__num" aria-hidden="true">02</span>
+          <p>
+            Clear, structured service pages that answer what new customers need to know
+            before making contact &mdash; without overwhelming them.
+          </p>
+        </li>
+        <li class="cs-outcome">
+          <span class="cs-outcome__num" aria-hidden="true">03</span>
+          <p>
+            Mobile-first design ready for the reality of how local customers find and
+            evaluate businesses in 2025.
+          </p>
+        </li>
+        <li class="cs-outcome">
+          <span class="cs-outcome__num" aria-hidden="true">04</span>
+          <p>
+            Solid local SEO foundations &mdash; technically positioned to earn visibility
+            in local search from launch, not after a costly rebuild.
+          </p>
+        </li>
+      </ul>
+    </div>
+
+    <!-- ─── 7. INLINE CTA ────────────────────────────────── -->
+    <div class="cs-cta" role="region" aria-label="Start a project with Kersivo">
+      <div class="cs-cta__inner">
+        <p class="cs-cta__pre">Ready to start?</p>
+        <h2 class="cs-cta__title">
+          Your business deserves a site that works as hard as you do.
+        </h2>
+        <p class="cs-cta__body">
+          We work with a small number of UK businesses at a time. If your site no longer
+          reflects the quality of your work, get in touch &mdash; we will give you a straight
+          answer on fit, scope, and what it would take.
+        </p>
+        <div class="cs-cta__actions">
+          <a
+            href="/#contact"
+            class="k-btn k-btn--primary k-btn--magnetic"
+            data-magnetic="true"
+            data-cta="contact"
+          >
+            <span class="k-btn__label">Get in touch</span>
+            <span class="k-btn__shine" aria-hidden="true"></span>
+            <span class="k-btn__arrow" aria-hidden="true">&#8594;</span>
+          </a>
+          <a href="/packages/" class="k-btn k-btn--ghost">
+            <span class="k-btn__label">See packages</span>
+            <span class="k-btn__arrow2" aria-hidden="true">&#8594;</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
   </div>
-</section>
+</article>

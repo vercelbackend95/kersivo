@@ -357,7 +357,6 @@ body[data-page="home"] .k-topnav:not(.is-scrolled) .k-topnav__surface{
 
 .k-topnav__actions .k-topnav__cta.k-btn--primary:active{
   --press: 1px;
-  --scale: 0.99;
 }
 
 .k-topnav__actions .k-topnav__cta.k-btn--primary:focus-visible{

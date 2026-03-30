@@ -137,6 +137,15 @@
   height: 16px;
 }
 
+.ks-lead__directLabel {
+  margin: 8px 0 0;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: var(--w-semibold, 650);
+}
+
 .ks-lead__email {
   display: inline-flex;
   align-items: center;

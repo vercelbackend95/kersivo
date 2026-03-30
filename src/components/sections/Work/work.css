@@ -1,403 +1,593 @@
-.k-work .container { position: relative; }
+/* =====================================================
+   Kersivo — Case Study: Sewing Ataga
+   /work/ premium case study layout
+   ===================================================== */
 
-/* Work uses the global CTA system (.k-btn). Tighten it slightly in this section. */
-.k-work{
-  --btn-h: 46px;
-  --btn-pad: 18px;
+/* ── Page wrapper ─────────────────────────────────── */
+.cs-page {
+  padding: clamp(56px, 7vw, 96px) 0 clamp(72px, 9vw, 120px);
 }
 
-/* =========================
-   Header (SERVICES / PACKAGES style)
-   ========================= */
-
-.k-workHead{
-  text-align: center;
-  margin: 0 auto clamp(18px, 2.6vw, 26px);
-  max-width: 86ch;
+/* ── 1. Header ────────────────────────────────────── */
+.cs-header {
+  padding-top: clamp(12px, 2vw, 28px);
+  max-width: 960px;
 }
 
-.k-workHead__kicker{
+.cs-header__eyebrow {
+  margin-bottom: 18px;
+}
+
+.cs-eyebrow {
+  display: inline-block;
   font-size: 12px;
-  letter-spacing: .18em;
+  letter-spacing: 0.20em;
   text-transform: uppercase;
-  color: rgba(255,255,255,.60);
-  margin-bottom: 10px;
+  color: rgba(255, 255, 255, 0.42);
+  font-weight: 600;
 }
 
-.k-workHead__title{
+.cs-title {
   margin: 0;
-  font-size: var(--h2);
-  line-height: 1.06;
-  letter-spacing: var(--track-tight);
+  font-size: clamp(56px, 9.5vw, 124px);
+  line-height: 0.96;
+  letter-spacing: -0.045em;
+  color: rgba(255, 255, 255, 0.96);
+  font-weight: 880;
 }
 
-.k-workHead__grad{
-  display: block;
-  margin-top: 6px;
-  background: linear-gradient(90deg, rgba(140,170,255,1), rgba(210,150,255,1));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+.cs-client-line {
+  margin: 16px 0 0;
+  font-size: clamp(15px, 1.3vw, 19px);
+  color: rgba(255, 255, 255, 0.44);
+  letter-spacing: -0.01em;
+  font-weight: 450;
+  line-height: 1.4;
 }
 
-.k-workHead__lead{
-  margin: 12px auto 0;
-  max-width: var(--measure);
-  color: rgba(255,255,255,.74);
-  font-size: var(--p);
-  line-height: 1.55;
+.cs-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 28px;
+  align-items: center;
 }
 
-/* =========================
-   Card + layout
-   ========================= */
-
-.k-workCard{
-  overflow: hidden;
+.cs-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  padding: 7px 13px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.60);
+  white-space: nowrap;
+  font-weight: 500;
 }
 
-.k-work__grid{
-  display:grid;
-  gap: 18px;
-  position: relative;
+.cs-tag--url {
+  color: rgba(185, 155, 255, 0.90);
+  border-color: rgba(160, 120, 255, 0.24);
+  background: rgba(160, 120, 255, 0.06);
+  text-decoration: none;
+  transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
 }
 
-.k-work__pulse{
-  position:absolute;
-  inset: -2px;
-  border-radius: 30px;
-  background:
-    radial-gradient(900px 520px at 30% 5%, rgba(160,120,255,.18), transparent 55%),
-    radial-gradient(760px 520px at 75% 20%, rgba(120,190,255,.14), transparent 60%);
-  pointer-events:none;
-  mix-blend-mode: screen;
+.cs-tag--url:hover {
+  border-color: rgba(160, 120, 255, 0.42);
+  background: rgba(160, 120, 255, 0.12);
+  color: rgba(200, 175, 255, 0.95);
 }
 
-/* main layout */
-.k-work__main{
-  display:grid;
-  grid-template-columns: 1.75fr 0.85fr;
-  gap: 16px;
+.cs-tag--url:focus-visible {
+  outline: 2px solid rgba(160, 120, 255, 0.60);
+  outline-offset: 3px;
+}
+
+/* ── Divider ──────────────────────────────────────── */
+.cs-rule {
+  margin: clamp(44px, 5.5vw, 76px) 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* ── 2. Intro + Scope ─────────────────────────────── */
+.cs-intro {
+  display: grid;
+  grid-template-columns: 1.65fr 1fr;
+  gap: clamp(36px, 5vw, 80px);
   align-items: start;
 }
-.k-work__rightCol{
-  display:grid;
-  gap: 16px;
-  align-content: start;
-}
-@media (max-width: 920px){
-  .k-work__main{ grid-template-columns: 1fr; }
+
+.cs-intro__body {
+  display: grid;
+  gap: 20px;
 }
 
-/* stage */
-.k-stage{
-  border-radius: 22px;
-  border: 1px solid rgba(255,255,255,.10);
-  background: rgba(0,0,0,.18);
-  overflow: hidden;
-}
-.k-stage__top{
-  display:flex;
-  align-items:center;
-  justify-content: space-between;
-  padding: 14px 14px 10px 14px;
-}
-.k-stage__title{
-  font-weight: 800;
-  letter-spacing: -0.01em;
-  color: rgba(255,255,255,.88);
+.cs-intro__body p {
+  font-size: clamp(17px, 1.45vw, 21px);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.72);
+  letter-spacing: -0.012em;
+  margin: 0;
 }
 
-/* viewport + frame */
-.k-stage__viewport{
-  position: relative;
-  padding: 0 14px 12px 14px;
-}
-.k-stage__shot{
-  position: relative;
-  border-radius: 18px;
-  overflow: hidden;
-  background: rgba(0,0,0,.20);
-  border: 1px solid rgba(255,255,255,.08);
-}
-.k-stage__overlay{
-  position:absolute;
-  inset:0;
-  background:
-    radial-gradient(800px 420px at 30% 0%, rgba(160,120,255,.12), transparent 60%),
-    radial-gradient(780px 460px at 75% 20%, rgba(120,190,255,.10), transparent 62%),
-    linear-gradient(180deg, rgba(0,0,0,.06), rgba(0,0,0,.20));
-  pointer-events:none;
-}
-
-.k-frame{
-  width: 100%;
-  height: 420px;
-  display:block;
-  border: 0;
-  opacity: 0;
-  transition: opacity 240ms ease;
-}
-.k-frame.is-mobile{ height: 520px; }
-@media (max-width: 720px){
-  .k-frame{ height: 360px; }
-  .k-frame.is-mobile{ height: 520px; }
-}
-
-/* Actions in preview (bottom-right) */
-.k-stage__shotActions{
-  position: absolute;
-  right: 12px;
-  bottom: 12px;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-}
-
-.k-stage__openShot{
-  font-size: 12px;
-  font-weight: 750;
-  color: rgba(255,255,255,.80);
-  text-decoration: none;
-  padding: 10px 12px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.12);
-  background: rgba(255,255,255,.04);
-  backdrop-filter: blur(10px);
-  transition: border-color 180ms ease, transform 180ms cubic-bezier(.2,.8,.2,1), box-shadow 180ms ease;
-}
-.k-stage__openShot:hover{
-  transform: translate3d(0,-1px,0);
-  border-color: rgba(160,120,255,.24);
-  box-shadow: 0 18px 50px rgba(120,140,255,.14);
-}
-.k-stage__openShot:focus-visible{
-  outline: none;
-  box-shadow:
-    0 0 0 4px rgba(160,120,255,.18),
-    0 0 0 1px rgba(255,255,255,.12) inset;
-}
-
-/* toggles */
-.k-toggle{
-  display:inline-flex;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.10);
-  background: rgba(0,0,0,.22);
-  padding: 4px;
-  gap: 4px;
-}
-.k-toggle button{
-  border: 0;
-  background: transparent;
-  color: rgba(255,255,255,.70);
-  font-weight: 800;
-  font-size: 12px;
-  padding: 9px 12px;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: background 160ms ease, color 160ms ease, transform 160ms cubic-bezier(.2,.8,.2,1);
-}
-.k-toggle button:hover{ color: rgba(255,255,255,.90); }
-.k-toggle button.is-on{
-  background: rgba(160,120,255,.16);
-  color: rgba(255,255,255,.90);
-  transform: translate3d(0,-1px,0);
-}
-.k-toggle button:focus-visible{
-  outline: none;
-  box-shadow:
-    0 0 0 4px rgba(160,120,255,.18),
-    0 0 0 1px rgba(255,255,255,.12) inset;
-}
-.k-toggle--focus button.is-on{
-  background: rgba(120,190,255,.14);
-}
-
-/* Compact + overlay version for the shot */
-.k-toggle--compact{
-  padding: 3px;
-  gap: 3px;
-}
-.k-toggle--compact button{
+.cs-scope__heading {
   font-size: 11px;
-  padding: 8px 10px;
-}
-.k-toggle--shot{
-  background: rgba(10,10,16,.55);
-  backdrop-filter: blur(10px);
-  border-color: rgba(255,255,255,.12);
-}
-.k-toggle--shot button.is-on{
-  background: rgba(255,255,255,.10);
-  transform: translate3d(0,-1px,0);
-}
-
-/* pipe panel */
-.k-pipe{
-  border-radius: 22px;
-  border: 1px solid rgba(255,255,255,.10);
-  background: rgba(0,0,0,.22);
-  padding: 14px;
-}
-.k-pipe__top{
-  display:flex;
-  align-items:center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-.k-pipe__title{
-  font-weight: 850;
-  letter-spacing: -0.01em;
-  color: rgba(255,255,255,.86);
-}
-.k-pipe__badge{
-  font-size: 11px;
-  letter-spacing: .12em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  padding: 7px 10px;
-  border-radius: 999px;
-  background: rgba(140,120,255,.18);
-  border: 1px solid rgba(160,120,255,.18);
-  color: rgba(255,255,255,.85);
+  color: rgba(255, 255, 255, 0.36);
+  font-weight: 600;
+  margin-bottom: 14px;
 }
 
-/* timeline */
-.k-timeline{
+.cs-scope__list {
   list-style: none;
   margin: 0;
   padding: 0;
-  display:grid;
-  gap: 12px;
-}
-.k-timeline__item{
-  display:grid;
-  grid-template-columns: 18px 1fr;
-  gap: 10px;
-  align-items: start;
-}
-.k-timeline__dot{
-  width: 12px;
-  height: 12px;
-  border-radius: 999px;
-  margin-top: 6px;
-  background: rgba(255,255,255,.16);
-  border: 1px solid rgba(255,255,255,.10);
-}
-.k-timeline__dot.is-on{
-  background: rgba(120,190,255,.38);
-  border-color: rgba(120,190,255,.34);
-  box-shadow: 0 0 0 6px rgba(120,190,255,.12);
-}
-.k-timeline__dot.is-queued{
-  background: rgba(160,120,255,.32);
-  border-color: rgba(160,120,255,.28);
-  box-shadow: 0 0 0 6px rgba(160,120,255,.10);
+  display: grid;
+  gap: 8px;
 }
 
-.k-timeline__content{ display:flex; flex-direction: column; }
-.k-timeline__row{
-  display:flex;
-  align-items:center;
-  justify-content: flex-start;
-  gap: 10px;
-}
-.k-timeline__name{ font-weight: 860; color: rgba(255,255,255,.88); }
-.k-timeline__meta{
-  margin-top: 6px;
-  color: rgba(255,255,255,.60);
-  font-size: 12px;
-}
-.k-timeline__btn{
-  margin-top: 10px;
-  display: inline-flex;
-  align-self: flex-end;
-  justify-content: center;
-  --btn-h: 42px;
-  --btn-pad: 14px;
-}
-
-/* Focus: SOFT panel (no extra “card frame”) */
-.k-sideFocus{
-  border: 0;
-  background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,0));
-  border-radius: 18px;
-  padding: 10px 10px 8px 10px;
-}
-.k-sideFocus::before{
-  content:"";
-  display:block;
-  height: 1px;
-  margin: 2px 0 10px 0;
-  background: rgba(255,255,255,.08);
-}
-.k-sideFocus .k-toggle{
-  margin: 0 0 10px 0;
-  border-color: rgba(255,255,255,.08);
-  background: rgba(0,0,0,.14);
-}
-.k-sideFocus__body{ padding: 0 2px 2px 2px; }
-.k-sideFocus__title{
-  font-weight: 900;
-  font-size: 12px;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,.60);
-  margin-bottom: 8px;
-}
-.k-sideFocus__list{
-  margin: 0;
-  padding: 0 0 0 18px;
-  color: rgba(255,255,255,.78);
+.cs-scope__list li {
   font-size: 13px;
-  line-height: 1.45;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.64);
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.02);
+  letter-spacing: -0.005em;
+  margin: 0;
 }
-.k-sideFocus__list li{ margin: 6px 0; }
 
-/* CTA strip: no frame, just aligned actions */
-.k-ctaStrip{
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  padding: 0;
+@media (max-width: 780px) {
+  .cs-intro {
+    grid-template-columns: 1fr;
+    gap: clamp(28px, 4vw, 48px);
+  }
+}
+
+/* ── 3. Challenge ─────────────────────────────────── */
+.cs-challenge {
+  margin-top: clamp(64px, 8vw, 108px);
+}
+
+.cs-section-label {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.34);
+  font-weight: 600;
+  margin-bottom: 22px;
+}
+
+.cs-challenge__pull {
+  margin: 0 0 24px;
   border: 0;
-  background: none;
-  border-radius: 0;
+  padding: 0;
+  max-width: 840px;
 }
 
-.k-stage__ctaRow{
-  display:flex;
-  gap: 10px;
-  align-items:center;
+.cs-challenge__pull p {
+  font-size: clamp(22px, 3vw, 40px);
+  line-height: 1.22;
+  letter-spacing: -0.032em;
+  font-weight: 780;
+  color: rgba(255, 255, 255, 0.90);
+  border-left: 2px solid rgba(160, 120, 255, 0.55);
+  padding-left: 24px;
+  margin: 0;
 }
-.k-stage__ctaRow--right{ margin-left: auto; }
-.k-stage__ctaBtns{
-  display:flex;
+
+.cs-challenge__body {
+  max-width: 680px;
+  font-size: clamp(16px, 1.2vw, 18px);
+  line-height: 1.68;
+  color: rgba(255, 255, 255, 0.62);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+/* ── 4. Browser preview ───────────────────────────── */
+.cs-preview-wrap {
+  margin-top: clamp(64px, 8vw, 108px);
+}
+
+.cs-browser {
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(0, 0, 0, 0.28);
+  overflow: hidden;
+  margin: 0;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.30),
+    0 24px 80px rgba(0, 0, 0, 0.40),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+}
+
+.cs-browser__bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.cs-browser__dots {
+  display: flex;
+  gap: 7px;
+  flex-shrink: 0;
+}
+
+.cs-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  display: block;
+}
+
+.cs-dot--red    { background: rgba(255, 90, 80, 0.52); }
+.cs-dot--yellow { background: rgba(255, 185, 55, 0.42); }
+.cs-dot--green  { background: rgba(60, 210, 100, 0.40); }
+
+.cs-browser__address {
+  flex: 1;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.36);
+  text-align: center;
+  letter-spacing: 0.01em;
+  font-weight: 450;
+}
+
+.cs-browser__spacer {
+  /* balances the dots */
+  width: calc(3 * 11px + 2 * 7px);
+  flex-shrink: 0;
+}
+
+.cs-browser__viewport {
+  position: relative;
+  overflow: hidden;
+  min-height: 320px;
+  background: rgba(12, 12, 20, 0.95);
+}
+
+.cs-browser__img {
+  width: 100%;
+  height: auto;
+  max-height: 620px;
+  display: block;
+  object-fit: cover;
+  object-position: top center;
+  position: relative;
+  z-index: 1;
+  /* smooth fade-in once loaded */
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.cs-browser__img.is-loaded {
+  opacity: 1;
+}
+
+/* Fallback panel — shown until/unless screenshot loads */
+.cs-browser__fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: linear-gradient(
+    155deg,
+    rgba(28, 18, 52, 0.95) 0%,
+    rgba(10, 12, 22, 0.98) 100%
+  );
+  z-index: 0;
+}
+
+.cs-browser__fallback-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 10px;
-  align-items:center;
-  justify-content:flex-end;
+  text-align: center;
+}
+
+.cs-browser__fallback-url {
+  font-size: clamp(20px, 3vw, 38px);
+  font-weight: 780;
+  letter-spacing: -0.03em;
+  color: rgba(255, 255, 255, 0.18);
+}
+
+.cs-browser__fallback-hint {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.18);
+  letter-spacing: 0.02em;
+}
+
+.cs-browser__shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 55%,
+    rgba(0, 0, 0, 0.35) 100%
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+.cs-browser__live {
+  position: absolute;
+  bottom: 18px;
+  right: 18px;
+  z-index: 3;
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.84);
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(8, 8, 16, 0.66);
+  backdrop-filter: blur(14px);
+  text-decoration: none;
+  letter-spacing: 0.01em;
+  transition: border-color 180ms ease, transform 200ms cubic-bezier(.2,.9,.2,1), box-shadow 200ms ease;
+}
+
+.cs-browser__live:hover {
+  border-color: rgba(160, 120, 255, 0.34);
+  transform: translate3d(0, -2px, 0);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.30);
+}
+
+.cs-browser__live:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(160, 120, 255, 0.40);
+}
+
+.cs-browser__caption {
+  display: block;
+  padding: 10px 20px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.26);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  letter-spacing: 0.02em;
+  font-weight: 450;
+}
+
+/* ── 5. What was built ────────────────────────────── */
+.cs-built {
+  margin-top: clamp(80px, 9vw, 120px);
+}
+
+.cs-built__header {
+  margin-bottom: clamp(36px, 4vw, 56px);
+  max-width: 600px;
+}
+
+.cs-built__title {
+  margin-top: 10px;
+  font-size: clamp(30px, 3.8vw, 50px);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 860;
+}
+
+.cs-built__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+@media (max-width: 960px) {
+  .cs-built__grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 540px) {
+  .cs-built__grid { grid-template-columns: 1fr; }
+}
+
+.cs-built__card {
+  padding: clamp(20px, 2vw, 28px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.020);
+  transition: border-color 220ms ease, background 220ms ease;
+}
+
+.cs-built__card:hover {
+  border-color: rgba(255, 255, 255, 0.11);
+  background: rgba(255, 255, 255, 0.034);
+}
+
+.cs-built__card h3 {
+  font-size: 14px;
+  font-weight: 760;
+  letter-spacing: -0.01em;
+  color: rgba(255, 255, 255, 0.90);
+  margin-bottom: 10px;
+}
+
+.cs-built__card p {
+  font-size: 13.5px;
+  line-height: 1.62;
+  color: rgba(255, 255, 255, 0.52);
+  margin: 0;
+}
+
+/* ── 6. Outcomes ──────────────────────────────────── */
+.cs-outcomes {
+  margin-top: clamp(80px, 9vw, 120px);
+}
+
+.cs-outcomes__title {
+  margin-top: 10px;
+  margin-bottom: clamp(28px, 3vw, 44px);
+  font-size: clamp(30px, 3.8vw, 50px);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 860;
+}
+
+.cs-outcomes__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0;
+}
+
+.cs-outcome {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 20px;
+  align-items: start;
+  padding: 26px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  margin: 0;
+}
+
+.cs-outcome:last-child {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.cs-outcome__num {
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.10em;
+  color: rgba(160, 120, 255, 0.60);
+  padding-top: 5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.cs-outcome p {
+  font-size: clamp(16px, 1.25vw, 18px);
+  line-height: 1.60;
+  color: rgba(255, 255, 255, 0.74);
+  letter-spacing: -0.012em;
+  margin: 0;
+}
+
+@media (max-width: 480px) {
+  .cs-outcome {
+    grid-template-columns: 36px 1fr;
+    gap: 14px;
+  }
+}
+
+/* ── 7. Inline CTA ────────────────────────────────── */
+.cs-cta {
+  margin-top: clamp(80px, 9vw, 120px);
+  padding: clamp(36px, 4.5vw, 64px) clamp(28px, 4vw, 56px);
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: linear-gradient(
+    150deg,
+    rgba(160, 120, 255, 0.055) 0%,
+    rgba(0, 0, 0, 0.03) 60%,
+    rgba(120, 160, 255, 0.04) 100%
+  );
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ambient glow top-left */
+.cs-cta::before {
+  content: "";
+  position: absolute;
+  top: -60px;
+  left: -60px;
+  width: 360px;
+  height: 360px;
+  background: radial-gradient(
+    circle,
+    rgba(160, 120, 255, 0.10) 0%,
+    transparent 65%
+  );
+  pointer-events: none;
+}
+
+/* Ambient glow bottom-right */
+.cs-cta::after {
+  content: "";
+  position: absolute;
+  bottom: -60px;
+  right: -40px;
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(
+    circle,
+    rgba(120, 170, 255, 0.07) 0%,
+    transparent 65%
+  );
+  pointer-events: none;
+}
+
+.cs-cta__inner {
+  position: relative;
+  z-index: 1;
+}
+
+.cs-cta__pre {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.36);
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.cs-cta__title {
+  font-size: clamp(26px, 3.2vw, 44px);
+  line-height: 1.10;
+  letter-spacing: -0.032em;
+  color: rgba(255, 255, 255, 0.93);
+  max-width: 620px;
+  font-weight: 860;
+  margin-bottom: 16px;
+}
+
+.cs-cta__body {
+  max-width: 560px;
+  font-size: clamp(15px, 1.1vw, 17px);
+  line-height: 1.68;
+  color: rgba(255, 255, 255, 0.56);
+  letter-spacing: -0.01em;
+  margin-bottom: clamp(24px, 2.8vw, 38px);
+}
+
+.cs-cta__actions {
+  display: flex;
+  gap: 12px;
   flex-wrap: wrap;
+  align-items: center;
 }
 
-/* responsive */
-@media (max-width: 720px){
-  .k-stage__top{ padding: 14px 12px 10px 12px; }
-  .k-stage__viewport{ padding: 0 12px 12px 12px; }
+/* ── Image load handler ───────────────────────────── */
+/*
+  The <img> in .cs-browser__viewport uses opacity:0 by default.
+  JS (below) adds .is-loaded once the image fires onload.
+  If the image never loads, the .cs-browser__fallback stays visible.
+*/
 
-  .k-pipe{ padding: 12px; }
-  .k-sideFocus{ padding: 10px 10px 8px 10px; }
-
-  .k-ctaStrip{ justify-content: flex-start; }
-  .k-stage__ctaRow--right{ margin-left: 0; }
-  .k-stage__ctaBtns{ justify-content: flex-start; }
-}
-
-/* reduced motion */
-@media (prefers-reduced-motion: reduce){
-  .k-work__pulse{ display:none; }
-  .k-toggle button{ transition: none; }
-  .k-frame{ transition: none; }
-  .k-stage__openShot{ transition: none; }
+/* ── Reduced motion ───────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .cs-browser__live,
+  .cs-built__card,
+  .cs-tag--url,
+  .cs-browser__img {
+    transition: none !important;
+  }
 }

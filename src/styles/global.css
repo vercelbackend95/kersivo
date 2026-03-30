@@ -348,7 +348,7 @@ section, [data-section]{
   scroll-snap-align: none !important;
   scroll-snap-stop: normal !important;
 }
-#contact{ scroll-margin-top: 110px; }
+#contact{ scroll-margin-top: var(--nav-h); }
 /* =========================
    Mobile anchor offset fix
    (sections were landing under the topnav)

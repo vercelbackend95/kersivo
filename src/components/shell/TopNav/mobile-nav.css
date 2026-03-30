@@ -344,21 +344,75 @@
   color: rgba(255, 255, 255, 0.34);
 }
 
-/* CTA button */
+/* CTA action row — custom editorial element, not k-btn */
 .k-mn__quote {
   position: relative;
   z-index: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
   width: 100%;
-  justify-content: center;
-  --btn-h: 52px;
-  --btn-pad: 22px;
-  font-size: 14px;
-  font-weight: var(--w-semibold, 650);
-  letter-spacing: -0.02em;
+  min-height: 58px;
+  padding: 14px 18px;
+
+  background: rgba(252, 249, 241, 0.055);
+  border: 1px solid rgba(252, 249, 241, 0.12);
+  border-radius: 12px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.065);
+
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+
+  transition:
+    background 160ms ease,
+    border-color 160ms ease;
 }
 
-.k-mn__quote .k-btn__arrow {
-  opacity: 0.9;
+.k-mn__quote:hover {
+  background: rgba(252, 249, 241, 0.09);
+  border-color: rgba(252, 249, 241, 0.20);
+}
+
+.k-mn__quote:active {
+  background: rgba(252, 249, 241, 0.038);
+}
+
+.k-mn__quote:focus-visible {
+  outline: 2px solid rgba(168, 194, 212, 0.78);
+  outline-offset: 3px;
+}
+
+.k-mn__quoteText {
+  font-size: 18px;
+  font-weight: var(--w-semibold, 650);
+  letter-spacing: -0.025em;
+  line-height: 1;
+  color: rgba(248, 245, 238, 0.90);
+
+  transition: color 160ms ease;
+}
+
+.k-mn__quote:hover .k-mn__quoteText {
+  color: rgba(248, 245, 238, 1);
+}
+
+.k-mn__quoteArrow {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: rgba(248, 245, 238, 0.40);
+
+  transition:
+    transform 160ms ease,
+    color 160ms ease;
+}
+
+.k-mn__quote:hover .k-mn__quoteArrow {
+  transform: translateX(4px);
+  color: rgba(248, 245, 238, 0.72);
 }
 
 /* ── Desktop: hidden ── */
@@ -375,7 +429,14 @@
   .k-mn__meta,
   .k-mn__arrow,
   .k-mn__close,
-  .k-mn__brand {
+  .k-mn__brand,
+  .k-mn__quote,
+  .k-mn__quoteText,
+  .k-mn__quoteArrow {
     transition: none !important;
+  }
+
+  .k-mn__quote:hover .k-mn__quoteArrow {
+    transform: none !important;
   }
 }

@@ -3,7 +3,6 @@ import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import "./mobile-nav.css";
 import { NAV_LINKS } from "./nav-links";
-import { createActiveSectionScrollSpy } from "./active-section";
 
 function normPath(p: string) {
   const s = (p || "/").trim();
@@ -38,7 +37,7 @@ export default function MobileNav() {
 
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [activeHash, setActiveHash] = useState<string>("#services");
+  const [activeHash, setActiveHash] = useState<string>("");
 
   const sheetRef = useRef<HTMLDivElement | null>(null);
   const lastActiveElRef = useRef<HTMLElement | null>(null);
@@ -96,10 +95,11 @@ export default function MobileNav() {
   useEffect(() => {
     if (!mounted) return;
     try {
-      const fromHash = normHash(window.location.hash || "#services");
-      setActiveHash(fromHash || "#services");
+      const onHome = normPath(window.location.pathname) === "/";
+      const raw = (window.location.hash || "").replace(/^#/, "").trim();
+      setActiveHash(onHome && raw ? normHash(raw) : "");
     } catch {
-      setActiveHash("#services");
+      setActiveHash("");
     }
   }, [mounted]);
 
@@ -107,27 +107,26 @@ export default function MobileNav() {
     if (!mounted) return;
     if (normPath(window.location.pathname) !== "/") return;
 
-    const topnavRoot = document.querySelector("[data-topnav]") as HTMLElement | null;
-    const spy = createActiveSectionScrollSpy({
-      links: NAV_LINKS,
-      topnavRoot,
-      onActiveChange: (hash) => setActiveHash(normHash(hash)),
-    });
-    spy.start();
-
-    const onExternalChange = (event: Event) => {
-      const customEvent = event as CustomEvent<{ hash?: string }>;
-      const nextHash = normHash(customEvent.detail?.hash || "");
-      if (nextHash) setActiveHash(nextHash);
+    const syncFromLocation = () => {
+      const raw = (window.location.hash || "").replace(/^#/, "").trim();
+      setActiveHash(raw ? normHash(raw) : "");
     };
 
-    window.addEventListener("kersivo:active-section-change", onExternalChange as EventListener);
+    const onScrollSpy = (event: Event) => {
+      const customEvent = event as CustomEvent<{ hash?: string }>;
+      const next = (customEvent.detail?.hash ?? "").trim();
+      if (!next) {
+        setActiveHash("");
+        return;
+      }
+      setActiveHash(normHash(next));
+    };
+
+    window.addEventListener("kersivo:active-section-change", onScrollSpy as EventListener);
+    window.addEventListener("hashchange", syncFromLocation);
     return () => {
-      spy.stop();
-      window.removeEventListener(
-        "kersivo:active-section-change",
-        onExternalChange as EventListener
-      );
+      window.removeEventListener("kersivo:active-section-change", onScrollSpy as EventListener);
+      window.removeEventListener("hashchange", syncFromLocation);
     };
   }, [mounted]);
 
@@ -322,9 +321,11 @@ export default function MobileNav() {
                 >
                   {NAV_LINKS.map((l, i) => {
                     const sectionHash = normHash(l.href.split("#")[1] || "");
-                    const isActive =
-                      normPath(window.location.pathname) === "/" &&
-                      sectionHash === activeHash;
+                    const pathHere = normPath(window.location.pathname);
+                    const linkPath = normPath(l.href);
+                    const isActive = sectionHash
+                      ? pathHere === "/" && sectionHash === activeHash
+                      : linkPath === pathHere;
                     return (
                       <motion.li
                         key={l.href}
@@ -344,7 +345,7 @@ export default function MobileNav() {
                           className="k-mn__row"
                           href={l.href}
                           onClick={() => {
-                            setActiveHash(sectionHash);
+                            if (sectionHash) setActiveHash(sectionHash);
                             doClose();
                           }}
                           aria-current={isActive ? "page" : undefined}
@@ -389,13 +390,12 @@ export default function MobileNav() {
               <p className="k-mn__footLine">Start your project</p>
               <a
                 href="/#contact"
-                className="k-mn__quote k-btn k-btn--primary"
+                className="k-mn__quote"
                 onClick={doClose}
               >
-                <span className="k-btn__label">Get a quote</span>
-                <span className="k-btn__shine" aria-hidden="true" />
-                <span className="k-btn__arrow" aria-hidden="true">
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <span className="k-mn__quoteText">Get a quote</span>
+                <span className="k-mn__quoteArrow" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
                     <path d="M3 7H11M8 4L11 7L8 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 </span>

@@ -36,9 +36,9 @@ function QuoteCta({ href, label }: { href: string; label: string }) {
 export default function PackagesTable() {
   const tiers: Tier[] = useMemo(
     () => [
-      { key: "base", name: "Base", price: "From £750", cta: "Get a quote", ctaHref: "#contact" },
-      { key: "plus", name: "Plus", price: "From £1,350", cta: "Get a quote", ctaHref: "#contact" },
-      { key: "bespoke", name: "Bespoke", price: "From £2,450", cta: "Get a quote", ctaHref: "#contact" },
+      { key: "base", name: "Base", price: "From £750", cta: "Get a quote", ctaHref: "/#contact" },
+      { key: "plus", name: "Plus", price: "From £1,350", cta: "Get a quote", ctaHref: "/#contact" },
+      { key: "bespoke", name: "Bespoke", price: "From £2,450", cta: "Get a quote", ctaHref: "/#contact" },
     ],
     []
   );

@@ -9,6 +9,11 @@ type ScrollSpyOptions = {
   onActiveChange: (hash: string) => void;
 };
 
+/** Document Y of element top (stable vs offsetTop / offsetParent quirks). */
+function getElementDocumentY(el: HTMLElement): number {
+  return el.getBoundingClientRect().top + window.scrollY;
+}
+
 function normalizeHash(rawHash: string): string {
   const hash = (rawHash || "").trim().replace(/^#/, "");
   return hash ? `#${hash}` : "";
@@ -36,39 +41,47 @@ function collectTargets(links: Array<{ href: string }>): NavTarget[] {
     })
     .filter(Boolean) as NavTarget[];
 
-  return dedupeByHash(targets).sort((a, b) => a.section.offsetTop - b.section.offsetTop);
+  return dedupeByHash(targets).sort(
+    (a, b) => getElementDocumentY(a.section) - getElementDocumentY(b.section)
+  );
 }
 
-function getProbeY(topnavRoot: HTMLElement | null): number {
+/**
+ * Probe line just below the sticky nav, aligned with scroll-padding intent:
+ * nav height + small breathing room (matches visual "section entered").
+ */
+function getScrollProbeLine(topnavRoot: HTMLElement | null): number {
   const scrollY = window.scrollY || window.pageYOffset || 0;
   const navHeight = topnavRoot?.getBoundingClientRect().height ?? 0;
-  const viewportBias = Math.max(90, Math.min(window.innerHeight * 0.24, 220));
-  return scrollY + navHeight + viewportBias;
+  return scrollY + navHeight + 10;
 }
 
 function pickActiveHash(targets: NavTarget[], topnavRoot: HTMLElement | null): string {
   if (targets.length === 0) return "";
 
-  const probeY = getProbeY(topnavRoot);
-  let fallback = targets[0].hash;
+  const probeLine = getScrollProbeLine(topnavRoot);
+  const firstTop = getElementDocumentY(targets[0].section);
 
-  for (const target of targets) {
-    const top = target.section.offsetTop;
-    if (top <= probeY) fallback = target.hash;
-    else break;
+  if (probeLine < firstTop) {
+    return "";
+  }
+
+  const contactEl = document.getElementById("contact");
+  if (contactEl && probeLine >= getElementDocumentY(contactEl)) {
+    return "";
   }
 
   for (let i = 0; i < targets.length; i += 1) {
     const current = targets[i];
     const next = targets[i + 1];
-    const start = current.section.offsetTop;
-    const end = next ? next.section.offsetTop : Number.POSITIVE_INFINITY;
-    if (probeY >= start && probeY < end) {
+    const start = getElementDocumentY(current.section);
+    const end = next ? getElementDocumentY(next.section) : Number.POSITIVE_INFINITY;
+    if (probeLine >= start && probeLine < end) {
       return current.hash;
     }
   }
 
-  return fallback;
+  return targets[targets.length - 1]?.hash ?? "";
 }
 
 export function createActiveSectionScrollSpy({

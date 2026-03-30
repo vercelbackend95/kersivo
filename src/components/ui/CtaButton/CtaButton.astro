@@ -75,9 +75,10 @@ const isContact = contactHref === "#contact" || contactHref.endsWith("/#contact"
         const r = el.getBoundingClientRect();
         const dx = (e.clientX - (r.left + r.width / 2)) / (r.width / 2);
         const dy = (e.clientY - (r.top + r.height / 2)) / (r.height / 2);
-
-        el.style.setProperty("--tx", (dx * strength).toFixed(2) + "px");
-        el.style.setProperty("--ty", (dy * strength).toFixed(2) + "px");
+        const tx = Math.round(dx * strength);
+        const ty = Math.round(dy * strength);
+        el.style.setProperty("--tx", tx + "px");
+        el.style.setProperty("--ty", ty + "px");
       };
 
       el.addEventListener("pointerleave", onLeave, { passive: true });

@@ -207,7 +207,11 @@ const {
           const start = performance.now();
           const tick = () => {
             const r = target.getBoundingClientRect();
-            const done = r.top < 140 && r.top > -80;
+            const pad = parseFloat(
+              getComputedStyle(document.documentElement).scrollPaddingTop || "0"
+            );
+            const threshold = (Number.isFinite(pad) ? pad : 96) + 8;
+            const done = r.top <= threshold && r.top >= -80;
             if (done || performance.now() - start > 900) {
               highlight();
               setTimeout(focusFirst, reduced ? 0 : 60);

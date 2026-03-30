@@ -46,7 +46,7 @@
   text-decoration: none;
   user-select: none;
 
-  transform: translate3d(var(--tx, 0px), calc(var(--ty, 0px) + var(--press, 0px)), 0) scale(var(--scale, 1));
+  transform: translate3d(var(--tx, 0px), calc(var(--ty, 0px) + var(--press, 0px)), 0);
   will-change: transform;
 
   transition:
@@ -54,7 +54,6 @@
     background 200ms ease,
     border-color 180ms ease,
     box-shadow 200ms ease,
-    filter 200ms ease,
     color 200ms ease;
 
   border: 1px solid transparent;
@@ -63,7 +62,6 @@
 /* micro press — primary only */
 .k-btn--primary:active{
   --press: 1.5px;
-  --scale: .982;
 }
 
 .k-btn:focus-visible{
@@ -113,13 +111,11 @@
 }
 
 .k-btn--primary:hover{
-  filter: brightness(1.08) saturate(1.04);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,.30),
     0 1px 3px rgba(0,0,0,.30),
     0 4px 20px rgba(103,53,238,.38),
     0 12px 44px rgba(103,53,238,.20);
-  --scale: 1.014;
 }
 
 /* specular sweep — sharp, no blur, fast */

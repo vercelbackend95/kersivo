@@ -1,0 +1,222 @@
+/* =========================================
+   Kersivo — Legal Page Layout
+   Shared by: /privacy-policy/, /terms/, /cookies/
+   Minimal, premium, brand-consistent
+   ========================================= */
+
+/* -------------------------
+   Page wrapper
+   ------------------------- */
+.k-legal {
+  padding: clamp(72px, 9vw, 120px) 0 clamp(64px, 8vw, 112px);
+  position: relative;
+}
+
+/* -------------------------
+   Header block
+   ------------------------- */
+.k-legal__header {
+  text-align: center;
+  margin-bottom: clamp(40px, 5vw, 64px);
+}
+
+.k-legal__kicker {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  font-weight: var(--w-semibold);
+  color: rgba(255, 255, 255, 0.45);
+  margin-bottom: 16px;
+}
+
+.k-legal__title {
+  font-size: clamp(32px, 4.2vw, 52px);
+  font-weight: var(--w-black);
+  letter-spacing: var(--track-tight);
+  color: var(--fg);
+  line-height: 1.05;
+  margin: 0;
+}
+
+.k-legal__lead {
+  margin: 14px auto 0;
+  max-width: 52ch;
+  font-size: var(--p);
+  color: rgba(255, 255, 255, 0.58);
+  line-height: 1.55;
+}
+
+.k-legal__meta {
+  margin-top: 20px;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.32);
+}
+
+/* -------------------------
+   Content card
+   ------------------------- */
+.k-legal__card {
+  max-width: 760px;
+  margin-inline: auto;
+
+  background:
+    radial-gradient(800px 400px at 50% 0%, rgba(255, 255, 255, 0.035), transparent 70%),
+    rgba(255, 255, 255, 0.025);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: clamp(32px, 4vw, 56px) clamp(24px, 4vw, 52px);
+
+  box-shadow:
+    0 2px 0 rgba(255, 255, 255, 0.04) inset,
+    0 32px 80px rgba(0, 0, 0, 0.38);
+}
+
+/* -------------------------
+   Prose overrides inside legal card
+   Keep measure but allow full card width
+   ------------------------- */
+.k-legal__card .prose {
+  max-width: none;
+}
+
+.k-legal__card .prose h2 {
+  font-size: clamp(18px, 1.8vw, 22px);
+  font-weight: var(--w-bold);
+  letter-spacing: var(--track-normal);
+  color: var(--fg);
+  margin-top: clamp(32px, 3.5vw, 44px);
+  padding-top: clamp(24px, 2.5vw, 32px);
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.k-legal__card .prose h2:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+.k-legal__card .prose p {
+  font-size: clamp(15px, 1.1vw, 16px);
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.k-legal__card .prose ul {
+  font-size: clamp(15px, 1.1vw, 16px);
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.64);
+  padding-left: 1.4em;
+}
+
+.k-legal__card .prose ul li {
+  margin-top: 6px;
+}
+
+/* Contact link inside prose */
+.k-legal__card .prose a {
+  color: rgba(168, 194, 212, 0.88);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  transition: color 0.18s ease;
+}
+
+.k-legal__card .prose a:hover {
+  color: rgba(210, 225, 240, 1);
+}
+
+/* -------------------------
+   Contact callout (bottom of each doc)
+   ------------------------- */
+.k-legal__contact {
+  margin-top: clamp(32px, 3vw, 44px);
+  padding: 20px 24px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.k-legal__contact-icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  display: grid;
+  place-items: center;
+  color: rgba(168, 194, 212, 0.80);
+}
+
+.k-legal__contact-body {
+  flex: 1;
+}
+
+.k-legal__contact-label {
+  font-size: 13px;
+  font-weight: var(--w-semibold);
+  color: var(--fg);
+  display: block;
+  margin-bottom: 4px;
+  letter-spacing: var(--track-normal);
+}
+
+.k-legal__contact-text {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.k-legal__contact-text a {
+  color: rgba(168, 194, 212, 0.88);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+/* -------------------------
+   Back link
+   ------------------------- */
+.k-legal__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.42);
+  letter-spacing: var(--track-normal);
+  transition: color 0.18s ease;
+  margin-bottom: clamp(28px, 3vw, 40px);
+}
+
+.k-legal__back:hover {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.k-legal__back svg {
+  transition: transform 0.18s ease;
+}
+
+.k-legal__back:hover svg {
+  transform: translateX(-3px);
+}
+
+/* -------------------------
+   Responsive
+   ------------------------- */
+@media (max-width: 600px) {
+  .k-legal__card {
+    border-radius: 16px;
+  }
+
+  .k-legal__contact {
+    flex-direction: column;
+    gap: 10px;
+  }
+}

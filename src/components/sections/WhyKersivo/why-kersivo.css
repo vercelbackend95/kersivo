@@ -198,6 +198,12 @@
   gap: 14px 28px;
 }
 
+/* Supporting ghost CTA — lighter scale than hero or secondary */
+.ks-why__cta {
+  --btn-h: 48px;
+  --btn-pad: 22px;
+}
+
 .ks-why__footNote {
   margin: 0;
   font-size: 14px;
