@@ -5,7 +5,7 @@ import "./testimonials-new.css";
 <section
   class="ks-testi section"
   id="testimonials"
-  aria-labelledby="ks-testi-quote"
+  aria-labelledby="ks-testi-heading"
   data-light-zone
   data-light-x="48"
   data-light-y="44"
@@ -15,7 +15,13 @@ import "./testimonials-new.css";
 >
   <div class="container ks-testi__container">
 
-    <p class="k-kicker">Client voice</p>
+    <header class="ks-testi__intro">
+      <h2 class="ks-testi__a11yTitle" id="ks-testi-heading">Featured project — client testimonial</h2>
+      <p class="k-kicker">Featured project</p>
+      <p class="ks-testi__bridge">
+        Client voice from the case study above — inspectable end-to-end in the full write-up.
+      </p>
+    </header>
 
     <div class="ks-testi__body">
 
@@ -23,7 +29,7 @@ import "./testimonials-new.css";
       <div class="ks-testi__quoteCol">
         <p class="ks-testi__mark" aria-hidden="true">&ldquo;</p>
 
-        <blockquote class="ks-testi__quote" id="ks-testi-quote">
+        <blockquote class="ks-testi__quote" cite="/work/sewing-ataga/">
           Kersivo delivered exactly what they promised. The site is fast,
           clear, and the quality of people who get in touch has improved
           noticeably. <em>It now feels like a business I'm proud to send
@@ -96,20 +102,12 @@ import "./testimonials-new.css";
               </div>
             </div>
 
-            <div class="ks-testi__scores">
-              <div class="ks-testi__score">
-                <span class="ks-testi__scoreNum">98</span>
-                <span class="ks-testi__scoreLabel">Performance</span>
-              </div>
-              <div class="ks-testi__score">
-                <span class="ks-testi__scoreNum">100</span>
-                <span class="ks-testi__scoreLabel">Accessibility</span>
-              </div>
-              <div class="ks-testi__score">
-                <span class="ks-testi__scoreNum">100</span>
-                <span class="ks-testi__scoreLabel">Best Practices</span>
-              </div>
-            </div>
+            <p class="ks-testi__buildNote" aria-hidden="true">
+              <span class="ks-testi__buildNoteMain">Performance-led build</span>
+              <span class="ks-testi__buildNoteSub">
+                Lean delivery, accessible markup, assets tuned for speed.
+              </span>
+            </p>
 
           </div>
         </figure>

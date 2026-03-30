@@ -1,5 +1,7 @@
 ---
 import "./cta-button.css";
+import { isContactCtaHref } from "../../../site/cta";
+
 type Variant = "primary" | "secondary" | "ghost";
 
 interface Props {
@@ -26,10 +28,7 @@ const magnetic =
 const classes = `k-btn k-btn--${variant} ${magnetic ? "k-btn--magnetic" : ""} ${extraClass}`.trim();
 const hasShine = variant === "primary";
 const contactHref = (href || "").trim();
-const isContact =
-  contactHref === "#contact" ||
-  contactHref.endsWith("/#contact") ||
-  (/[?&](?:source|_source)=/.test(contactHref) && contactHref.includes("#contact"));
+const isContact = isContactCtaHref(contactHref);
 ---
 
 <a

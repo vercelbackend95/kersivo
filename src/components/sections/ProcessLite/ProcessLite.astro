@@ -1,7 +1,7 @@
 ---
 import "./process-lite.css";
 import CtaButton from "../../ui/CtaButton/CtaButton.astro";
-import { CTA_PRIMARY_CONTACT } from "../../../site/cta";
+import { CTA_SECONDARY_PACKAGES, CTA_SECONDARY_WORK } from "../../../site/cta";
 
 const steps = [
   {
@@ -66,14 +66,25 @@ const steps = [
     </ol>
 
     <div class="ks-process__foot">
-      <CtaButton
-        href="/#contact"
-        label={CTA_PRIMARY_CONTACT}
-        variant="secondary"
-        arrow={true}
-        magnetic={false}
-      />
-      <p class="ks-process__footNote">Prefer to talk it through? We will walk you through the process in the first reply.</p>
+      <div class="ks-process__ctas" role="group" aria-label="Explore pricing and work">
+        <CtaButton
+          href="/packages/"
+          label={CTA_SECONDARY_PACKAGES}
+          variant="secondary"
+          arrow={true}
+          magnetic={false}
+        />
+        <CtaButton
+          href="/work/"
+          label={CTA_SECONDARY_WORK}
+          variant="secondary"
+          arrow={true}
+          magnetic={false}
+        />
+      </div>
+      <p class="ks-process__footNote">
+        Prefer to talk it through? Brief us in the contact section — we will walk you through the process in the first reply.
+      </p>
     </div>
 
   </div>

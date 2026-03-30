@@ -27,7 +27,7 @@
   --nav-link-active: rgba(255, 255, 255, 0.96);
 }
 
-@media (max-width: 860px){
+@media (max-width: 899px){
   :root{
     --nav-float-y: 0px;
     --nav-h: calc(env(safe-area-inset-top) + var(--nav-row-h));
@@ -298,15 +298,17 @@ body[data-page="home"] .k-topnav:not(.is-scrolled) .k-topnav__surface{
   border-radius: 4px;
 }
 
-@media (max-width: 1100px) and (min-width: 861px){
+/* Wide-but-narrow chrome: iPad landscape 1024, small laptops — extra air between links */
+@media (max-width: 1100px) and (min-width: 900px){
   .k-topnav__links{
-    gap: clamp(16px, 1.8vw, 26px);
-    padding: 0 4px;
+    gap: clamp(20px, 2.2vw, 30px);
+    padding: 0 6px;
   }
 
   .k-topnav__link{
-    font-size: 12.5px;
-    letter-spacing: -0.012em;
+    padding-inline: 5px;
+    font-size: 12.75px;
+    letter-spacing: -0.011em;
   }
 }
 
@@ -408,7 +410,7 @@ body[data-page="home"] .k-topnav:not(.is-scrolled) .k-topnav__surface{
 }
 
 /* ===== MOBILE ===== */
-@media (max-width: 860px){
+@media (max-width: 899px){
   .k-topnav__shell{
     padding-left: 0;
     padding-right: 0;

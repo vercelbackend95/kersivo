@@ -48,11 +48,12 @@ export function parseLeadSourceFromSearch(search: string): string | null {
 }
 
 /**
- * Href to the inline contact block: packages keeps local #contact; other inner pages pass ?source= for attribution on home.
+ * Href to contact: home and packages keep in-page `#contact`; other routes use `/contact/?source=` (same form, no jump to home).
  */
 export function homeContactHrefFromPagePath(pagePath: string): string {
   const p = (pagePath || "/").replace(/\/+$/, "") || "/";
   if (p === "/packages") return "/packages/#contact";
   if (p === "/") return "/#contact";
-  return `/?source=${encodeURIComponent(p)}#contact`;
+  if (p === "/contact") return "/contact/#contact";
+  return `/contact/?source=${encodeURIComponent(p)}#contact`;
 }

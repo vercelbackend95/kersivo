@@ -183,24 +183,27 @@
 
 /* --- Foot --- */
 .ks-why__foot {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 14px 28px;
-}
-
-/* Supporting ghost CTA — lighter scale than hero or secondary */
-.ks-why__cta {
-  --btn-h: 48px;
-  --btn-pad: 22px;
+  max-width: 42ch;
 }
 
 .ks-why__footNote {
   margin: 0;
   font-size: 14px;
   color: rgba(255, 255, 255, 0.5);
-  max-width: 38ch;
-  line-height: 1.5;
+  line-height: 1.55;
+}
+
+.ks-why__footLink {
+  color: rgba(255, 255, 255, 0.72);
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.22);
+  text-underline-offset: 3px;
+  transition: color 160ms ease, text-decoration-color 160ms ease;
+}
+
+.ks-why__footLink:hover {
+  color: rgba(255, 255, 255, 0.92);
+  text-decoration-color: rgba(255, 255, 255, 0.35);
 }
 
 @media (prefers-reduced-motion: reduce) {

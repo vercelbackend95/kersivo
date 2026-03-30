@@ -47,6 +47,10 @@
   --container: 1400px;
   --gutter: clamp(16px, 3vw, 28px);
 
+  /* Breakpoint axis — tablet / compact vs wide (iPad portrait ~810/834 → compact; landscape 1024 → wide) */
+  --bp-compact-max: 899px;
+  --bp-wide-min: 900px;
+
   /* Content rhythm */
   --measure: 65ch; /* max comfortable line length */
   --space-1: 6px;
@@ -370,10 +374,9 @@ section, [data-section]{
    (sections were landing under the topnav)
    ========================= */
 
-@media (max-width: 768px){
-  /* --nav-h na mobile: topnav.css */
+@media (max-width: 899px){
+  /* --nav-h: compact bar (topnav.css, aligned with --bp-compact-max) */
 
-  /* Każda sekcja przy scroll/jump dostaje bezpieczny margines */
   section[id],
   [data-section][id],
   main [id]{
@@ -381,8 +384,7 @@ section, [data-section]{
   }
 }
 
-/* (opcjonalnie) jeśli pierwsza sekcja na podstronach nadal “przykleja się” do góry */
-@media (max-width: 768px){
+@media (max-width: 899px){
   main{
     padding-top: 10px;
   }

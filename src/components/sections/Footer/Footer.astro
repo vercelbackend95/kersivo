@@ -14,7 +14,7 @@ interface Props {
 const { showTopCta = true } = Astro.props as Props;
 const footCardClasses = `k-footcard${showTopCta ? "" : " k-footcard--flush"}`;
 
-/** Pages that render InlineContactLead with `id="contact"` (same-origin anchor). */
+/** Pages with `id="contact"`: home, `/packages/`, `/contact/` (same-origin `#contact`); others use `/contact/?source=`. */
 const path = Astro.url.pathname.replace(/\/+$/, "") || "/";
 const contactHref = homeContactHrefFromPagePath(path);
 

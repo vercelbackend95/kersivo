@@ -6,6 +6,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 // New sales-first sections
 import HeroSales from "../components/sections/HeroSales/HeroSales.astro";
 import CaseEvidence from "../components/sections/CaseEvidence/CaseEvidence.astro";
+import CredibilityScope from "../components/sections/CredibilityScope/CredibilityScope.astro";
 import TestimonialsNew from "../components/sections/Testimonials/TestimonialsNew.astro";
 import ServicesSnapshot from "../components/sections/ServicesSnapshot/ServicesSnapshot.astro";
 import WhyKersivo from "../components/sections/WhyKersivo/WhyKersivo.astro";
@@ -15,7 +16,6 @@ import FAQSales from "../components/sections/FAQSales/FAQSales.astro";
 import InlineContactLead from "../components/sections/InlineContactLead/InlineContactLead.astro";
 import Footer from "../components/sections/Footer/Footer.astro";
 import HomeDecisionBar from "../components/shell/HomeDecisionLayer/HomeDecisionBar.astro";
-import NextStepBand from "../components/shell/HomeDecisionLayer/NextStepBand.astro";
 ---
 
 <BaseLayout
@@ -28,25 +28,20 @@ import NextStepBand from "../components/shell/HomeDecisionLayer/NextStepBand.ast
   <!-- 2. Case evidence: proof of real business outcome -->
   <CaseEvidence />
 
+  <!-- 2b. Honest breadth + how additional proof is shared (no second fake case) -->
+  <CredibilityScope />
+
   <!-- 3. Testimonial + project showcase -->
   <TestimonialsNew />
 
   <!-- 4. Services: what exactly can I buy -->
   <ServicesSnapshot />
 
-  <NextStepBand
-    hint="Tell us what you need — we reply with fit, scope, and a clear next step."
-  />
-
   <!-- 5. Why Kersivo: differentiators with proof -->
   <WhyKersivo />
 
   <!-- 6. Process: reduce perceived risk -->
   <ProcessLite />
-
-  <NextStepBand
-    hint="If the process fits, the next move is a short brief — then a straight answer on scope."
-  />
 
   <!-- 7. Fit / Not-fit: lead qualification -->
   <FitSection />

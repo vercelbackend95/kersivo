@@ -1,0 +1,19 @@
+---
+export const prerender = true;
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import InlineContactLead from "../../components/sections/InlineContactLead/InlineContactLead.astro";
+import Footer from "../../components/sections/Footer/Footer.astro";
+import { parseLeadSourceFromSearch } from "../../lib/leadSource";
+
+const title = "Contact — Kersivo";
+const description =
+  "Brief us on your site and goals. We reply within 12 hours with a clear view on fit, scope, and next steps.";
+
+const leadSource = parseLeadSourceFromSearch(Astro.url.search) ?? "/contact";
+---
+
+<BaseLayout title={title} description={description}>
+  <InlineContactLead leadSource={leadSource} />
+  <Footer showTopCta={false} />
+</BaseLayout>

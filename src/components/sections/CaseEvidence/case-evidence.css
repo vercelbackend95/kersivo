@@ -156,10 +156,3 @@
   align-items: center;
   gap: 14px 24px;
 }
-
-.ks-case__footNote {
-  margin: 0;
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.5);
-  line-height: 1.45;
-}

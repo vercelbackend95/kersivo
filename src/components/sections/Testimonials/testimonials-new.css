@@ -12,6 +12,32 @@
   gap: clamp(36px, 5vw, 60px);
 }
 
+.ks-testi__intro {
+  display: grid;
+  gap: 10px;
+  max-width: 48ch;
+}
+
+.ks-testi__a11yTitle {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.ks-testi__bridge {
+  margin: 0;
+  font-size: clamp(14px, 0.85vw + 0.52rem, 15.5px);
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.52);
+}
+
 /* --- Split layout --- */
 .ks-testi__body {
   display: grid;
@@ -346,36 +372,31 @@
   font-weight: 650;
 }
 
-/* score badges */
-.ks-testi__scores {
+/* build approach (no unaudited metric numbers) */
+.ks-testi__buildNote {
+  margin: 0;
   display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.ks-testi__score {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 6px 12px;
-  border-radius: 8px;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 14px;
+  border-radius: 10px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.09);
 }
 
-.ks-testi__scoreNum {
-  font-size: 14px;
-  font-weight: 780;
-  letter-spacing: -0.04em;
-  color: rgba(102, 255, 170, 0.9);
+.ks-testi__buildNoteMain {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(102, 255, 170, 0.88);
 }
 
-.ks-testi__scoreLabel {
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.44);
-  font-weight: 600;
+.ks-testi__buildNoteSub {
+  font-size: 11px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.48);
+  font-weight: 500;
 }
 
 /* project badge */

@@ -93,7 +93,8 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-@media (min-width: 900px) and (max-width: 1024px) {
+/* Matrix often overflows here (iPad landscape 1024 through narrow laptop) */
+@media (min-width: 900px) and (max-width: 1199px) {
   .k-packMatrixHint {
     display: block;
   }
@@ -524,9 +525,7 @@
     line-height: 1.52;
     color: rgba(255, 255, 255, 0.86);
   }
-}
 
-@media (max-width: 860px) {
   .k-pack__head {
     text-align: left;
   }
@@ -583,27 +582,52 @@
   }
 }
 
+/* Tablet / narrow desktop: readable cells without blowing min-width (810–834 use cards; 900–1099 is matrix) */
 @media (min-width: 900px) and (max-width: 1099px) {
   .k-packMatrix {
-    grid-template-columns: minmax(188px, 1.1fr) repeat(3, minmax(148px, 1fr));
+    grid-template-columns: minmax(196px, 1.08fr) repeat(3, minmax(154px, 1fr));
   }
 
   .k-packHeadCell {
-    padding-inline: 0.8rem;
+    padding: 0.95rem 0.88rem 1rem;
+  }
+
+  .k-packTierName {
+    font-size: 1.02rem;
+  }
+
+  .k-packTierNote {
+    font-size: 0.76rem;
+    line-height: 1.48;
+    max-width: 28ch;
   }
 
   .k-packCell {
-    padding-inline: 0.8rem;
+    padding: 0.8rem 0.88rem;
+    font-size: 0.82rem;
+    line-height: 1.55;
   }
 
   .k-packCellHint {
-    font-size: 0.68rem;
+    font-size: 0.69rem;
+    line-height: 1.44;
   }
 
   .k-packStage--matrix .k-packCta {
-    --btn-h: clamp(27px, 1.4vw + 22px, 30px);
-    --btn-pad: clamp(8px, 0.9vw + 6px, 11px);
-    --btn-size: clamp(0.6rem, 0.2vw + 0.55rem, 0.66rem);
+    --btn-h: clamp(28px, 1.5vw + 22px, 31px);
+    --btn-pad: clamp(9px, 1vw + 6px, 12px);
+    --btn-size: clamp(0.61rem, 0.22vw + 0.55rem, 0.67rem);
+  }
+}
+
+/* iPad landscape & similar: slightly tighter grid but keep line rhythm */
+@media (min-width: 900px) and (max-width: 1024px) {
+  .k-packMatrix {
+    grid-template-columns: minmax(192px, 1.06fr) repeat(3, minmax(150px, 1fr));
+  }
+
+  .k-packCell {
+    padding-block: 0.76rem;
   }
 }
 

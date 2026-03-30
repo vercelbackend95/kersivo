@@ -1,7 +1,5 @@
 ---
 import "./faq-sales.css";
-import CtaButton from "../../ui/CtaButton/CtaButton.astro";
-import { CTA_PRIMARY_CONTACT } from "../../../site/cta";
 
 const faqs = [
   {
@@ -28,6 +26,11 @@ const faqs = [
     id: "faq-existing",
     question: "Can you improve our existing site instead of rebuilding it?",
     answer: "Yes — if a full rebuild is not the right move, we can scope a <strong>conversion and performance improvement pass</strong> on your existing site. We assess page speed, mobile UX, messaging structure, and contact flow and fix what matters most. We will advise honestly on whether a partial improvement or a full rebuild better serves your goals.",
+  },
+  {
+    id: "faq-more-proof",
+    question: "Can I see more examples or references before we commit?",
+    answer: "The public portfolio is intentionally small. If your brief needs it, we share <strong>additional live references, walkthroughs, or sector-relevant detail</strong> after a short introductory conversation — matched to what is fair to show and any confidentiality in place.",
   },
 ] as const;
 ---
@@ -89,14 +92,9 @@ const faqs = [
     </ul>
 
     <div class="ks-faq__foot">
-      <CtaButton
-        href="/#contact"
-        label={CTA_PRIMARY_CONTACT}
-        variant="primary"
-        arrow={true}
-        magnetic={false}
-      />
-      <p class="ks-faq__footNote">Still have a question? Just ask in the message below.</p>
+      <p class="ks-faq__footNote">
+        Still have a question? Add it in the contact form right below — that is the fastest way to get a straight answer.
+      </p>
     </div>
 
   </div>

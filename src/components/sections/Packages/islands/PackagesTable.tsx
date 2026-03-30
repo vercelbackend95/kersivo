@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { CTA_PRIMARY_CONTACT } from "../../../../site/cta";
+import { CTA_PRIMARY_CONTACT, isContactCtaHref } from "../../../../site/cta";
 
 type TierKey = "base" | "plus" | "bespoke";
 
@@ -27,13 +27,19 @@ function cn(...x: Array<string | false | undefined | null>) {
 function QuoteCta({ href, label, compact }: { href: string; label: string; compact?: boolean }) {
   return (
     <a
-      className={cn("k-btn k-btn--primary k-packCta", compact && "k-packCta--compact")}
+      className={cn(
+        "k-btn k-btn--primary k-btn--magnetic",
+        "k-packCta",
+        compact && "k-packCta--compact"
+      )}
       href={href}
+      data-magnetic="true"
+      {...(isContactCtaHref(href) ? { "data-cta": "contact" as const } : {})}
     >
       <span className="k-btn__label">{label}</span>
       <span className="k-btn__shine" aria-hidden="true" />
       <span className="k-btn__arrow" aria-hidden="true">
-        <svg width="12" height="12" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
             d="M3 7H11M8 4L11 7L8 10"
             stroke="currentColor"

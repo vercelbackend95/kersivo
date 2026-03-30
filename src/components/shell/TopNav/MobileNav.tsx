@@ -209,15 +209,33 @@ export default function MobileNav({ contactHref = "/#contact" }: MobileNavProps)
     window.setTimeout(() => {
       try {
         const url = new URL(href, window.location.href);
-        const sameOrigin = url.origin === window.location.origin;
-        if (sameOrigin) {
-          window.location.assign(`${url.pathname}${url.search}${url.hash}`);
+        if (url.origin !== window.location.origin) {
+          window.location.assign(href);
           return;
         }
+
+        const targetPath = normPath(url.pathname);
+        const herePath = normPath(window.location.pathname);
+        const hashRaw = (url.hash || "").replace(/^#/, "").trim();
+
+        // Same path + in-page hash (e.g. home /#services): avoid location.assign reload;
+        // synthetic click uses native fragment navigation + BaseLayout #contact handler.
+        if (targetPath === herePath && hashRaw) {
+          const a = document.createElement("a");
+          a.setAttribute("href", `${url.pathname}${url.search}${url.hash}`);
+          a.setAttribute("tabindex", "-1");
+          a.setAttribute("aria-hidden", "true");
+          a.style.cssText = "position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none";
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          return;
+        }
+
+        window.location.assign(`${url.pathname}${url.search}${url.hash}`);
       } catch {
-        // Fallback below.
+        window.location.assign(href);
       }
-      window.location.assign(href);
     }, 0);
   };
 

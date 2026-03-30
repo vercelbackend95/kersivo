@@ -1,7 +1,6 @@
 ---
 import "./why-kersivo.css";
-import CtaButton from "../../ui/CtaButton/CtaButton.astro";
-import { CTA_PRIMARY_CONTACT } from "../../../site/cta";
+import { CTA_SECONDARY_PACKAGES, CTA_SECONDARY_WORK } from "../../../site/cta";
 
 const differentiators = [
   {
@@ -74,16 +73,12 @@ const differentiators = [
     </div>
 
     <div class="ks-why__foot">
-      <CtaButton
-        href="/#contact"
-        label={CTA_PRIMARY_CONTACT}
-        variant="ghost"
-        magnetic={false}
-        arrow={true}
-        class="ks-why__cta"
-      />
       <p class="ks-why__footNote">
-        Usually chosen when the business is already strong and the website needs to catch up.
+        Usually chosen when the business is already strong and the website needs to catch up. Explore{" "}
+        <a class="ks-why__footLink" href="/packages/">{CTA_SECONDARY_PACKAGES}</a>
+        {" "}or{" "}
+        <a class="ks-why__footLink" href="/work/">{CTA_SECONDARY_WORK}</a>
+        .
       </p>
     </div>
 

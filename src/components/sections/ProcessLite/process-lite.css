@@ -164,8 +164,15 @@
 .ks-process__foot {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-start;
   gap: 14px 28px;
+}
+
+.ks-process__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
 }
 
 .ks-process__footNote {
