@@ -11,7 +11,7 @@ export function normalisePathname(pathname: string): string {
 }
 
 /**
- * True when this nav href is the current page. `/work/*` child routes highlight "Selected work".
+ * True when this nav href is the current page. `/work/*` child routes highlight "Product Lab".
  */
 export function isNavLinkActive(href: string, pathname: string): boolean {
   const hasHash = href.includes("#");
@@ -33,7 +33,7 @@ export const NAV_LINKS: NavLink[] = [
   },
   {
     href: "/work/",
-    label: "Selected work",
+    label: "Product Lab",
     description: "Client projects and studio products",
   },
   {

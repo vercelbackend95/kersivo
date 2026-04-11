@@ -179,6 +179,16 @@
   opacity: 1;
 }
 
+.ks-testi__projectNote {
+  margin: 0;
+  max-width: min(42ch, 100%);
+  font-size: clamp(11px, 0.35vw + 0.62rem, 12.5px);
+  line-height: 1.55;
+  letter-spacing: 0.01em;
+  color: rgba(255, 255, 255, 0.45);
+  text-wrap: pretty;
+}
+
 /* ===========================
    RIGHT — browser mockup
    =========================== */

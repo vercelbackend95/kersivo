@@ -37,10 +37,6 @@
   color: rgba(255, 255, 255, 0.94);
 }
 
-.ks-case__anchorRest {
-  color: rgba(255, 255, 255, 0.58);
-}
-
 .ks-case__h2 {
   margin: 0;
   font-size: clamp(2rem, 4.2vw + 0.4rem, 3.5rem);

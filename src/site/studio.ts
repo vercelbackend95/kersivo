@@ -4,7 +4,7 @@
  */
 export const studioAvailability = {
   credibilityLabel: "Current availability",
-  credibilityValue: "Limited capacity — enquire for next start",
+  credibilityValue: "Limited — enquire for next start",
   ctaNote:
     "Taking new work on a limited basis — I’ll confirm realistic timing in my reply.",
 } as const;

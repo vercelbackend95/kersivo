@@ -1,7 +1,6 @@
 ---
 import "./footer.css";
 import CtaButton from "../../ui/CtaButton/CtaButton.astro";
-import KersivoMark from "../../ui/KersivoMark/KersivoMark.astro";
 import { homeContactHrefFromPagePath } from "../../../lib/leadSource";
 import { CTA_PRIMARY_CONTACT } from "../../../site/cta";
 
@@ -20,7 +19,7 @@ const contactHref = homeContactHrefFromPagePath(path);
 
 const nav = [
   {
-    title: "Selected work",
+    title: "Product Lab",
     links: [
       { label: "Overview", href: "/work/" },
       { label: "What we build", href: "/#services" },
@@ -75,10 +74,14 @@ const legal = [
       <div class="k-footcard__top">
         <div class="k-footcard__brand">
           <a class="k-footcard__logo" href="/" aria-label="Kersivo home">
-            <span class="k-footcard__mark" aria-hidden="true">
-              <KersivoMark size={18} />
-            </span>
-            <span class="k-footcard__name">Kersivo</span>
+            <img
+              class="k-footcard__logoImg"
+              src="/visuals/Logokersivo.png"
+              alt=""
+              width="90"
+              height="28"
+              decoding="async"
+            />
           </a>
 
           <p class="k-footcard__blurb">

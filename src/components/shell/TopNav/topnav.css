@@ -25,6 +25,10 @@
   --nav-link-idle: rgba(255, 255, 255, 0.46);
   --nav-link-hover: rgba(255, 255, 255, 0.84);
   --nav-link-active: rgba(255, 255, 255, 0.96);
+
+  /* Logo: intrinsic asset 90×28 — scale with bar height, no fixed-h + max-width vw clash */
+  --nav-logo-ar: 90 / 28;
+  --nav-logo-h: clamp(24px, calc(var(--nav-row-h) * 0.48), 31px);
 }
 
 @media (max-width: 899px){
@@ -169,7 +173,6 @@ body[data-page="home"] .k-topnav:not(.is-scrolled) .k-topnav__surface{
 
   display: inline-flex;
   align-items: center;
-  gap: 11px;
   color: rgba(255, 255, 255, 0.94);
   text-decoration: none;
   flex: 0 0 auto;
@@ -186,38 +189,12 @@ body[data-page="home"] .k-topnav:not(.is-scrolled) .k-topnav__surface{
   opacity: 0.86;
 }
 
-.k-topnav__mark{
-  width: 28px;
-  height: 28px;
-  border-radius: 10px;
-  display: grid;
-  place-items: center;
-  color: rgba(252, 250, 246, 0.96);
-  background: rgba(255, 255, 255, 0.045);
-  border: 1px solid rgba(255, 255, 255, 0.11);
-  box-shadow:
-    0 12px 34px rgba(0, 0, 0, 0.24),
-    inset 0 1px 0 rgba(255, 255, 255, 0.14);
-  transition:
-    background 220ms cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 220ms cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.k-topnav__brand:hover .k-topnav__mark{
-  background: rgba(255, 255, 255, 0.065);
-  border-color: rgba(255, 255, 255, 0.14);
-  box-shadow:
-    0 18px 46px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.17);
-}
-
-.k-topnav__name{
-  font-weight: var(--w-semibold, 650);
-  letter-spacing: -0.038em;
-  font-size: 15px;
-  white-space: nowrap;
+.k-topnav__logo{
+  display: block;
+  height: var(--nav-logo-h);
+  width: auto;
+  aspect-ratio: var(--nav-logo-ar);
+  object-fit: contain;
 }
 
 /* ===== LINKS — editorial sentence case, whisper → clarity ===== */
@@ -462,11 +439,6 @@ body[data-page="home"] .k-topnav:not(.is-scrolled) .k-topnav__surface{
 }
 
 @media (max-width: 420px){
-  .k-topnav__name{
-    font-size: 14px;
-    letter-spacing: -0.035em;
-  }
-
   .k-topnav__cta{
     --btn-h: 35px;
     --btn-pad: 13px;
@@ -498,8 +470,7 @@ body[data-page="home"] .k-topnav:not(.is-scrolled) .k-topnav__surface{
   .k-topnav__surface::before,
   .k-topnav__link,
   .k-topnav__link::after,
-  .k-topnav__brand,
-  .k-topnav__mark{
+  .k-topnav__brand{
     transition: none !important;
   }
 }

@@ -47,13 +47,23 @@
   padding: 0;
 }
 
+/* Global `li + li { margin-top }` would offset pills 2–3 in a horizontal flex row. */
+.k-pack__meta li + li {
+  margin-top: 0;
+}
+
 .k-pack__meta li {
-  padding: 0.44rem 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.25rem;
+  padding: 0.35rem 0.85rem;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.02);
   color: rgba(255, 255, 255, 0.76);
   font-size: 0.76rem;
+  line-height: 1.25;
   letter-spacing: 0.01em;
 }
 

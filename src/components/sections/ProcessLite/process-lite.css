@@ -49,7 +49,13 @@
 @media (min-width: 720px) {
   .ks-process__steps {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
     border-top: 0;
+  }
+
+  /* Global `li + li { margin-top }` would offset columns 2–3; keep tops aligned in the row. */
+  .ks-process__steps > li + li {
+    margin-top: 0;
   }
 }
 
@@ -63,6 +69,10 @@
 
 @media (min-width: 720px) {
   .ks-process__step {
+    grid-template-rows: auto 1fr auto;
+    align-content: start;
+    min-height: 0;
+    height: 100%;
     padding: clamp(26px, 3.4vw, 36px) clamp(18px, 2.2vw, 28px);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     border-bottom: 0;
@@ -160,12 +170,12 @@
   }
 }
 
-/* --- CTA row --- */
+/* --- CTA row: buttons first, footnote below on all breakpoints --- */
 .ks-process__foot {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   align-items: flex-start;
-  gap: 14px 28px;
+  gap: clamp(14px, 2vw, 18px);
 }
 
 .ks-process__ctas {
@@ -177,6 +187,9 @@
 
 .ks-process__footNote {
   margin: 0;
-  font-size: 14px;
+  font-size: clamp(13px, 0.35vw + 12px, 14px);
+  line-height: 1.6;
   color: rgba(255, 255, 255, 0.5);
+  max-width: min(100%, 62ch);
+  text-wrap: pretty;
 }

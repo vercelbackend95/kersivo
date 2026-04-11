@@ -4,8 +4,10 @@ import "./work-index.css";
 type Entry = {
   kind: string;
   href: string;
-  imageSrc: string;
-  imageAlt: string;
+  /** Omit when no public screenshot yet — a branded placeholder is shown. */
+  imageSrc?: string;
+  /** Required when `imageSrc` is set. */
+  imageAlt?: string;
   title: string;
   meta: string;
   summary: string;
@@ -19,9 +21,9 @@ const entries: Entry[] = [
     imageSrc: "/screenshots/sewing-ataga-desktop.jpg",
     imageAlt: "Sewing Ataga website preview showing premium tailoring service homepage",
     title: "Sewing Ataga",
-    meta: "Tailoring & alterations — London, UK",
+    meta: "Tailoring & alterations — Poole, UK",
     summary:
-      "Full website design and build for an established studio: service-led structure, local SEO foundations, and a mobile-first experience tied to real enquiry behaviour.",
+      "High-performance web infrastructure for a London-based tailoring studio. Focused on local SEO foundations and a frictionless mobile journey to drive high-intent enquiries.",
     cta: "Read case study",
   },
   {
@@ -29,11 +31,20 @@ const entries: Entry[] = [
     href: "/work/barber-website-system/",
     imageSrc: "/screenshots/barber-system-desktop.jpg",
     imageAlt: "Barber website system preview with booking and retail interface",
-    title: "Barber website system",
+    title: "Kersivo Barber System",
     meta: "Bookings, retail & admin — UK barbershops",
     summary:
-      "A live, branded demonstration of a vertical product: one connected system for bookings, shop/pickup, and day-to-day updates — built to show how we ship polished, operational sites at speed.",
+      "An end-to-end booking and retail ecosystem designed for UK barbershops. Built with Astro for sub-second speeds, featuring automated scheduling, data sovereignty, and a zero-friction checkout.",
     cta: "Explore product demo",
+  },
+  {
+    kind: "New SaaS (Coming Soon)",
+    href: "/contact/",
+    title: "Consultancy Booking Engine",
+    meta: "In Development — Q3 2026",
+    summary:
+      "A high-integrity scheduling platform for professional service providers. Replacing back-and-forth emails with automated, prepay-enabled consultation booking and secure client portals.",
+    cta: "Register interest",
   },
 ];
 ---
@@ -41,12 +52,12 @@ const entries: Entry[] = [
 <section class="wk-index section" aria-labelledby="wk-index-title">
   <div class="container">
     <header class="wk-index__head">
-      <p class="k-kicker k-kicker--md wk-index__eyebrow">Selected work</p>
+      <p class="k-kicker k-kicker--md wk-index__eyebrow">Product Lab</p>
       <h1 class="wk-index__title" id="wk-index-title">Evidence, curated.</h1>
       <p class="wk-index__lead">
-        A focused set of what we have shipped publicly — one live client engagement and one
-        studio product demo. We keep the portfolio small on purpose; further references and
-        situational examples are available on request.
+        A focused display of public deployments — comprising active client engagements and proprietary studio
+        products. The portfolio is kept small by design; focus is placed on depth of integration and technical
+        performance rather than project volume.
       </p>
     </header>
 
@@ -55,16 +66,31 @@ const entries: Entry[] = [
         entries.map((item, i) => (
           <li class="wk-index__item">
             <a class="wk-card" href={item.href}>
-              <figure class="wk-card__media">
-                <img
-                  class="wk-card__img"
-                  src={item.imageSrc}
-                  alt={item.imageAlt}
-                  width="1200"
-                  height="760"
-                  loading="lazy"
-                  decoding="async"
-                />
+              <figure
+                class:list={[
+                  "wk-card__media",
+                  !item.imageSrc && "wk-card__media--placeholder",
+                ]}
+              >
+                {item.imageSrc ? (
+                  <img
+                    class="wk-card__img"
+                    src={item.imageSrc}
+                    alt={item.imageAlt}
+                    width="1200"
+                    height="760"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  <div
+                    class="wk-card__placeholder"
+                    role="img"
+                    aria-label="New SaaS (coming soon); product preview image not yet available"
+                  >
+                    <span class="wk-card__placeholderMark" aria-hidden="true">New SaaS (Coming Soon)</span>
+                  </div>
+                )}
               </figure>
               <div class="wk-card__body">
                 <span class="wk-card__row">
@@ -90,9 +116,8 @@ const entries: Entry[] = [
     </ul>
 
     <p class="wk-index__note" role="note">
-      Commissioned work and confidential builds are not always listed here. If you need
-      category-specific proof (e.g. hospitality, professional services, e-commerce), ask when
-      you enquire — we will share what is appropriate.
+      Confidential builds and internal enterprise tools are not listed publicly. For sector-specific proof
+      (e.g., hospitality, professional services) or technical walkthroughs under NDA — please enquire directly.
     </p>
   </div>
 </section>

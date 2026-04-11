@@ -2,7 +2,6 @@
 // src/components/shell/TopNav/TopNav.astro
 import "./topnav.css";
 import CtaButton from "../../ui/CtaButton/CtaButton.astro";
-import KersivoMark from "../../ui/KersivoMark/KersivoMark.astro";
 import { CTA_PRIMARY_CONTACT } from "../../../site/cta";
 import MobileNav from "./MobileNav";
 import { homeContactHrefFromPagePath } from "../../../lib/leadSource";
@@ -21,10 +20,14 @@ const contactCtaHref = homeContactHrefFromPagePath(pathname);
     <div class="k-topnav__surface">
       <div class="k-topnav__inner">
         <a class="k-topnav__brand" href="/" aria-label="Kersivo home">
-          <span class="k-topnav__mark" aria-hidden="true">
-            <KersivoMark size={16} />
-          </span>
-          <span class="k-topnav__name">Kersivo</span>
+          <img
+            class="k-topnav__logo"
+            src="/visuals/Logokersivo.png"
+            alt=""
+            width="90"
+            height="28"
+            decoding="async"
+          />
         </a>
 
         <nav class="k-topnav__links" aria-label="Primary">

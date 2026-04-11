@@ -11,6 +11,7 @@ const pageCrossfade = fade({ duration: "170ms" });
 
 const SITE_URL = "https://kersivo.co.uk";
 const OG_IMAGE = `${SITE_URL}/og/kersivo-og.jpg`;
+const ORG_LOGO_URL = `${SITE_URL}/visuals/Logokersivo.png`;
 
 const pathname = Astro.url.pathname.endsWith("/") ? Astro.url.pathname : `${Astro.url.pathname}/`;
 const PAGE_URL = `${SITE_URL}${pathname}`;
@@ -70,7 +71,7 @@ const {
             "@type": "Organization",
             name: "Kersivo",
             url: SITE_URL,
-            logo: `${SITE_URL}/favicon.svg`,
+            logo: ORG_LOGO_URL,
             sameAs: [],
           },
           {

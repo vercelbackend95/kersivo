@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import "./mobile-nav.css";
-import { KersivoMarkIcon } from "../../ui/KersivoMark/KersivoMarkIcon";
 import { NAV_LINKS, isNavLinkActive, normalisePathname } from "./nav-links";
 import { CTA_PRIMARY_CONTACT } from "../../../site/cta";
 
@@ -304,10 +303,14 @@ export default function MobileNav({ contactHref = "/#contact" }: MobileNavProps)
                 onClick={doClose}
                 aria-label="Kersivo home"
               >
-                <span className="k-mn__mark" aria-hidden="true">
-                  <KersivoMarkIcon size={15} />
-                </span>
-                <span className="k-mn__name">Kersivo</span>
+                <img
+                  className="k-mn__logo"
+                  src="/visuals/Logokersivo.png"
+                  alt=""
+                  width={90}
+                  height={28}
+                  decoding="async"
+                />
               </a>
 
               <button

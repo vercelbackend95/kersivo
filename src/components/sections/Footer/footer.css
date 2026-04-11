@@ -123,25 +123,16 @@
 .k-footcard__logo{
   display: inline-flex;
   align-items: center;
-  gap: 10px;
   text-decoration: none;
   color: rgba(255,255,255,.94);
 }
 
-.k-footcard__mark{
-  width: 34px;
-  height: 34px;
-  border-radius: 12px;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(135deg, rgba(var(--scene-steel-rgb), .9), rgba(var(--scene-ivory-rgb), .82));
-  box-shadow: 0 18px 70px rgba(var(--scene-steel-rgb), .16);
-}
-
-.k-footcard__name{
-  font-weight: var(--w-bold, 780);
-  letter-spacing: -0.02em;
-  font-size: 18px;
+.k-footcard__logoImg{
+  display: block;
+  height: var(--nav-logo-h, clamp(24px, calc(56px * 0.48), 31px));
+  width: auto;
+  aspect-ratio: var(--nav-logo-ar, 90 / 28);
+  object-fit: contain;
 }
 
 .k-footcard__blurb{

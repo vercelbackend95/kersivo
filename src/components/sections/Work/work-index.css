@@ -107,6 +107,31 @@
   transition: transform 340ms cubic-bezier(0.2, 0.9, 0.2, 1);
 }
 
+.wk-card__media--placeholder {
+  background:
+    radial-gradient(ellipse 120% 80% at 30% 20%, rgba(168, 194, 212, 0.12), transparent 55%),
+    linear-gradient(155deg, rgba(255, 255, 255, 0.06) 0%, rgba(8, 8, 16, 0.92) 100%);
+}
+
+.wk-card__placeholder {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+}
+
+.wk-card__placeholderMark {
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.32);
+}
+
 .wk-card__body {
   display: flex;
   flex-direction: column;

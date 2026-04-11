@@ -9,8 +9,8 @@
   color: rgba(255, 255, 255, 0.94);
 
   --ks-shell-max: 70rem;
-  /* Headline measure: wide enough for longest line at nowrap, still display-tight */
-  --ks-h1-max: min(36ch, calc(100vw - var(--gutter) * 2 - 12px));
+  /* Headline measure: fits multi-clause hero copy while staying display-tight */
+  --ks-h1-max: min(44ch, calc(100vw - var(--gutter) * 2 - 12px));
   --ks-lead-max: 44ch;
   --ks-stack-eyebrow-h1: clamp(0.72rem, 1.6vw, 1.1rem);
   --ks-stack-h1-lead: clamp(1.1rem, 2.4vw, 1.9rem);
@@ -243,7 +243,7 @@
       env(safe-area-inset-top, 0px) + var(--nav-h, 64px) + clamp(14px, 4.8vw, 24px)
     );
     padding-bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(26px, 4.6vw, 40px));
-    --ks-h1-max: min(30ch, calc(100vw - var(--gutter) * 2 - 8px));
+    --ks-h1-max: min(34ch, calc(100vw - var(--gutter) * 2 - 8px));
   }
 
   .ks-eyebrow {
@@ -303,7 +303,7 @@
 /* === Small tablet === */
 @media (min-width: 600px) {
   .ks-hero {
-    --ks-h1-max: min(34ch, calc(100vw - var(--gutter) * 2 - 24px));
+    --ks-h1-max: min(40ch, calc(100vw - var(--gutter) * 2 - 24px));
     --ks-lead-max: 46ch;
   }
 
@@ -371,7 +371,7 @@
 @media (min-width: 768px) {
   .ks-hero {
     --ks-shell-max: 64rem;
-    --ks-h1-max: min(36ch, calc(100vw - var(--gutter) * 2 - 32px));
+    --ks-h1-max: min(42ch, calc(100vw - var(--gutter) * 2 - 32px));
     --ks-lead-max: 48ch;
     --ks-stack-h1-lead: clamp(1.2rem, 2vw, 1.6rem);
     --ks-stack-lead-actions: clamp(1.55rem, 2.4vw, 2rem);
@@ -401,15 +401,10 @@
   }
 }
 
-/* Tight headline only when lines can carry no-wrap safely */
 @media (min-width: 800px) {
   .ks-h1 {
     line-height: 0.9;
     letter-spacing: -0.05em;
-  }
-
-  .ks-h1__line {
-    white-space: nowrap;
   }
 }
 
@@ -417,7 +412,7 @@
 @media (min-width: 900px) {
   .ks-hero {
     --ks-shell-max: 68rem;
-    --ks-h1-max: min(38ch, calc(100vw - var(--gutter) * 2 - 40px));
+    --ks-h1-max: min(44ch, calc(100vw - var(--gutter) * 2 - 40px));
     --ks-lead-max: 49ch;
     min-height: clamp(640px, 87svh, 820px);
     padding-top: calc(
@@ -458,7 +453,7 @@
 @media (min-width: 1200px) {
   .ks-hero {
     --ks-shell-max: 72rem;
-    --ks-h1-max: min(40ch, calc(100vw - var(--gutter) * 2 - 48px));
+    --ks-h1-max: min(46ch, calc(100vw - var(--gutter) * 2 - 48px));
     --ks-lead-max: 50ch;
   }
 

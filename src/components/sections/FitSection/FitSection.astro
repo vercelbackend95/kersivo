@@ -3,26 +3,26 @@ import "./fit-section.css";
 
 const fitPoints = [
   {
-    title: "You want better enquiries, not just a prettier site.",
-    text: "If the goal is to improve how the business is perceived and increase the quality of incoming work — we are the right fit.",
+    title: "Focus on outcomes",
+    text: "The primary objective is to improve business perception and increase the quality of incoming enquiries. Performance is valued over purely aesthetic updates.",
   },
   {
-    title: "You can make decisions promptly and keep momentum.",
-    text: "The key decision-maker is available to review direction and give feedback at natural checkpoints.",
+    title: "Decisive momentum",
+    text: "Decision-makers are available to review strategic direction and provide feedback at natural checkpoints, ensuring project momentum is maintained.",
   },
   {
-    title: "You value quality and long-term maintainability.",
-    text: "You care about a considered build — one that performs well, ages well, and does not need constant patching.",
+    title: "Long-term value",
+    text: "There is a preference for considered, high-quality builds — systems that perform well, age gracefully, and do not require constant technical patching.",
   },
   {
-    title: "You prefer focused collaboration over agency noise.",
-    text: "Structured feedback rounds, clear communication, and no unnecessary back-and-forth or process theatre.",
+    title: "Focused collaboration",
+    text: "Efficiency is prioritized over 'agency noise'. The process relies on structured feedback, clear technical communication, and the removal of unnecessary process theatre.",
   },
 ] as const;
 
 const nonFitPoints = [
-  "If the lowest possible price is the only priority — we are probably not the right partner.",
-  "If you need a rushed launch with no room for structure or quality review — the outcome will suffer.",
+  "If the lowest possible price is the sole priority — Kersivo is unlikely to be the right technical partner.",
+  "If a rushed launch leaves no room for structural integrity or quality review — the final outcome will suffer, and the project will be declined.",
 ] as const;
 ---
 
@@ -43,10 +43,10 @@ const nonFitPoints = [
     <header class="ks-fit__intro">
       <p class="k-kicker">Clarity and standards</p>
       <h2 class="ks-fit__h2" id="ks-fit-heading">
-        Who we work best with.
+        Ideal partnership profile.
       </h2>
       <p class="ks-fit__lead">
-        We do our best work with service businesses that value clear positioning, calm delivery, and websites built to convert — not just impress.
+        Kersivo standards are designed for service businesses that prioritize clear positioning, calm delivery, and digital products built to convert — not just impress.
       </p>
     </header>
 
@@ -64,8 +64,8 @@ const nonFitPoints = [
         ))}
       </div>
 
-      <aside class="ks-fit__note" aria-label="When we may not be the best fit">
-        <p class="ks-fit__noteTitle">We may not be the best fit if:</p>
+      <aside class="ks-fit__note" aria-label="Compatibility check">
+        <p class="ks-fit__noteTitle">Compatibility check:</p>
         <ul class="ks-fit__noteList">
           {nonFitPoints.map((point) => (
             <li>{point}</li>
