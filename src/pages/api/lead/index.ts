@@ -16,6 +16,8 @@ type LeadPayload = {
   name?: string;
   email?: string;
   message?: string;
+  /** Optional industry or project type from the contact form. */
+  industry?: string;
   /** Optional URL from the contact form (not a honeypot). */
   website?: string;
   /** Honeypot; must stay in sync with LeadForm (`_hp`). */
@@ -87,6 +89,7 @@ export const POST: APIRoute = async ({ request }) => {
     const name = (raw.name || "").trim();
     const email = (raw.email || "").trim();
     const message = (raw.message || "").trim();
+    const industry = (raw.industry || "").trim();
     const website = (raw.website || "").trim();
     const leadSource = normalizeLeadSourceForApi(raw._source);
     const hp = (raw._hp || "").trim();
@@ -100,6 +103,9 @@ export const POST: APIRoute = async ({ request }) => {
 
     if (!name || !email || message.length < 10) {
       return json(400, { ok: false, error: "Missing fields (message min. 10 chars)." });
+    }
+    if (!budget) {
+      return json(400, { ok: false, error: "Please select a budget range." });
     }
     if (!isEmail(email)) {
       return json(400, { ok: false, error: "Invalid email." });
@@ -129,6 +135,7 @@ export const POST: APIRoute = async ({ request }) => {
         <b>Email:</b> ${esc(email)}<br/>
         <b>Service:</b> ${esc(service || "-")}<br/>
         <b>Budget:</b> ${esc(budget || "-")}<br/>
+        <b>Industry / project type:</b> ${esc(industry || "—")}<br/>
         <b>Website:</b> ${esc(website || "-")}<br/>
         <b>Lead source:</b> ${esc(leadSource)}</p>
 

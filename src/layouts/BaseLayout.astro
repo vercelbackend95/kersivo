@@ -11,7 +11,14 @@ const pageCrossfade = fade({ duration: "170ms" });
 
 const SITE_URL = "https://kersivo.co.uk";
 const OG_IMAGE = `${SITE_URL}/og/kersivo-og.jpg`;
-const ORG_LOGO_URL = `${SITE_URL}/visuals/Logokersivo.png`;
+const ORG_LOGO_URL = `${SITE_URL}/visuals/logo-kersivo.png`;
+
+/** Stable @ids for JSON-LD @graph (must be unique per entity). */
+const JSON_LD_BUSINESS_ID = `${SITE_URL}/#kes-business`;
+const JSON_LD_WEBSITE_ID = `${SITE_URL}/#kes-website`;
+const BUSINESS_PHONE_E164 = "+447785744005";
+const SAME_AS_LINKEDIN = "https://www.linkedin.com/in/bartosz-jasinski-5088a6402/";
+const SAME_AS_X = "https://x.com/KersivoStudio";
 
 const pathname = Astro.url.pathname.endsWith("/") ? Astro.url.pathname : `${Astro.url.pathname}/`;
 const PAGE_URL = `${SITE_URL}${pathname}`;
@@ -68,23 +75,57 @@ const {
         "@context": "https://schema.org",
         "@graph": [
           {
-            "@type": "Organization",
-            name: "Kersivo",
+            "@type": "ProfessionalService",
+            "@id": JSON_LD_BUSINESS_ID,
+            name: "Kersivo Studio",
             url: SITE_URL,
             logo: ORG_LOGO_URL,
-            sameAs: [],
+            image: ORG_LOGO_URL,
+            telephone: BUSINESS_PHONE_E164,
+            priceRange: "££",
+            description:
+              "High-performance, engineer-led digital products and bespoke booking systems for UK service businesses. Specialist in Astro, React, and sub-second loading speeds.",
+            address: {
+              "@type": "PostalAddress",
+              addressLocality: "Bournemouth",
+              addressRegion: "Dorset",
+              postalCode: "BH1",
+              addressCountry: "GB",
+            },
+            geo: {
+              "@type": "GeoCoordinates",
+              latitude: 50.7208,
+              longitude: -1.8795,
+            },
+            areaServed: [
+              { "@type": "Country", name: "United Kingdom" },
+              { "@type": "AdministrativeArea", name: "Dorset" },
+              { "@type": "City", name: "Bournemouth" },
+            ],
+            knowsAbout: [
+              "Web Performance Optimization",
+              "Astro Framework",
+              "React Development",
+              "Conversion Rate Optimization",
+              "Bespoke Booking Systems",
+              "Technical SEO",
+              "Performance Engineering",
+              "High-performance Web Development",
+            ],
+            sameAs: [SAME_AS_LINKEDIN, SAME_AS_X],
+            founder: {
+              "@type": "Person",
+              name: "Bartosz Jasinski",
+              jobTitle: "Founder & Lead Engineer",
+              sameAs: [SAME_AS_LINKEDIN, SAME_AS_X],
+            },
           },
           {
             "@type": "WebSite",
-            name: "Kersivo",
+            "@id": JSON_LD_WEBSITE_ID,
+            name: "Kersivo Studio",
             url: SITE_URL,
-          },
-          {
-            "@type": "Service",
-            name: "Web Design & Development",
-            provider: { "@type": "Organization", name: "Kersivo" },
-            areaServed: "GB",
-            serviceType: "Web design, development, performance and SEO foundations",
+            publisher: { "@id": JSON_LD_BUSINESS_ID },
           },
         ],
       })}

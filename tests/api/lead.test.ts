@@ -39,7 +39,7 @@ describe("POST /api/lead", () => {
         message: "Need help with redesign and migration, at least ten chars.",
         website: websiteUrl,
         service: "Website",
-        budget: "",
+        budget: "£750 — £1,350 (Base)",
         _hp: "",
         startedAt: Date.now() - 10_000,
       }),
@@ -64,7 +64,7 @@ describe("POST /api/lead", () => {
         message: "Need help with redesign and migration, at least ten chars.",
         _source: "/packages",
         service: "Website",
-        budget: "",
+        budget: "Not sure yet",
         _hp: "",
         startedAt: Date.now() - 10_000,
       }),
@@ -86,7 +86,7 @@ describe("POST /api/lead", () => {
         message: "Need help with redesign and migration, at least ten chars.",
         _source: "/studio",
         service: "Website",
-        budget: "",
+        budget: "Not sure yet",
         _hp: "",
         startedAt: Date.now() - 10_000,
       }),
@@ -107,7 +107,7 @@ describe("POST /api/lead", () => {
         message: "Need help with redesign and migration, at least ten chars.",
         _source: "https://evil.example/phish",
         service: "Website",
-        budget: "",
+        budget: "Not sure yet",
         _hp: "",
         startedAt: Date.now() - 10_000,
       }),
@@ -117,6 +117,46 @@ describe("POST /api/lead", () => {
     const [, init] = vi.mocked(globalThis.fetch).mock.calls[0];
     const payload = JSON.parse(String(init?.body));
     expect(payload.html).toContain("Lead source:</b> —");
+  });
+
+  it("includes industry in the email when provided", async () => {
+    const industry = "Barber, local services";
+    const res = await POST({
+      request: makeLeadRequest({
+        name: "Jane",
+        email: "jane@example.com",
+        message: "Need help with redesign and migration, at least ten chars.",
+        industry,
+        service: "Website",
+        budget: "£1,350 — £2,450 (Plus)",
+        _hp: "",
+        startedAt: Date.now() - 10_000,
+      }),
+    } as Parameters<typeof POST>[0]);
+
+    expect(res.status).toBe(200);
+    const [, init] = vi.mocked(globalThis.fetch).mock.calls[0];
+    const payload = JSON.parse(String(init?.body));
+    expect(payload.html).toContain("Industry / project type:</b> " + industry);
+  });
+
+  it("returns 400 when budget is missing", async () => {
+    const res = await POST({
+      request: makeLeadRequest({
+        name: "Jane",
+        email: "jane@example.com",
+        message: "Need help with redesign and migration, at least ten chars.",
+        service: "Website",
+        budget: "",
+        _hp: "",
+        startedAt: Date.now() - 10_000,
+      }),
+    } as Parameters<typeof POST>[0]);
+
+    expect(res.status).toBe(400);
+    const body = await res.json();
+    expect(body).toEqual(expect.objectContaining({ ok: false }));
+    expect(globalThis.fetch).not.toHaveBeenCalled();
   });
 
   it("does not call Resend when honeypot _hp is filled", async () => {

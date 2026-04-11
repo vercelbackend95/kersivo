@@ -5,6 +5,15 @@ import { CTA_PRIMARY_CONTACT } from "../../../../site/cta";
 const API_ENDPOINT = "/api/lead";
 /** Min time on page before submit (ms); blocks instant bot posts. */
 const MIN_SUBMIT_MS = 1400;
+/** Matches server validation in `/api/lead`. */
+const MESSAGE_MIN_LEN = 10;
+
+const BUDGET_OPTIONS = [
+  { value: "£750 — £1,350 (Base)", label: "£750 — £1,350 (Base)" },
+  { value: "£1,350 — £2,450 (Plus)", label: "£1,350 — £2,450 (Plus)" },
+  { value: "£2,450+ (Bespoke)", label: "£2,450+ (Bespoke)" },
+  { value: "Not sure yet", label: "Not sure yet" },
+] as const;
 
 function isEmail(v: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
@@ -28,7 +37,10 @@ export default function LeadForm({ source = "/" }: LeadFormProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [website, setWebsite] = useState("");
+  const [industry, setIndustry] = useState("");
+  const [budget, setBudget] = useState("");
   const [message, setMessage] = useState("");
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [hpField, setHpField] = useState("");
 
   const [loading, setLoading] = useState(false);
@@ -38,7 +50,12 @@ export default function LeadForm({ source = "/" }: LeadFormProps) {
   const [submitBlockedUntil, setSubmitBlockedUntil] = useState(0);
   const [, setCooldownTick] = useState(0);
 
-  const valid = name.trim().length > 0 && isEmail(email) && message.trim().length > 0;
+  const valid =
+    name.trim().length > 0 &&
+    isEmail(email) &&
+    message.trim().length >= MESSAGE_MIN_LEN &&
+    budget !== "" &&
+    privacyAccepted;
 
   const cooldownRemainingMs =
     submitBlockedUntil > Date.now() ? submitBlockedUntil - Date.now() : 0;
@@ -88,9 +105,10 @@ export default function LeadForm({ source = "/" }: LeadFormProps) {
         name: name.trim(),
         email: email.trim(),
         website: website.trim(),
+        industry: industry.trim(),
         message: message.trim(),
         service: "Website",
-        budget: "",
+        budget,
         _hp: hpField,
         _source: resolvedSource,
       };
@@ -172,20 +190,57 @@ export default function LeadForm({ source = "/" }: LeadFormProps) {
         </div>
       </div>
 
+      <div className="ks-lead__row ks-lead__row--split">
+        <div className="ks-lead__field">
+          <label className="ks-lead__label" htmlFor="lead-website">
+            Current website URL <span className="ks-lead__labelMuted">(optional)</span>
+          </label>
+          <input
+            id="lead-website"
+            className="ks-lead__input"
+            type="url"
+            name="website"
+            placeholder="https://yourbusiness.co.uk"
+            value={website}
+            onChange={(e) => setWebsite(e.target.value)}
+            autoComplete="url"
+          />
+        </div>
+        <div className="ks-lead__field">
+          <label className="ks-lead__label" htmlFor="lead-industry">Industry / project type</label>
+          <input
+            id="lead-industry"
+            className="ks-lead__input"
+            type="text"
+            name="industry"
+            placeholder="e.g. Barber, Tailor, E-commerce"
+            value={industry}
+            onChange={(e) => setIndustry(e.target.value)}
+            autoComplete="off"
+          />
+        </div>
+      </div>
+
       <div className="ks-lead__field">
-        <label className="ks-lead__label" htmlFor="lead-website">
-          Current website URL <span style={{ color: "rgba(255,255,255,0.34)", fontWeight: 450 }}>(optional)</span>
-        </label>
-        <input
-          id="lead-website"
-          className="ks-lead__input"
-          type="url"
-          name="website"
-          placeholder="https://yourbusiness.co.uk"
-          value={website}
-          onChange={(e) => setWebsite(e.target.value)}
-          autoComplete="url"
-        />
+        <label className="ks-lead__label" htmlFor="lead-budget">Estimated budget</label>
+        <select
+          id="lead-budget"
+          className="ks-lead__select"
+          name="budget"
+          value={budget}
+          onChange={(e) => setBudget(e.target.value)}
+          required
+          aria-required="true"
+        >
+          <option value="" disabled>
+            Select a budget range
+          </option>
+          {BUDGET_OPTIONS.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="ks-lead__field">
@@ -194,10 +249,11 @@ export default function LeadForm({ source = "/" }: LeadFormProps) {
           id="lead-message"
           className="ks-lead__textarea"
           name="message"
-          placeholder="Briefly describe your project."
+          placeholder="Briefly describe your project (at least a sentence)."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           required
+          minLength={MESSAGE_MIN_LEN}
         />
       </div>
 
@@ -210,6 +266,24 @@ export default function LeadForm({ source = "/" }: LeadFormProps) {
       {error && (
         <p className="ks-lead__notice ks-lead__notice--err" role="alert">{error}</p>
       )}
+
+      <div className="ks-lead__privacy">
+        <input
+          id="lead-privacy"
+          className="ks-lead__checkbox"
+          type="checkbox"
+          name="privacy"
+          checked={privacyAccepted}
+          onChange={(e) => setPrivacyAccepted(e.target.checked)}
+          required
+        />
+        <label className="ks-lead__privacyLabel" htmlFor="lead-privacy">
+          I agree to the{" "}
+          <a className="ks-lead__privacyLink" href="/privacy/">
+            Privacy Policy
+          </a>
+        </label>
+      </div>
 
       <button
         type="submit"

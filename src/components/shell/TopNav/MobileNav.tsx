@@ -305,7 +305,7 @@ export default function MobileNav({ contactHref = "/#contact" }: MobileNavProps)
               >
                 <img
                   className="k-mn__logo"
-                  src="/visuals/Logokersivo.png"
+                  src="/visuals/logo-kersivo.png"
                   alt=""
                   width={90}
                   height={28}

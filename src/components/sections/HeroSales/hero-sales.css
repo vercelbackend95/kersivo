@@ -232,6 +232,11 @@
   text-align: center;
 }
 
+/* Global `li + li { margin-top }` drops 2nd/3rd items in a horizontal flex row. */
+.ks-trust__item + .ks-trust__item {
+  margin-top: 0;
+}
+
 .ks-trust__item + .ks-trust__item::before {
   display: none;
 }
